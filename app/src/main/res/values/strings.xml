@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pill-Mate-Android</string>
+
+    <string name="test">test</string>
 </resources>
