@@ -13,7 +13,7 @@ import android.util.Log
 import com.example.pill_mate_android.BuildConfig
 
 object PillApiClient {
-    private const val BASE_URL = "http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/"
+    private const val BASE_URL = "https://apis.data.go.kr/1471000/"
 
     private fun createOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {

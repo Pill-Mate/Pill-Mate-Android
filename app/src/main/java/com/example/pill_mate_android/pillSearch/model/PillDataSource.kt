@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.pillSearch.model
 
 interface PillDataSource {
-    suspend fun getPills(serviceKey: String, pageNo: Int, numOfRows: Int, itemName: String): List<Pill>?
+    suspend fun getPillInfo(serviceKey: String, pageNo: Int, numOfRows: Int, itemName: String): List<PillInfoItem>?
+    suspend fun getPillIdntfc(serviceKey: String, pageNo: Int, numOfRows: Int, item_name: String): List<PillIdntfcItem>?
 }

@@ -7,22 +7,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.pill_mate_android.databinding.SuggestionRecyclerviewItemBinding
-import com.example.pill_mate_android.pillSearch.model.PillInfoItem
+import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 
-class PillAdapter(
-    private val onItemClick: (PillInfoItem) -> Unit = {}
-) : RecyclerView.Adapter<PillAdapter.PillViewHolder>() {
+class PillIdntfcAdapter(
+    private val onItemClick: (PillIdntfcItem) -> Unit = {}
+) : RecyclerView.Adapter<PillIdntfcAdapter.PillViewHolder>() {
 
-    private val pillList = mutableListOf<PillInfoItem>()
+    private val pillList = mutableListOf<PillIdntfcItem>()
 
     class PillViewHolder(
         var binding: SuggestionRecyclerviewItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pill: PillInfoItem) = with(binding) {
-            ivImage.load(pill.itemImage)
-            tvPillName.text = pill.itemName
-            tvCompanyName.text = pill.entpName
+        fun bind(pill: PillIdntfcItem) = with(binding) {
+            ivImage.load(pill.ITEM_IMAGE)
+            tvClassName.text = pill.CLASS_NAME
+            tvPillName.text = pill.ITEM_NAME
+            tvCompanyName.text = pill.ENTP_NAME
         }
     }
 
@@ -43,7 +44,7 @@ class PillAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateItems(newPillList: List<PillInfoItem>) {
+    fun updateItems(newPillList: List<PillIdntfcItem>) {
         Log.d("PillAdapter", "updateItems called with ${newPillList.size} items")
         pillList.clear()
         pillList.addAll(newPillList)

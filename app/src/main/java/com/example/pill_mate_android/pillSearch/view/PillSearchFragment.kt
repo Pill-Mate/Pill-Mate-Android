@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentPillSearchBinding
-import com.example.pill_mate_android.pillSearch.model.Pill
+import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
+import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
 
@@ -19,7 +20,7 @@ class PillSearchFragment : Fragment(), PillSearchView {
 
     private lateinit var binding: FragmentPillSearchBinding
     private lateinit var presenter: PillSearchPresenter
-    private lateinit var adapter: PillAdapter
+    private lateinit var adapter: PillIdntfcAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +34,7 @@ class PillSearchFragment : Fragment(), PillSearchView {
     }
 
     private fun setupRecyclerView() {
-        adapter = PillAdapter()
+        adapter = PillIdntfcAdapter()
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter
     }
@@ -65,9 +66,21 @@ class PillSearchFragment : Fragment(), PillSearchView {
         })
     }
 
-    override fun showPills(pills: List<Pill>) {
+    override fun showPillInfo(pills: List<PillInfoItem>) {
         Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
         pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.itemName}") }
+
+        if (pills.isNotEmpty()) {
+            binding.rvSuggestion.visibility = View.VISIBLE
+            //adapter.updateItems(pills)
+        } else {
+            binding.rvSuggestion.visibility = View.GONE
+        }
+    }
+
+    override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
+        Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
+        pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
 
         if (pills.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
