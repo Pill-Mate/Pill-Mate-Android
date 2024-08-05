@@ -26,7 +26,7 @@ class PillSearchPresenterImpl(
                     itemName = query
                 )
                 val pillIdntfc = repository.getPillIdntfc(
-                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF%2F5JaiCg%3D%3D",
+                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
                     pageNo = 1,
                     numOfRows = 8,
                     item_name = query
