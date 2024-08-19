@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface PillApiService {
 
-    @GET("DrbEasyDrugInfoService/getDrbEasyDrugList")
+    @GET("1471000/DrbEasyDrugInfoService/getDrbEasyDrugList")
     suspend fun getPillInfo(
         @Query("serviceKey") serviceKey: String,
         @Query("pageNo") pageNo: Int,
@@ -17,7 +17,7 @@ interface PillApiService {
         @Query("type") type: String = "json"
     ): Response<PillInfoResponse>
 
-    @GET("MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01")
+    @GET("1471000/MdcinGrnIdntfcInfoService01/getMdcinGrnIdntfcInfoList01")
     suspend fun getPillIdntfc(
         @Query("serviceKey") serviceKey: String,
         @Query("pageNo") pageNo: Int,

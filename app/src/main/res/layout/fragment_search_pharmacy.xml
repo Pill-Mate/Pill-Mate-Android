@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_bg"
+    android:id="@+id/searchPharmacyFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pillSearch.view.PillSearchFragment">
+    tools:context=".SearchPharmacyFragment">
 
     <EditText
-        android:id="@+id/et_pillSearch"
+        android:id="@+id/et_pharmacy_search"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -19,12 +19,12 @@
         android:background="@drawable/search_view_background"
         android:backgroundTint="@null"
         android:elevation="1dp"
-        android:hint="의약품 검색"
+        android:hint="약국 검색"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:singleLine="true"
         android:paddingStart="45dp"
         android:paddingEnd="10dp"
+        android:singleLine="true"
         android:textColorHint="#838383"
         app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_pillSearch" />
+        app:layout_constraintTop_toBottomOf="@id/et_pharmacy_search" />
 
     <ImageView
         android:id="@+id/ic_search"
@@ -50,9 +50,9 @@
         android:layout_marginStart="15dp"
         android:elevation="2dp"
         android:src="@drawable/ic_search"
-        app:layout_constraintBottom_toBottomOf="@id/et_pillSearch"
-        app:layout_constraintStart_toStartOf="@id/et_pillSearch"
-        app:layout_constraintTop_toTopOf="@id/et_pillSearch" />
+        app:layout_constraintBottom_toBottomOf="@id/et_pharmacy_search"
+        app:layout_constraintStart_toStartOf="@id/et_pharmacy_search"
+        app:layout_constraintTop_toTopOf="@id/et_pharmacy_search" />
 
     <ImageView
         android:id="@+id/iv_delete"
@@ -62,8 +62,8 @@
         android:elevation="2dp"
         android:src="@drawable/cross"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/et_pillSearch"
-        app:layout_constraintEnd_toEndOf="@id/et_pillSearch"
-        app:layout_constraintTop_toTopOf="@id/et_pillSearch" />
+        app:layout_constraintBottom_toBottomOf="@id/et_pharmacy_search"
+        app:layout_constraintEnd_toEndOf="@id/et_pharmacy_search"
+        app:layout_constraintTop_toTopOf="@id/et_pharmacy_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

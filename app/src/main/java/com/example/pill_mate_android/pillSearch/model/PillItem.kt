@@ -1,5 +1,8 @@
 package com.example.pill_mate_android.pillSearch.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 data class PillInfoItem(
     val entpName: String,
     val itemName: String,
@@ -17,6 +20,7 @@ data class PillInfoItem(
     val bizrno: String
 )
 
+@Parcelize
 data class PillIdntfcItem(
     val ITEM_SEQ: String,
     val ITEM_NAME: String,
@@ -50,4 +54,4 @@ data class PillIdntfcItem(
     val MARK_CODE_BACK: String?,
     val EDI_CODE: String?,
     val BIZRNO: String?
-)
+) : Parcelable

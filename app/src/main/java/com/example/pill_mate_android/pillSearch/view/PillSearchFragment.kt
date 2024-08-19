@@ -34,7 +34,11 @@ class PillSearchFragment : Fragment(), PillSearchView {
     }
 
     private fun setupRecyclerView() {
-        adapter = PillIdntfcAdapter()
+        adapter = PillIdntfcAdapter { pillItem ->
+            // 아이템 클릭 시 DialogFragment
+            val dialog = PillDetailDialogFragment.newInstance(pillItem)
+            dialog.show(childFragmentManager, "PillDetailDialog")
+        }
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter
     }
@@ -72,7 +76,6 @@ class PillSearchFragment : Fragment(), PillSearchView {
 
         if (pills.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
-            //adapter.updateItems(pills)
         } else {
             binding.rvSuggestion.visibility = View.GONE
         }
