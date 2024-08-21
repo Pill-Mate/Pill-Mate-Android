@@ -10,12 +10,64 @@
         android:label="Step One"
         tools:layout="@layout/fragment_step_one">
         <action
-            android:id="@+id/action_stepOneFragment_to_searchPharmacyFragment"
-            app:destination="@id/searchPharmacyFragment" />
-        <action
             android:id="@+id/action_stepOneFragment_to_stepTwoFragment"
             app:destination="@id/stepTwoFragment" />
     </fragment>
-    <!-- Add other steps similarly -->
+
+    <fragment
+        android:id="@+id/stepTwoFragment"
+        android:name="com.example.pill_mate_android.StepTwoFragment"
+        android:label="Step Two"
+        tools:layout="@layout/fragment_step_two">
+        <action
+            android:id="@+id/action_stepTwoFragment_to_stepThreeFragment"
+            app:destination="@id/stepThreeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepThreeFragment"
+        android:name="com.example.pill_mate_android.StepThreeFragment"
+        android:label="Step Three"
+        tools:layout="@layout/fragment_step_three">
+        <!--<action
+            android:id="@+id/action_stepThreeFragment_to_stepFourFragment"
+            app:destination="@id/stepFourFragment" />-->
+    </fragment>
+
+    <!--<fragment
+        android:id="@+id/stepFourFragment"
+        android:name="com.example.pill_mate_android.StepFourFragment"
+        android:label="Step Four"
+        tools:layout="@layout/fragment_step_four">
+        <action
+            android:id="@+id/action_stepFourFragment_to_stepFiveFragment"
+            app:destination="@id/stepFiveFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepFiveFragment"
+        android:name="com.example.pill_mate_android.StepFiveFragment"
+        android:label="Step Five"
+        tools:layout="@layout/fragment_step_five">
+        <action
+            android:id="@+id/action_stepFiveFragment_to_stepSixFragment"
+            app:destination="@id/stepSixFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepSixFragment"
+        android:name="com.example.pill_mate_android.StepSixFragment"
+        android:label="Step Six"
+        tools:layout="@layout/fragment_step_six">
+        <action
+            android:id="@+id/action_stepSixFragment_to_stepSevenFragment"
+            app:destination="@id/stepSevenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepSevenFragment"
+        android:name="com.example.pill_mate_android.StepSevenFragment"
+        android:label="Step Seven"
+        tools:layout="@layout/fragment_step_seven" />-->
 
 </navigation>

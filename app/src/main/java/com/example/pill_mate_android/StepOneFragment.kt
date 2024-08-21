@@ -1,12 +1,13 @@
 package com.example.pill_mate_android
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.pill_mate_android.databinding.FragmentStepOneBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import com.example.pill_mate_android.databinding.FragmentStepOneBinding
 
 class StepOneFragment : Fragment() {
 
@@ -24,11 +25,22 @@ class StepOneFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.layoutPharmacy.setOnClickListener {
-            findNavController().navigate(R.id.action_stepOneFragment_to_searchPharmacyFragment)
+        setFragmentResultListener("requestKey") { key, bundle ->
+            val selectedPharmacy = bundle.getString("pharmacy")
+            binding.etPharmacy.setText(selectedPharmacy)
         }
 
-        binding.nextButton.setOnClickListener {
+        binding.etPharmacy.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, SearchPharmacyFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+
+        binding.btnNext.setOnClickListener {
             findNavController().navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
         }
     }

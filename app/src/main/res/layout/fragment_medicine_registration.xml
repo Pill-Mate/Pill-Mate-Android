@@ -54,7 +54,6 @@
         android:paddingHorizontal="16dp"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
-    <!-- Fragment Container for Steps -->
     <fragment
         android:id="@+id/nav_host_fragment_steps"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -66,5 +65,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/search_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

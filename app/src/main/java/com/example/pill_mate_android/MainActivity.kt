@@ -11,14 +11,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Check if we are recreating the activity (i.e., not the first time)
         if (savedInstanceState == null) {
-            // Create the initial fragment to display
-            val fragment = PillSearchFragment() // Replace with your initial fragment
-            // Add the fragment to the container
-            supportFragmentManager.commit {
-                replace(R.id.fragment_container, fragment)
-            }
+            val fragment = MedicineRegistrationFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
         }
     }
 }
