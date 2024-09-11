@@ -11,6 +11,8 @@ import okhttp3.Interceptor
 import okhttp3.ResponseBody
 import android.util.Log
 import com.example.pill_mate_android.BuildConfig
+import com.tickaroo.tikxml.TikXml
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 
 object PillApiClient {
     private const val BASE_URL = "https://apis.data.go.kr/"
@@ -48,11 +50,16 @@ object PillApiClient {
             .create()
     }
 
+    val tikXml = TikXml.Builder()
+        .exceptionOnUnreadXml(false) // XML 파싱 중 예외 처리 설정
+        .build()
+
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(createOkHttpClient())
-            .addConverterFactory(GsonConverterFactory.create(gson)) // 커스텀 Gson 추가
+            .addConverterFactory(GsonConverterFactory.create(gson)) // json
+            .addConverterFactory(TikXmlConverterFactory.create(tikXml)) // xml
             .build()
     }
 

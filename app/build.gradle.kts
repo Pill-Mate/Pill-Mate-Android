@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id ("kotlin-parcelize")
+    id ("kotlin-kapt")
 }
 
 android {
@@ -67,7 +68,12 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx) // 카카오 로그인
     implementation("io.coil-kt:coil:2.4.0") // 이미지 로딩 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // retrofit2
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0") //json
+    implementation("com.tickaroo.tikxml:tikxml:0.8.13") //xml
+    implementation ("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation ("com.tickaroo.tikxml:core:0.8.13")
+    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    kapt ("com.tickaroo.tikxml:processor:0.8.13")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     testImplementation(libs.junit)
