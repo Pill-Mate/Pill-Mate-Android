@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.example.pill_mate_android.databinding.FragmentPillDetailDialogBinding
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 
@@ -32,7 +33,9 @@ class PillDetailDialogFragment : DialogFragment() {
         val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
 
         pillItem?.let {
-            binding.ivPillImage.load(it.ITEM_IMAGE)
+            binding.ivPillImage.load(it.ITEM_IMAGE){
+                transformations(RoundedCornersTransformation(20f)) // 4dp 둥근 모서리
+            }
             binding.tvPillClass.text = it.CLASS_NAME
             binding.tvPillName.text = it.ITEM_NAME
             binding.tvPillIngredient.text = it.ENTP_NAME

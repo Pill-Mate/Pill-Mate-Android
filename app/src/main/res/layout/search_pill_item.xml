@@ -10,10 +10,11 @@
 
     <ImageView
         android:id="@+id/iv_image"
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
+        android:layout_width="100dp"
+        android:layout_height="54dp"
         android:layout_marginStart="10dp"
         android:src="@drawable/ic_test_image"
+        android:background="@drawable/rectangle_radius_4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -43,8 +44,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:maxEms="20"
             android:textColor="@color/black"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:textStyle="bold"
             tools:text="이름" />
 
@@ -59,16 +61,5 @@
             tools:text="용량" />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/iv_detail"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_arraw"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

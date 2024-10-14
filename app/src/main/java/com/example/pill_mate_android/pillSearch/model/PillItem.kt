@@ -22,7 +22,7 @@ data class PillInfoItem(
 
 @Parcelize
 data class PillIdntfcItem(
-    val ITEM_SEQ: String,
+    val ITEM_SEQ: String, // 의약품 고유 식별번호
     val ITEM_NAME: String,
     val ENTP_SEQ: String,
     val ENTP_NAME: String,

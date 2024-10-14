@@ -8,7 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pill_mate_android.databinding.FragmentStepTwoBinding
-import com.example.pill_mate_android.pillSearch.view.PillSearchFragment
+import com.example.pill_mate_android.pillSearch.view.PillSearchBottomSheetFragment
 
 class StepTwoFragment : Fragment() {
 
@@ -32,13 +32,10 @@ class StepTwoFragment : Fragment() {
             }
         })
 
-        binding.etPharmacy.setOnFocusChangeListener { _, hasFocus ->
+        binding.etPillName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, PillSearchFragment())
-                    .addToBackStack(null)
-                    .commit()
+                val bottomSheetFragment = PillSearchBottomSheetFragment()
+                bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
             }
         }
 

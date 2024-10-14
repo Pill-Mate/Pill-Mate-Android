@@ -1,0 +1,17 @@
+package com.example.pill_mate_android.pillSearch.api
+
+import com.example.pill_mate_android.pillSearch.model.PharmacyResponse
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface XmlApiService {
+    @GET("B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire") // xml
+    suspend fun getPharmacyList(
+        @Query("serviceKey") serviceKey: String,
+        @Query("pageNo") pageNo: Int,
+        @Query("numOfRows") numOfRows: Int,
+        @Query("QN") name: String?, // 기관(약국)명
+        @Query("ORD") order: String, // 정렬
+    ): Response<PharmacyResponse>
+}

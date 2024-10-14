@@ -31,24 +31,23 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title">
 
         <EditText
-            android:id="@+id/et_pharmacy"
+            android:id="@+id/et_pillName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/iv_searchPharmacy"
-            android:hint="약국 이름을 입력하세요"
+            android:layout_toEndOf="@id/iv_search"
+            android:hint="약물명을 입력하세요"
             android:background="@drawable/search_view_background"
             android:paddingStart="16dp" />
 
         <ImageView
-            android:id="@+id/iv_searchPharmacy"
+            android:id="@+id/iv_search"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_search"
-            android:contentDescription="Search Pharmacy" />
+            android:src="@drawable/ic_search"/>
 
     </RelativeLayout>
 

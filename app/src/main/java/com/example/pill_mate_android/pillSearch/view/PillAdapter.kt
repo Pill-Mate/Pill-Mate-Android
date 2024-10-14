@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.pill_mate_android.databinding.SuggestionRecyclerviewItemBinding
+import com.example.pill_mate_android.databinding.SearchPillItemBinding
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 
 class PillAdapter(
@@ -16,7 +16,7 @@ class PillAdapter(
     private val pillList = mutableListOf<PillInfoItem>()
 
     class PillViewHolder(
-        var binding: SuggestionRecyclerviewItemBinding
+        var binding: SearchPillItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pill: PillInfoItem) = with(binding) {
@@ -28,7 +28,7 @@ class PillAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PillViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = SuggestionRecyclerviewItemBinding.inflate(layoutInflater, parent, false)
+        val binding = SearchPillItemBinding.inflate(layoutInflater, parent, false)
         return PillViewHolder(binding)
     }
 

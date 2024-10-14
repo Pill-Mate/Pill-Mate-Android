@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
@@ -24,9 +25,46 @@ class MedicineRegistrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val progressBar = binding.progressBar
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        // 백 버튼 클릭 리스너 등록
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 현재 프래그먼트를 가져옴
+                val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+                val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
+                // 현재 프래그먼트가 StepOneFragment일 때만 다이얼로그 표시
+                if (currentFragment is StepOneFragment) {
+                    showPillRegistrationDialog()
+                } else {
+                    // 이전 프래그먼트로 이동
+                    parentFragmentManager.popBackStack()
+                }
+            }
+        })
+
+        binding.ivBack.setOnClickListener {
+            // iv_back 클릭 시 동작
+            val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+            val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
+
+            // 현재 프래그먼트가 StepOneFragment일 때만 다이얼로그 표시
+            if (currentFragment is StepOneFragment) {
+                showPillRegistrationDialog()
+            } else {
+                // 이전 프래그먼트로 이동
+                parentFragmentManager.popBackStack()
+            }
+        }
+
+        // iv_delete 클릭 이벤트 추가
+        binding.ivDelete.setOnClickListener {
+            showPillRegistrationDialog()
+        }
+    }
+
+    private fun showPillRegistrationDialog() {
+        val dialog = PillRegistrationDialogFragment()
+        dialog.show(childFragmentManager, "PillRegistrationDialog")
     }
 
     override fun onDestroyView() {
