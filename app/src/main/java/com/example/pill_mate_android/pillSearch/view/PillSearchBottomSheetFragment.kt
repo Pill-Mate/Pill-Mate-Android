@@ -19,15 +19,20 @@ import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
+import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
+import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenterImpl
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class PillSearchBottomSheetFragment : BottomSheetDialogFragment(), PillSearchView {
+class PillSearchBottomSheetFragment(
+    private val stepTwoView: StepTwoView // StepTwoView를 인자로 받음
+) : BottomSheetDialogFragment(), PillSearchView {
 
     private var _binding: FragmentSearchPillBinding? = null
     private val binding get() = _binding!!
-    private lateinit var presenter: PillSearchPresenter
+    private lateinit var pillSearchPresenter: PillSearchPresenter
+    private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
     private lateinit var adapter: PillIdntfcAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
 
@@ -36,7 +41,8 @@ class PillSearchBottomSheetFragment : BottomSheetDialogFragment(), PillSearchVie
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
-        presenter = PillSearchPresenterImpl(this) // presenter 초기화
+        pillSearchPresenter = PillSearchPresenterImpl(this) // PillSearchPresenter 초기화
+        stepTwoPresenter = StepTwoPresenterImpl(stepTwoView) // StepTwoPresenter 초기화
         return binding.root
     }
 
@@ -52,7 +58,7 @@ class PillSearchBottomSheetFragment : BottomSheetDialogFragment(), PillSearchVie
 
             // 화면을 꽉 채우도록 설정
             bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
-            // 키보드
+            // 키보드 자동 보이기
             dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
         return dialog
@@ -74,10 +80,9 @@ class PillSearchBottomSheetFragment : BottomSheetDialogFragment(), PillSearchVie
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // adapter 초기화 - 아이템 클릭 시 다이얼로그를 표시하는 콜백 추가
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
-            // 아이템을 클릭하면 다이얼로그 표시
-            val dialog = PillDetailDialogFragment.newInstance(pillItem)
+            // 아이템 클릭 시 다이얼로그 생성 및 표시
+            val dialog = PillDetailDialogFragment.newInstance(stepTwoPresenter, this, pillItem)
             dialog.show(parentFragmentManager, "PillDetailDialog")
         })
 
@@ -101,24 +106,22 @@ class PillSearchBottomSheetFragment : BottomSheetDialogFragment(), PillSearchVie
 
     private fun setupSearchBar() {
         binding.etPillSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                text: CharSequence?, start: Int, count: Int, after: Int
-            ) {}
+            override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
                 if (text.isNullOrEmpty()) {
                     binding.apply {
                         ivDelete.visibility = View.GONE
                         rvSuggestion.visibility = View.GONE
-                        etPillSearch.setBackgroundResource(R.drawable.search_view_background)
+                        etPillSearch.setBackgroundResource(R.drawable.bg_search_view)
                     }
                 } else {
                     binding.apply {
                         ivDelete.visibility = View.VISIBLE
-                        etPillSearch.setBackgroundResource(R.drawable.search_view_changed_background)
+                        etPillSearch.setBackgroundResource(R.drawable.bg_search_view_changed)
                     }
                     currentQuery = text.toString() // 검색어 업데이트
-                    presenter.searchPills(currentQuery)
+                    pillSearchPresenter.searchPills(currentQuery) // 검색 요청
                 }
             }
 

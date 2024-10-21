@@ -1,6 +1,9 @@
 package com.example.pill_mate_android.pillSearch.view
 
 import android.annotation.SuppressLint
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -69,7 +72,7 @@ class PillIdntfcAdapter(
     override fun getItemCount(): Int = pillList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateItems(newPillList: List<PillIdntfcItem>) {
+    fun updateItems(newPillList: List<PillIdntfcItem>, newQuery: String) {
         Log.d("PillAdapter", "updateItems called with ${newPillList.size} items")
         pillList.clear()
         pillList.addAll(newPillList)

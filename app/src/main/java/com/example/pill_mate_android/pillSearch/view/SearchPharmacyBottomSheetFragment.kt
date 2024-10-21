@@ -74,7 +74,15 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = PharmacyAdapter() // adapter 초기화
+        // PharmacyAdapter 초기화, 아이템 클릭 시 데이터 전달
+        adapter = PharmacyAdapter(onItemClick = { pharmacy ->
+            val result = Bundle().apply {
+                putString("pharmacy", pharmacy.dutyName)
+            }
+            parentFragmentManager.setFragmentResult("requestKey", result)
+            dismiss() // 바텀 시트 닫기
+        })
+
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter // RecyclerView에 adapter 설정
 
@@ -102,12 +110,12 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
                     binding.apply {
                         ivDelete.visibility = View.GONE
                         rvSuggestion.visibility = View.GONE
-                        etPharmacySearch.setBackgroundResource(R.drawable.search_view_background)
+                        etPharmacySearch.setBackgroundResource(R.drawable.bg_search_view)
                     }
                 } else {
                     binding.apply {
                         ivDelete.visibility = View.VISIBLE
-                        etPharmacySearch.setBackgroundResource(R.drawable.search_view_changed_background)
+                        etPharmacySearch.setBackgroundResource(R.drawable.bg_search_view_changed)
                     }
                     currentQuery = text.toString() // 검색어 업데이트
                     presenter.searchPharmacies(currentQuery)

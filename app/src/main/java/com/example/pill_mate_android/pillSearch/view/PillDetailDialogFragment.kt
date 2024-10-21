@@ -11,8 +11,12 @@ import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.example.pill_mate_android.databinding.FragmentPillDetailDialogBinding
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
+import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
 
-class PillDetailDialogFragment : DialogFragment() {
+class PillDetailDialogFragment(
+    private val presenter: StepTwoPresenter,
+    private val bottomSheet: PillSearchBottomSheetFragment // 바텀 시트 인스턴스 전달
+) : DialogFragment() {
 
     private var _binding: FragmentPillDetailDialogBinding? = null
     private val binding get() = _binding!!
@@ -33,16 +37,24 @@ class PillDetailDialogFragment : DialogFragment() {
         val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
 
         pillItem?.let {
-            binding.ivPillImage.load(it.ITEM_IMAGE){
-                transformations(RoundedCornersTransformation(20f)) // 4dp 둥근 모서리
+            binding.ivPillImage.load(it.ITEM_IMAGE) {
+                transformations(RoundedCornersTransformation(20f))
             }
             binding.tvPillClass.text = it.CLASS_NAME
             binding.tvPillName.text = it.ITEM_NAME
-            binding.tvPillIngredient.text = it.ENTP_NAME
+            binding.tvPillEntp.text = it.ENTP_NAME
+        }
+
+        binding.btnYes.setOnClickListener {
+            pillItem?.ITEM_NAME?.let { pillName ->
+                presenter.onPillSelected(pillName) // 데이터 전달
+            }
+            bottomSheet.dismiss() // 바텀 시트 닫기
+            dismiss() // 다이얼로그 닫기
         }
 
         binding.btnNo.setOnClickListener {
-            dismiss()
+            dismiss() // 다이얼로그 닫기
         }
     }
 
@@ -52,10 +64,14 @@ class PillDetailDialogFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(pillItem: PillIdntfcItem): PillDetailDialogFragment {
+        fun newInstance(
+            presenter: StepTwoPresenter,
+            bottomSheet: PillSearchBottomSheetFragment, // 바텀 시트 인스턴스 전달
+            pillItem: PillIdntfcItem
+        ): PillDetailDialogFragment {
             val args = Bundle()
             args.putParcelable("pillItem", pillItem)
-            val fragment = PillDetailDialogFragment()
+            val fragment = PillDetailDialogFragment(presenter, bottomSheet)
             fragment.arguments = args
             return fragment
         }
