@@ -38,7 +38,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         setFragmentResultListener("requestKey") { _, bundle ->
             val selectedPharmacy = bundle.getString("pharmacy") ?: ""
             binding.etPharmacy.setText(selectedPharmacy)
-            binding.tvWarning.isVisible = false // 경고 숨기기
+            binding.tvWarning.isVisible = false
             presenter.onPharmacyNameChanged(selectedPharmacy)
         }
 

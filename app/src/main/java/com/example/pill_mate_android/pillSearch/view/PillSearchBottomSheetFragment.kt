@@ -111,13 +111,11 @@ class PillSearchBottomSheetFragment(
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
                 if (text.isNullOrEmpty()) {
                     binding.apply {
-                        ivDelete.visibility = View.GONE
                         rvSuggestion.visibility = View.GONE
                         etPillSearch.setBackgroundResource(R.drawable.bg_search_view)
                     }
                 } else {
                     binding.apply {
-                        ivDelete.visibility = View.VISIBLE
                         etPillSearch.setBackgroundResource(R.drawable.bg_search_view_changed)
                     }
                     currentQuery = text.toString() // 검색어 업데이트
