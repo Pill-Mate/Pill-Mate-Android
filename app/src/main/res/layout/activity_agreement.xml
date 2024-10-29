@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/round_number1"
-            style="@style/B3_RG12"
+            style="@style/B4_RG12"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="20dp"
@@ -54,7 +54,7 @@
 
         <TextView
             android:id="@+id/round_number2"
-            style="@style/B3_RG12"
+            style="@style/B4_RG12"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
@@ -69,7 +69,7 @@
 
         <TextView
             android:id="@+id/round_number3"
-            style="@style/B3_RG12"
+            style="@style/B4_RG12"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
@@ -283,7 +283,7 @@
 
     <TextView
         android:id="@+id/tv_cb5_description"
-        style="@style/B3_RG12"
+        style="@style/B4_RG12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -295,7 +295,7 @@
 
     <TextView
         android:id="@+id/tv_detail"
-        style="@style/B3_RG12"
+        style="@style/B4_RG12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
@@ -328,7 +328,7 @@
 
             <TextView
                 android:id="@+id/tv_cb6"
-                style="@style/H1_SB16"
+                style="@style/H2_SB16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -353,7 +353,7 @@
 
         <TextView
             android:id="@+id/tv_agreement2"
-            style="@style/B3_RG12"
+            style="@style/B4_RG12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -368,7 +368,7 @@
 
     <Button
         android:id="@+id/btn_done"
-        style="@style/H1_SB16"
+        style="@style/H2_SB16"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="26dp"
