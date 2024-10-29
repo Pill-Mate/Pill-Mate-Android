@@ -4,14 +4,12 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.ActivityKakaoLoginBinding
-import com.example.pill_mate_android.ui.main.activity.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -38,16 +36,6 @@ class KakaoLoginActivity : AppCompatActivity() {
     }
 
     private fun kakaoLogin() { // 로그인 정보 확인
-        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
-            if (error != null) {
-                Log.e(TAG, "토큰 실패", error)
-            } else if (tokenInfo != null) {
-                Log.i(TAG, "토큰 성공")
-                navigateToAgreement(tokenInfo.id.toString())
-                finish()
-            }
-        }
-
         // 카카오 로그인
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -93,10 +81,10 @@ class KakaoLoginActivity : AppCompatActivity() {
 
     // 로그인 -> 약관 동의 페이지로 이동
     private fun navigateToAgreement(accessToken: String) {
+
         val intent = Intent(this, AgreementActivity::class.java).apply {
             putExtra("ACCESS_TOKEN", accessToken) // 액세스 토큰을 인텐트에 추가
         }
-        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-        finish()
+        startActivity(intent)
     }
 }
