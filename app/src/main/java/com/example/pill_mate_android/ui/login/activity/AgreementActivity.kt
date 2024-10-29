@@ -9,12 +9,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pill_mate_android.GlobalApplication
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityAgreementBinding
 import com.example.pill_mate_android.ui.login.LoginData
 import com.example.pill_mate_android.ui.login.ResponseToken
-import com.example.pill_mate_android.ui.main.activity.MainActivity
+import com.example.pill_mate_android.ui.onboarding.TimePicker1Activity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -107,7 +108,7 @@ class AgreementActivity : AppCompatActivity() {
     private fun loginNetwork() {
 
         val loginData = LoginData(
-            accessToken = accessToken, alarmMarketing = binding.cb5.isChecked
+            kakaoAccessToken = accessToken, marketingAlarm = binding.cb5.isChecked
         )
         val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
@@ -119,11 +120,11 @@ class AgreementActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.jwtToken?.let { jwtToken ->
                         saveJwtToken(jwtToken)
+
                         Toast.makeText(this@AgreementActivity, "가입 완료", Toast.LENGTH_SHORT).show()
 
-                        val intent = Intent(this@AgreementActivity, MainActivity::class.java)
+                        val intent = Intent(this@AgreementActivity, TimePicker1Activity::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 } else {
                     Toast.makeText(this@AgreementActivity, "가입 실패 : ${response.message()}", Toast.LENGTH_SHORT).show()
@@ -131,7 +132,7 @@ class AgreementActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
-                Toast.makeText(this@AgreementActivity, "네트워크 오류: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
     }
@@ -142,6 +143,9 @@ class AgreementActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putString("JWT_TOKEN", token)
         editor.apply()
+
+        // GlobalApplication에 토큰 저장
+        GlobalApplication.getInstance()?.userToken = token
     }
 
     // 뒤로 가기 버튼 클릭 시 -> 로그인 페이지로 이동

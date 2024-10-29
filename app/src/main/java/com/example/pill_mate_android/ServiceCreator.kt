@@ -1,6 +1,7 @@
 package com.example.pill_mate_android
 
 import com.example.pill_mate_android.ui.login.LoginService
+import com.example.pill_mate_android.ui.login.OnBoardingService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,6 +18,7 @@ object ServiceCreator {
     private fun provideOkHttpClient(): OkHttpClient =
         OkHttpClient.Builder().connectTimeout(100, TimeUnit.SECONDS).readTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS).run {
+                addInterceptor(TokenInterceptor())
                 addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 })
@@ -24,4 +26,5 @@ object ServiceCreator {
             }
 
     val loginService: LoginService = userRetrofit.create(LoginService::class.java)
+    val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
 }
