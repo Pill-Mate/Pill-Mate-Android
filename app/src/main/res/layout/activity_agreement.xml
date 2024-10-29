@@ -319,49 +319,56 @@
         app:layout_constraintWidth_percent="0.88">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_cb6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_cb6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_cb6"
+                    style="@style/H2_SB16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="모두동의"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/cb_6"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/btn_checkbox"
+                    android:button="@null"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
-                android:id="@+id/tv_cb6"
-                style="@style/H2_SB16"
+                android:id="@+id/tv_agreement2"
+                style="@style/B4_RG12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="모두동의"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <CheckBox
-                android:id="@+id/cb_6"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/btn_checkbox"
-                android:button="@null"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="7dp"
+                android:text="약관 및 개인정보 보호방침, 마케팅 수신 동의"
+                android:textColor="@color/gray_1"
+                app:layout_constraintStart_toStartOf="@id/layout_cb6"
+                app:layout_constraintTop_toBottomOf="@id/layout_cb6" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tv_agreement2"
-            style="@style/B4_RG12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="7dp"
-            android:text="약관 및 개인정보 보호방침, 마케팅 수신 동의"
-            android:textColor="@color/gray_1"
-            app:layout_constraintStart_toStartOf="@id/layout_cb6"
-            app:layout_constraintTop_toBottomOf="@id/layout_cb6" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -374,6 +381,7 @@
         android:layout_marginBottom="26dp"
         android:background="@drawable/btn_basic"
         android:backgroundTint="@color/gray_3"
+        android:enabled="false"
         android:stateListAnimator="@null"
         android:text="가입 완료"
         android:textColor="@color/black"
