@@ -2,38 +2,25 @@ package com.example.pill_mate_android.ui.login.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.pill_mate_android.GlobalApplication
 import com.example.pill_mate_android.R
-import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityAgreementBinding
-import com.example.pill_mate_android.ui.login.LoginData
-import com.example.pill_mate_android.ui.login.ResponseToken
 import com.example.pill_mate_android.ui.onboarding.TimePicker1Activity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class AgreementActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAgreementBinding
     private lateinit var individualCheckBoxes: List<CheckBox>
-    private var accessToken: String? = null // 전달받은 토큰
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAgreementBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-
-        // 인텐트로부터 accessToken을 가져오기
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.agreement)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -105,54 +92,9 @@ class AgreementActivity : AppCompatActivity() {
         )
     }
 
-    private fun loginNetwork() {
-
-        val loginData = LoginData(
-            kakaoAccessToken = accessToken, marketingAlarm = binding.cb5.isChecked
-        )
-        val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
-
-        call.enqueue(object : Callback<ResponseToken> {
-            override fun onResponse(
-                call: Call<ResponseToken>, response: Response<ResponseToken>
-            ) {
-
-                if (response.isSuccessful) {
-                    response.body()?.jwtToken?.let { jwtToken ->
-                        saveJwtToken(jwtToken)
-
-                        Toast.makeText(this@AgreementActivity, "가입 완료", Toast.LENGTH_SHORT).show()
-
-                        val intent = Intent(this@AgreementActivity, TimePicker1Activity::class.java)
-                        startActivity(intent)
-                    }
-                } else {
-                    Toast.makeText(this@AgreementActivity, "가입 실패 : ${response.message()}", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
-    }
-
-    // jwtToken 저장
-    private fun saveJwtToken(token: String) {
-        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("JWT_TOKEN", token)
-        editor.apply()
-
-        // GlobalApplication에 토큰 저장
-        GlobalApplication.getInstance()?.userToken = token
-    }
-
     // 뒤로 가기 버튼 클릭 시 -> 로그인 페이지로 이동
     private fun onBackButtonClick() {
         binding.btnBack.setOnClickListener {
-            val intent = Intent(this@AgreementActivity, KakaoLoginActivity::class.java)
-            startActivity(intent)
             finish()
         }
     }
@@ -160,7 +102,10 @@ class AgreementActivity : AppCompatActivity() {
     // 가입완료 버튼 클릭 시
     private fun onDoneButtonClick() {
         binding.btnDone.setOnClickListener {
-            loginNetwork()
+            val intent = Intent(this, TimePicker1Activity::class.java).apply {
+                putExtra("ALARM_MARKETING", binding.cb5.isChecked)
+            }
+            startActivity(intent)
         }
     }
 

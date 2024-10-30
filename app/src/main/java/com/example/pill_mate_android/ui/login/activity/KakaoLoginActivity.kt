@@ -8,12 +8,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pill_mate_android.GlobalApplication
 import com.example.pill_mate_android.R
+import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityKakaoLoginBinding
+import com.example.pill_mate_android.ui.login.LoginData
+import com.example.pill_mate_android.ui.login.ResponseToken
+import com.example.pill_mate_android.ui.main.activity.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class KakaoLoginActivity : AppCompatActivity() {
 
@@ -44,7 +52,8 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                navigateToAgreement(token.accessToken)
+
+                loginNetwork(token.accessToken)
             }
         }
 
@@ -64,12 +73,61 @@ class KakaoLoginActivity : AppCompatActivity() {
                     UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-                    navigateToAgreement(token.accessToken)
+
+                    loginNetwork(token.accessToken)
                 }
             }
         } else {
             UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
         }
+    }
+
+    private fun loginNetwork(accessToken: String) {
+
+        val loginData = LoginData(kakaoAccessToken = accessToken)
+        val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
+
+        call.enqueue(object : Callback<ResponseToken> {
+            override fun onResponse(
+                call: Call<ResponseToken>, response: Response<ResponseToken>
+            ) {
+
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    if (responseData?.jwtToken != null) {
+                        saveJwtToken(responseData.jwtToken)
+
+                        Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
+
+                        val nextActivity = if (responseData.login == true) {
+                            MainActivity::class.java
+                        } else {
+                            AgreementActivity::class.java
+                        }
+
+                        // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
+                        navigateToNext(nextActivity)
+                    }
+                } else {
+                    Log.e("가입 실패", "가입 실패 : ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    // jwtToken 저장
+    private fun saveJwtToken(token: String) {
+        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("JWT_TOKEN", token)
+        editor.apply()
+
+        // GlobalApplication에 토큰 저장
+        GlobalApplication.getInstance()?.userToken = token
     }
 
     // 카카오 로그인 버튼 클릭 시
@@ -79,12 +137,10 @@ class KakaoLoginActivity : AppCompatActivity() {
         }
     }
 
-    // 로그인 -> 약관 동의 페이지로 이동
-    private fun navigateToAgreement(accessToken: String) {
-
-        val intent = Intent(this, AgreementActivity::class.java).apply {
-            putExtra("ACCESS_TOKEN", accessToken) // 액세스 토큰을 인텐트에 추가
-        }
+    // 로그인 -> 다음 페이지로 이동
+    private fun navigateToNext(nextActivity: Class<*>) {
+        val intent = Intent(this, nextActivity)
         startActivity(intent)
     }
+
 }
