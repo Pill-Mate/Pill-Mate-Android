@@ -25,11 +25,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.onboarding.TimePicker1Activity"
-            android:exported="true">
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".ui.login.activity.SplashActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +37,7 @@
         </activity>
         <activity
             android:name=".ui.login.activity.AgreementActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".ui.login.activity.KakaoLoginActivity"
             android:exported="false" />

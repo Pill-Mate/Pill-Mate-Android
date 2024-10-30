@@ -3,6 +3,7 @@ package com.example.pill_mate_android.ui.onboarding
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -12,7 +13,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pill_mate_android.R
+import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityTimePicker2Binding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class TimePicker2Activity : AppCompatActivity() {
 
@@ -184,13 +189,21 @@ class TimePicker2Activity : AppCompatActivity() {
             val lunchTime = getFormattedTime(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2)
             val dinnerTime = getFormattedTime(binding.hrsPicker3, binding.minPicker3, binding.amPmPicker3)
 
-            val intent = Intent(this@TimePicker2Activity, SuccessActivity::class.java)
-            intent.putExtra("BREAKFAST_TIME", breakfastTime)
-            intent.putExtra("LUNCH_TIME", lunchTime)
-            intent.putExtra("DINNER_TIME", dinnerTime)
-            intent.putExtra("WAKEUP_TIME", getIntent().getStringExtra("WAKEUP_TIME"))
-            intent.putExtra("BED_TIME", getIntent().getStringExtra("BED_TIME"))
-            startActivity(intent)
+            val wakeupTime = intent.getStringExtra("WAKEUP_TIME")
+            val bedTime = intent.getStringExtra("BED_TIME")
+            val alarmMarketing = intent.getBooleanExtra("ALARM_MARKETING", false)
+
+            val onBoardingData = OnBoardingData(
+                alarmMarketing = alarmMarketing,
+                wakeupTime = wakeupTime,
+                bedTime = bedTime,
+                morningTime = breakfastTime,
+                lunchTime = lunchTime,
+                dinnerTime = dinnerTime
+
+            )
+
+            onBoardingNetwork(onBoardingData)
         }
     }
 
@@ -248,5 +261,25 @@ class TimePicker2Activity : AppCompatActivity() {
         }
 
         return String.format("%02d:%02d:%02d", hour, minute, 0)
+    }
+
+    private fun onBoardingNetwork(onBoardingData: OnBoardingData) {
+
+        val call: Call<Void> = ServiceCreator.onBoardingService.sendOnBoardingData(onBoardingData)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val intent = Intent(this@TimePicker2Activity, SuccessActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Log.e("데이터 전송 실패", "데이터 전송 실패: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
     }
 }
