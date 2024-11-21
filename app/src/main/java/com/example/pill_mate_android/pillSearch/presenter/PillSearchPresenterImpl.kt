@@ -1,11 +1,11 @@
 package com.example.pill_mate_android.pillSearch.presenter
 
 import android.util.Log
-import com.example.pill_mate_android.pillSearch.model.HospitalItem
-import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.model.PillRepository
+import com.example.pill_mate_android.pillSearch.model.Searchable
+import com.example.pill_mate_android.pillSearch.model.SearchType
 import com.example.pill_mate_android.pillSearch.view.PillSearchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,61 +52,26 @@ class PillSearchPresenterImpl(
         }
     }
 
-    override fun searchPharmacies(query: String) {
-        Log.d("PillSearchPresenterImpl", "searchPharmacies called with query: $query")
+    override fun search(query: String, type: SearchType) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val pharmacyList = repository.getPharmacyList(
+                val results = repository.getSearchResults(
                     serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
                     pageNo = 1,
                     numOfRows = 10,
-                    order = "name",
                     name = query,
-                )
-
-                withContext(Dispatchers.Main) {
-                    if (pharmacyList!= null) {
-                        val filteredPharmacies = filterPharmacyList(pharmacyList, query)
-                        Log.d("pharmacyListSearchPresenterImpl", "Filtered pharmacies: $filteredPharmacies")
-                        view.showPharmacies(filteredPharmacies)
-                    } else {
-                        view.showPharmacies(emptyList())
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("pharmacyListSearchPresenterImpl", "Error fetching pharmacies", e)
-                withContext(Dispatchers.Main) {
-                    view.showPharmacies(emptyList())
-                }
-            }
-        }
-    }
-
-    override fun searchHospitals(query: String) {
-        Log.d("PillSearchPresenterImpl", "searchHospitals called with query: $query")
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val hospitalList = repository.getHospitalList(
-                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
-                    pageNo = 1,
-                    numOfRows = 10,
                     order = "name",
-                    name = query
+                    type = type
                 )
 
+                val filteredResults = filterResults(results, query)
+
                 withContext(Dispatchers.Main) {
-                    if (hospitalList != null) {
-                        val filteredHospitals = filterHospitalList(hospitalList, query)
-                        Log.d("PillSearchPresenterImpl", "Filtered hospitals: $filteredHospitals")
-                        view.showHospitals(filteredHospitals)
-                    } else {
-                        view.showHospitals(emptyList())
-                    }
+                    view.showResults(filteredResults, type)
                 }
             } catch (e: Exception) {
-                Log.e("PillSearchPresenterImpl", "Error fetching hospitals", e)
                 withContext(Dispatchers.Main) {
-                    view.showHospitals(emptyList())
+                    view.showResults(emptyList(), type)
                 }
             }
         }
@@ -124,21 +89,11 @@ class PillSearchPresenterImpl(
         return (startsWithQuery + containsQuery).take(20)
     }
 
-    private fun filterPharmacyList(pharmacies: List<PharmacyItem>, query: String): List<PharmacyItem> {
-        val startsWithQuery = pharmacies.filter { it.dutyName?.startsWith(query, ignoreCase = true) == true }
-        val containsQuery = pharmacies.filter { it.dutyName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
-        return (startsWithQuery + containsQuery).take(20)
-    }
+    private fun <T : Searchable> filterResults(items: List<T>?, query: String): List<T> {
+        if (items.isNullOrEmpty()) return emptyList()
 
-    private fun filterHospitalList(
-        hospitals: List<HospitalItem>, query: String
-    ): List<HospitalItem> {
-        val startsWithQuery = hospitals.filter {
-            it.dutyName?.startsWith(query, ignoreCase = true) == true
-        }
-        val containsQuery = hospitals.filter {
-            it.dutyName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery
-        }
+        val startsWithQuery = items.filter { it.getName()?.startsWith(query, ignoreCase = true) == true }
+        val containsQuery = items.filter { it.getName()?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
         return (startsWithQuery + containsQuery).take(20)
     }
 }

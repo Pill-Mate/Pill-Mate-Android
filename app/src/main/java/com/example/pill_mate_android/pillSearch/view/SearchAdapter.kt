@@ -10,17 +10,17 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.SearchRecentItemBinding
-import com.example.pill_mate_android.databinding.SearchPharmacyItemBinding
-import com.example.pill_mate_android.pillSearch.model.PharmacyItem
+import com.example.pill_mate_android.databinding.SearchResultItemBinding
+import com.example.pill_mate_android.pillSearch.model.Searchable
 
-class PharmacyAdapter(
-    private val onItemClick: (String) -> Unit = {},
-    private val onSearchResultClick: (String) -> Unit = {},
-    private val onDeleteClick: (String) -> Unit = {},
-    private var recentSearches: List<String> = emptyList(),
-    private var pharmacyList: List<PharmacyItem> = emptyList(),
-    private var showRecentSearches: Boolean = true,
-    private var query: String = "" // 현재 검색어 저장
+class SearchAdapter(
+    private val onItemClick: (String) -> Unit = {},  // 최근 검색어 클릭 이벤트
+    private val onSearchResultClick: (String) -> Unit = {},  // 검색 결과 클릭 이벤트
+    private val onDeleteClick: (String) -> Unit = {},  // 최근 검색어 삭제 이벤트
+    private var recentSearches: List<String> = emptyList(),  // 최근 검색어 리스트
+    private var searchResults: List<Searchable> = emptyList(),  // 병원/약국 검색 결과
+    private var showRecentSearches: Boolean = true,  // 최근 검색어 표시 여부
+    private var query: String = ""  // 현재 검색어
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -29,7 +29,7 @@ class PharmacyAdapter(
     }
 
     override fun getItemCount(): Int {
-        return if (showRecentSearches) recentSearches.size else pharmacyList.size
+        return if (showRecentSearches) recentSearches.size else searchResults.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -43,7 +43,7 @@ class PharmacyAdapter(
             )
             RecentSearchViewHolder(binding)
         } else {
-            val binding = SearchPharmacyItemBinding.inflate(
+            val binding = SearchResultItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
             SearchResultViewHolder(binding)
@@ -55,8 +55,8 @@ class PharmacyAdapter(
             val recentSearch = recentSearches[position]
             holder.bind(recentSearch)
         } else if (holder is SearchResultViewHolder) {
-            val pharmacy = pharmacyList[position]
-            holder.bind(pharmacy, query) // query 전달
+            val result = searchResults[position]
+            holder.bind(result, query)
         }
     }
 
@@ -72,12 +72,17 @@ class PharmacyAdapter(
     }
 
     inner class SearchResultViewHolder(
-        private val binding: SearchPharmacyItemBinding
+        private val binding: SearchResultItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pharmacy: PharmacyItem, query: String) {
-            val spannableString = SpannableString(pharmacy.dutyName)
-            val queryIndex = pharmacy.dutyName.indexOf(query, ignoreCase = true)
+        fun bind(result: Searchable, query: String) {
+            val name = result.getName()
+            val address = result.getAddress()
+            val phone = result.getNumber()
+
+            // 검색어 강조
+            val spannableString = SpannableString(name)
+            val queryIndex = name?.indexOf(query, ignoreCase = true) ?: -1
             if (queryIndex >= 0) {
                 spannableString.setSpan(
                     ForegroundColorSpan(
@@ -88,20 +93,19 @@ class PharmacyAdapter(
                 )
             }
 
-            binding.tvPharmacyName.text = spannableString
-            binding.tvPharmacyAddress.text = pharmacy.dutyAddr
-            binding.tvPharmacyNumber.text = pharmacy.dutyTel1
+            binding.tvName.text = spannableString
+            binding.tvAddress.text = address
+            binding.tvNumber.text = phone
 
             binding.root.setOnClickListener {
-                onSearchResultClick(pharmacy.dutyName)
+                onSearchResultClick(name ?: "")
             }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updatePharmacies(newPharmacyList: List<PharmacyItem>, newQuery: String) {
-        pharmacyList = newPharmacyList
-        query = newQuery // 검색어 업데이트
+    fun updateResults(newResults: List<Searchable>) {
+        searchResults = newResults
         showRecentSearches = false
         notifyDataSetChanged()
     }

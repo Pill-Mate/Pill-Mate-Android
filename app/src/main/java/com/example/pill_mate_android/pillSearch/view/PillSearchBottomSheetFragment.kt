@@ -18,6 +18,8 @@ import com.example.pill_mate_android.pillSearch.model.HospitalItem
 import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
+import com.example.pill_mate_android.pillSearch.model.SearchType
+import com.example.pill_mate_android.pillSearch.model.Searchable
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
@@ -144,12 +146,8 @@ class PillSearchBottomSheetFragment(
         }
     }
 
-    override fun showPharmacies(pills: List<PharmacyItem>) {
-        Log.d("PharmacySearchFragment", "showPharmacy called with items")
-    }
-
-    override fun showHospitals(pills: List<HospitalItem>) {
-        Log.d("PharmacySearchFragment", "showPharmacy called with items")
+    override fun showResults(results: List<Searchable>, type: SearchType) {
+        Log.d("PillSearchFragment", "showPharmacy called with items")
     }
 
     override fun onDestroyView() {

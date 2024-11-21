@@ -59,4 +59,8 @@ data class HospitalItem(
     @PropertyElement(name = "rnum") val rnum: Int?,                       // 순번
     @PropertyElement(name = "wgs84Lat") val wgs84Lat: Double?,            // 위도
     @PropertyElement(name = "wgs84Lon") val wgs84Lon: Double?             // 경도
-)
+): Searchable {
+    override fun getName(): String? = dutyName
+    override fun getAddress(): String? = dutyAddr
+    override fun getNumber(): String? = dutyTel1
+}

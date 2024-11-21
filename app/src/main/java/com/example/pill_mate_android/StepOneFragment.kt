@@ -14,7 +14,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.pill_mate_android.databinding.FragmentStepOneBinding
 import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenter
 import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenterImpl
-import com.example.pill_mate_android.pillSearch.view.SearchPharmacyBottomSheetFragment
+import com.example.pill_mate_android.pillSearch.model.SearchType
+import com.example.pill_mate_android.pillSearch.view.SearchBottomSheetFragment
 
 class StepOneFragment : Fragment(), StepOnePresenter.View {
 
@@ -36,17 +37,17 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
         // FragmentResultListener 설정
         setFragmentResultListener("requestKey") { _, bundle ->
-            val selectedPharmacy = bundle.getString("pharmacy") ?: ""
-            binding.etPharmacy.setText(selectedPharmacy)
+            val selectedResult = bundle.getString("selectedItem") ?: ""
+            binding.etPharmacy.setText(selectedResult)
             binding.tvWarning.isVisible = false
             updateEditTextBackground(false)
-            presenter.onPharmacyNameChanged(selectedPharmacy)
+            presenter.onPharmacyNameChanged(selectedResult)
         }
 
+        // EditText 포커스 시 바텀시트 열기
         binding.etPharmacy.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val bottomSheetFragment = SearchPharmacyBottomSheetFragment()
-                bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+                openSearchBottomSheet(SearchType.PHARMACY)
             }
         }
 
@@ -62,6 +63,12 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        binding.etHospital.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                openSearchBottomSheet(SearchType.HOSPITAL)
+            }
+        }
+
         // 다음 버튼 클릭 시 유효성 검사
         binding.btnNext.setOnClickListener {
             presenter.onNextButtonClicked(binding.etPharmacy.text.toString())
@@ -69,6 +76,11 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
                 findNavController().navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
             }
         }
+    }
+
+    private fun openSearchBottomSheet(searchType: SearchType) {
+        val bottomSheetFragment = SearchBottomSheetFragment(searchType)
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
     // 버튼 상태 업데이트 (Drawable 리소스 사용)

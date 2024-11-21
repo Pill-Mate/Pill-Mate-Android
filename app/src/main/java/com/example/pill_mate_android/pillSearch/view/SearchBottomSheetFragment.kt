@@ -13,34 +13,34 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
-import com.example.pill_mate_android.databinding.FragmentSearchPharmacyBinding
+import com.example.pill_mate_android.databinding.FragmentSearchBottomSheetBinding
 import com.example.pill_mate_android.pillSearch.SearchDividerItemDecoration
-import com.example.pill_mate_android.pillSearch.model.HospitalItem
-import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
+import com.example.pill_mate_android.pillSearch.model.SearchType
+import com.example.pill_mate_android.pillSearch.model.Searchable
 import com.example.pill_mate_android.pillSearch.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearchView {
+class SearchBottomSheetFragment(private val searchType: SearchType) : BottomSheetDialogFragment(), PillSearchView {
 
-    private var _binding: FragmentSearchPharmacyBinding? = null
+    private var _binding: FragmentSearchBottomSheetBinding? = null
     private val binding get() = _binding!!
     private lateinit var presenter: PillSearchPresenter
-    private lateinit var adapter: PharmacyAdapter
+    private lateinit var adapter: SearchAdapter
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private var currentQuery: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchPharmacyBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBottomSheetBinding.inflate(inflater, container, false)
         presenter = PillSearchPresenterImpl(this)
-        sharedPreferencesHelper = SharedPreferencesHelper(requireContext())
+        sharedPreferencesHelper = SharedPreferencesHelper(requireContext(), searchType) // SearchType 기반으로 초기화
         return binding.root
     }
 
@@ -76,15 +76,15 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
             dismiss() // This closes the bottom sheet
         }
 
-        adapter = PharmacyAdapter(
+        adapter = SearchAdapter(
             onItemClick = { selectedTerm ->
-                binding.etPharmacySearch.setText(selectedTerm)
-                binding.etPharmacySearch.setSelection(selectedTerm.length)
-                presenter.searchPharmacies(selectedTerm)
+                binding.etSearch.setText(selectedTerm)
+                binding.etSearch.setSelection(selectedTerm.length)
+                presenter.search(selectedTerm, searchType)
             },
-            onSearchResultClick = { pharmacyName ->
-                sharedPreferencesHelper.saveSearchTerm(pharmacyName)
-                sendPharmacyNameToParent(pharmacyName)
+            onSearchResultClick = { selectedResult ->
+                sharedPreferencesHelper.saveSearchTerm(selectedResult)
+                sendResultToParent(selectedResult)
                 dismiss()
             },
             onDeleteClick = { term ->
@@ -113,17 +113,16 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
     }
 
     private fun setupSearchBar() {
-        binding.etPharmacySearch.addTextChangedListener(object : TextWatcher {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s.toString()
 
-                // 입력된 텍스트가 있으면 하늘색(두께 2dp), 없으면 검정색(두께 1dp)
                 val (underlineColor, underlineThickness) = if (currentQuery.isNotEmpty()) {
-                    Pair(R.color.main_blue_1, 2) // 하늘색과 2dp
+                    Pair(R.color.main_blue_1, 2)
                 } else {
-                    Pair(R.color.black, 1) // 검정색과 1dp
+                    Pair(R.color.black, 1)
                 }
 
                 updateUnderline(underlineColor, underlineThickness)
@@ -131,7 +130,7 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
                 if (currentQuery.isEmpty()) {
                     updateRecentSearches()
                 } else {
-                    presenter.searchPharmacies(currentQuery)
+                    presenter.search(currentQuery, searchType)
                 }
             }
 
@@ -142,8 +141,8 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
     private fun updateUnderline(colorRes: Int, thickness: Int) {
         val drawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            setColor(ContextCompat.getColor(requireContext(), android.R.color.transparent)) // 투명 배경
-            setStroke(thickness, ContextCompat.getColor(requireContext(), colorRes)) // 색상과 두께 설정
+            setColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+            setStroke(thickness, ContextCompat.getColor(requireContext(), colorRes))
         }
         binding.vUnderline.background = drawable
     }
@@ -154,38 +153,34 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
             adapter.updateRecentSearches(recentSearches)
             binding.rvSuggestion.visibility = View.VISIBLE
         } else {
+            adapter.updateRecentSearches(emptyList())
             binding.rvSuggestion.visibility = View.GONE
         }
     }
 
-    private fun sendPharmacyNameToParent(pharmacyName: String) {
-        val result = Bundle().apply { putString("pharmacy", pharmacyName) }
-        parentFragmentManager.setFragmentResult("requestKey", result)
-    }
-
-    override fun showPharmacies(pharmacies: List<PharmacyItem>) {
-        if (_binding == null) return // binding이 null이면 아무 작업도 하지 않음
-
-        if (pharmacies.isNotEmpty()) {
-            adapter.updatePharmacies(pharmacies, currentQuery)
-            binding.rvSuggestion.visibility = View.VISIBLE
-            binding.tvRecentSearch.visibility = View.GONE
-            binding.btnClearAll.visibility = View.GONE
-        } else {
-            binding.rvSuggestion.visibility = View.GONE
-        }
-    }
-
-    override fun showHospitals(pills: List<HospitalItem>) {
-        Log.d("PharmacySearchFragment", "showPharmacy called with items")
+    private fun sendResultToParent(result: String) {
+        val bundle = Bundle().apply { putString("selectedItem", result) }
+        parentFragmentManager.setFragmentResult("requestKey", bundle)
     }
 
     override fun showPillInfo(pills: List<PillInfoItem>) {
-        Log.d("SearchPharmacyFragment", "showPillInfo called with ${pills.size} items")
+        Log.d("SearchFragment", "showPillInfo called with items")
     }
 
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        Log.d("SearchPharmacyFragment", "showPillIdntfc called with ${pills.size} items")
+        Log.d("SearchFragment", "showPillIdntfc called with items")
+    }
+
+    override fun showResults(results: List<Searchable>, type: SearchType) {
+        if (_binding == null) return
+
+        if (results.isNotEmpty()) {
+            adapter.updateResults(results)
+            binding.rvSuggestion.visibility = View.VISIBLE
+        } else {
+            adapter.updateResults(emptyList())
+            binding.rvSuggestion.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {
