@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">Pill-Mate-Android</string>
 
+    <!-- SearchBottomSheetFragment -->
+    <string name="search_pharmacy">약국 검색</string>
+    <string name="search_hospital">병원 검색</string>
+
+    <string name="enter_pharmacy_name">약국명을 입력하세요</string>
+    <string name="enter_hospital_name">병원명을 입력하세요</string>
+
     <string name="test">test</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

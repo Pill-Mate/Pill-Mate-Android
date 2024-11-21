@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -81,21 +82,29 @@ class SearchAdapter(
             val phone = result.getNumber()
 
             // 검색어 강조
-            val spannableString = SpannableString(name)
-            val queryIndex = name?.indexOf(query, ignoreCase = true) ?: -1
-            if (queryIndex >= 0) {
-                spannableString.setSpan(
-                    ForegroundColorSpan(
-                        ContextCompat.getColor(binding.root.context, R.color.main_blue_1)
-                    ),
-                    queryIndex, queryIndex + query.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+            if (!name.isNullOrEmpty() && query.isNotEmpty()) {
+                val spannableString = SpannableString(name)
+                val queryIndex = name.indexOf(query, ignoreCase = true)
+
+                if (queryIndex >= 0) {
+                    spannableString.setSpan(
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(binding.root.context, R.color.main_blue_1)
+                        ),
+                        queryIndex,
+                        queryIndex + query.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
+                binding.tvName.text = spannableString
+            } else {
+                binding.tvName.text = name
+                binding.tvName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.black))
             }
 
-            binding.tvName.text = spannableString
-            binding.tvAddress.text = address
-            binding.tvNumber.text = phone
+            binding.tvAddress.text = address ?: "주소 정보 없음"
+            binding.tvNumber.text = phone ?: "전화번호 정보 없음"
 
             binding.root.setOnClickListener {
                 onSearchResultClick(name ?: "")
@@ -104,9 +113,11 @@ class SearchAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateResults(newResults: List<Searchable>) {
+    fun updateResults(newResults: List<Searchable>, newQuery: String) {
         searchResults = newResults
+        query = newQuery
         showRecentSearches = false
+        Log.d("SearchAdapter", "Updated results with query: $query, items: ${newResults.size}")
         notifyDataSetChanged()
     }
 
