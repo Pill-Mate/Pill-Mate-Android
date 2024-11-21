@@ -1,6 +1,7 @@
 package com.example.pill_mate_android.pillSearch.view
 
 import android.app.Dialog
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentSearchPharmacyBinding
 import com.example.pill_mate_android.pillSearch.SearchDividerItemDecoration
+import com.example.pill_mate_android.pillSearch.model.HospitalItem
 import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
@@ -70,6 +72,10 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.ivExit.setOnClickListener {
+            dismiss() // This closes the bottom sheet
+        }
+
         adapter = PharmacyAdapter(
             onItemClick = { selectedTerm ->
                 binding.etPharmacySearch.setText(selectedTerm)
@@ -113,6 +119,15 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s.toString()
 
+                // 입력된 텍스트가 있으면 하늘색(두께 2dp), 없으면 검정색(두께 1dp)
+                val (underlineColor, underlineThickness) = if (currentQuery.isNotEmpty()) {
+                    Pair(R.color.main_blue_1, 2) // 하늘색과 2dp
+                } else {
+                    Pair(R.color.black, 1) // 검정색과 1dp
+                }
+
+                updateUnderline(underlineColor, underlineThickness)
+
                 if (currentQuery.isEmpty()) {
                     updateRecentSearches()
                 } else {
@@ -122,6 +137,15 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
 
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    private fun updateUnderline(colorRes: Int, thickness: Int) {
+        val drawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(ContextCompat.getColor(requireContext(), android.R.color.transparent)) // 투명 배경
+            setStroke(thickness, ContextCompat.getColor(requireContext(), colorRes)) // 색상과 두께 설정
+        }
+        binding.vUnderline.background = drawable
     }
 
     private fun updateRecentSearches() {
@@ -144,6 +168,8 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
     }
 
     override fun showPharmacies(pharmacies: List<PharmacyItem>) {
+        if (_binding == null) return // binding이 null이면 아무 작업도 하지 않음
+
         if (pharmacies.isNotEmpty()) {
             adapter.updatePharmacies(pharmacies, currentQuery)
             binding.rvSuggestion.visibility = View.VISIBLE
@@ -152,6 +178,10 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
         } else {
             binding.rvSuggestion.visibility = View.GONE
         }
+    }
+
+    override fun showHospitals(pills: List<HospitalItem>) {
+        Log.d("PharmacySearchFragment", "showPharmacy called with items")
     }
 
     override fun showPillInfo(pills: List<PillInfoItem>) {

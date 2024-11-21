@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.pillSearch.api
 
+import com.example.pill_mate_android.pillSearch.model.HospitalResponse
 import com.example.pill_mate_android.pillSearch.model.PharmacyResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -14,4 +15,13 @@ interface XmlApiService {
         @Query("QN") name: String?, // 기관(약국)명
         @Query("ORD") order: String, // 정렬
     ): Response<PharmacyResponse>
+
+    @GET("B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire") // xml
+    suspend fun getHospitalList(
+        @Query("serviceKey") serviceKey: String,
+        @Query("pageNo") pageNo: Int,
+        @Query("numOfRows") numOfRows: Int,
+        @Query("QN") name: String?, // 기관(병원)명
+        @Query("ORD") order: String, // 정렬
+    ): Response<HospitalResponse>
 }

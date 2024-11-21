@@ -6,30 +6,30 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 
 @Xml(name = "response")
 data class PharmacyResponse(
-    @Element(name = "header") val header: Header?,
-    @Element(name = "body") val body: Body?
+    @Element(name = "header") val header: PharmacyHeader?,
+    @Element(name = "body") val body: PharmacyBody?
 )
 
 @Xml(name = "header")
-data class Header(
+data class PharmacyHeader(
     @PropertyElement(name = "resultCode") val resultCode: String?,
     @PropertyElement(name = "resultMsg") val resultMsg: String?
 )
 
 @Xml(name = "body")
-data class Body(
-    @Element(name = "items") val items: Items?,
+data class PharmacyBody(
+    @Element(name = "items") val items: PharmacyItems?,
     @PropertyElement(name = "numOfRows") val numOfRows: Int?,
     @PropertyElement(name = "pageNo") val pageNo: Int?,
     @PropertyElement(name = "totalCount") val totalCount: Int?
 )
 
 @Xml(name = "items")
-data class Items(
+data class PharmacyItems(
     @Element(name = "item") val itemList: List<PharmacyItem>?
 )
 
-@Xml(name = "item") //하 이거 안 써가지구 그 몇시간동안 시벌
+@Xml(name = "item")
 data class PharmacyItem(
     @PropertyElement(name = "dutyAddr") val dutyAddr: String?,      // 약국 주소
     @PropertyElement(name = "dutyName") val dutyName: String,      // 약국 이름

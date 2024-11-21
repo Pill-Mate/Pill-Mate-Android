@@ -1,6 +1,7 @@
 package com.example.pill_mate_android.pillSearch.presenter
 
 import android.util.Log
+import com.example.pill_mate_android.pillSearch.model.HospitalItem
 import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
@@ -81,6 +82,36 @@ class PillSearchPresenterImpl(
         }
     }
 
+    override fun searchHospitals(query: String) {
+        Log.d("PillSearchPresenterImpl", "searchHospitals called with query: $query")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val hospitalList = repository.getHospitalList(
+                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
+                    pageNo = 1,
+                    numOfRows = 10,
+                    order = "name",
+                    name = query
+                )
+
+                withContext(Dispatchers.Main) {
+                    if (hospitalList != null) {
+                        val filteredHospitals = filterHospitalList(hospitalList, query)
+                        Log.d("PillSearchPresenterImpl", "Filtered hospitals: $filteredHospitals")
+                        view.showHospitals(filteredHospitals)
+                    } else {
+                        view.showHospitals(emptyList())
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("PillSearchPresenterImpl", "Error fetching hospitals", e)
+                withContext(Dispatchers.Main) {
+                    view.showHospitals(emptyList())
+                }
+            }
+        }
+    }
+
     private fun filterPillInfo(pills: List<PillInfoItem>, query: String): List<PillInfoItem> {
         val startsWithQuery = pills.filter { it.itemName?.startsWith(query, ignoreCase = true) == true }
         val containsQuery = pills.filter { it.itemName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
@@ -96,6 +127,18 @@ class PillSearchPresenterImpl(
     private fun filterPharmacyList(pharmacies: List<PharmacyItem>, query: String): List<PharmacyItem> {
         val startsWithQuery = pharmacies.filter { it.dutyName?.startsWith(query, ignoreCase = true) == true }
         val containsQuery = pharmacies.filter { it.dutyName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
+        return (startsWithQuery + containsQuery).take(20)
+    }
+
+    private fun filterHospitalList(
+        hospitals: List<HospitalItem>, query: String
+    ): List<HospitalItem> {
+        val startsWithQuery = hospitals.filter {
+            it.dutyName?.startsWith(query, ignoreCase = true) == true
+        }
+        val containsQuery = hospitals.filter {
+            it.dutyName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery
+        }
         return (startsWithQuery + containsQuery).take(20)
     }
 }

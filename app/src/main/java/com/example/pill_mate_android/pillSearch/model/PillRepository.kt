@@ -101,4 +101,31 @@ class PillRepository : PillDataSource {
             null
         }
     }
+
+    override suspend fun getHospitalList(
+        serviceKey: String,
+        pageNo: Int,
+        numOfRows: Int,
+        name: String?,
+        order: String
+    ): List<HospitalItem>? {
+        return try {
+            val response = XmlApiClient.xmlApiService.getHospitalList(serviceKey, pageNo, numOfRows, name, order)
+
+            Log.d("PillRepository", "Hospital Response code: ${response.code()}")
+            Log.d("PillRepository", "Hospital Response body: ${response.body()}")
+
+            if (response.isSuccessful) {
+                val hospitals = response.body()?.body?.items?.itemList // 올바른 매핑
+                Log.d("PillRepository", "Fetched hospitals: $hospitals")
+                hospitals // HospitalItem 리스트 반환
+            } else {
+                Log.e("PillRepository", "Error fetching hospitals: ${response.errorBody()?.string()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("PillRepository", "Exception fetching hospitals", e)
+            null
+        }
+    }
 }

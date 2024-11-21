@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.example.pill_mate_android.pillSearch.SearchDividerItemDecoration
+import com.example.pill_mate_android.pillSearch.model.HospitalItem
 import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
@@ -144,6 +145,10 @@ class PillSearchBottomSheetFragment(
     }
 
     override fun showPharmacies(pills: List<PharmacyItem>) {
+        Log.d("PharmacySearchFragment", "showPharmacy called with items")
+    }
+
+    override fun showHospitals(pills: List<HospitalItem>) {
         Log.d("PharmacySearchFragment", "showPharmacy called with items")
     }
 
