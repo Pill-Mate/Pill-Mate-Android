@@ -39,13 +39,15 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
             val selectedPharmacy = bundle.getString("pharmacy") ?: ""
             binding.etPharmacy.setText(selectedPharmacy)
             binding.tvWarning.isVisible = false
+            updateEditTextBackground(false)
             presenter.onPharmacyNameChanged(selectedPharmacy)
         }
 
-        // EditText 클릭 시 바텀 시트 열기
-        binding.etPharmacy.setOnClickListener {
-            val bottomSheetFragment = SearchPharmacyBottomSheetFragment()
-            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        binding.etPharmacy.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val bottomSheetFragment = SearchPharmacyBottomSheetFragment()
+                bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+            }
         }
 
         // EditText 내용 변화 감지
@@ -54,6 +56,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 presenter.onPharmacyNameChanged(s.toString())
+                updateEditTextBackground(false)
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -70,23 +73,29 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     // 버튼 상태 업데이트 (Drawable 리소스 사용)
     override fun updateButtonState(isEnabled: Boolean) {
-        val backgroundResource = if (isEnabled) {
-            R.drawable.bg_btn_main_blue_1
-        } else {
-            R.drawable.bg_btn_gray_3
-        }
-        binding.btnNext.setBackgroundResource(backgroundResource)
+        // 버튼 배경 리소스 설정
+        binding.btnNext.setBackgroundResource(
+            if (isEnabled) R.drawable.bg_btn_main_blue_1 else R.drawable.bg_btn_gray_3
+        )
 
-        val textColor = if (isEnabled) {
-            ContextCompat.getColor(requireContext(), android.R.color.white)
-        } else {
-            ContextCompat.getColor(requireContext(), android.R.color.black)
-        }
-        binding.btnNext.setTextColor(textColor)
+        // 버튼 텍스트 색상 설정
+        binding.btnNext.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isEnabled) android.R.color.white else android.R.color.black
+            )
+        )
     }
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
+        updateEditTextBackground(isVisible)
+    }
+
+    private fun updateEditTextBackground(isWarningVisible: Boolean) {
+        binding.etPharmacy.setBackgroundResource(
+            if (isWarningVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_3
+        )
     }
 
     override fun onDestroy() {

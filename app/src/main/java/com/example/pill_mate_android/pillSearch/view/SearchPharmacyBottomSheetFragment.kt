@@ -153,12 +153,8 @@ class SearchPharmacyBottomSheetFragment : BottomSheetDialogFragment(), PillSearc
         if (recentSearches.isNotEmpty()) {
             adapter.updateRecentSearches(recentSearches)
             binding.rvSuggestion.visibility = View.VISIBLE
-            binding.tvRecentSearch.visibility = View.VISIBLE
-            binding.btnClearAll.visibility = View.VISIBLE
         } else {
             binding.rvSuggestion.visibility = View.GONE
-            binding.tvRecentSearch.visibility = View.GONE
-            binding.btnClearAll.visibility = View.GONE
         }
     }
 

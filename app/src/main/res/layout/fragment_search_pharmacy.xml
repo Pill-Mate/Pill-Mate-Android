@@ -40,7 +40,7 @@
         android:background="@null"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:paddingStart="28dp"
+        android:paddingStart="32dp"
         android:paddingEnd="10dp"
         android:singleLine="true"
         android:hint="약국명을 입력하세요"
