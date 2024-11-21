@@ -23,6 +23,8 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     private val binding get() = _binding!!
     private lateinit var presenter: StepOnePresenter.Presenter
 
+    private var activeSearchType: SearchType? = null // 현재 열려 있는 검색 타입
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,16 +40,21 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         // FragmentResultListener 설정
         setFragmentResultListener("requestKey") { _, bundle ->
             val selectedResult = bundle.getString("selectedItem") ?: ""
-            binding.etPharmacy.setText(selectedResult)
-            binding.tvWarning.isVisible = false
-            updateEditTextBackground(false)
-            presenter.onPharmacyNameChanged(selectedResult)
+            handleSearchResult(selectedResult)
         }
 
         // EditText 포커스 시 바텀시트 열기
         binding.etPharmacy.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                activeSearchType = SearchType.PHARMACY
                 openSearchBottomSheet(SearchType.PHARMACY)
+            }
+        }
+
+        binding.etHospital.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                activeSearchType = SearchType.HOSPITAL
+                openSearchBottomSheet(SearchType.HOSPITAL)
             }
         }
 
@@ -57,17 +64,11 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 presenter.onPharmacyNameChanged(s.toString())
-                updateEditTextBackground(false)
+                updateEditTextBackground(false, binding.etPharmacy)
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
-        binding.etHospital.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                openSearchBottomSheet(SearchType.HOSPITAL)
-            }
-        }
 
         // 다음 버튼 클릭 시 유효성 검사
         binding.btnNext.setOnClickListener {
@@ -83,14 +84,28 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
-    // 버튼 상태 업데이트 (Drawable 리소스 사용)
+    private fun handleSearchResult(selectedResult: String) {
+        when (activeSearchType) {
+            SearchType.PHARMACY -> {
+                binding.etPharmacy.setText(selectedResult)
+                binding.etPharmacy.clearFocus() // 포커스 아웃
+                presenter.onPharmacyNameChanged(selectedResult)
+            }
+            SearchType.HOSPITAL -> {
+                binding.etHospital.setText(selectedResult)
+                binding.etHospital.clearFocus() // 포커스 아웃
+            }
+            else -> return
+        }
+        binding.tvWarning.isVisible = false
+        activeSearchType = null
+    }
+
     override fun updateButtonState(isEnabled: Boolean) {
-        // 버튼 배경 리소스 설정
         binding.btnNext.setBackgroundResource(
             if (isEnabled) R.drawable.bg_btn_main_blue_1 else R.drawable.bg_btn_gray_3
         )
 
-        // 버튼 텍스트 색상 설정
         binding.btnNext.setTextColor(
             ContextCompat.getColor(
                 requireContext(),
@@ -101,11 +116,11 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
-        updateEditTextBackground(isVisible)
+        updateEditTextBackground(isVisible, binding.etPharmacy)
     }
 
-    private fun updateEditTextBackground(isWarningVisible: Boolean) {
-        binding.etPharmacy.setBackgroundResource(
+    private fun updateEditTextBackground(isWarningVisible: Boolean, editText: View) {
+        editText.setBackgroundResource(
             if (isWarningVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_3
         )
     }

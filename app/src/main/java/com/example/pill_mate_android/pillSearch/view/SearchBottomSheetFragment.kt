@@ -109,7 +109,21 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
     }
 
     private fun initView() {
+        setupTexts()
         setupSearchBar()
+    }
+
+    private fun setupTexts() {
+        when (searchType) {
+            SearchType.PHARMACY -> {
+                binding.tvHead.text = getString(R.string.search_pharmacy)
+                binding.etSearch.hint = getString(R.string.enter_pharmacy_name)
+            }
+            SearchType.HOSPITAL -> {
+                binding.tvHead.text = getString(R.string.search_hospital)
+                binding.etSearch.hint = getString(R.string.enter_hospital_name)
+            }
+        }
     }
 
     private fun setupSearchBar() {
@@ -119,13 +133,8 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s.toString()
 
-                val (underlineColor, underlineThickness) = if (currentQuery.isNotEmpty()) {
-                    Pair(R.color.main_blue_1, 2)
-                } else {
-                    Pair(R.color.black, 1)
-                }
-
-                updateUnderline(underlineColor, underlineThickness)
+                val underlineColor = if (currentQuery.isNotEmpty()) R.color.main_blue_1 else R.color.black
+                updateUnderline(underlineColor)
 
                 if (currentQuery.isEmpty()) {
                     updateRecentSearches()
@@ -138,13 +147,9 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         })
     }
 
-    private fun updateUnderline(colorRes: Int, thickness: Int) {
-        val drawable = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-            setStroke(thickness, ContextCompat.getColor(requireContext(), colorRes))
-        }
-        binding.vUnderline.background = drawable
+    private fun updateUnderline(colorRes: Int) {
+        val underlineColor = ContextCompat.getColor(requireContext(), colorRes)
+        binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
     private fun updateRecentSearches() {
@@ -175,10 +180,10 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         if (_binding == null) return
 
         if (results.isNotEmpty()) {
-            adapter.updateResults(results)
+            adapter.updateResults(results, currentQuery) // currentQuery를 전달
             binding.rvSuggestion.visibility = View.VISIBLE
         } else {
-            adapter.updateResults(emptyList())
+            adapter.updateResults(emptyList(), "") // 빈 리스트와 빈 검색어 전달
             binding.rvSuggestion.visibility = View.GONE
         }
     }
