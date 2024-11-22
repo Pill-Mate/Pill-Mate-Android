@@ -25,41 +25,68 @@ class MedicineRegistrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 백 버튼 클릭 리스너 등록
+        setupNavigation()
+        setupNextButton()
+    }
+
+    private fun setupNavigation() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // 현재 프래그먼트를 가져옴
                 val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
                 val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
-                // 현재 프래그먼트가 StepOneFragment일 때만 다이얼로그 표시
                 if (currentFragment is StepOneFragment) {
                     showPillRegistrationDialog()
                 } else {
-                    // 이전 프래그먼트로 이동
-                    parentFragmentManager.popBackStack()
+                    navHostFragment.navController.navigateUp()
                 }
             }
         })
 
         binding.ivBack.setOnClickListener {
-            // iv_back 클릭 시 동작
             val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
             val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
-            // 현재 프래그먼트가 StepOneFragment일 때만 다이얼로그 표시
             if (currentFragment is StepOneFragment) {
                 showPillRegistrationDialog()
             } else {
-                // 이전 프래그먼트로 이동
-                parentFragmentManager.popBackStack()
+                navHostFragment.navController.navigateUp()
             }
         }
 
-        // iv_delete 클릭 이벤트 추가
         binding.ivDelete.setOnClickListener {
             showPillRegistrationDialog()
         }
+    }
+
+    private fun setupNextButton() {
+        binding.btnNext.setOnClickListener {
+            val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+            val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
+
+            when (currentFragment) {
+                is StepOneFragment -> {
+                    if (currentFragment.isValidInput()) {
+                        navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
+                    } else {
+                        currentFragment.showWarning(true)
+                    }
+                }
+                is StepTwoFragment -> {
+                    if (currentFragment.isValidInput()) {
+                        navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
+                    }
+                }
+                // Add other fragments as needed
+            }
+        }
+    }
+
+    fun updateNextButtonState(isEnabled: Boolean) {
+        binding.btnNext.isEnabled = isEnabled
+        binding.btnNext.setBackgroundResource(
+            if (isEnabled) R.drawable.bg_btn_main_blue_1 else R.drawable.bg_btn_gray_3
+        )
     }
 
     private fun showPillRegistrationDialog() {

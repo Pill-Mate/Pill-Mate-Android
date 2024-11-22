@@ -1,7 +1,6 @@
 package com.example.pill_mate_android.pillSearch.view
 
 import android.app.Dialog
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
