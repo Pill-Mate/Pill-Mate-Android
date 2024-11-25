@@ -89,6 +89,10 @@ class PillSearchBottomSheetFragment(
             dialog.show(parentFragmentManager, "PillDetailDialog")
         })
 
+        binding.ivExit.setOnClickListener {
+            dismiss()
+        }
+
         // RecyclerView에 레이아웃 매니저와 어댑터 설정
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter
@@ -112,15 +116,12 @@ class PillSearchBottomSheetFragment(
             override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+                val underlineColor = if (currentQuery.isNotEmpty()) R.color.main_blue_1 else R.color.black
+                updateUnderline(underlineColor)
+
                 if (text.isNullOrEmpty()) {
-                    binding.apply {
-                        rvSuggestion.visibility = View.GONE
-                        etPillSearch.setBackgroundResource(R.drawable.bg_search_view)
-                    }
+                    binding.rvSuggestion.visibility = View.GONE
                 } else {
-                    binding.apply {
-                        etPillSearch.setBackgroundResource(R.drawable.bg_search_view_changed)
-                    }
                     currentQuery = text.toString() // 검색어 업데이트
                     pillSearchPresenter.searchPills(currentQuery) // 검색 요청
                 }
@@ -128,6 +129,11 @@ class PillSearchBottomSheetFragment(
 
             override fun afterTextChanged(text: Editable?) {}
         })
+    }
+
+    private fun updateUnderline(colorRes: Int) {
+        val underlineColor = ContextCompat.getColor(requireContext(), colorRes)
+        binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
     override fun showPillInfo(pills: List<PillInfoItem>) {

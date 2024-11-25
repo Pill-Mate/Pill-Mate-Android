@@ -38,7 +38,7 @@
                 android:id="@+id/et_pillName"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="약국 이름을 입력하세요"
+                android:hint="약물 검색"
                 android:background="@drawable/bg_edittext_gray_3"
                 android:paddingStart="48dp"
                 android:paddingEnd="16dp"

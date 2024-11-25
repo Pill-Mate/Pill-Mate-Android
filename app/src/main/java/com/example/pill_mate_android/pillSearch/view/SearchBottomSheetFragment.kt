@@ -72,7 +72,7 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         super.onViewCreated(view, savedInstanceState)
 
         binding.ivExit.setOnClickListener {
-            dismiss() // This closes the bottom sheet
+            dismiss()
         }
 
         adapter = SearchAdapter(
