@@ -42,20 +42,23 @@ class MedicineRegistrationFragment : Fragment() {
     }
 
     fun updateRecyclerViewData(label: String, data: String) {
-        android.util.Log.d("MedicineRegistrationFragment", "Update RecyclerView - Label: $label, Data: $data")
-
         val existingItem = dataList.find { it.label == label }
         if (existingItem != null) {
             existingItem.data = data
         } else {
             dataList.add(RegistrationData(label, data))
         }
-
-        // 리사이클러뷰 가시성 변경
-        binding.rvData.visibility = View.VISIBLE
-
-        // 어댑터에 데이터 변경 알림
         adapter.notifyDataSetChanged()
+
+        // "다음" 버튼 상태 업데이트
+        updateNextButtonState(isValidInput())
+    }
+
+    private fun isValidInput(): Boolean {
+        // StepOneFragment, StepTwoFragment, StepThreeFragment 등에서 필요한 데이터 유효성 검증
+        val hasDayData = dataList.any { it.label == "요일" && it.data.isNotEmpty() }
+        val hasTimeData = dataList.any { it.label == "복용 시간대" && it.data.isNotEmpty() }
+        return hasDayData && hasTimeData
     }
 
     private fun setupNavigation() {
@@ -98,8 +101,16 @@ class MedicineRegistrationFragment : Fragment() {
                         navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
                     }
                 }
+                is StepThreeFragment -> {
+                    if (currentFragment.isValidInput()) {
+                        navHostFragment.navController.navigate(R.id.action_stepThreeFragment_to_stepFourFragment)
+                    }
+                }
             }
         }
+
+/*        // 초기 상태
+        updateNextButtonState(false)*/
     }
 
     fun updateNextButtonState(isEnabled: Boolean) {

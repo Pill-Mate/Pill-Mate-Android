@@ -29,21 +29,22 @@
         android:name="com.example.pill_mate_android.StepThreeFragment"
         android:label="Step Three"
         tools:layout="@layout/fragment_step_three">
-        <!--<action
+        <action
             android:id="@+id/action_stepThreeFragment_to_stepFourFragment"
-            app:destination="@id/stepFourFragment" />-->
+            app:destination="@id/stepFourFragment" />
     </fragment>
 
-    <!--<fragment
+    <fragment
         android:id="@+id/stepFourFragment"
         android:name="com.example.pill_mate_android.StepFourFragment"
         android:label="Step Four"
         tools:layout="@layout/fragment_step_four">
-        <action
+        <!--<action
             android:id="@+id/action_stepFourFragment_to_stepFiveFragment"
-            app:destination="@id/stepFiveFragment" />
+            app:destination="@id/stepFiveFragment" />-->
     </fragment>
 
+    <!--
     <fragment
         android:id="@+id/stepFiveFragment"
         android:name="com.example.pill_mate_android.StepFiveFragment"

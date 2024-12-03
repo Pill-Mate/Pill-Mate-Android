@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.example.pill_mate_android.pillSearch.SearchDividerItemDecoration
-import com.example.pill_mate_android.pillSearch.model.HospitalItem
-import com.example.pill_mate_android.pillSearch.model.PharmacyItem
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.model.SearchType
@@ -83,6 +81,10 @@ class PillSearchBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initView() // 초기화 메서드 호출
+    }
+
+    private fun initView() {
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
             // 아이템 클릭 시 다이얼로그 생성 및 표시
             val dialog = PillDetailDialogFragment.newInstance(stepTwoPresenter, this, pillItem)
@@ -92,6 +94,9 @@ class PillSearchBottomSheetFragment(
         binding.ivExit.setOnClickListener {
             dismiss()
         }
+
+        // 포커스 설정
+        binding.etPillSearch.requestFocus()
 
         // RecyclerView에 레이아웃 매니저와 어댑터 설정
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
@@ -104,10 +109,6 @@ class PillSearchBottomSheetFragment(
             SearchDividerItemDecoration(dividerColor, dividerHeight)
         )
 
-        initView() // 초기화 메서드 호출
-    }
-
-    private fun initView() {
         setupSearchBar() // 검색 바 세팅 메서드 호출
     }
 

@@ -6,10 +6,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.setFragmentResultListener
 import com.example.pill_mate_android.databinding.FragmentStepTwoBinding
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenterImpl
@@ -27,24 +26,31 @@ class StepTwoFragment : Fragment(), StepTwoView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStepTwoBinding.inflate(inflater, container, false)
+        presenter = StepTwoPresenterImpl(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Presenter 초기화
-        presenter = StepTwoPresenterImpl(this)
+        setupInputField()
 
-        // EditText 포커스 시 바텀시트 열기
+        // FragmentResultListener 설정
+        setFragmentResultListener("pillSearchResultKey") { _, bundle ->
+            val selectedPillName = bundle.getString("selectedPillName") ?: ""
+            handleSearchResult(selectedPillName)
+        }
+    }
+
+    private fun setupInputField() {
+        // EditText 포커스 이벤트 처리
         binding.etPillName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                val bottomSheetFragment = PillSearchBottomSheetFragment(this)
-                bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
+                openPillSearchBottomSheet()
             }
         }
 
-        // EditText 텍스트 변경에 따른 버튼 상태 업데이트
+        // EditText 텍스트 변경 감지
         binding.etPillName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -56,9 +62,21 @@ class StepTwoFragment : Fragment(), StepTwoView {
         })
     }
 
+    private fun openPillSearchBottomSheet() {
+        val bottomSheetFragment = PillSearchBottomSheetFragment(this)
+        bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
+    }
+
+    private fun handleSearchResult(selectedPillName: String) {
+        binding.etPillName.setText(selectedPillName) // EditText 업데이트
+        binding.etPillName.clearFocus() // 포커스 해제
+        presenter.handleTextChange(selectedPillName) // Presenter 업데이트
+    }
+
     override fun updatePillName(pillName: String) {
-        binding.etPillName.setText(pillName) // 선택한 약 이름 업데이트
-        updateParentButtonState(true)
+        binding.etPillName.setText(pillName)
+        binding.etPillName.clearFocus() // 포커스 해제
+        updateParentButtonState(true) // 버튼 상태 업데이트
     }
 
     override fun updateButtonState(isEnabled: Boolean) {

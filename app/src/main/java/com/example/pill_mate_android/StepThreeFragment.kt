@@ -26,6 +26,7 @@ class StepThreeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupDaySelection()
+        updateNextButtonState()
     }
 
     private fun setupDaySelection() {
@@ -39,6 +40,9 @@ class StepThreeFragment : Fragment() {
                     "요일", // Label
                     if (selectedDays.size == 7) "매일" else selectedDays.joinToString(", ")
                 )
+
+                // 다음 버튼 상태 업데이트
+                updateNextButtonState()
             }
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
         }
@@ -50,6 +54,15 @@ class StepThreeFragment : Fragment() {
             selectedDays.isEmpty() -> "" // 아무것도 선택되지 않은 경우 (예외 처리)
             else -> selectedDays.joinToString(", ") // 선택된 요일을 콤마로 구분
         }
+    }
+
+    private fun updateNextButtonState() {
+        val isInputValid = selectedDays.isNotEmpty()
+        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isInputValid)
+    }
+
+    fun isValidInput(): Boolean {
+        return selectedDays.isNotEmpty()
     }
 
     override fun onDestroyView() {

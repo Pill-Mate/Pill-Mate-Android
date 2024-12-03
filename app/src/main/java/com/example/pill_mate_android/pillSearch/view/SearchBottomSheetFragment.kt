@@ -71,6 +71,10 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initView()
+    }
+
+    private fun initView() {
         binding.ivExit.setOnClickListener {
             dismiss()
         }
@@ -91,6 +95,7 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
                 updateRecentSearches()
             }
         )
+        binding.etSearch.requestFocus()
 
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter
@@ -99,15 +104,11 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         val dividerHeight = 1f
         binding.rvSuggestion.addItemDecoration(SearchDividerItemDecoration(dividerColor, dividerHeight))
 
-        initView()
-
         binding.btnClearAll.setOnClickListener {
             sharedPreferencesHelper.clearAllSearches()
             updateRecentSearches()
         }
-    }
 
-    private fun initView() {
         setupTexts()
         setupSearchBar()
     }

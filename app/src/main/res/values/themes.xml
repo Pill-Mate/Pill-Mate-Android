@@ -2,8 +2,7 @@
 <resources>
 
     <style name="Theme.PillMateAndroid" parent="android:Theme.Material.Light.NoActionBar" />
-    <style name="Base.Theme.PillMateAndroid" parent="Theme.AppCompat.Light.NoActionBar">
-    </style>
+    <style name="Base.Theme.PillMateAndroid" parent="Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="RoundedBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/RoundBottomSheetStyle</item>
@@ -30,6 +29,13 @@
         <item name="android:textColor">@color/day_btn_text_color</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TagTextStyle" parent="TextAppearance.MaterialComponents.Chip">
+        <!-- <item name="android:fontFamily">@font/pretendard</item>  Pretendard 폰트 적용 -->
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/main_blue_1</item>
     </style>
 
 </resources>
