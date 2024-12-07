@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 날짜 레이아웃 스타일 -->
+    <style name="layout_calendar_date_item">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <!-- 날짜 아이콘 스타일 -->
+    <style name="layout_calendar_icon">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <!-- 날짜 텍스트 스타일 -->
+    <style name="tv_calendar_date_item">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/gray_2</item>
+    </style>
+
+    <!-- 요일 텍스트 스타일 -->
+    <style name="tv_calendar_day_of_month">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/gray_1</item>
+    </style>
+</resources>
