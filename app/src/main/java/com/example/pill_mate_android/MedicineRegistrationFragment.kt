@@ -1,14 +1,17 @@
 package com.example.pill_mate_android
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
+import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
 import com.example.pill_mate_android.pillSearch.view.RegistrationDataAdapter
 
@@ -39,6 +42,12 @@ class MedicineRegistrationFragment : Fragment() {
         adapter = RegistrationDataAdapter(dataList)
         binding.rvData.layoutManager = LinearLayoutManager(requireContext())
         binding.rvData.adapter = adapter
+
+        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 회색
+        val dividerHeight = 1f // 1dp
+        val marginStart = 24f
+        val marginEnd = 24f
+        binding.rvData.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
     }
 
     fun updateRecyclerViewData(label: String, data: String) {
@@ -48,17 +57,13 @@ class MedicineRegistrationFragment : Fragment() {
         } else {
             dataList.add(RegistrationData(label, data))
         }
-        adapter.notifyDataSetChanged()
 
-        // "다음" 버튼 상태 업데이트
-        updateNextButtonState(isValidInput())
-    }
-
-    private fun isValidInput(): Boolean {
-        // StepOneFragment, StepTwoFragment, StepThreeFragment 등에서 필요한 데이터 유효성 검증
-        val hasDayData = dataList.any { it.label == "요일" && it.data.isNotEmpty() }
-        val hasTimeData = dataList.any { it.label == "복용 시간대" && it.data.isNotEmpty() }
-        return hasDayData && hasTimeData
+        adapter.updateData(dataList)
+        if (dataList.isNotEmpty()) {
+            binding.rvData.visibility = View.VISIBLE
+        } else {
+            binding.rvData.visibility = View.GONE
+        }
     }
 
     private fun setupNavigation() {
@@ -106,11 +111,11 @@ class MedicineRegistrationFragment : Fragment() {
                         navHostFragment.navController.navigate(R.id.action_stepThreeFragment_to_stepFourFragment)
                     }
                 }
+                is StepFourFragment -> {
+                    // 다음
+                }
             }
         }
-
-/*        // 초기 상태
-        updateNextButtonState(false)*/
     }
 
     fun updateNextButtonState(isEnabled: Boolean) {

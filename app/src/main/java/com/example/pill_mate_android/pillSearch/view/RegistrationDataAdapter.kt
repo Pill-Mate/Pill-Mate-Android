@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.pillSearch.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.R
 
-class RegistrationDataAdapter(private val dataList: List<RegistrationData>) :
+class RegistrationDataAdapter(private var dataList: List<RegistrationData>) :
     RecyclerView.Adapter<RegistrationDataAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -25,9 +26,19 @@ class RegistrationDataAdapter(private val dataList: List<RegistrationData>) :
         val item = dataList[position]
         holder.label.text = item.label
         holder.data.text = item.data
+        Log.d("AdapterBinding", "Binding data at position $position: Label=${item.label}, Data=${item.data}")
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int {
+        Log.d("AdapterItemCount", "Item count: ${dataList.size}")
+        return dataList.size
+    }
+
+    fun updateData(newData: List<RegistrationData>) {
+        this.dataList = newData
+        Log.d("AdapterUpdate", "Updating data. New size: ${newData.size}")
+        notifyDataSetChanged()
+    }
 }
 
 data class RegistrationData(val label: String, var data: String)

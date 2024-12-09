@@ -20,6 +20,7 @@ import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
 import com.example.pill_mate_android.pillSearch.model.SearchType
 import com.example.pill_mate_android.pillSearch.model.Searchable
+import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.example.pill_mate_android.pillSearch.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -100,9 +101,11 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         binding.rvSuggestion.layoutManager = LinearLayoutManager(context)
         binding.rvSuggestion.adapter = adapter
 
-        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3)
-        val dividerHeight = 1f
-        binding.rvSuggestion.addItemDecoration(SearchDividerItemDecoration(dividerColor, dividerHeight))
+        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 회색
+        val dividerHeight = 1f // 1dp
+        val marginStart = 24f
+        val marginEnd = 24f
+        binding.rvSuggestion.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
 
         binding.btnClearAll.setOnClickListener {
             sharedPreferencesHelper.clearAllSearches()

@@ -22,6 +22,7 @@ import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenterImpl
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenterImpl
+import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -89,6 +90,12 @@ class PillSearchBottomSheetFragment(
             // 아이템 클릭 시 다이얼로그 생성 및 표시
             val dialog = PillDetailDialogFragment.newInstance(stepTwoPresenter, this, pillItem)
             dialog.show(parentFragmentManager, "PillDetailDialog")
+
+            val result = Bundle().apply {
+                putString("selectedPillName", pillItem.ITEM_NAME)
+            }
+            Log.d("PillSearchBottomSheet", "Setting FragmentResult with pill name: ${pillItem.ITEM_NAME}")
+            parentFragmentManager.setFragmentResult("pillSearchResultKey", result)
         })
 
         binding.ivExit.setOnClickListener {
@@ -103,11 +110,11 @@ class PillSearchBottomSheetFragment(
         binding.rvSuggestion.adapter = adapter
 
         // Divider 추가 (아이템 구분선)
-        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 옅은 회색
-        val dividerHeight = 1f
-        binding.rvSuggestion.addItemDecoration(
-            SearchDividerItemDecoration(dividerColor, dividerHeight)
-        )
+        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3)
+        val dividerHeight = 1f // 1dp
+        val marginStart = 24f
+        val marginEnd = 24f
+        binding.rvSuggestion.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
 
         setupSearchBar() // 검색 바 세팅 메서드 호출
     }

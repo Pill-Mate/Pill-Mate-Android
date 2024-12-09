@@ -34,8 +34,14 @@ class PillIdntfcAdapter(
             tvPillName.text = pill.ITEM_NAME
             tvCompanyName.text = pill.ENTP_NAME
 
+            // 약물명 자르기 (19자 초과 시 ...)
+            val pillName = if (pill.ITEM_NAME.length > 19) {
+                "${pill.ITEM_NAME.substring(0, 19)}.."
+            } else {
+                pill.ITEM_NAME
+            }
+
             // 검색어를 사용한 SpannableString 생성
-            val pillName = pill.ITEM_NAME
             val spannableString = SpannableString(pillName)
 
             val queryIndex = pillName.indexOf(query, ignoreCase = true)

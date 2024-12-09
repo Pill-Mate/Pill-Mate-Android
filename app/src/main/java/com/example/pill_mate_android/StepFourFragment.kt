@@ -40,15 +40,17 @@ class StepFourFragment : Fragment() {
                 selectedTimes.addAll(newSelectedTimes)
                 updateSelectedTimes() // 선택된 시간대 업데이트
                 updateSelectedTimeText() // tv_day 텍스트 업데이트
-                // MedicineRegistrationFragment에 데이터 전달
-                (requireActivity() as? MedicineRegistrationFragment)?.updateRecyclerViewData(
-                    "복용 시간",
-                    if (selectedTimes.isNotEmpty()) {
+
+                // MedicineRegistrationFragment의 리사이클러뷰 업데이트
+                val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (parentFragment is MedicineRegistrationFragment) {
+                    val timeData = if (selectedTimes.isNotEmpty()) {
                         getString(R.string.selected_time, selectedTimes.size, selectedTimes.joinToString(", "))
                     } else {
                         getString(R.string.selected_none)
                     }
-                )
+                    parentFragment.updateRecyclerViewData("횟수", timeData)
+                }
             }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }

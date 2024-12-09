@@ -3,10 +3,10 @@ package com.example.pill_mate_android
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.example.pill_mate_android.databinding.FragmentStepTwoBinding
@@ -38,6 +38,7 @@ class StepTwoFragment : Fragment(), StepTwoView {
         // FragmentResultListener 설정
         setFragmentResultListener("pillSearchResultKey") { _, bundle ->
             val selectedPillName = bundle.getString("selectedPillName") ?: ""
+            Log.d("PillSearchResult", "Received pill name: $selectedPillName")
             handleSearchResult(selectedPillName)
         }
     }
@@ -53,11 +54,9 @@ class StepTwoFragment : Fragment(), StepTwoView {
         // EditText 텍스트 변경 감지
         binding.etPillName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 presenter.handleTextChange(s.toString())
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
     }
@@ -68,9 +67,17 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     private fun handleSearchResult(selectedPillName: String) {
+        Log.d("SearchResult", "Selected pill name: $selectedPillName")
         binding.etPillName.setText(selectedPillName) // EditText 업데이트
         binding.etPillName.clearFocus() // 포커스 해제
         presenter.handleTextChange(selectedPillName) // Presenter 업데이트
+
+        Log.d("SearchResult", "Calling updateRecyclerViewData")
+        // MedicineRegistrationFragment의 리사이클러뷰 업데이트
+        val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (parentFragment is MedicineRegistrationFragment) {
+            parentFragment.updateRecyclerViewData("약물명", selectedPillName)
+        }
     }
 
     override fun updatePillName(pillName: String) {

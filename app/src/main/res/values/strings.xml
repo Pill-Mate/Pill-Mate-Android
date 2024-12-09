@@ -11,6 +11,9 @@
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--StepThreeFragment-->
+    <string name="everyday">매일</string>
+
     <!--StepFourFragment-->
     <string name="enter_time">1일 몇 회 복용하나요?</string>
     <string name="selected_none">0회 선택</string>

@@ -12,7 +12,7 @@ class StepThreeFragment : Fragment() {
     private var _binding: FragmentStepThreeBinding? = null
     private val binding get() = _binding!!
 
-    private var selectedDays = listOf("일", "월", "화", "수", "목", "금", "토") // 초기 선택된 요일 (매일)
+    private var selectedDays = listOf("일", "월", "화", "수", "목", "금", "토")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +35,14 @@ class StepThreeFragment : Fragment() {
                 selectedDays = newSelectedDays
                 updateSelectedDaysText(selectedDays)
 
-                // MedicineRegistrationFragment에 데이터 전달
-                (requireActivity() as? MedicineRegistrationFragment)?.updateRecyclerViewData(
-                    "요일", // Label
-                    if (selectedDays.size == 7) "매일" else selectedDays.joinToString(", ")
-                )
+                val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (parentFragment is MedicineRegistrationFragment) {
+                    parentFragment.updateRecyclerViewData(
+                        "요일",
+                        if (selectedDays.size == 7) "매일" else selectedDays.joinToString(", ")
+                    )
+                }
 
-                // 다음 버튼 상태 업데이트
                 updateNextButtonState()
             }
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
@@ -50,9 +51,9 @@ class StepThreeFragment : Fragment() {
 
     private fun updateSelectedDaysText(selectedDays: List<String>) {
         binding.tvDay.text = when {
-            selectedDays.size == 7 -> "매일" // 모든 요일이 선택된 경우
-            selectedDays.isEmpty() -> "" // 아무것도 선택되지 않은 경우 (예외 처리)
-            else -> selectedDays.joinToString(", ") // 선택된 요일을 콤마로 구분
+            selectedDays.size == 7 -> getString(R.string.everyday)
+            selectedDays.isEmpty() -> ""
+            else -> selectedDays.joinToString(", ")
         }
     }
 
