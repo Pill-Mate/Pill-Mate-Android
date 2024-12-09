@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import com.example.pill_mate_android.databinding.FragmentStepOneBinding
-import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenter
-import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenterImpl
+import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.model.SearchType
 import com.example.pill_mate_android.pillSearch.view.SearchBottomSheetFragment
+import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenter
+import com.example.pill_mate_android.pillSearch.presenter.StepOnePresenterImpl
 
 class StepOneFragment : Fragment(), StepOnePresenter.View {
 
@@ -37,17 +37,22 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
         setupInputFields()
         setupSearchListeners()
-
-        // FragmentResultListener 설정
-        setFragmentResultListener("requestKey") { _, bundle ->
-            val selectedResult = bundle.getString("selectedItem") ?: ""
-            handleSearchResult(selectedResult)
-        }
     }
 
     private fun setupInputFields() {
         // 약국 입력 감지
         binding.etPharmacy.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                presenter.onPharmacyNameChanged(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // 병원 입력 감지
+        binding.etHospital.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -77,25 +82,37 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     }
 
     private fun openSearchBottomSheet(searchType: SearchType) {
-        val bottomSheetFragment = SearchBottomSheetFragment(searchType)
+        val bottomSheetFragment = SearchBottomSheetFragment(searchType) {
+            // 🛠️ BottomSheet가 닫힐 때 호출되는 콜백
+            updateEditTextFromDataRepository()
+        }
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
-    private fun handleSearchResult(selectedResult: String) {
-        when (activeSearchType) {
-            SearchType.PHARMACY -> {
-                binding.etPharmacy.setText(selectedResult)
-                binding.etPharmacy.clearFocus()
-                presenter.onPharmacyNameChanged(selectedResult)
-            }
-            SearchType.HOSPITAL -> {
-                binding.etHospital.setText(selectedResult)
-                binding.etHospital.clearFocus()
-            }
-            else -> return
+    private fun updateEditTextFromDataRepository() {
+        // DataRepository에서 데이터 가져와서 EditText에 반영
+        DataRepository.pharmacyData?.let {
+            binding.etPharmacy.setText(it.pharmacyName)
+            binding.etPharmacy.clearFocus()
         }
-        binding.tvWarning.isVisible = false
-        activeSearchType = null
+
+        DataRepository.hospitalData?.let {
+            binding.etHospital.setText(it.hospitalName)
+            binding.etHospital.clearFocus()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // DataRepository에서 데이터 가져와서 EditText에 반영
+        DataRepository.pharmacyData?.let {
+            binding.etPharmacy.setText(it.pharmacyName)
+        }
+
+        DataRepository.hospitalData?.let {
+            binding.etHospital.setText(it.hospitalName)
+        }
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
@@ -113,6 +130,5 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        parentFragmentManager.clearFragmentResultListener("requestKey")
     }
 }

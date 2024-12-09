@@ -13,7 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentSearchBottomSheetBinding
-import com.example.pill_mate_android.pillSearch.SearchDividerItemDecoration
+import com.example.pill_mate_android.pillSearch.model.DataRepository
+import com.example.pill_mate_android.pillSearch.model.Hospital
+import com.example.pill_mate_android.pillSearch.model.Pharmacy
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.model.PillInfoItem
 import com.example.pill_mate_android.pillSearch.presenter.PillSearchPresenter
@@ -26,7 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class SearchBottomSheetFragment(private val searchType: SearchType) : BottomSheetDialogFragment(), PillSearchView {
+class SearchBottomSheetFragment(private val searchType: SearchType, private val onDismiss: (() -> Unit)? = null) : BottomSheetDialogFragment(), PillSearchView {
 
     private var _binding: FragmentSearchBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -86,9 +88,9 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
                 binding.etSearch.setSelection(selectedTerm.length)
                 presenter.search(selectedTerm, searchType)
             },
-            onSearchResultClick = { selectedResult ->
-                sharedPreferencesHelper.saveSearchTerm(selectedResult)
-                sendResultToParent(selectedResult)
+            onSearchResultClick = { name, phone ->
+                sharedPreferencesHelper.saveSearchTerm(name)
+                saveDataToRepository(name, phone)
                 dismiss()
             },
             onDeleteClick = { term ->
@@ -166,9 +168,22 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
         }
     }
 
-    private fun sendResultToParent(result: String) {
-        val bundle = Bundle().apply { putString("selectedItem", result) }
-        parentFragmentManager.setFragmentResult("requestKey", bundle)
+    private fun saveDataToRepository(name: String, phone: String) {
+        when (searchType) {
+            SearchType.PHARMACY -> {
+                DataRepository.pharmacyData = Pharmacy(
+                    pharmacyName = name,
+                    pharmacyPhone = phone
+                )
+            }
+            SearchType.HOSPITAL -> {
+                DataRepository.hospitalData = Hospital(
+                    hospitalName = name,
+                    hospitalPhone = phone
+                )
+            }
+        }
+        Log.d("SearchBottomSheet", "Saved $name with phone $phone to DataRepository")
     }
 
     override fun showPillInfo(pills: List<PillInfoItem>) {
@@ -194,5 +209,6 @@ class SearchBottomSheetFragment(private val searchType: SearchType) : BottomShee
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        onDismiss?.invoke() // BottomSheet가 닫힐 때 콜백 호출
     }
 }

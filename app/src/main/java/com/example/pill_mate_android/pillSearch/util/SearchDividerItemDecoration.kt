@@ -1,4 +1,4 @@
-package com.example.pill_mate_android.pillSearch
+package com.example.pill_mate_android.pillSearch.util
 
 import android.graphics.Canvas
 import android.graphics.Paint

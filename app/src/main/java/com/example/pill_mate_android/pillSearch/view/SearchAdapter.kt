@@ -16,7 +16,7 @@ import com.example.pill_mate_android.pillSearch.model.Searchable
 
 class SearchAdapter(
     private val onItemClick: (String) -> Unit = {},  // 최근 검색어 클릭 이벤트
-    private val onSearchResultClick: (String) -> Unit = {},  // 검색 결과 클릭 이벤트
+    private val onSearchResultClick: (String, String) -> Unit = { _, _ -> }, // 검색 결과 클릭 이벤트 (name, phone)
     private val onDeleteClick: (String) -> Unit = {},  // 최근 검색어 삭제 이벤트
     private var recentSearches: List<String> = emptyList(),  // 최근 검색어 리스트
     private var searchResults: List<Searchable> = emptyList(),  // 병원/약국 검색 결과
@@ -107,7 +107,8 @@ class SearchAdapter(
             binding.tvNumber.text = phone ?: "전화번호 정보 없음"
 
             binding.root.setOnClickListener {
-                onSearchResultClick(name ?: "")
+                // 이름과 전화번호를 함께 전달
+                onSearchResultClick(name.orEmpty(), phone.orEmpty())
             }
         }
     }
