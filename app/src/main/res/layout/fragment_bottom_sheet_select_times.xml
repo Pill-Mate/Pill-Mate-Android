@@ -47,8 +47,7 @@
                 android:id="@+id/iv_fasting_check"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="공복 체크 아이콘" />
+                android:src="@drawable/ic_btn_unselect"/>
         </LinearLayout>
 
         <!-- 아침 -->

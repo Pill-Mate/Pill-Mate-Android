@@ -112,7 +112,9 @@ class MedicineRegistrationFragment : Fragment() {
                     }
                 }
                 is StepFourFragment -> {
-                    // 다음
+                    if (currentFragment.isValidInput()) {
+                        navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
+                    }
                 }
             }
         }

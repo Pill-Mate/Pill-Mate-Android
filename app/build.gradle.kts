@@ -75,6 +75,7 @@ dependencies {
     kapt ("com.tickaroo.tikxml:processor:0.8.13")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation ("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

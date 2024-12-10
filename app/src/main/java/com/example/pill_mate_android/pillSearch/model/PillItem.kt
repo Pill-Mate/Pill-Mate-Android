@@ -22,12 +22,12 @@ data class PillInfoItem(
 
 @Parcelize
 data class PillIdntfcItem(
-    val ITEM_SEQ: String, // 의약품 고유 식별번호
-    val ITEM_NAME: String,
+    val ITEM_SEQ: String,   // 식별 번호
+    val ITEM_NAME: String,  // 약물 이름
     val ENTP_SEQ: String,
     val ENTP_NAME: String,
     val CHART: String,
-    val ITEM_IMAGE: String?,
+    val ITEM_IMAGE: String?, // 약물 이미지 URL
     val PRINT_FRONT: String?,
     val PRINT_BACK: String?,
     val DRUG_SHAPE: String,
@@ -40,7 +40,7 @@ data class PillIdntfcItem(
     val THICK: String?,
     val IMG_REGIST_TS: String?,
     val CLASS_NO: String?,
-    val CLASS_NAME: String?,
+    val CLASS_NAME: String?, // 분류명
     val ETC_OTC_NAME: String?,
     val ITEM_PERMIT_DATE: String?,
     val FORM_CODE_NAME: String?,

@@ -8,8 +8,10 @@
     <string name="enter_pharmacy_name">약국명을 입력하세요</string>
     <string name="enter_hospital_name">병원명을 입력하세요</string>
 
-    <string name="test">test</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- PillSearchBottomSheetFragment -->
+    <string name="search_pill">약물 검색</string>
+    <string name="enter_pill_name">약물명을 입력하세요</string>
+
 
     <!--StepThreeFragment-->
     <string name="everyday">매일</string>
@@ -19,5 +21,8 @@
     <string name="selected_none">0회 선택</string>
     <string name="selected_time">%1$d회 (%2$s)</string>
     <string name="selected_count">%1$d회</string>
+
+    <string name="test">test</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

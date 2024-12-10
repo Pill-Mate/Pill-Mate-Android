@@ -87,6 +87,10 @@ class StepFourFragment : Fragment() {
         }
     }
 
+    fun isValidInput(): Boolean {
+        return selectedTimes.isNotEmpty()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
