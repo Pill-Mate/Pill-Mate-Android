@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.R
 
+data class RegistrationData(val label: String, var data: String)
+
 class RegistrationDataAdapter(private var dataList: List<RegistrationData>) :
     RecyclerView.Adapter<RegistrationDataAdapter.ViewHolder>() {
 
@@ -26,19 +28,13 @@ class RegistrationDataAdapter(private var dataList: List<RegistrationData>) :
         val item = dataList[position]
         holder.label.text = item.label
         holder.data.text = item.data
-        Log.d("AdapterBinding", "Binding data at position $position: Label=${item.label}, Data=${item.data}")
     }
 
-    override fun getItemCount(): Int {
-        Log.d("AdapterItemCount", "Item count: ${dataList.size}")
-        return dataList.size
-    }
+    override fun getItemCount(): Int = dataList.size
 
     fun updateData(newData: List<RegistrationData>) {
         this.dataList = newData
-        Log.d("AdapterUpdate", "Updating data. New size: ${newData.size}")
+        Log.d("RegistrationDataAdapter", "Data updated: $newData")
         notifyDataSetChanged()
     }
 }
-
-data class RegistrationData(val label: String, var data: String)

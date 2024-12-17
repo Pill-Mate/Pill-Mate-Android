@@ -60,12 +60,24 @@
         android:gravity="center_vertical"
         android:inputType="number"
         android:padding="12dp"
-        android:text="30분"
+        android:text="30"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_meal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/layout_meal"
         app:layout_constraintTop_toTopOf="@+id/layout_meal" />
+
+    <TextView
+        android:id="@+id/tv_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="분"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/et_minutes"
+        app:layout_constraintStart_toStartOf="@+id/et_minutes"
+        app:layout_constraintTop_toTopOf="@+id/et_minutes" />
 
     <LinearLayout
         android:id="@+id/ll_selected_times"

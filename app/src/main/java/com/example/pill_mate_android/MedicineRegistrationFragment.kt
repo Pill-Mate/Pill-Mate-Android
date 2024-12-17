@@ -11,59 +11,58 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
+import com.example.pill_mate_android.pillSearch.model.MedicineRegistrationRepository
+import com.example.pill_mate_android.pillSearch.presenter.MedicineRegistrationPresenter
 import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
+import com.example.pill_mate_android.pillSearch.view.MedicineRegistrationView
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
 import com.example.pill_mate_android.pillSearch.view.RegistrationDataAdapter
 
-class MedicineRegistrationFragment : Fragment() {
+class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     private var _binding: FragmentMedicineRegistrationBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: RegistrationDataAdapter
-    private val dataList = mutableListOf<RegistrationData>()
+    private lateinit var presenter: MedicineRegistrationPresenter
+
+    fun getPresenter(): MedicineRegistrationPresenter {
+        return presenter
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentMedicineRegistrationBinding.inflate(inflater, container, false)
+        presenter = MedicineRegistrationPresenter(MedicineRegistrationRepository(), this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupRecyclerView()
+        setupRecyclerView() // onViewCreated에서 RecyclerView 초기화
         setupNavigation()
         setupNextButton()
     }
 
     private fun setupRecyclerView() {
-        adapter = RegistrationDataAdapter(dataList)
+        // 어댑터 초기화
+        adapter = RegistrationDataAdapter(emptyList())
         binding.rvData.layoutManager = LinearLayoutManager(requireContext())
         binding.rvData.adapter = adapter
 
-        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 회색
+        // 아이템 간의 구분선 추가
+        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3)
         val dividerHeight = 1f // 1dp
-        val marginStart = 24f
-        val marginEnd = 24f
+        val marginStart = 24f // 좌측 여백
+        val marginEnd = 24f // 우측 여백
         binding.rvData.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
     }
 
-    fun updateRecyclerViewData(label: String, data: String) {
-        val existingItem = dataList.find { it.label == label }
-        if (existingItem != null) {
-            existingItem.data = data
-        } else {
-            dataList.add(RegistrationData(label, data))
-        }
-
-        adapter.updateData(dataList)
-        if (dataList.isNotEmpty()) {
-            binding.rvData.visibility = View.VISIBLE
-        } else {
-            binding.rvData.visibility = View.GONE
-        }
+    override fun updateRecyclerView(data: List<RegistrationData>) {
+        adapter.updateData(data)
+        Log.d("MedicineRegistrationFragment", "어댑터 데이터 업데이트: ${data.size} 개의 아이템")
+        binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun setupNavigation() {
@@ -131,6 +130,6 @@ class MedicineRegistrationFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // 메모리 누수 방지
     }
 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.setFragmentResultListener
 import com.example.pill_mate_android.databinding.FragmentStepTwoBinding
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenterImpl
+import com.example.pill_mate_android.pillSearch.presenter.MedicineRegistrationPresenter
 import com.example.pill_mate_android.pillSearch.view.PillSearchBottomSheetFragment
 import com.example.pill_mate_android.pillSearch.view.StepTwoView
 
@@ -20,6 +21,7 @@ class StepTwoFragment : Fragment(), StepTwoView {
     private var _binding: FragmentStepTwoBinding? = null
     private val binding get() = _binding!!
     private lateinit var presenter: StepTwoPresenter
+    private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +29,13 @@ class StepTwoFragment : Fragment(), StepTwoView {
     ): View {
         _binding = FragmentStepTwoBinding.inflate(inflater, container, false)
         presenter = StepTwoPresenterImpl(this)
+
+        // MedicineRegistrationPresenter 인스턴스를 부모 Fragment로부터 가져옴
+        val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (parentFragment is MedicineRegistrationFragment) {
+            registrationPresenter = parentFragment.getPresenter() // getter로 presenter 접근
+        }
+
         return binding.root
     }
 
@@ -35,7 +44,7 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         setupInputField()
 
-        // FragmentResultListener 설정
+        // FragmentResultListener 설정 (약물 검색 결과를 받음)
         setFragmentResultListener("pillSearchResultKey") { _, bundle ->
             val selectedPillName = bundle.getString("selectedPillName") ?: ""
             Log.d("PillSearchResult", "Received pill name: $selectedPillName")
@@ -68,29 +77,21 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
     private fun handleSearchResult(selectedPillName: String) {
         Log.d("SearchResult", "Selected pill name: $selectedPillName")
-        binding.etPillName.setText(selectedPillName) // EditText 업데이트
+        binding.etPillName.setText(selectedPillName) // EditText에 업데이트
         binding.etPillName.clearFocus() // 포커스 해제
-        presenter.handleTextChange(selectedPillName) // Presenter 업데이트
 
-        Log.d("SearchResult", "Calling updateRecyclerViewData")
-        // MedicineRegistrationFragment의 리사이클러뷰 업데이트
-        val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (parentFragment is MedicineRegistrationFragment) {
-            parentFragment.updateRecyclerViewData("약물명", selectedPillName)
+        // Presenter에 Schedule 데이터 업데이트 요청
+        registrationPresenter.updateSchedule { schedule ->
+            schedule.copy(medicine_name = selectedPillName)
         }
     }
 
     override fun updatePillName(pillName: String) {
         binding.etPillName.setText(pillName)
         binding.etPillName.clearFocus() // 포커스 해제
-        updateParentButtonState(true) // 버튼 상태 업데이트
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
-        updateParentButtonState(isEnabled)
-    }
-
-    private fun updateParentButtonState(isEnabled: Boolean) {
         (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
     }
 

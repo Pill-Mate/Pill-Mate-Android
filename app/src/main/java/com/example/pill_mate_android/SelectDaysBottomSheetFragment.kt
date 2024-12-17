@@ -8,11 +8,13 @@ import android.widget.Button
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class DaySelectionBottomSheetFragment(
-    private val initiallySelectedDays: List<String>, // 초기 선택된 요일
+    private val initiallySelectedDays: List<String> = listOf("일", "월", "화", "수", "목", "금", "토"),
     private val onDaysSelected: (List<String>) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private val selectedDays = mutableSetOf<String>() // 선택된 요일
+    private val dayOrder = listOf("일", "월", "화", "수", "목", "금", "토")
+    private val dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
+    private val selectedDays = mutableSetOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,9 +43,14 @@ class DaySelectionBottomSheetFragment(
         val confirmButton = view.findViewById<Button>(R.id.btn_confirm)
 
         // 초기 선택 상태 반영
-        selectedDays.clear()
-        selectedDays.addAll(initiallySelectedDays)
+        if (initiallySelectedDays.isEmpty()) {
+            selectedDays.addAll(dayOrder) // 모든 요일 기본 선택
+        } else {
+            selectedDays.clear()
+            selectedDays.addAll(initiallySelectedDays)
+        }
 
+        // 초기 선택 상태에 맞게 버튼 선택 상태 변경
         dayButtons.forEach { (button, day) ->
             button.isSelected = selectedDays.contains(day)
         }
@@ -57,14 +64,14 @@ class DaySelectionBottomSheetFragment(
                 } else {
                     selectedDays.remove(day)
                 }
-
                 confirmButton.isEnabled = selectedDays.isNotEmpty()
             }
         }
 
-        // 확인 버튼 클릭 처리
+        // 확인 버튼 클릭 시 선택한 요일을 콜백으로 전달
         confirmButton.setOnClickListener {
-            onDaysSelected(selectedDays.toList())
+            val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
+            onDaysSelected(sortedDays)
             dismiss()
         }
 
