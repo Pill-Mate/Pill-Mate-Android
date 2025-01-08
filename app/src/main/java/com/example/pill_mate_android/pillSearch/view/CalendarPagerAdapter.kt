@@ -17,18 +17,38 @@ class CalendarPagerAdapter(
 ) : RecyclerView.Adapter<CalendarPagerAdapter.CalendarViewHolder>() {
 
     private val calendarList = mutableListOf<Calendar>()
+    private val initialMonthsCount = 12 // 초기 6개월 전후로 총 12개월
 
     init {
-        prepareCalendarList()
+        prepareInitialCalendarList()
     }
 
-    private fun prepareCalendarList() {
+    private fun prepareInitialCalendarList() {
         val currentCalendar = Calendar.getInstance()
         currentCalendar.add(Calendar.MONTH, -6) // 6개월 전부터 시작
-        repeat(12) { // 12개월 데이터 생성
+        repeat(initialMonthsCount) {
             calendarList.add(currentCalendar.clone() as Calendar)
             currentCalendar.add(Calendar.MONTH, 1)
         }
+    }
+
+    fun addPastMonths(count: Int) {
+        val firstCalendar = calendarList.first().clone() as Calendar
+        for (i in 1..count) {
+            firstCalendar.add(Calendar.MONTH, -1)
+            calendarList.add(0, firstCalendar.clone() as Calendar)
+        }
+        notifyItemRangeInserted(0, count)
+    }
+
+    fun addFutureMonths(count: Int) {
+        val lastCalendar = calendarList.last().clone() as Calendar
+        val startPosition = calendarList.size
+        for (i in 1..count) {
+            lastCalendar.add(Calendar.MONTH, 1)
+            calendarList.add(lastCalendar.clone() as Calendar)
+        }
+        notifyItemRangeInserted(startPosition, count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
@@ -65,10 +85,8 @@ class CalendarPagerAdapter(
             startDayOfWeek: Int,
             onDateSelected: (String) -> Unit
         ) {
-            // 빈 칸 채우기 (달의 시작 요일 전)
             addEmptyViews(startDayOfWeek - 1)
 
-            // 날짜 채우기
             for (day in 1..maxDay) {
                 val dayView = createDayView(year, month, day, onDateSelected)
                 gridLayout.addView(dayView)
@@ -97,11 +115,11 @@ class CalendarPagerAdapter(
                 setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 setBackgroundResource(R.drawable.bg_date_normal)
                 layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0 // GridLayout 내에서 균등 분배
+                    width = 0
                     height = 0
                     columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                     rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                    setMargins(6, 6, 6, 6) // 이미지 비율에 맞는 간격 설정
+                    setMargins(6, 6, 6, 6)
                 }
                 setOnClickListener {
                     val selectedDate = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
@@ -115,11 +133,11 @@ class CalendarPagerAdapter(
 
         private fun createGridLayoutParams(): GridLayout.LayoutParams {
             return GridLayout.LayoutParams().apply {
-                width = 0 // GridLayout 내에서 균등 분배
-                height = 0 // 행 크기 균등 분배
+                width = 0
+                height = 0
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(4, 4, 4, 4) // 날짜 간격을 균일하게 설정
+                setMargins(4, 4, 4, 4)
             }
         }
 
