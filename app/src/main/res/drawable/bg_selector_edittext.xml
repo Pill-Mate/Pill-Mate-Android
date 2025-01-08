@@ -1,0 +1,21 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 입력값이 있거나 포커스 상태일 때 -->
+    <item android:state_focused="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="2dp" android:color="@color/main_blue_1" />
+            <corners android:radius="8dp" />
+            <padding android:left="10dp" android:right="10dp" />
+        </shape>
+    </item>
+
+    <!-- 기본 상태 -->
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="2dp" android:color="@color/gray_3" />
+            <corners android:radius="8dp" />
+            <padding android:left="10dp" android:right="10dp" />
+        </shape>
+    </item>
+</selector>

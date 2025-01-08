@@ -32,7 +32,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMedicineRegistrationBinding.inflate(inflater, container, false)
         presenter = MedicineRegistrationPresenter(MedicineRegistrationRepository(), this)
         return binding.root
@@ -40,28 +40,26 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView() // onViewCreated에서 RecyclerView 초기화
+        setupRecyclerView()
         setupNavigation()
         setupNextButton()
     }
 
     private fun setupRecyclerView() {
-        // 어댑터 초기화
         adapter = RegistrationDataAdapter(emptyList())
         binding.rvData.layoutManager = LinearLayoutManager(requireContext())
         binding.rvData.adapter = adapter
 
-        // 아이템 간의 구분선 추가
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3)
-        val dividerHeight = 1f // 1dp
-        val marginStart = 24f // 좌측 여백
-        val marginEnd = 24f // 우측 여백
+        val dividerHeight = 1f
+        val marginStart = 24f
+        val marginEnd = 24f
         binding.rvData.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
     }
 
     override fun updateRecyclerView(data: List<RegistrationData>) {
         adapter.updateData(data)
-        Log.d("MedicineRegistrationFragment", "어댑터 데이터 업데이트: ${data.size} 개의 아이템")
+        Log.d("MedicineRegistrationFragment", "RecyclerView updated: ${data.size} items")
         binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
@@ -93,27 +91,33 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
             when (currentFragment) {
-                is StepOneFragment -> {
-                    if (currentFragment.isValidInput()) {
-                        navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
-                    } else {
-                        currentFragment.showWarning(true)
-                    }
+                is StepOneFragment -> if (currentFragment.isValidInput()) {
+                    navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
                 }
-                is StepTwoFragment -> {
-                    if (currentFragment.isValidInput()) {
-                        navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
-                    }
+                is StepTwoFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it } // 현재 데이터 저장
+                    presenter.updateView() // UI 업데이트
+                    navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
                 }
-                is StepThreeFragment -> {
-                    if (currentFragment.isValidInput()) {
-                        navHostFragment.navController.navigate(R.id.action_stepThreeFragment_to_stepFourFragment)
-                    }
+                is StepThreeFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
+                    navHostFragment.navController.navigate(R.id.action_stepThreeFragment_to_stepFourFragment)
                 }
-                is StepFourFragment -> {
-                    if (currentFragment.isValidInput()) {
-                        navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
-                    }
+                is StepFourFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
+                    navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
+                }
+                is StepFiveFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
+                    navHostFragment.navController.navigate(R.id.action_stepFiveFragment_to_stepSixFragment)
+                }
+                is StepSixFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
+                    navHostFragment.navController.navigate(R.id.action_stepSixFragment_to_stepSevenFragment)
                 }
             }
         }
@@ -130,6 +134,6 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // 메모리 누수 방지
+        _binding = null
     }
 }

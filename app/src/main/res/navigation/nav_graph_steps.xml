@@ -49,25 +49,25 @@
         android:name="com.example.pill_mate_android.StepFiveFragment"
         android:label="Step Five"
         tools:layout="@layout/fragment_step_five">
-        <!--<action
+        <action
             android:id="@+id/action_stepFiveFragment_to_stepSixFragment"
-            app:destination="@id/stepSixFragment" />-->
+            app:destination="@id/stepSixFragment" />
     </fragment>
-    <!--
-        <fragment
-            android:id="@+id/stepSixFragment"
-            android:name="com.example.pill_mate_android.StepSixFragment"
-            android:label="Step Six"
-            tools:layout="@layout/fragment_step_six">
-            <action
-                android:id="@+id/action_stepSixFragment_to_stepSevenFragment"
-                app:destination="@id/stepSevenFragment" />
-        </fragment>
 
-        <fragment
-            android:id="@+id/stepSevenFragment"
-            android:name="com.example.pill_mate_android.StepSevenFragment"
-            android:label="Step Seven"
-            tools:layout="@layout/fragment_step_seven" />-->
+    <fragment
+        android:id="@+id/stepSixFragment"
+        android:name="com.example.pill_mate_android.StepSixFragment"
+        android:label="Step Six"
+        tools:layout="@layout/fragment_step_six">
+        <action
+            android:id="@+id/action_stepSixFragment_to_stepSevenFragment"
+            app:destination="@id/stepSevenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepSevenFragment"
+        android:name="com.example.pill_mate_android.StepSevenFragment"
+        android:label="Step Seven"
+        tools:layout="@layout/fragment_step_seven" />
 
 </navigation>

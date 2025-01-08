@@ -23,7 +23,7 @@ class MedicineRegistrationPresenter(
                 schedule.intake_count?.takeIf { it.isNotEmpty() }?.let {
                     val times = it.split(",").map { time -> time.trim() }
                     if (times.isNotEmpty()) "${times.size}회(${times.joinToString(",")})" else ""
-                } ?: "" // 빈 값일 경우 횟수를 표시하지 않음
+                } ?: ""
             ),
             RegistrationData(
                 "시간대",
@@ -44,17 +44,23 @@ class MedicineRegistrationPresenter(
         ).filter { it.data.isNotEmpty() }
     }
 
-    // Schedule 데이터를 업데이트하고 View에 알림
+    fun getSelectedTimes(): List<String> {
+        val schedule = repository.getSchedule() ?: Schedule()
+        return schedule.intake_count?.split(",")?.map { it.trim() } ?: emptyList()
+    }
+
+    // Schedule 데이터를 저장만 함 (UI 업데이트 X)
     fun updateSchedule(update: (Schedule) -> Schedule) {
         val currentSchedule = repository.getSchedule() ?: Schedule()
         val updatedSchedule = update(currentSchedule)
         repository.saveSchedule(updatedSchedule)
 
-        // 디버그 로그 추가
         Log.d("MedicineRegistrationPresenter", "Updated schedule: $updatedSchedule")
+    }
 
-        // View에 RecyclerView 업데이트 명령
+    // RecyclerView 업데이트 요청
+    fun updateView() {
         val displayItems = getDisplayItems()
-        view.updateRecyclerView(displayItems) // View에 데이터 갱신 요청
+        view.updateRecyclerView(displayItems)
     }
 }
