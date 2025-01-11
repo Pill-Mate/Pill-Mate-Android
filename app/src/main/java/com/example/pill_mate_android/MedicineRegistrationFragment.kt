@@ -1,10 +1,12 @@
 package com.example.pill_mate_android
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -95,8 +97,8 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
                 }
                 is StepTwoFragment -> if (currentFragment.isValidInput()) {
-                    presenter.updateSchedule { it } // 현재 데이터 저장
-                    presenter.updateView() // UI 업데이트
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
                     navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
                 }
                 is StepThreeFragment -> if (currentFragment.isValidInput()) {
@@ -119,6 +121,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     presenter.updateView()
                     navHostFragment.navController.navigate(R.id.action_stepSixFragment_to_stepSevenFragment)
                 }
+                is StepSevenFragment -> if (currentFragment.isValidInput()) {
+                    presenter.updateSchedule { it }
+                    presenter.updateView()
+                    navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
+                }
             }
         }
     }
@@ -130,6 +137,13 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     private fun showPillRegistrationDialog() {
         val dialog = PillRegistrationDialogFragment()
         dialog.show(childFragmentManager, "PillRegistrationDialog")
+    }
+
+    // 키보드 숨기기
+    fun hideKeyboard() {
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = requireActivity().currentFocus ?: View(requireContext())
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onDestroyView() {

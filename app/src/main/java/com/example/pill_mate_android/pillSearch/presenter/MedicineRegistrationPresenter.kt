@@ -5,13 +5,15 @@ import com.example.pill_mate_android.pillSearch.model.MedicineRegistrationReposi
 import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.view.MedicineRegistrationView
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class MedicineRegistrationPresenter(
     private val repository: MedicineRegistrationRepository,
     private val view: MedicineRegistrationView // View와의 연결
 ) {
 
-    // 항목 순서 고정 및 null, 빈 값, 0 값 숨김
     fun getDisplayItems(): List<RegistrationData> {
         val schedule = repository.getSchedule() ?: Schedule()
 
@@ -35,7 +37,7 @@ class MedicineRegistrationPresenter(
             ),
             RegistrationData(
                 "복약기간",
-                if (schedule.intake_period > 0) "${schedule.start_date} ~ ${schedule.intake_period}일" else ""
+                calculateIntakePeriod(schedule)
             ),
             RegistrationData(
                 "투여용량",
@@ -44,12 +46,25 @@ class MedicineRegistrationPresenter(
         ).filter { it.data.isNotEmpty() }
     }
 
+    private fun calculateIntakePeriod(schedule: Schedule): String {
+        if (schedule.start_date.isEmpty() || schedule.intake_period <= 0) return ""
+
+        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+        val startDate = dateFormat.parse(schedule.start_date) ?: return ""
+
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+        calendar.add(Calendar.DATE, schedule.intake_period - 1)
+
+        val endDate = dateFormat.format(calendar.time)
+        return "${schedule.start_date} ~ $endDate(${schedule.intake_period}일)"
+    }
+
     fun getSelectedTimes(): List<String> {
         val schedule = repository.getSchedule() ?: Schedule()
         return schedule.intake_count?.split(",")?.map { it.trim() } ?: emptyList()
     }
 
-    // Schedule 데이터를 저장만 함 (UI 업데이트 X)
     fun updateSchedule(update: (Schedule) -> Schedule) {
         val currentSchedule = repository.getSchedule() ?: Schedule()
         val updatedSchedule = update(currentSchedule)
@@ -58,7 +73,6 @@ class MedicineRegistrationPresenter(
         Log.d("MedicineRegistrationPresenter", "Updated schedule: $updatedSchedule")
     }
 
-    // RecyclerView 업데이트 요청
     fun updateView() {
         val displayItems = getDisplayItems()
         view.updateRecyclerView(displayItems)

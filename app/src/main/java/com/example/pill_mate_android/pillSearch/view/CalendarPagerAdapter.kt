@@ -113,14 +113,15 @@ class CalendarPagerAdapter(
                 text = day.toString()
                 gravity = Gravity.CENTER
                 setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
-                setBackgroundResource(R.drawable.bg_date_normal)
-                layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = 0
-                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                    rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                    setMargins(6, 6, 6, 6)
+                layoutParams = createGridLayoutParams()
+
+                addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+                    val size = minOf(v.width, v.height)
+                    v.layoutParams.width = size
+                    v.layoutParams.height = size
+                    v.requestLayout()
                 }
+
                 setOnClickListener {
                     val selectedDate = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
                         Calendar.getInstance().apply { set(year, month, day) }.time
@@ -137,7 +138,7 @@ class CalendarPagerAdapter(
                 height = 0
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(4, 4, 4, 4)
+                setMargins(2, 2, 2, 2)
             }
         }
 
@@ -145,10 +146,10 @@ class CalendarPagerAdapter(
             for (i in 0 until gridLayout.childCount) {
                 val dayView = gridLayout.getChildAt(i)
                 if (dayView is TextView && dayView.text == selectedDay.toString()) {
-                    dayView.setBackgroundResource(R.drawable.bg_date_selected)
+                    dayView.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
                 } else if (dayView is TextView && dayView.text.isNotEmpty()) {
-                    dayView.setBackgroundResource(R.drawable.bg_date_normal)
+                    dayView.background = null
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 }
             }

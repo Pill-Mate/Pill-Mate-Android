@@ -1,5 +1,6 @@
 package com.example.pill_mate_android
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,7 +35,6 @@ class StepSevenFragment : Fragment() {
     ): View {
         _binding = FragmentStepSevenBinding.inflate(inflater, container, false)
 
-        // MedicineRegistrationFragment에 연결된 Presenter 가져오기
         val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (parentFragment is MedicineRegistrationFragment) {
             registrationPresenter = parentFragment.getPresenter()
@@ -45,12 +46,10 @@ class StepSevenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
         binding.tvStartDate.text = selectedStartDate
         setupDosageDaysEditText()
         setupStartDateSelection()
 
-        // 초기 Presenter 업데이트
         updateSchedule()
     }
 
@@ -60,10 +59,8 @@ class StepSevenFragment : Fragment() {
                 selectedStartDate = selectedDate
                 binding.tvStartDate.text = selectedDate
 
-                // Presenter에 시작일 업데이트
                 updateSchedule()
 
-                // 복약일수가 이미 입력되었을 경우 종료일 업데이트
                 if (dosageDays > 0) {
                     updateEndDateChip()
                 }
@@ -80,28 +77,33 @@ class StepSevenFragment : Fragment() {
                 val inputText = s.toString().trim()
                 dosageDays = inputText.toIntOrNull() ?: 0
 
-                // Presenter에 복약일수 업데이트
                 updateSchedule()
 
-                // 종료일 업데이트
                 if (dosageDays > 0 && selectedStartDate != "0000.00.00") {
                     updateEndDateChip()
                 } else {
-                    binding.layoutEndDateChip.removeAllViews() // 종료일 칩 제거
+                    binding.layoutEndDateChip.removeAllViews()
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // 엔터 키 입력 처리 (포커스 해제)
-        binding.etPeriod.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+        binding.etPeriod.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
                 binding.etPeriod.clearFocus()
-                return@OnEditorActionListener true
+                hideKeyboard()
+                return@setOnEditorActionListener true
             }
             false
-        })
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etPeriod.windowToken, 0)
     }
 
     private fun updateEndDateChip() {
@@ -136,6 +138,14 @@ class StepSevenFragment : Fragment() {
                 intake_period = dosageDays
             )
         }
+    }
+
+    fun isValidInput(): Boolean {
+        val periodText = binding.etPeriod.text.toString().trim()
+        val startDateText = binding.tvStartDate.text.toString().trim()
+
+        // 입력값이 모두 비어있지 않은지 확인
+        return periodText.isNotEmpty() && periodText.toIntOrNull() != null && startDateText.isNotEmpty()
     }
 
     override fun onDestroyView() {

@@ -68,6 +68,20 @@
         android:id="@+id/stepSevenFragment"
         android:name="com.example.pill_mate_android.StepSevenFragment"
         android:label="Step Seven"
-        tools:layout="@layout/fragment_step_seven" />
+        tools:layout="@layout/fragment_step_seven" >
+        <action
+            android:id="@+id/action_stepSevenFragment_to_stepEightFragment"
+            app:destination="@id/stepEightFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepEightFragment"
+        android:name="com.example.pill_mate_android.StepEightFragment"
+        android:label="Step Eight"
+        tools:layout="@layout/fragment_step_eight">
+<!--        <action-->
+<!--            android:id="@+id/action_stepSixFragment_to_stepSevenFragment"-->
+<!--            app:destination="@id/stepSevenFragment" />-->
+    </fragment>
 
 </navigation>

@@ -62,17 +62,15 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
                 }
                 updateMonthText(calendar)
 
-                // 동적으로 월 추가
-                if (position <= 2) { // 시작 부분에 가까워지면
+                if (position <= 2) {
                     calendarAdapter.addPastMonths(3)
                     viewPager.setCurrentItem(position + 3, false)
-                } else if (position >= calendarAdapter.itemCount - 3) { // 끝 부분에 가까워지면
+                } else if (position >= calendarAdapter.itemCount - 3) {
                     calendarAdapter.addFutureMonths(3)
                 }
             }
         })
 
-        // 초기 위치 설정
         val initialPosition = 6
         viewPager.setCurrentItem(initialPosition, false)
         updateMonthText(Calendar.getInstance())

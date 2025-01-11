@@ -8,7 +8,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="복약 기간을 알려주세요"
+        android:text="1회 투여용량을 알려주세요"
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -19,10 +19,10 @@
         android:layout_marginEnd="16dp" />
 
     <TextView
-        android:id="@+id/tv_start_date_label"
+        android:id="@+id/tv_medicine_volume_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="시작일"
+        android:text="투여용량"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
@@ -30,74 +30,65 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="20dp" />
 
+    <!-- 단위 라벨 -->
     <TextView
-        android:id="@+id/tv_period_label"
+        android:id="@+id/tv_medicine_unit_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="복약일수"
+        android:text="단위"
         android:textColor="@color/black"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/et_period"
+        app:layout_constraintStart_toStartOf="@+id/layout_medicine_unit"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-    <LinearLayout
-        android:id="@+id/layout_start_date"
+    <EditText
+        android:id="@+id/et_medicine_volume"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:orientation="horizontal"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_selector_edittext"
+        android:inputType="number"
         android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_start_date_label"
+        android:hint="숫자입력"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_medicine_volume_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/et_period">
+        app:layout_constraintEnd_toStartOf="@id/layout_medicine_unit" />
+
+    <LinearLayout
+        android:id="@+id/layout_medicine_unit"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_edittext_gray_3"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_medicine_unit_label"
+        app:layout_constraintBottom_toBottomOf="@+id/et_medicine_volume"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/et_medicine_volume">
 
         <TextView
-            android:id="@+id/tv_start_date"
+            android:id="@+id/tv_medicine_unit"
             android:layout_width="0dp"
             android:layout_height="22dp"
             android:layout_weight="1"
-            android:text="0000.00.00"
+            android:hint="단위선택"
             android:textSize="16sp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/black" />
 
         <ImageView
-            android:id="@+id/iv_start_date_dropdown"
+            android:id="@+id/iv_dropdown"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_dropdown"
             android:contentDescription="Dropdown icon" />
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/et_period"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_selector_edittext"
-        android:inputType="number"
-        android:imeOptions="actionDone"
-        android:padding="12dp"
-        android:hint="입력 전"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_period_label"
-        app:layout_constraintBottom_toBottomOf="@+id/layout_start_date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/layout_start_date" />
-
-    <LinearLayout
-        android:id="@+id/layout_end_date_chip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/et_period"
-        app:layout_constraintTop_toBottomOf="@+id/et_period" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
