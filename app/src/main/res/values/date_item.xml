@@ -11,10 +11,11 @@
 
     <!-- 날짜 아이콘 스타일 -->
     <style name="layout_calendar_icon">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">24dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:src">@drawable/ic_calendar</item>
     </style>
 
     <!-- 날짜 텍스트 스타일 -->

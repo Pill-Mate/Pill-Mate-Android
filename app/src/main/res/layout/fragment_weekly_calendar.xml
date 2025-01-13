@@ -11,10 +11,7 @@
 
         <ImageView
             android:id="@+id/ic_sun"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_1"
@@ -30,10 +27,7 @@
 
         <ImageView
             android:id="@+id/ic_mon"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_2"
@@ -49,10 +43,7 @@
 
         <ImageView
             android:id="@+id/ic_tue"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_3"
@@ -68,10 +59,7 @@
 
         <ImageView
             android:id="@+id/ic_wed"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_4"
@@ -87,10 +75,7 @@
 
         <ImageView
             android:id="@+id/ic_thu"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_5"
@@ -106,10 +91,7 @@
 
         <ImageView
             android:id="@+id/ic_fri"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_6"
@@ -125,10 +107,7 @@
 
         <ImageView
             android:id="@+id/ic_sat"
-            style="@style/layout_calendar_icon"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar" />
+            style="@style/layout_calendar_icon" />
 
         <TextView
             android:id="@+id/tv_7"
