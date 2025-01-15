@@ -130,24 +130,22 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     @RequiresApi(VERSION_CODES.O)
-    fun updateDateIcons(responseHome: ResponseHome) {
-        if (!isAdded || _binding == null) return
-
+    fun updateWeeklyIcons(responseData: WeeklyIconsData) {
         val icons = listOf(
             binding.icSun, binding.icMon, binding.icTue, binding.icWed, binding.icThu, binding.icFri, binding.icSat
         )
         val days = listOf(
-            responseHome.sunday,
-            responseHome.monday,
-            responseHome.tuesday,
-            responseHome.wednesday,
-            responseHome.thursday,
-            responseHome.friday,
-            responseHome.saturday
+            responseData.sunday,
+            responseData.monday,
+            responseData.tuesday,
+            responseData.wednesday,
+            responseData.thursday,
+            responseData.friday,
+            responseData.saturday
         )
 
         try {
-            icons.zip(days).forEachIndexed { _, (icon, isActive) ->
+            icons.zip(days).forEach { (icon, isActive) ->
                 val color = if (isActive) {
                     ContextCompat.getColor(requireContext(), R.color.main_blue_1) // 활성 상태 색상
                 } else {
@@ -166,7 +164,7 @@ class WeeklyCalendarFragment : Fragment() {
         val dayOfToday = today.dayOfWeek.value // 기준 날짜의 요일 구하기
         Log.e("Calendar", "dayOfToday: $dayOfToday")
 
-        if (dayOfToday == SUNDAY) { // 일요일일 경우 다음 리스트를 받아와야 함 (일요일을 가장 먼저 표시하기 때문)
+        if (dayOfToday == SUNDAY) { // 일요일일 경우 다음 리스트를 받아오기 (일요일을 가장 먼저 표시하기 때문에)
             for (day in MONDAY..SUNDAY) { // 일(오늘) ~ 그 다음주 토
                 dates.add(today.plusDays((day - 1).toLong()))
             }
@@ -202,7 +200,7 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     fun forceUpdate(date: LocalDate) {
-        resetUi() // 기존 UI 초기화
+        resetUi()
         for (i in textViewList.indices) {
             if (dates[i] == date) {
                 setSelectedDate(textViewList[i]) // 선택된 날짜 스타일 적용

@@ -3,6 +3,7 @@ package com.example.pill_mate_android
 import com.example.pill_mate_android.ui.login.LoginService
 import com.example.pill_mate_android.ui.login.OnBoardingService
 import com.example.pill_mate_android.ui.pillcheck.HomeService
+import com.example.pill_mate_android.ui.pillcheck.WeeklyCalendarService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -29,4 +30,5 @@ object ServiceCreator {
     val loginService: LoginService = userRetrofit.create(LoginService::class.java)
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
+    val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
 }

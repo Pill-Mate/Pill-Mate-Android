@@ -8,3 +8,8 @@ interface HomeService {
     @POST("/api/v1/home/scheduledata")
     fun getHomeData(@Body home: HomeData): Call<ResponseHome>
 }
+
+interface WeeklyCalendarService {
+    @POST("/api/v1/home/weekscroll")
+    fun getWeeklyCalendarData(@Body home: HomeData): Call<ResponseWeeklyCalendar>
+}

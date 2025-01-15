@@ -98,6 +98,8 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 if (!selectedDate.isBefore(startOfWeek) && !selectedDate.isAfter(startOfWeek.plusDays(6))) {
                     setSelectedDay(selectedDate)
                 }
+
+                fetchWeeklyCalendarData(startOfWeek)
             }
         })
     }
@@ -193,6 +195,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         textView.setTypeface(typeface, Typeface.NORMAL)
     }
 
+    // 홈 데이터 받아오기
     @RequiresApi(VERSION_CODES.O)
     private fun fetchHomeData(selectedDate: LocalDate) {
         val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
@@ -208,7 +211,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
                         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
-                        currentFragment?.updateDateIcons(it) // 데이터 전달
+                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
 
                         if (it.medicineList.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
@@ -225,6 +228,34 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             }
 
             override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    //주간 달력 스크롤 시 데이터 받아오기
+    @RequiresApi(VERSION_CODES.O)
+    private fun fetchWeeklyCalendarData(selectedDate: LocalDate) {
+        val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
+        val call: Call<ResponseWeeklyCalendar> = ServiceCreator.weeklyCalendarService.getWeeklyCalendarData(homeData)
+
+        call.enqueue(object : Callback<ResponseWeeklyCalendar> {
+            override fun onResponse(
+                call: Call<ResponseWeeklyCalendar>, response: Response<ResponseWeeklyCalendar>
+            ) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    responseData?.let {
+                        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
+                        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+
+                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
+
+                    } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseWeeklyCalendar>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
