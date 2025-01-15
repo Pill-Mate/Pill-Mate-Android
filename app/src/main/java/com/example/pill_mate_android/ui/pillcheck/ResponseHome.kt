@@ -1,17 +1,17 @@
 package com.example.pill_mate_android.ui.pillcheck
 
 data class ResponseHome(
-    val sunday: Boolean,
-    val monday: Boolean,
-    val tuesday: Boolean,
-    val wednesday: Boolean,
-    val thursday: Boolean,
-    val friday: Boolean,
-    val saturday: Boolean,
+    override val sunday: Boolean,
+    override val monday: Boolean,
+    override val tuesday: Boolean,
+    override val wednesday: Boolean,
+    override val thursday: Boolean,
+    override val friday: Boolean,
+    override val saturday: Boolean,
     val countAll: Int,
     val countLeft: Int,
     val medicineList: List<Data>
-) {
+) : WeeklyIconsData {
     data class Data(
         val medicineScheduleId: Long,
         val intakeCount: String,
