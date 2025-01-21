@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -45,6 +46,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         setupRecyclerView()
         setupNavigation()
         setupNextButton()
+        setupSkipButton()
     }
 
     private fun setupRecyclerView() {
@@ -63,6 +65,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         adapter.updateData(data)
         Log.d("MedicineRegistrationFragment", "RecyclerView updated: ${data.size} items")
         binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+
+    override fun showConfirmationBottomSheet() {
+        val bottomSheetFragment = ConfirmationBottomSheet()
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
     private fun setupNavigation() {
@@ -126,8 +133,38 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     presenter.updateView()
                     navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
                 }
+                is StepEightFragment -> if (currentFragment.isValidInput()) {
+                    currentFragment.saveData() // 데이터 저장
+                    showConfirmationBottomSheet { confirmed ->
+                        if (confirmed) {
+                            // 확인 시 수행할 작업 (예: 데이터 저장 완료 처리)
+                        }
+                    }
+                } else {
+                    showInvalidInputToast()
+                }
             }
         }
+    }
+
+    private fun setupSkipButton() {
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        navHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.btnSkip.visibility = if (destination.id == R.id.stepEightFragment) View.VISIBLE else View.GONE
+        }
+
+        binding.btnSkip.setOnClickListener {
+            showConfirmationBottomSheet { confirmed ->
+                if (confirmed) {
+                    // 확인 시 수행할 작업 (예: 다음 단계로 이동)
+                }
+            }
+        }
+    }
+
+    private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {
+        val bottomSheetFragment = ConfirmationBottomSheet.newInstance(onConfirmed)
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
 
     fun updateNextButtonState(isEnabled: Boolean) {
@@ -139,11 +176,14 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         dialog.show(childFragmentManager, "PillRegistrationDialog")
     }
 
-    // 키보드 숨기기
     fun hideKeyboard() {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val view = requireActivity().currentFocus ?: View(requireContext())
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun showInvalidInputToast() {
+        Toast.makeText(requireContext(), "모든 입력값을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

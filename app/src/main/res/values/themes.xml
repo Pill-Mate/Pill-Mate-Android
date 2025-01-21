@@ -15,10 +15,13 @@
     <style name="ButtonStyle1" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">48dp</item>
-        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
         <item name="android:background">@drawable/bg_select_button</item>
         <item name="android:textColor">@color/btn1_text_color</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:outlineProvider">none</item>
     </style>
 
     <style name="DayButtonStyle" parent="Widget.AppCompat.Button">
@@ -29,6 +32,8 @@
         <item name="android:textColor">@color/day_btn_text_color</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:outlineProvider">none</item>
     </style>
 
     <style name="TagTextStyle" parent="TextAppearance.MaterialComponents.Chip">

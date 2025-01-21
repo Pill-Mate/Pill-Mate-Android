@@ -84,10 +84,26 @@
         android:layout_height="wrap_content"
         android:text="다음"
         style="@style/ButtonStyle1"
+        app:layout_constraintBottom_toTopOf="@id/btn_skip"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"
+        app:layout_goneMarginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_skip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_btn_main_blue_2"
+        android:textColor="@color/main_blue_1"
+        android:text="건너뛰기"
+        android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/search_fragment_container"

@@ -79,9 +79,9 @@
         android:name="com.example.pill_mate_android.StepEightFragment"
         android:label="Step Eight"
         tools:layout="@layout/fragment_step_eight">
-<!--        <action-->
-<!--            android:id="@+id/action_stepSixFragment_to_stepSevenFragment"-->
-<!--            app:destination="@id/stepSevenFragment" />-->
+        <!--<action
+            android:id="@+id/action_stepEightFragment_to_nextFragment"
+            app:destination="@id/nextFragment" />-->
     </fragment>
 
 </navigation>
