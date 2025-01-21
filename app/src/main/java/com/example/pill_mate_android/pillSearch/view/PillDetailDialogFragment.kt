@@ -46,8 +46,8 @@ class PillDetailDialogFragment(
         }
 
         binding.btnYes.setOnClickListener {
-            pillItem?.ITEM_NAME?.let { pillName ->
-                presenter.onPillSelected(pillName) // 데이터 전달
+            pillItem?.let { item ->
+                presenter.onPillSelected(item) // `PillIdntfcItem` 객체 전달
             }
             bottomSheet.dismiss() // 바텀 시트 닫기
             dismiss() // 다이얼로그 닫기

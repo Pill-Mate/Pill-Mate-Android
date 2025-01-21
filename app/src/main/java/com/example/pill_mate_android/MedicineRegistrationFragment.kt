@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
-import com.example.pill_mate_android.pillSearch.model.MedicineRegistrationRepository
+import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.presenter.MedicineRegistrationPresenter
 import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.example.pill_mate_android.pillSearch.view.MedicineRegistrationView
@@ -37,7 +37,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMedicineRegistrationBinding.inflate(inflater, container, false)
-        presenter = MedicineRegistrationPresenter(MedicineRegistrationRepository(), this)
+        presenter = MedicineRegistrationPresenter(DataRepository, this)
         return binding.root
     }
 

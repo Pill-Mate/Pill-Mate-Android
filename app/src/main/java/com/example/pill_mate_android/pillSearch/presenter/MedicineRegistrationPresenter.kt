@@ -1,7 +1,7 @@
 package com.example.pill_mate_android.pillSearch.presenter
 
 import android.util.Log
-import com.example.pill_mate_android.pillSearch.model.MedicineRegistrationRepository
+import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.view.MedicineRegistrationView
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
@@ -10,11 +10,11 @@ import java.util.Calendar
 import java.util.Locale
 
 class MedicineRegistrationPresenter(
-    private val repository: MedicineRegistrationRepository,
+    private val repository: DataRepository,
     private val view: MedicineRegistrationView // View와의 연결
 ) {
 
-    fun getDisplayItems(): List<RegistrationData> {
+    private fun getDisplayItems(): List<RegistrationData> {
         val schedule = repository.getSchedule() ?: Schedule()
 
         return listOf(

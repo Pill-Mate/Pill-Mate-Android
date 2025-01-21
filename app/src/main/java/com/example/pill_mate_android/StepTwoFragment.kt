@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.example.pill_mate_android.databinding.FragmentStepTwoBinding
+import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenter
 import com.example.pill_mate_android.pillSearch.presenter.StepTwoPresenterImpl
 import com.example.pill_mate_android.pillSearch.presenter.MedicineRegistrationPresenter
@@ -46,9 +47,10 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         // FragmentResultListener 설정 (약물 검색 결과를 받음)
         setFragmentResultListener("pillSearchResultKey") { _, bundle ->
-            val selectedPillName = bundle.getString("selectedPillName") ?: ""
-            Log.d("PillSearchResult", "Received pill name: $selectedPillName")
-            handleSearchResult(selectedPillName)
+            val selectedPillItem = bundle.getParcelable<PillIdntfcItem>("selectedPillItem")
+            selectedPillItem?.let {
+                handleSearchResult(it) // PillIdntfcItem 객체 전달
+            }
         }
     }
 
@@ -75,14 +77,19 @@ class StepTwoFragment : Fragment(), StepTwoView {
         bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
     }
 
-    private fun handleSearchResult(selectedPillName: String) {
-        Log.d("SearchResult", "Selected pill name: $selectedPillName")
-        binding.etPillName.setText(selectedPillName) // EditText에 업데이트
-        binding.etPillName.clearFocus() // 포커스 해제
+    private fun handleSearchResult(selectedPillItem: PillIdntfcItem) {
+        Log.d("SearchResult", "Selected pill: ${selectedPillItem.ITEM_NAME}")
+
+        // StepTwoPresenter에 선택된 약물 객체 전달
+        presenter.onPillSelected(selectedPillItem)
+
+        // EditText에 약물 이름 업데이트
+        binding.etPillName.setText(selectedPillItem.ITEM_NAME)
+        binding.etPillName.clearFocus()
 
         // Presenter에 Schedule 데이터 업데이트 요청
         registrationPresenter.updateSchedule { schedule ->
-            schedule.copy(medicine_name = selectedPillName)
+            schedule.copy(medicine_name = selectedPillItem.ITEM_NAME)
         }
     }
 
