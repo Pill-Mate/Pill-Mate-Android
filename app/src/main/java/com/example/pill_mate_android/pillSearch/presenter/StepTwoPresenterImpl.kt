@@ -19,9 +19,6 @@ class StepTwoPresenterImpl(
 
         // DataRepository에 저장
         DataRepository.saveMedicine(medicine)
-
-        val savedMedicine = DataRepository.getMedicine()
-        Log.d("StepTwoPresenterImpl", "Saved Medicine: $savedMedicine")
     }
 
     override fun handleTextChange(input: String) {
@@ -39,7 +36,8 @@ class StepTwoPresenterImpl(
             efficacy = "",
             side_effect = "",
             caution = "",
-            storage = ""
+            storage = "",
+            entp_name = pillItem.ENTP_NAME
         )
     }
 }

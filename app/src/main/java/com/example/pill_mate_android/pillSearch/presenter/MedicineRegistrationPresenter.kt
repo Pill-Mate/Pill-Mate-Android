@@ -67,10 +67,10 @@ class MedicineRegistrationPresenter(
 
     fun updateSchedule(update: (Schedule) -> Schedule) {
         val currentSchedule = repository.getSchedule() ?: Schedule()
+        Log.d("MedicineRegistrationPresenter", "Current schedule before update: $currentSchedule")
         val updatedSchedule = update(currentSchedule)
         repository.saveSchedule(updatedSchedule)
-
-        Log.d("MedicineRegistrationPresenter", "Updated schedule: $updatedSchedule")
+        Log.d("MedicineRegistrationPresenter", "Updated schedule saved: ${repository.getSchedule()}")
     }
 
     fun updateView() {

@@ -89,7 +89,10 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         // Presenter에 Schedule 데이터 업데이트 요청
         registrationPresenter.updateSchedule { schedule ->
-            schedule.copy(medicine_name = selectedPillItem.ITEM_NAME)
+            schedule.copy(
+                medicine_name = selectedPillItem.ITEM_NAME,
+                medicine_id = selectedPillItem.ITEM_SEQ.toIntOrNull() ?: 0
+            )
         }
     }
 

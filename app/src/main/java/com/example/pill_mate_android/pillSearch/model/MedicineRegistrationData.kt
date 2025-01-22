@@ -19,7 +19,8 @@ data class Medicine(
     val efficacy: String,        // 효능
     val side_effect: String,     // 부작용
     val caution: String,         // 주의사항
-    val storage: String          // 보관 방법
+    val storage: String,         // 보관 방법
+    val entp_name: String        // 제약회사
 )
 
 data class Schedule(

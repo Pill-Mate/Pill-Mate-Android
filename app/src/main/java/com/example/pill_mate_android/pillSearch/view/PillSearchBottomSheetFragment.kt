@@ -90,11 +90,8 @@ class PillSearchBottomSheetFragment(
             val dialog = PillDetailDialogFragment.newInstance(stepTwoPresenter, this, pillItem)
             dialog.show(parentFragmentManager, "PillDetailDialog")
 
-            val result = Bundle().apply {
-                putString("selectedPillName", pillItem.ITEM_NAME)
-            }
-            Log.d("PillSearchBottomSheet", "Setting FragmentResult with pill name: ${pillItem.ITEM_NAME}")
-            parentFragmentManager.setFragmentResult("pillSearchResultKey", result)
+            // 아이템 클릭 시 데이터를 StepTwoFragment로 전달
+            sendPillResult(pillItem)
         })
 
         binding.ivExit.setOnClickListener {
@@ -136,6 +133,15 @@ class PillSearchBottomSheetFragment(
 
             override fun afterTextChanged(text: Editable?) {}
         })
+    }
+
+    private fun sendPillResult(pillItem: PillIdntfcItem) {
+        val result = Bundle().apply {
+            putParcelable("selectedPillItem", pillItem)
+        }
+        Log.d("PillSearchBottomSheet", "Sending selected pill: ${pillItem.ITEM_NAME}")
+        parentFragmentManager.setFragmentResult("pillSearchResultKey", result)
+        dismiss() // 선택 후 바텀 시트 닫기
     }
 
     private fun updateUnderline(colorRes: Int) {
