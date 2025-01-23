@@ -79,9 +79,25 @@
         android:name="com.example.pill_mate_android.StepEightFragment"
         android:label="Step Eight"
         tools:layout="@layout/fragment_step_eight">
-        <!--<action
-            android:id="@+id/action_stepEightFragment_to_nextFragment"
-            app:destination="@id/nextFragment" />-->
+        <action
+            android:id="@+id/action_stepEightFragment_to_loadingFragment"
+            app:destination="@id/loadingFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.pill_mate_android.LoadingFragment"
+        android:label="Loading Screen"
+        tools:layout="@layout/fragment_loading">
+        <action
+            android:id="@+id/action_loadingFragment_to_stepNineFragment"
+            app:destination="@id/stepNineFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepNineFragment"
+        android:name="com.example.pill_mate_android.StepNineFragment"
+        android:label="Schedule Screen"
+        tools:layout="@layout/fragment_step_nine" />
 
 </navigation>

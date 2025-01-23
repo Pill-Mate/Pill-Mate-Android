@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
 import com.example.pill_mate_android.pillSearch.model.DataRepository
@@ -137,7 +138,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     currentFragment.saveData() // 데이터 저장
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
-                            // 확인 시 수행할 작업 (예: 데이터 저장 완료 처리)
+                            findNavController().navigate(R.id.action_stepEightFragment_to_loadingFragment)
                         }
                     }
                 } else {
@@ -148,15 +149,27 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     private fun setupSkipButton() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
-        navHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
+        val navController = navHostFragment?.navController
+
+        navController?.addOnDestinationChangedListener { _, destination, _ ->
             binding.btnSkip.visibility = if (destination.id == R.id.stepEightFragment) View.VISIBLE else View.GONE
         }
 
         binding.btnSkip.setOnClickListener {
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
-                    // 확인 시 수행할 작업 (예: 다음 단계로 이동)
+                    try {
+                        // 현재 목적지가 stepEightFragment인 경우에만 네비게이션 수행
+                        if (navController?.currentDestination?.id == R.id.stepEightFragment) {
+                            navController.navigate(R.id.action_stepEightFragment_to_loadingFragment)
+                        } else {
+                            Log.e("MedicineRegistrationFragment", "Invalid navigation state")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MedicineRegistrationFragment", "Navigation failed", e)
+                        Toast.makeText(context, "네비게이션 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -164,7 +177,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {
         val bottomSheetFragment = ConfirmationBottomSheet.newInstance(onConfirmed)
-        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
     }
 
     fun updateNextButtonState(isEnabled: Boolean) {

@@ -47,7 +47,7 @@
                 android:id="@+id/tv_pill_class"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_text_gray_radius_4"
+                android:background="@drawable/bg_text_gray_3_radius_4"
                 android:text="약물분류명"
                 android:textColor="@color/gray_1"
                 android:textSize="12sp"

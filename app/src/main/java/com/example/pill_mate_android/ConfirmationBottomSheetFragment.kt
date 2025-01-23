@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.RoundedCornersTransformation
@@ -42,9 +43,11 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         loadScheduleData()
 
         binding.btnYes.setOnClickListener {
+            findNavController().navigate(R.id.action_stepEightFragment_to_loadingFragment)
             onConfirmed?.invoke(true)
             dismiss()
         }
+
         binding.btnNo.setOnClickListener {
             onConfirmed?.invoke(false)
             dismiss()
