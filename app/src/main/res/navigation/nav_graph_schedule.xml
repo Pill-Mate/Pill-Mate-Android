@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/loadingFragment">
+
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.pill_mate_android.LoadingFragment"
+        tools:layout="@layout/fragment_loading">
+        <action
+            android:id="@+id/action_loadingFragment_to_stepNineFragment"
+            app:destination="@id/stepNineFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepNineFragment"
+        android:name="com.example.pill_mate_android.StepNineFragment"
+        tools:layout="@layout/fragment_step_nine" />
+</navigation>

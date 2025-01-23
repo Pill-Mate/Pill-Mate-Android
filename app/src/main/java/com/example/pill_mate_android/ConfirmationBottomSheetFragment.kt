@@ -1,15 +1,17 @@
 package com.example.pill_mate_android
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.pill_mate_android.databinding.FragmentBottomSheetConfirmBinding
 import com.example.pill_mate_android.pillSearch.model.DataRepository
@@ -17,10 +19,9 @@ import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.example.pill_mate_android.pillSearch.view.ConfirmationDataAdapter
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ConfirmationBottomSheet : BottomSheetDialogFragment() {
+
     private var _binding: FragmentBottomSheetConfirmBinding? = null
     private val binding get() = _binding!!
     private var onConfirmed: ((Boolean) -> Unit)? = null
@@ -43,7 +44,7 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         loadScheduleData()
 
         binding.btnYes.setOnClickListener {
-            findNavController().navigate(R.id.action_stepEightFragment_to_loadingFragment)
+            navigateToScheduleActivity() // ScheduleActivity로 전환
             onConfirmed?.invoke(true)
             dismiss()
         }
@@ -63,7 +64,6 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.skipCollapsed = true
-                //behavior.isDraggable = false
             }
         }
         return dialog
@@ -74,9 +74,8 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         binding.rvData.layoutManager = LinearLayoutManager(requireContext())
         binding.rvData.adapter = adapter
 
-        // Divider 추가
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3)
-        val dividerHeight = 1f // 1dp
+        val dividerHeight = 1f
         val marginStart = 24f
         val marginEnd = 24f
         binding.rvData.addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
@@ -94,11 +93,9 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             binding.ivPillImage.load(imageUrl) {
                 transformations(RoundedCornersTransformation(20f))
                 crossfade(true)
-                //placeholder(R.drawable.ic_default_pill)
                 error(R.drawable.ic_default_pill)
             }
         } ?: run {
-            // 이미지 URL 없을 경우 기본 이미지 설정
             binding.ivPillImage.setImageResource(R.drawable.ic_default_pill)
         }
     }
@@ -121,6 +118,12 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             RegistrationData("복약기간", "${schedule.start_date} ~ (${schedule.intake_period}일)").takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
             RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}").takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() }
         )
+    }
+
+    private fun navigateToScheduleActivity() {
+        val intent = Intent(requireContext(), ScheduleActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish() // MedicineRegistrationActivity 종료
     }
 
     override fun onDestroyView() {

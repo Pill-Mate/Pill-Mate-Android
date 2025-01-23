@@ -35,7 +35,7 @@ class LoadingFragment : Fragment() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             findNavController().navigate(R.id.action_loadingFragment_to_stepNineFragment)
-        }, 3000) //3초
+        }, 3000) // 3초 후 이동
     }
 
     override fun onDestroyView() {

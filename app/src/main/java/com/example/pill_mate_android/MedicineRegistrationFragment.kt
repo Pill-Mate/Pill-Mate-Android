@@ -1,6 +1,7 @@
 package com.example.pill_mate_android
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -138,7 +139,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     currentFragment.saveData() // 데이터 저장
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
-                            findNavController().navigate(R.id.action_stepEightFragment_to_loadingFragment)
+                            navigateToScheduleActivity() // ScheduleActivity로 전환
                         }
                     }
                 } else {
@@ -159,20 +160,16 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         binding.btnSkip.setOnClickListener {
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
-                    try {
-                        // 현재 목적지가 stepEightFragment인 경우에만 네비게이션 수행
-                        if (navController?.currentDestination?.id == R.id.stepEightFragment) {
-                            navController.navigate(R.id.action_stepEightFragment_to_loadingFragment)
-                        } else {
-                            Log.e("MedicineRegistrationFragment", "Invalid navigation state")
-                        }
-                    } catch (e: Exception) {
-                        Log.e("MedicineRegistrationFragment", "Navigation failed", e)
-                        Toast.makeText(context, "네비게이션 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
+                    navigateToScheduleActivity() // ScheduleActivity로 전환
                 }
             }
         }
+    }
+
+    private fun navigateToScheduleActivity() {
+        val intent = Intent(requireContext(), ScheduleActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish() // MedicineRegistrationActivity 종료
     }
 
     private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {
