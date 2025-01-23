@@ -49,6 +49,16 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         setupNavigation()
         setupNextButton()
         setupSkipButton()
+
+        // 현재 프래그먼트를 기반으로 ProgressBar 설정
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        val currentFragment = navHostFragment.navController.currentDestination?.id
+
+        if (currentFragment == R.id.stepEightFragment) {
+            binding.progressBar.visibility = View.GONE // StepEightFragment에서는 ProgressBar 숨김
+        } else {
+            binding.progressBar.visibility = View.VISIBLE
+        }
     }
 
     private fun setupRecyclerView() {
@@ -170,6 +180,14 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         val intent = Intent(requireContext(), ScheduleActivity::class.java)
         startActivity(intent)
         requireActivity().finish() // MedicineRegistrationActivity 종료
+    }
+
+    fun navigateToStepEight() {
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
+        val navController = navHostFragment?.navController
+
+        // 스텝8로 이동
+        navController?.navigate(R.id.stepEightFragment)
     }
 
     private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {

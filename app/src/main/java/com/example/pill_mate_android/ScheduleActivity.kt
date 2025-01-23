@@ -19,16 +19,25 @@ class ScheduleActivity : AppCompatActivity() {
             val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
                     as NavHostFragment
             val navController = navHostFragment.navController
-
         }
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        // Step 9에서 뒤로가기 시 MedicineRegistrationActivity로 이동
-        val intent = Intent(this, MedicineRegistrationActivity::class.java)
-        intent.putExtra("destination", "step8")
-        startActivity(intent)
-        finish()
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+
+        when (currentFragment) {
+            is StepNineFragment -> {
+                val intent = Intent(this, MedicineRegistrationActivity::class.java).apply {
+                    putExtra("destination", "step8")
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+                startActivity(intent)
+                finish()
+            }
+            else -> {
+                super.onBackPressed()
+            }
+        }
     }
 }

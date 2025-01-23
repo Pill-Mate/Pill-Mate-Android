@@ -11,10 +11,10 @@ class ScheduleAdapter(private var scheduleList: List<ScheduleItem>) :
     RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     data class ScheduleItem(
-        val iconRes: Int, // Drawable resource for the icon
-        val label: String, // Time group label (e.g., 아침)
-        val time: String, // Time (e.g., 오전 8:00)
-        val mealTime: String? = null // Optional tag (e.g., 식전 30분)
+        val iconRes: Int, // 시간대 아이콘
+        val label: String, // 시간대 이름 (아침, 공복 등)
+        val time: String, // 시간 (예: 오전 8:00)
+        val mealTime: String? = null // 추가 정보 (예: 식전 30분, 공복 등)
     )
 
     inner class ScheduleViewHolder(private val binding: ItemScheduleBinding) :
@@ -24,7 +24,11 @@ class ScheduleAdapter(private var scheduleList: List<ScheduleItem>) :
             binding.ivIcon.setImageResource(item.iconRes)
             binding.tvLabel.text = item.label
             binding.tvTime.text = item.time
-            if (item.mealTime != null) {
+
+            // 공복과 취침전의 경우 mealTime을 숨김
+            if (item.label == "공복" || item.label == "취침전") {
+                binding.tvMealTime.visibility = View.GONE
+            } else if (item.mealTime != null) {
                 binding.tvMealTime.text = item.mealTime
                 binding.tvMealTime.visibility = View.VISIBLE
             } else {

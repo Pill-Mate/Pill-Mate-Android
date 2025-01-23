@@ -16,5 +16,23 @@
     <fragment
         android:id="@+id/stepNineFragment"
         android:name="com.example.pill_mate_android.StepNineFragment"
-        tools:layout="@layout/fragment_step_nine" />
+        tools:layout="@layout/fragment_step_nine" >
+        <action
+        android:id="@+id/action_stepNineFragment_to_stepTenFragment"
+        app:destination="@id/stepTenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepTenFragment"
+        android:name="com.example.pill_mate_android.StepTenFragment"
+        tools:layout="@layout/fragment_step_ten" >
+        <action
+            android:id="@+id/action_stepTenFragment_to_stepElevenFragment"
+            app:destination="@id/stepElevenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepElevenFragment"
+        android:name="com.example.pill_mate_android.StepElevenFragment"
+        tools:layout="@layout/fragment_step_eleven" />
 </navigation>

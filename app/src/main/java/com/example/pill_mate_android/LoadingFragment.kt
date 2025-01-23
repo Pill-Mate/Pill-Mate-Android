@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.example.pill_mate_android.databinding.FragmentLoadingBinding
 
 class LoadingFragment : Fragment() {
@@ -34,7 +35,13 @@ class LoadingFragment : Fragment() {
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_loadingFragment_to_stepNineFragment)
+            findNavController().navigate(
+                R.id.action_loadingFragment_to_stepNineFragment,
+                null,
+                navOptions {
+                    popUpTo(R.id.loadingFragment) { inclusive = true } // 백 스택에서 제거
+                }
+            )
         }, 3000) // 3초 후 이동
     }
 
