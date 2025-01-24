@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
@@ -212,15 +213,27 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
                         currentFragment?.updateWeeklyIcons(it) // 데이터 전달
+                        // 데이터를 그룹화하여 RecyclerView에 설정
+                        setupIntakeCountRecyclerView(it)
 
                         if (it.medicineList.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
                             with(binding) {
                                 layoutNone.visibility = View.VISIBLE
+                                layoutProgressbar.visibility = View.INVISIBLE
+                                intakeCountRecyclerView.visibility = View.INVISIBLE
                             }
                         } else {
                             with(binding) {
                                 layoutNone.visibility = View.INVISIBLE
+                                layoutProgressbar.visibility = View.VISIBLE
+                                intakeCountRecyclerView.visibility = View.VISIBLE
+                                tvNum.text = it.countAll.toString()
+                                if (it.countLeft == 0) {
+                                    tvRemain.text = "복약 완료"
+                                } else {
+                                    tvRemain.text = "${it.countLeft}회 남음"
+                                }
                             }
                         }
                     } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
@@ -259,6 +272,33 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
+    }
+
+    private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터를 그룹화
+        val groupedMedicines = groupMedicines(responseHome)
+
+        // intakeCount RecyclerView 설정
+        val intakeCountAdapter = IntakeCountAdapter(groupedMedicines)
+        binding.intakeCountRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = intakeCountAdapter
+        }
+    }
+
+    private fun groupMedicines(responseHome: ResponseHome): List<GroupedMedicine> { // intakeCount 기준으로 그룹화
+        val intakeGroups = responseHome.medicineList.groupBy { it.intakeCount }
+
+        // 각 intakeCount 그룹 내에서 intakeTime으로 그룹화
+        return intakeGroups.map { (intakeCount, medicines) ->
+            val timeGroups = medicines.groupBy { it.intakeTime }.map { (time, medicinesAtTime) ->
+                TimeGroup(
+                    intakeTime = time, medicines = medicinesAtTime
+                )
+            }
+            GroupedMedicine(
+                intakeCount = intakeCount, times = timeGroups
+            )
+        }
     }
 
     @RequiresApi(VERSION_CODES.O)
