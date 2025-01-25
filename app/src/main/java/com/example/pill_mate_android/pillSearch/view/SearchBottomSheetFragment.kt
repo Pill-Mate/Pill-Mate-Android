@@ -88,9 +88,9 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
                 binding.etSearch.setSelection(selectedTerm.length)
                 presenter.search(selectedTerm, searchType)
             },
-            onSearchResultClick = { name, phone ->
+            onSearchResultClick = { name, phone, address ->
                 sharedPreferencesHelper.saveSearchTerm(name)
-                saveDataToRepository(name, phone)
+                saveDataToRepository(name, phone, address)
                 dismiss()
             },
             onDeleteClick = { term ->
@@ -168,22 +168,24 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
         }
     }
 
-    private fun saveDataToRepository(name: String, phone: String) {
+    private fun saveDataToRepository(name: String, phone: String, address: String) {
         when (searchType) {
             SearchType.PHARMACY -> {
                 DataRepository.pharmacyData = Pharmacy(
                     pharmacyName = name,
-                    pharmacyPhone = phone
+                    pharmacyPhone = phone,
+                    pharmacyAddress = address
                 )
             }
             SearchType.HOSPITAL -> {
                 DataRepository.hospitalData = Hospital(
                     hospitalName = name,
-                    hospitalPhone = phone
+                    hospitalPhone = phone,
+                    hospitalAddress = address
                 )
             }
         }
-        Log.d("SearchBottomSheet", "Saved $name with phone $phone to DataRepository")
+        Log.d("SearchBottomSheet", "Saved $name with phone $phone and address $address to DataRepository")
     }
 
     override fun showPillInfo(pills: List<PillInfoItem>) {

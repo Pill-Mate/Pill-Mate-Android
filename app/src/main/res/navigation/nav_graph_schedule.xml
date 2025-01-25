@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,21 +10,42 @@
         <action
             android:id="@+id/action_loadingFragment_to_stepNineFragment"
             app:destination="@id/stepNineFragment" />
+        <action
+            android:id="@+id/action_loadingFragment_to_loadingConflictFragment"
+            app:destination="@id/loadingConflictFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loadingConflictFragment"
+        android:name="com.example.pill_mate_android.LoadingConflictFragment"
+        tools:layout="@layout/fragment_loading_conflict">
+        <action
+            android:id="@+id/action_loadingConflictFragment_to_medicineConflictFragment"
+            app:destination="@id/medicineConflictFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/medicineConflictFragment"
+        android:name="com.example.pill_mate_android.MedicineConflictFragment"
+        tools:layout="@layout/fragment_medicine_conflict">
+        <action
+            android:id="@+id/action_medicineConflictFragment_to_stepNineFragment"
+            app:destination="@id/stepNineFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/stepNineFragment"
         android:name="com.example.pill_mate_android.StepNineFragment"
-        tools:layout="@layout/fragment_step_nine" >
+        tools:layout="@layout/fragment_step_nine">
         <action
-        android:id="@+id/action_stepNineFragment_to_stepTenFragment"
-        app:destination="@id/stepTenFragment" />
+            android:id="@+id/action_stepNineFragment_to_stepTenFragment"
+            app:destination="@id/stepTenFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/stepTenFragment"
         android:name="com.example.pill_mate_android.StepTenFragment"
-        tools:layout="@layout/fragment_step_ten" >
+        tools:layout="@layout/fragment_step_ten">
         <action
             android:id="@+id/action_stepTenFragment_to_stepElevenFragment"
             app:destination="@id/stepElevenFragment" />

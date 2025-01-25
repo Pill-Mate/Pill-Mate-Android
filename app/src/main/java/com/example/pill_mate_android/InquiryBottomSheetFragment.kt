@@ -1,0 +1,78 @@
+package com.example.pill_mate_android
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.example.pill_mate_android.databinding.FragmentBottomSheetInquiryBinding
+import com.example.pill_mate_android.pillSearch.model.Hospital
+import com.example.pill_mate_android.pillSearch.model.Pharmacy
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
+class InquiryBottomSheetFragment(
+    private val pharmacy: Pharmacy,
+    private val hospital: Hospital?
+) : BottomSheetDialogFragment() {
+
+    private var _binding: FragmentBottomSheetInquiryBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentBottomSheetInquiryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupUI()
+    }
+
+    private fun setupUI() {
+        // 약국 정보 설정
+        binding.tvPharmacyName.text = pharmacy.pharmacyName
+        binding.tvPharmacyAddress.text = pharmacy.pharmacyAddress
+        binding.layoutCallPharmacy.setOnClickListener {
+            // 약국 통화 이벤트 처리
+            makeCall(pharmacy.pharmacyPhone)
+        }
+
+        // 병원 정보 설정 (병원이 없으면 GONE 처리)
+        if (hospital == null) {
+            binding.layoutHospital.visibility = View.GONE
+        } else {
+            binding.tvHospitalName.text = hospital.hospitalName
+            binding.tvHospitalAddress.text = hospital.hospitalAddress
+            binding.layoutCallHospital.setOnClickListener {
+                // 병원 통화 이벤트 처리
+                makeCall(hospital.hospitalPhone)
+            }
+        }
+
+        // 닫기 버튼 처리
+        binding.ivClose.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    private fun makeCall(phoneNumber: String) {
+        // 전화 연결 로직 (Intent 사용)
+        val intent = android.content.Intent(android.content.Intent.ACTION_DIAL).apply {
+            data = android.net.Uri.parse("tel:$phoneNumber")
+        }
+        startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance(pharmacy: Pharmacy, hospital: Hospital?): InquiryBottomSheetFragment {
+            return InquiryBottomSheetFragment(pharmacy, hospital)
+        }
+    }
+}

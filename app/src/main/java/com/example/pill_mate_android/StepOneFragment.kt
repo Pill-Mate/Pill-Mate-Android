@@ -83,7 +83,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     private fun openSearchBottomSheet(searchType: SearchType) {
         val bottomSheetFragment = SearchBottomSheetFragment(searchType) {
-            // 🛠️ BottomSheet가 닫힐 때 호출되는 콜백
+            // BottomSheet가 닫힐 때 호출되는 콜백
             updateEditTextFromDataRepository()
         }
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)

@@ -1,12 +1,50 @@
 package com.example.pill_mate_android.pillSearch.model
 
+import java.net.URI
+import java.util.Date
+
+data class MedicineRegisterRequest(
+    val pharmacyName: String?,              // 약국 이름
+    val pharmacyPhone: String?,             // 약국 전화번호
+    val pharmacyAddress: String?,           // 약국 주소
+    val hospitalName: String?,              // 병원 이름
+    val hospitalPhone: String?,             // 병원 전화번호
+    val hospitalAddress: String?,           // 병원 주소
+    val identifyNumber: String,             // 식별 번호
+    val medicineName: String,               // 약물 이름
+    val ingredient: String,                 // 성분
+    val ingredientUnit: String,             // 성분 단위 (mg, ml 등)
+    val ingredientAmount: Float,            // 성분 양
+    val medicineImage: URI?,                // 약물 이미지 URL
+    val entpName: String,                   // 제약회사 이름
+    val classname: String,                  // 약물 분류명
+    val efficacy: String?,                  // 효능
+    val sideEffect: String?,                // 부작용
+    val caution: String?,                   // 주의사항
+    val storage: String?,                   // 보관 방법
+    val medicineId: Long,                   // 약물 ID
+    val intakeCounts: Set<String>,          // 복용 횟수 (아침/점심/저녁)
+    val intakeFrequencys: Set<String>,      // 복용 요일 (월/화/수)
+    val mealUnit: String,                   // 식사 단위 (예: 식전/식후)
+    val mealTime: Int,                      // 식사 시간 (분 단위)
+    val eatUnit: String,                    // 1회 투여 단위 (예: ml, 정 등)
+    val eatCount: Int,                      // 1회 투여량
+    val startDate: Date,                    // 복용 시작일
+    val intakePeriod: Int,                  // 복용 기간
+    val medicineVolume: Float,              // 약물 용량
+    val isAlarm: Boolean,                   // 알람 여부
+    val cautionTypes: Set<String>?          // 주의사항 타입
+)
+
 data class Hospital(
     val hospitalName: String,
+    val hospitalAddress: String,
     val hospitalPhone: String
 )
 
 data class Pharmacy(
     val pharmacyName: String,
+    val pharmacyAddress: String,
     val pharmacyPhone: String
 )
 

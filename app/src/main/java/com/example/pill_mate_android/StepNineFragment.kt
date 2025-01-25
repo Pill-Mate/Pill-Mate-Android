@@ -9,10 +9,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.pill_mate_android.databinding.FragmentStepNineBinding
+import com.example.pill_mate_android.pillSearch.api.ServerApiClient
 import com.example.pill_mate_android.pillSearch.model.DataRepository
+import com.example.pill_mate_android.pillSearch.model.DataRepository.createMedicineRegisterRequest
+import com.example.pill_mate_android.pillSearch.model.MedicineRegisterRequest
 import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.util.VerticalSpaceItemDecoration
 import com.example.pill_mate_android.pillSearch.view.ScheduleAdapter
+import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialogListener {
 
@@ -46,9 +53,8 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
         val spacingInPixels = resources.getDimensionPixelSize(R.dimen.schedule_item_spacing) // 12dp
         binding.rvSchedule.addItemDecoration(VerticalSpaceItemDecoration(spacingInPixels))
 
-        // 스위치 상태 변경 처리 (기본값은 켜진 상태)
+        // 스위치 상태 변경 처리
         binding.switchAlarm.isChecked = true // 기본값 설정
-
         binding.switchAlarm.setOnCheckedChangeListener { _, isChecked ->
             if (!isChecked) {
                 showAlarmSwitchDialog()
@@ -59,13 +65,47 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
         // 뒤로가기 버튼 클릭 처리
         binding.ivBack.setOnClickListener {
-            requireActivity().onBackPressed() // ScheduleActivity의 onBackPressed 호출
+            requireActivity().onBackPressed()
         }
 
         // 등록 버튼 클릭 처리
         binding.btnRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_stepNineFragment_to_stepTenFragment)
+            handleRegister()
         }
+    }
+
+    private fun handleRegister() {
+        val request = createMedicineRegisterRequest()
+        if (request != null) {
+            sendRegisterRequest(request)
+        } else {
+            showErrorMessage("등록에 필요한 데이터가 부족합니다.")
+        }
+    }
+
+    private fun sendRegisterRequest(request: MedicineRegisterRequest) {
+        val serverApiService = ServerApiClient.serverApiService
+        serverApiService.registerMedicine(request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    navigateToNextStep()
+                } else {
+                    showErrorMessage("등록에 실패했습니다. 다시 시도해주세요.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                showErrorMessage("네트워크 오류가 발생했습니다.")
+            }
+        })
+    }
+
+    private fun navigateToNextStep() {
+        findNavController().navigate(R.id.action_stepNineFragment_to_stepTenFragment)
+    }
+
+    private fun showErrorMessage(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     private fun showAlarmSwitchDialog() {
@@ -84,7 +124,6 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun loadMedicineData() {
-        // 약물 데이터를 불러와 UI에 표시
         val medicine = DataRepository.getMedicine()
         val schedule = DataRepository.getSchedule()
 
@@ -92,10 +131,9 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
             binding.tvMedicineName.text = medicine.medicine_name
             binding.tvMedicineDose.text = "${schedule.eat_count}${schedule.eat_unit}"
             binding.ivMedicineImage.load(medicine.image) {
-                error(R.drawable.ic_default_pill) // 이미지 로드 실패 시 기본 이미지 표시
+                error(R.drawable.ic_default_pill)
             }
         } else {
-            // 약물 또는 스케줄 데이터가 없는 경우 처리
             binding.tvMedicineName.text = "약물 없음"
             binding.tvMedicineDose.text = ""
             binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)
@@ -103,7 +141,6 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun loadScheduleData() {
-        // 스케줄 데이터를 불러와 RecyclerView에 표시
         val schedule = DataRepository.getSchedule()
         if (schedule != null) {
             val scheduleList = createScheduleList(schedule)
@@ -112,37 +149,26 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun createScheduleList(schedule: Schedule): List<ScheduleAdapter.ScheduleItem> {
-        // 스케줄 데이터를 변환하여 리스트 형태로 반환
         val result = mutableListOf<ScheduleAdapter.ScheduleItem>()
-
         val timeGroups = schedule.intake_count.split(",")
         for (group in timeGroups) {
-            val time = "오전 8:00" // 온보딩 데이터 가져와서 설정해야함
+            val time = "오전 8:00" // 서버에서 가져와야해
             val mealTime = if (schedule.meal_unit.isNotEmpty()) "${schedule.meal_unit} ${schedule.meal_time}분" else null
-
-            // 시간대에 따라 아이콘 설정
             val iconRes = when (group.trim()) {
                 "아침" -> R.drawable.ic_breakfast
                 "점심" -> R.drawable.ic_lunch
                 "저녁" -> R.drawable.ic_dinner
                 "공복" -> R.drawable.ic_emptystomach
                 "취침전" -> R.drawable.ic_bedtime
-                else -> R.drawable.ic_breakfast // 기본 아이콘
+                else -> R.drawable.ic_breakfast
             }
 
-            result.add(ScheduleAdapter.ScheduleItem(
-                iconRes = iconRes,
-                label = group.trim(),
-                time = time,
-                mealTime = mealTime
-            ))
+            result.add(ScheduleAdapter.ScheduleItem(iconRes, group.trim(), time, mealTime))
         }
-
         return result
     }
 
     private fun updateAlarmState(isEnabled: Boolean) {
-        // 알람 상태 변경 처리
         val schedule = DataRepository.getSchedule()
         if (schedule != null) {
             val updatedSchedule = schedule.copy(is_alarm = isEnabled)
