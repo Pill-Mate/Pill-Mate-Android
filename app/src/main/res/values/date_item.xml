@@ -15,7 +15,7 @@
         <item name="android:layout_height">24dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:src">@drawable/ic_calendar</item>
+        <item name="android:src">@drawable/ic_weekly_calendar</item>
     </style>
 
     <!-- 날짜 텍스트 스타일 -->
