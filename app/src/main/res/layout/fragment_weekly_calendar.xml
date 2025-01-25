@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.pillcheck.WeeklyCalendarFragment">
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_sun"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_1"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_mon"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="2" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_tue"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_3"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="3" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_wed"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_4"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="4" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_thu"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_5"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="5" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_fri"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_6"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="6" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/layout_calendar_date_item"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_sat"
+            style="@style/layout_calendar_icon" />
+
+        <TextView
+            android:id="@+id/tv_7"
+            style="@style/tv_calendar_date_item"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            tools:text="7" />
+    </LinearLayout>
+
+</LinearLayout>

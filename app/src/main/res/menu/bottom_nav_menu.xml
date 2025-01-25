@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_check"
+        android:title="@string/pill_check" />
+    <item
+        android:id="@+id/menu_stats"
+        android:title="@string/pill_stats" />
+    <item
+        android:id="@+id/menu_edit"
+        android:title="@string/pill_edit" />
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/pill_search" />
+    <item
+        android:id="@+id/menu_mypage"
+        android:title="@string/my_page" />
+</menu>
