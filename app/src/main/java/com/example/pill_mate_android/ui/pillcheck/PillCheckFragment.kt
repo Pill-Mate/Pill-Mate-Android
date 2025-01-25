@@ -243,6 +243,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                                     tvRemain.text = "${it.countLeft}회 남음"
                                 }
                             }
+                            setupProgressBar(it.countAll, it.countLeft)
                         }
                     } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
                 }
@@ -314,6 +315,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                                     tvRemain.text = "${it.countLeft}회 남음"
                                 }
                             }
+                            setupProgressBar(it.countAll, it.countLeft)
                         }
                     } ?: Log.e("데이터 전송 실패", "데이터 전송에 실패했습니다.")
                 }
@@ -359,6 +361,12 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 intakeCount = intakeCount, times = timeGroups
             )
         }
+    }
+
+    // 프로그래스바 값 설정
+    private fun setupProgressBar(countAll: Int, countLeft: Int) {
+        binding.pbNumberOfMedications.max = countAll
+        binding.pbNumberOfMedications.progress = countAll - countLeft
     }
 
     @RequiresApi(VERSION_CODES.O)
