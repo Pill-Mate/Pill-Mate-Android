@@ -48,12 +48,9 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
         selectedOption = arguments?.getString(ARG_SELECTED_OPTION)
 
         val options = when (type) {
-            BottomSheetType.MEAL_TIME_0 -> {
+            BottomSheetType.MEAL_TIME -> {
                 binding.tvTitle.text = "복용 시간대를 선택하세요"
                 listOf("식전", "식후")
-            }BottomSheetType.MEAL_TIME_1 -> {
-                binding.tvTitle.text = "복용 시간대를 선택하세요"
-                listOf("식전", "식후", "식간")
             }
             BottomSheetType.DOSAGE_UNIT -> {
                 binding.tvTitle.text = "투약 단위를 선택해주세요"

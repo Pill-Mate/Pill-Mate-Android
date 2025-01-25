@@ -17,11 +17,9 @@ import com.example.pill_mate_android.databinding.FragmentBottomSheetConfirmBindi
 import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
+import com.example.pill_mate_android.pillSearch.util.DateConversionUtil
 import com.example.pill_mate_android.pillSearch.view.ConfirmationDataAdapter
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
@@ -123,19 +121,8 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         )
     }
 
-    // 복약기간 계산 메서드
     private fun calculateIntakePeriod(schedule: Schedule): String {
-        if (schedule.start_date.isEmpty() || schedule.intake_period <= 0) return ""
-
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        val startDate = dateFormat.parse(schedule.start_date) ?: return ""
-
-        val calendar = Calendar.getInstance()
-        calendar.time = startDate
-        calendar.add(Calendar.DATE, schedule.intake_period - 1) // 복약 기간 계산
-
-        val endDate = dateFormat.format(calendar.time)
-        return "${schedule.start_date} ~ $endDate(${schedule.intake_period}일)"
+        return DateConversionUtil.calculateIntakePeriod(schedule.start_date, schedule.intake_period)
     }
 
     private fun navigateToScheduleActivity() {
