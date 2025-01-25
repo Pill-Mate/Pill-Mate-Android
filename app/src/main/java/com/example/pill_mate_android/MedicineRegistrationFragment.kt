@@ -182,11 +182,17 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         requireActivity().finish() // MedicineRegistrationActivity 종료
     }
 
+    fun navigateToStepOne() {
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
+        val navController = navHostFragment?.navController
+
+        navController?.navigate(R.id.stepEightFragment)
+    }
+
     fun navigateToStepEight() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
         val navController = navHostFragment?.navController
 
-        // 스텝8로 이동
         navController?.navigate(R.id.stepEightFragment)
     }
 

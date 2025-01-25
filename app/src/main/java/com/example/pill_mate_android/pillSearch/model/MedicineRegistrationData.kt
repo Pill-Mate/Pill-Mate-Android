@@ -1,39 +1,36 @@
 package com.example.pill_mate_android.pillSearch.model
 
-import java.net.URI
-import java.util.Date
-
 data class MedicineRegisterRequest(
-    val pharmacyName: String?,              // 약국 이름
-    val pharmacyPhone: String?,             // 약국 전화번호
-    val pharmacyAddress: String?,           // 약국 주소
-    val hospitalName: String?,              // 병원 이름
-    val hospitalPhone: String?,             // 병원 전화번호
-    val hospitalAddress: String?,           // 병원 주소
-    val identifyNumber: String,             // 식별 번호
-    val medicineName: String,               // 약물 이름
-    val ingredient: String,                 // 성분
-    val ingredientUnit: String,             // 성분 단위 (mg, ml 등)
-    val ingredientAmount: Float,            // 성분 양
-    val medicineImage: URI?,                // 약물 이미지 URL
-    val entpName: String,                   // 제약회사 이름
-    val classname: String,                  // 약물 분류명
-    val efficacy: String?,                  // 효능
-    val sideEffect: String?,                // 부작용
-    val caution: String?,                   // 주의사항
-    val storage: String?,                   // 보관 방법
-    val medicineId: Long,                   // 약물 ID
-    val intakeCounts: Set<String>,          // 복용 횟수 (아침/점심/저녁)
-    val intakeFrequencys: Set<String>,      // 복용 요일 (월/화/수)
-    val mealUnit: String,                   // 식사 단위 (예: 식전/식후)
-    val mealTime: Int,                      // 식사 시간 (분 단위)
-    val eatUnit: String,                    // 1회 투여 단위 (예: ml, 정 등)
-    val eatCount: Int,                      // 1회 투여량
-    val startDate: Date,                    // 복용 시작일
-    val intakePeriod: Int,                  // 복용 기간
-    val medicineVolume: Float,              // 약물 용량
-    val isAlarm: Boolean,                   // 알람 여부
-    val cautionTypes: Set<String>?          // 주의사항 타입
+    val pharmacyName: String?,
+    val pharmacyPhone: String?,
+    val pharmacyAddress: String?,
+    val hospitalName: String?,
+    val hospitalPhone: String?,
+    val hospitalAddress: String?,
+    val identifyNumber: String,
+    val medicineName: String,
+    val ingredient: String,
+    val ingredientUnit: String, // MG, ML 등
+    val ingredientAmount: Float,
+    val medicineImage: String?, // URI 대신 String으로 변경
+    val entpName: String,
+    val classname: String,
+    val efficacy: String?,
+    val sideEffect: String?,
+    val caution: String?,
+    val storage: String?,
+    val medicineId: Long,
+    val intakeCounts: Set<String>, // 복용 시간
+    val intakeFrequencys: Set<String>, // 복용 요일
+    val mealUnit: String, // MEALBEFORE, MEALAFTER 등
+    val mealTime: Int,
+    val eatUnit: String, // JUNG, ML 등
+    val eatCount: Int,
+    val startDate: String, // ISO 8601 형식
+    val intakePeriod: Int,
+    val medicineVolume: Float,
+    val isAlarm: Boolean,
+    val cautionTypes: Set<String>?
 )
 
 data class Hospital(
@@ -74,6 +71,6 @@ data class Schedule(
     val intake_period: Int = 0,         // 복용 기간 (일 단위)
     val medicine_unit: String = "",     // 1회 투여 용량 단위
     val medicine_volume: Float = 0.0f,  // 1회 투여 용량 (0.45mg)
-    val is_alarm: Boolean = false,      // 알람 여부
+    val is_alarm: Boolean = true,      // 알람 여부
     val caution_types: String = ""      // 주의 사항 (복용주의 타입)
 )

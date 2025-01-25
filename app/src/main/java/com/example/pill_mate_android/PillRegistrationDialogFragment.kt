@@ -1,6 +1,7 @@
 package com.example.pill_mate_android
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.pill_mate_android.databinding.FragmentPillRegistrationDialogBinding
+import com.example.pill_mate_android.ui.main.activity.MainActivity
 
 class PillRegistrationDialogFragment : DialogFragment() {
 
@@ -27,8 +29,14 @@ class PillRegistrationDialogFragment : DialogFragment() {
         setColoredMessage()
 
         binding.btnCancel.setOnClickListener {
-            dismiss() // 등록 전 화면(메인? // )으로 이동하기
+            // 메인 액티비티로 이동
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
+            startActivity(intent)
+            requireActivity().finish() // 현재 액티비티 종료
+            dismiss() // 다이얼로그 닫기
         }
+
         binding.btnConfirm.setOnClickListener {
             dismiss()
         }

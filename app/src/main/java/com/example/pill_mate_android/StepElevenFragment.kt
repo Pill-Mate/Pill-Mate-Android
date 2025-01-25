@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.pill_mate_android.databinding.FragmentStepElevenBinding
+import com.example.pill_mate_android.ui.main.activity.MainActivity
 
 class StepElevenFragment : Fragment() {
 
@@ -34,10 +35,10 @@ class StepElevenFragment : Fragment() {
 
     private fun navigateToMainActivity() {
         // home으로 이동
-        /*val intent = Intent(requireContext(), MainActivity::class.java)
+        val intent = Intent(requireContext(), MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-        requireActivity().finish()*/
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

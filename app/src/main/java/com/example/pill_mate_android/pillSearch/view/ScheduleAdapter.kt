@@ -7,14 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.ItemScheduleBinding
 
-class ScheduleAdapter(private var scheduleList: List<ScheduleItem>) :
-    RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
+class ScheduleAdapter(
+    private var scheduleList: List<ScheduleItem>,
+    private val timeMap: Map<String, String> // 서버에서 가져온 시간을 전달받음
+) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     data class ScheduleItem(
         val iconRes: Int, // 시간대 아이콘
-        val label: String, // 시간대 이름 (아침, 공복 등)
-        val time: String, // 시간 (예: 오전 8:00)
-        val mealTime: String? = null // 추가 정보 (예: 식전 30분, 공복 등)
+        val label: String, // 시간대 이름 (아침, 점심 등)
+        var time: String, // 시간 (예: 오전 8:00)
+        val mealTime: String? = null // 추가 정보 (예: 식전 30분 등)
     )
 
     inner class ScheduleViewHolder(private val binding: ItemScheduleBinding) :
@@ -23,9 +25,8 @@ class ScheduleAdapter(private var scheduleList: List<ScheduleItem>) :
         fun bind(item: ScheduleItem) {
             binding.ivIcon.setImageResource(item.iconRes)
             binding.tvLabel.text = item.label
-            binding.tvTime.text = item.time
+            binding.tvTime.text = timeMap[item.label] ?: item.time // Use formatted time
 
-            // 공복과 취침전의 경우 mealTime을 숨김
             if (item.label == "공복" || item.label == "취침전") {
                 binding.tvMealTime.visibility = View.GONE
             } else if (item.mealTime != null) {

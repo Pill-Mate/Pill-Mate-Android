@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pill_mate_android.databinding.FragmentStepTenBinding
+import com.example.pill_mate_android.pillSearch.model.DataRepository
 
 class StepTenFragment : Fragment() {
 
@@ -28,13 +29,21 @@ class StepTenFragment : Fragment() {
 
     private fun setupButtons() {
         binding.btnYes.setOnClickListener {
-            // Navigate to MedicineRegistrationActivity's Step 1
+            DataRepository.clearAll()
+            navigateToMedicineRegistrationActivity()
         }
 
         binding.btnNo.setOnClickListener {
-            // Navigate to Step 11
+            DataRepository.clearAll()
             findNavController().navigate(R.id.action_stepTenFragment_to_stepElevenFragment)
         }
+    }
+
+    private fun navigateToMedicineRegistrationActivity() {
+        val intent = android.content.Intent(requireContext(), MedicineRegistrationActivity::class.java)
+        intent.putExtra("destination", "step1")
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

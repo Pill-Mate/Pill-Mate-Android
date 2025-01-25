@@ -19,6 +19,9 @@ import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.util.CustomDividerItemDecoration
 import com.example.pill_mate_android.pillSearch.view.ConfirmationDataAdapter
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
@@ -115,9 +118,24 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             RegistrationData("횟수", "${schedule.intake_count.split(",").size}회(${schedule.intake_count})").takeIf { schedule.intake_count.isNotEmpty() },
             RegistrationData("시간대", "${schedule.meal_unit} ${schedule.meal_time}분").takeIf { schedule.meal_unit.isNotEmpty() && schedule.meal_time > 0 },
             RegistrationData("투약량", "${schedule.eat_count}${schedule.eat_unit}").takeIf { schedule.eat_count > 0 && schedule.eat_unit.isNotEmpty() },
-            RegistrationData("복약기간", "${schedule.start_date} ~ (${schedule.intake_period}일)").takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
+            RegistrationData("복약기간", calculateIntakePeriod(schedule)).takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
             RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}").takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() }
         )
+    }
+
+    // 복약기간 계산 메서드
+    private fun calculateIntakePeriod(schedule: Schedule): String {
+        if (schedule.start_date.isEmpty() || schedule.intake_period <= 0) return ""
+
+        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+        val startDate = dateFormat.parse(schedule.start_date) ?: return ""
+
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+        calendar.add(Calendar.DATE, schedule.intake_period - 1) // 복약 기간 계산
+
+        val endDate = dateFormat.format(calendar.time)
+        return "${schedule.start_date} ~ $endDate(${schedule.intake_period}일)"
     }
 
     private fun navigateToScheduleActivity() {

@@ -18,9 +18,15 @@ class MedicineRegistrationActivity : AppCompatActivity() {
 
         // Intent로 전달된 destination 확인
         val destination = intent.getStringExtra("destination")
-        if (destination == "step8") {
-            moveToStepEight()
+        when (destination) {
+            "step1" -> moveToStepOne()
+            "step8" -> moveToStepEight()
         }
+    }
+
+    private fun moveToStepOne() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment
+        fragment?.navigateToStepOne() // StepOneFragment로 이동
     }
 
     private fun moveToStepEight() {

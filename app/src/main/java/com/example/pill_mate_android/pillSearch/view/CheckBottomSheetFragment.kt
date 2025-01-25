@@ -57,7 +57,7 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
             }
             BottomSheetType.DOSAGE_UNIT -> {
                 binding.tvTitle.text = "투약 단위를 선택해주세요"
-                listOf("정(개)", "캡슐", "ml", "표", "주사")
+                listOf("정(개)", "캡슐", "ml", "포", "주사")
             }
             BottomSheetType.VOLUME_UNIT -> {
                 binding.tvTitle.text = "투약 단위를 선택하세요"
