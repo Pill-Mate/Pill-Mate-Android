@@ -1,13 +1,14 @@
 package com.example.pill_mate_android
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentMedicineConflictBinding
-import com.example.pill_mate_android.pillSearch.api.ServerApiClient
 import com.example.pill_mate_android.pillSearch.model.ConflictResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -69,23 +70,25 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun fetchConflictData() {
-        val identifyNumber = arguments?.getString("identifyNumber") ?: return
+        val identifyNumber = arguments?.getString("identifyNumber") ?: run {
+            Log.e("MedicineConflict", "Identify number is missing.")
+            return
+        }
 
-        val serverApiService = ServerApiClient.serverApiService
-        serverApiService.getMedicineConflicts(identifyNumber).enqueue(object : Callback<ConflictResponse> {
-            override fun onResponse(call: Call<ConflictResponse>, response: Response<ConflictResponse>) {
-                if (response.isSuccessful) {
-                    val conflictData = response.body()
-                    updateUI(conflictData)
-                } else {
-                    // 에러 처리
+        medicineRegistrationService.getMedicineConflicts(identifyNumber)
+            .enqueue(object : Callback<ConflictResponse> {
+                override fun onResponse(call: Call<ConflictResponse>, response: Response<ConflictResponse>) {
+                    if (response.isSuccessful) {
+                        updateUI(response.body())
+                    } else {
+                        Log.e("MedicineConflict", "Failed to fetch data: ${response.errorBody()?.string()}")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<ConflictResponse>, t: Throwable) {
-                // 네트워크 에러 처리
-            }
-        })
+                override fun onFailure(call: Call<ConflictResponse>, t: Throwable) {
+                    Log.e("MedicineConflict", "Network error: ${t.message}")
+                }
+            })
     }
 
     private fun updateUI(conflictData: ConflictResponse?) {
@@ -98,9 +101,12 @@ class MedicineConflictFragment : Fragment() {
             efficiencyOverlapAdapter.submitList(data.conflicts.filter { it.crashName == "효능군 중복" })
             sameIngredientOverlapAdapter.submitList(data.conflicts.filter { it.crashName == "동일성분 중복" })
 
-            binding.rvContraindication.visibility = if (contraindicationAdapter.itemCount > 0) View.VISIBLE else View.GONE
-            binding.rvEfficiencyOverlap.visibility = if (efficiencyOverlapAdapter.itemCount > 0) View.VISIBLE else View.GONE
-            binding.rvSameIngredientOverlap.visibility = if (sameIngredientOverlapAdapter.itemCount > 0) View.VISIBLE else View.GONE
+            binding.rvContraindication.visibility =
+                if (contraindicationAdapter.itemCount > 0) View.VISIBLE else View.GONE
+            binding.rvEfficiencyOverlap.visibility =
+                if (efficiencyOverlapAdapter.itemCount > 0) View.VISIBLE else View.GONE
+            binding.rvSameIngredientOverlap.visibility =
+                if (sameIngredientOverlapAdapter.itemCount > 0) View.VISIBLE else View.GONE
         }
     }
 

@@ -8,10 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentStepNineBinding
-import com.example.pill_mate_android.pillSearch.api.ServerApiClient
 import com.example.pill_mate_android.pillSearch.model.DataRepository
-import com.example.pill_mate_android.pillSearch.model.DataRepository.createMedicineRegisterRequest
 import com.example.pill_mate_android.pillSearch.model.MedicineRegisterRequest
 import com.example.pill_mate_android.pillSearch.model.Schedule
 import com.example.pill_mate_android.pillSearch.util.VerticalSpaceItemDecoration
@@ -44,38 +43,29 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun setupUI() {
-        // 스케줄 RecyclerView 설정
+        // RecyclerView 설정
         scheduleAdapter = ScheduleAdapter(emptyList())
         binding.rvSchedule.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSchedule.adapter = scheduleAdapter
 
-        // RecyclerView 아이템 간 간격 추가
         val spacingInPixels = resources.getDimensionPixelSize(R.dimen.schedule_item_spacing) // 12dp
         binding.rvSchedule.addItemDecoration(VerticalSpaceItemDecoration(spacingInPixels))
 
-        // 스위치 상태 변경 처리
-        binding.switchAlarm.isChecked = true // 기본값 설정
+        // 알람 스위치 상태 변경
+        binding.switchAlarm.isChecked = true
         binding.switchAlarm.setOnCheckedChangeListener { _, isChecked ->
-            if (!isChecked) {
-                showAlarmSwitchDialog()
-            } else {
-                updateAlarmState(true)
-            }
+            if (!isChecked) showAlarmSwitchDialog() else updateAlarmState(true)
         }
 
-        // 뒤로가기 버튼 클릭 처리
-        binding.ivBack.setOnClickListener {
-            requireActivity().onBackPressed()
-        }
+        // 뒤로가기 버튼 처리
+        binding.ivBack.setOnClickListener { requireActivity().onBackPressed() }
 
-        // 등록 버튼 클릭 처리
-        binding.btnRegister.setOnClickListener {
-            handleRegister()
-        }
+        // 등록 버튼 처리
+        binding.btnRegister.setOnClickListener { handleRegister() }
     }
 
     private fun handleRegister() {
-        val request = createMedicineRegisterRequest()
+        val request = DataRepository.createMedicineRegisterRequest()
         if (request != null) {
             sendRegisterRequest(request)
         } else {
@@ -84,20 +74,21 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun sendRegisterRequest(request: MedicineRegisterRequest) {
-        val serverApiService = ServerApiClient.serverApiService
-        serverApiService.registerMedicine(request).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    navigateToNextStep()
-                } else {
-                    showErrorMessage("등록에 실패했습니다. 다시 시도해주세요.")
+        // ServiceCreator를 통해 등록 API 호출
+        medicineRegistrationService.registerMedicine(request)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        navigateToNextStep()
+                    } else {
+                        showErrorMessage("등록에 실패했습니다. 다시 시도해주세요.")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                showErrorMessage("네트워크 오류가 발생했습니다.")
-            }
-        })
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    showErrorMessage("네트워크 오류가 발생했습니다.")
+                }
+            })
     }
 
     private fun navigateToNextStep() {
@@ -151,8 +142,9 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     private fun createScheduleList(schedule: Schedule): List<ScheduleAdapter.ScheduleItem> {
         val result = mutableListOf<ScheduleAdapter.ScheduleItem>()
         val timeGroups = schedule.intake_count.split(",")
+
         for (group in timeGroups) {
-            val time = "오전 8:00" // 서버에서 가져와야해
+            val time = "오전 8:00" // 서버에서 가져와야 함
             val mealTime = if (schedule.meal_unit.isNotEmpty()) "${schedule.meal_unit} ${schedule.meal_time}분" else null
             val iconRes = when (group.trim()) {
                 "아침" -> R.drawable.ic_breakfast
@@ -165,6 +157,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
             result.add(ScheduleAdapter.ScheduleItem(iconRes, group.trim(), time, mealTime))
         }
+
         return result
     }
 

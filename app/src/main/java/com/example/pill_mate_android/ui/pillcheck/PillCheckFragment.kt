@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.ui.pillcheck
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Build.VERSION_CODES
@@ -16,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.example.pill_mate_android.MedicineRegistrationActivity
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.FragmentPillCheckBinding
@@ -121,7 +123,12 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         binding.btnToday.setOnClickListener { // 오늘 날짜로 이동
             resetToToday()
             moveToTodayPage()
+        }
 
+        binding.btnUpload.setOnClickListener {
+            // 약물 등록 액티비티로 이동
+            val intent = Intent(requireContext(), MedicineRegistrationActivity::class.java)
+            startActivity(intent)
         }
     }
 

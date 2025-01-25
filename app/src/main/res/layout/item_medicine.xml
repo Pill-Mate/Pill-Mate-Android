@@ -18,7 +18,7 @@
             android:id="@+id/img_medicine"
             android:layout_width="100dp"
             android:layout_height="54dp"
-            android:src="@drawable/sample_img"
+            android:src="@drawable/ic_default_pill"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

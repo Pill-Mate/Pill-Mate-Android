@@ -5,6 +5,7 @@
     <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".GlobalApplication"
@@ -67,6 +68,10 @@
 
         <activity
             android:name=".ScheduleActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PillMateAndroid" />
+        <activity
+            android:name=".MedicineRegistrationActivity"
             android:exported="true"
             android:theme="@style/Theme.PillMateAndroid" />
     </application>

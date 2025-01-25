@@ -1,5 +1,6 @@
 package com.example.pill_mate_android
 
+import com.example.pill_mate_android.pillSearch.api.MedicineRegistrationService
 import com.example.pill_mate_android.ui.login.LoginService
 import com.example.pill_mate_android.ui.login.OnBoardingService
 import com.example.pill_mate_android.ui.pillcheck.HomeService
@@ -31,4 +32,5 @@ object ServiceCreator {
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
     val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
+    val medicineRegistrationService: MedicineRegistrationService = userRetrofit.create(MedicineRegistrationService::class.java)
 }

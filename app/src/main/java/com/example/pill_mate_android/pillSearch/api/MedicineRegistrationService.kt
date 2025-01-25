@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ServerApiService {
+interface MedicineRegistrationService {
     @Headers("Content-Type: application/json")
     @POST("/api/v1/medicine-register/regular") // 약물 등록
     fun registerMedicine(@Body request: MedicineRegisterRequest): Call<Void>

@@ -50,7 +50,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="삭제하기"
-            android:textColor="@color/pink_1"
+            android:textColor="@color/main_pink_1"
             android:background="@drawable/bg_btn_pink_2" />
     </LinearLayout>
 
