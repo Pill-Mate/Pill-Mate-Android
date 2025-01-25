@@ -17,7 +17,7 @@ class StepFourFragment : Fragment() {
     private val binding get() = _binding!!
 
     // 시간대 순서 고정
-    private val timeOrder = listOf("공복", "아침", "점심", "저녁", "식간", "취침전")
+    private val timeOrder = listOf("공복", "아침", "점심", "저녁", "취침전")
     private val timeOrderMap = timeOrder.withIndex().associate { it.value to it.index }
 
     private var selectedTimes: MutableSet<String> = linkedSetOf()
@@ -96,6 +96,10 @@ class StepFourFragment : Fragment() {
             selectedTimes.isEmpty() -> getString(R.string.enter_time)
             else -> getString(R.string.selected_count, selectedTimes.size)
         }
+    }
+
+    fun shouldMoveToStepFive(): Boolean {
+        return selectedTimes.any { it in listOf("아침", "점심", "저녁") }
     }
 
     fun isValidInput(): Boolean {

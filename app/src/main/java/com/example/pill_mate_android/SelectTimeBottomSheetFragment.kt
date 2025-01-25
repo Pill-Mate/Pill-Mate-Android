@@ -34,7 +34,6 @@ class SelectTimeBottomSheetFragment(
             Pair(view.findViewById<ImageView>(R.id.iv_morning_check), "아침"),
             Pair(view.findViewById<ImageView>(R.id.iv_lunch_check), "점심"),
             Pair(view.findViewById<ImageView>(R.id.iv_dinner_check), "저녁"),
-            Pair(view.findViewById<ImageView>(R.id.iv_snack_check), "식간"),
             Pair(view.findViewById<ImageView>(R.id.iv_before_sleep_check), "취침전")
         )
 

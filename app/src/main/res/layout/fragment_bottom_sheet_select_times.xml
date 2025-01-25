@@ -122,30 +122,6 @@
                 android:contentDescription="저녁 체크 아이콘" />
         </LinearLayout>
 
-        <!-- 식간 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
-
-            <TextView
-                android:id="@+id/tv_snack"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="식간"
-                android:textSize="16sp"
-                android:textColor="@color/black" />
-
-            <ImageView
-                android:id="@+id/iv_snack_check"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="식간 체크 아이콘" />
-        </LinearLayout>
-
         <!-- 취침전 -->
         <LinearLayout
             android:layout_width="match_parent"

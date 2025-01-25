@@ -51,12 +51,7 @@ class StepFiveFragment : Fragment() {
         setSelectedTimes(selectedTimes)
 
         binding.layoutMealUnit.setOnClickListener {
-            val type = if (selectedTimes.contains("취침전") || selectedTimes.contains("공복")) {
-                BottomSheetType.MEAL_TIME_1
-            } else {
-                BottomSheetType.MEAL_TIME_0
-            }
-            openBottomSheet(type)
+            openBottomSheet()
         }
 
         setupMealTimeEditText()
@@ -142,9 +137,9 @@ class StepFiveFragment : Fragment() {
         })
     }
 
-    private fun openBottomSheet(type: BottomSheetType) {
+    private fun openBottomSheet() {
         val bottomSheet = CheckBottomSheetFragment.newInstance(
-            type = type,
+            type = BottomSheetType.MEAL_TIME,
             selectedOption = selectedMealUnit // 기존 선택된 값 전달
         )
         bottomSheet.show(parentFragmentManager, bottomSheet.tag)

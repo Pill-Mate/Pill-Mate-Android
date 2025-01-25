@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_stepFourFragment_to_stepFiveFragment"
             app:destination="@id/stepFiveFragment" />
+        <action
+            android:id="@+id/action_stepFourFragment_to_stepSixFragment"
+            app:destination="@id/stepSixFragment" />
     </fragment>
 
     <fragment

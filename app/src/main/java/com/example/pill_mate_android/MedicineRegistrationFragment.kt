@@ -128,7 +128,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 is StepFourFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
                     presenter.updateView()
-                    navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
+                    if (currentFragment.shouldMoveToStepFive()) {
+                        navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
+                    } else {
+                        navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepSixFragment)
+                    }
                 }
                 is StepFiveFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
