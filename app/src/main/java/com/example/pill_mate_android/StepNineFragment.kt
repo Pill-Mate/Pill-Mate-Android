@@ -105,21 +105,6 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun handleRegister() {
-        val medicine = DataRepository.getMedicine()
-        val schedule = DataRepository.getSchedule()
-
-        if (medicine == null) {
-            Log.e("DataCheck", "Medicine 데이터가 없습니다.")
-        } else {
-            Log.d("DataCheck", "Medicine: $medicine")
-        }
-
-        if (schedule == null) {
-            Log.e("DataCheck", "Schedule 데이터가 없습니다.")
-        } else {
-            Log.d("DataCheck", "Schedule: $schedule")
-        }
-
         val request = DataRepository.createMedicineRegisterRequest()
         if (request != null) {
             Log.d("MedicineRegisterRequest", Gson().toJson(request)) // JSON 데이터 확인

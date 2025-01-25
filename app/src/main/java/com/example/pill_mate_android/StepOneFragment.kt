@@ -50,17 +50,6 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
-        // 병원 입력 감지
-        binding.etHospital.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                presenter.onPharmacyNameChanged(s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
     }
 
     private fun setupSearchListeners() {
@@ -116,7 +105,12 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
-        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
+        (parentFragment as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
+    }
+
+    fun onNextButtonClicked() {
+        val pharmacyName = binding.etPharmacy.text.toString()
+        presenter.onNextButtonClicked(pharmacyName)
     }
 
     override fun showWarning(isVisible: Boolean) {

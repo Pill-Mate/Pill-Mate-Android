@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -29,6 +30,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     private val binding get() = _binding!!
     private lateinit var adapter: RegistrationDataAdapter
     private lateinit var presenter: MedicineRegistrationPresenter
+    private val stepCount = 8 // 총 단계 수
 
     fun getPresenter(): MedicineRegistrationPresenter {
         return presenter
@@ -45,19 +47,62 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeProgressBar()
         setupRecyclerView()
         setupNavigation()
         setupNextButton()
         setupSkipButton()
+        setupNavigationListener()
+    }
 
-        // 현재 프래그먼트를 기반으로 ProgressBar 설정
+    private fun initializeProgressBar() {
+        val progressBarLayout = binding.progressBarSteps
+        progressBarLayout.removeAllViews()
+
+        repeat(stepCount) { index ->
+            val stepView = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1f
+                ).apply {
+                    if (index != 0) setMargins(4, 0, 0, 0)
+                }
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_progress_step)
+            }
+            progressBarLayout.addView(stepView)
+        }
+    }
+
+    private fun updateProgressBar(currentStep: Int) {
+        val progressBarLayout = binding.progressBarSteps
+        for (i in 0 until stepCount) {
+            val stepView = progressBarLayout.getChildAt(i)
+            stepView.background = ContextCompat.getDrawable(
+                requireContext(),
+                if (i < currentStep) R.drawable.bg_progress_step_active
+                else R.drawable.bg_progress_step
+            )
+        }
+    }
+
+    private fun setupNavigationListener() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
-        val currentFragment = navHostFragment.navController.currentDestination?.id
+        val navController = navHostFragment.navController
 
-        if (currentFragment == R.id.stepEightFragment) {
-            binding.progressBar.visibility = View.GONE // StepEightFragment에서는 ProgressBar 숨김
-        } else {
-            binding.progressBar.visibility = View.VISIBLE
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val stepIndex = when (destination.id) {
+                R.id.stepOneFragment -> 1
+                R.id.stepTwoFragment -> 2
+                R.id.stepThreeFragment -> 3
+                R.id.stepFourFragment -> 4
+                R.id.stepFiveFragment -> 5
+                R.id.stepSixFragment -> 6
+                R.id.stepSevenFragment -> 7
+                R.id.stepEightFragment -> 8
+                else -> 0
+            }
+            updateProgressBar(stepIndex)
         }
     }
 
@@ -112,8 +157,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
             when (currentFragment) {
-                is StepOneFragment -> if (currentFragment.isValidInput()) {
-                    navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
+                is StepOneFragment -> {
+                    currentFragment.onNextButtonClicked()
+                    if (currentFragment.isValidInput()) {
+                        navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
+                    }
                 }
                 is StepTwoFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
@@ -150,10 +198,10 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
                 }
                 is StepEightFragment -> if (currentFragment.isValidInput()) {
-                    currentFragment.saveData() // 데이터 저장
+                    currentFragment.saveData()
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
-                            navigateToScheduleActivity() // ScheduleActivity로 전환
+                            navigateToScheduleActivity()
                         }
                     }
                 } else {
@@ -174,7 +222,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         binding.btnSkip.setOnClickListener {
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
-                    navigateToScheduleActivity() // ScheduleActivity로 전환
+                    navigateToScheduleActivity()
                 }
             }
         }
@@ -183,14 +231,14 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     private fun navigateToScheduleActivity() {
         val intent = Intent(requireContext(), ScheduleActivity::class.java)
         startActivity(intent)
-        requireActivity().finish() // MedicineRegistrationActivity 종료
+        requireActivity().finish()
     }
 
     fun navigateToStepOne() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
         val navController = navHostFragment?.navController
 
-        navController?.navigate(R.id.stepEightFragment)
+        navController?.navigate(R.id.stepOneFragment)
     }
 
     fun navigateToStepEight() {

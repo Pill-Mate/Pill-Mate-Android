@@ -3,12 +3,9 @@ package com.example.pill_mate_android.pillSearch.presenter
 import android.util.Log
 import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.model.Schedule
+import com.example.pill_mate_android.pillSearch.util.DateConversionUtil
 import com.example.pill_mate_android.pillSearch.view.MedicineRegistrationView
 import com.example.pill_mate_android.pillSearch.view.RegistrationData
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
 class MedicineRegistrationPresenter(
     private val repository: DataRepository,
     private val view: MedicineRegistrationView // View와의 연결
@@ -47,17 +44,7 @@ class MedicineRegistrationPresenter(
     }
 
     private fun calculateIntakePeriod(schedule: Schedule): String {
-        if (schedule.start_date.isEmpty() || schedule.intake_period <= 0) return ""
-
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        val startDate = dateFormat.parse(schedule.start_date) ?: return ""
-
-        val calendar = Calendar.getInstance()
-        calendar.time = startDate
-        calendar.add(Calendar.DATE, schedule.intake_period - 1)
-
-        val endDate = dateFormat.format(calendar.time)
-        return "${schedule.start_date} ~ $endDate(${schedule.intake_period}일)"
+        return DateConversionUtil.calculateIntakePeriod(schedule.start_date, schedule.intake_period)
     }
 
     fun getSelectedTimes(): List<String> {

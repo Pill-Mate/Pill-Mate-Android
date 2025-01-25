@@ -1,7 +1,7 @@
 package com.example.pill_mate_android.pillSearch.model
 
-import java.net.URI
-import java.text.SimpleDateFormat
+import com.example.pill_mate_android.pillSearch.util.DateConversionUtil
+import com.example.pill_mate_android.pillSearch.util.TimeTranslationUtil
 
 object DataRepository {
     var hospitalData: Hospital? = null
@@ -52,37 +52,55 @@ object DataRepository {
 
         if (medicine == null || schedule == null) return null
 
-        return MedicineRegisterRequest(
-            pharmacyName = pharmacy?.pharmacyName,
-            pharmacyPhone = pharmacy?.pharmacyPhone,
-            pharmacyAddress = pharmacy?.pharmacyAddress,
-            hospitalName = hospital?.hospitalName,
-            hospitalPhone = hospital?.hospitalPhone,
-            hospitalAddress = hospital?.hospitalAddress,
-            identifyNumber = medicine.identify_number,
-            medicineName = medicine.medicine_name,
-            ingredient = medicine.ingredient,
-            ingredientUnit = "mg", // 성분 단위 (필요 시 데이터에서 계산)
-            ingredientAmount = 0.5f, // 성분 양 (데이터 기반 값 설정)
-            medicineImage = medicine.image?.let { URI(it) },
-            entpName = medicine.entp_name,
-            classname = medicine.classname,
-            efficacy = medicine.efficacy,
-            sideEffect = medicine.side_effect,
-            caution = medicine.caution,
-            storage = medicine.storage,
-            medicineId = schedule.medicine_id.toLong(),
-            intakeCounts = schedule.intake_count.split(",").toSet(),
-            intakeFrequencys = schedule.intake_frequency.split(",").toSet(),
-            mealUnit = schedule.meal_unit,
-            mealTime = schedule.meal_time,
-            eatUnit = schedule.eat_unit,
-            eatCount = schedule.eat_count,
-            startDate = SimpleDateFormat("yyyy-MM-dd").parse(schedule.start_date),
-            intakePeriod = schedule.intake_period,
-            medicineVolume = schedule.medicine_volume,
-            isAlarm = schedule.is_alarm,
-            cautionTypes = schedule.caution_types.split(",").toSet()
-        )
+        try {
+            val formattedStartDate = DateConversionUtil.toIso8601(schedule.start_date) ?: return null
+            val intakeCounts = schedule.intake_count
+                .split(",")
+                .mapNotNull { TimeTranslationUtil.translateTimeToEnglish(it.trim()) }
+                .toSet()
+
+            val intakeFrequencies = schedule.intake_frequency
+                .split(",")
+                .flatMap { day ->
+                    TimeTranslationUtil.translateDayToEnglish(day.trim()) ?: emptyList()
+                }
+                .toSet()
+
+            return MedicineRegisterRequest(
+                pharmacyName = pharmacy?.pharmacyName ?: "string",
+                pharmacyPhone = pharmacy?.pharmacyPhone ?: "string",
+                pharmacyAddress = pharmacy?.pharmacyAddress ?: "string",
+                hospitalName = hospital?.hospitalName ?: "string",
+                hospitalPhone = hospital?.hospitalPhone ?: "string",
+                hospitalAddress = hospital?.hospitalAddress ?: "string",
+                identifyNumber = medicine.identify_number,
+                medicineName = medicine.medicine_name,
+                ingredient = medicine.ingredient,
+                ingredientUnit = "MG",
+                ingredientAmount = 0.0f,
+                medicineImage = medicine.image ?: "string",
+                entpName = medicine.entp_name,
+                classname = medicine.classname,
+                efficacy = medicine.efficacy ?: "string",
+                sideEffect = medicine.side_effect ?: "string",
+                caution = medicine.caution ?: "string",
+                storage = medicine.storage ?: "string",
+                medicineId = schedule.medicine_id.toLong(),
+                intakeCounts = intakeCounts,
+                intakeFrequencys = intakeFrequencies,
+                mealUnit = TimeTranslationUtil.translateMealUnitToEnglish(schedule.meal_unit) ?: "UNKNOWN",
+                mealTime = schedule.meal_time,
+                eatUnit = TimeTranslationUtil.translateEatUnitToEnglish(schedule.eat_unit) ?: "UNKNOWN",
+                eatCount = schedule.eat_count,
+                startDate = formattedStartDate,
+                intakePeriod = schedule.intake_period,
+                medicineVolume = schedule.medicine_volume,
+                isAlarm = schedule.is_alarm,
+                cautionTypes = schedule.caution_types.split(",").map { it.trim() }.toSet()
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
     }
 }
