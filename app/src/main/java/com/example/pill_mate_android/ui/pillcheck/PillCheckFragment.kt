@@ -32,6 +32,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     private var _binding: FragmentPillCheckBinding? = null
     private val binding get() = _binding ?: error("binding not initialized")
+    private val expandedStates = mutableSetOf<Int>()
 
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
@@ -53,7 +54,8 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         initViews()
         setOneWeekViewPager()
-        setButtonClickListener()
+        setCalendarButtonClickListener()
+        setMainButtonClickListener()
 
         // 오늘 날짜에 대한 데이터 호출
         fetchHomeData(today)
@@ -107,7 +109,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // <> 버튼 클릭 시, 오늘 버튼 클릭 시
     @RequiresApi(VERSION_CODES.O)
-    private fun setButtonClickListener() {
+    private fun setCalendarButtonClickListener() {
         binding.btnLeft.setOnClickListener {
             changeSelectedDateByWeeks(-1) // 일주일 전으로 이동
             moveToPreviousPage()
@@ -122,6 +124,11 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             resetToToday()
             moveToTodayPage()
 
+        }
+    }
+
+    private fun setMainButtonClickListener() {
+        binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
         }
     }
 
@@ -213,6 +220,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
                         currentFragment?.updateWeeklyIcons(it) // 데이터 전달
+
                         // 데이터를 그룹화하여 RecyclerView에 설정
                         setupIntakeCountRecyclerView(it)
 
@@ -274,14 +282,66 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         })
     }
 
-    private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터를 그룹화
+    //체크박스 체크여부 데이터 보내기
+    @RequiresApi(VERSION_CODES.O)
+    private fun patchMedicineCheckData(medicineScheduleId: Long, eatCheck: Boolean) { // 로컬 상태 업데이트
+
+        val checkData = listOf(MedicineCheckData(medicineScheduleId, eatCheck))
+
+        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkData)
+
+        call.enqueue(object : Callback<ResponseHome> {
+            override fun onResponse(call: Call<ResponseHome>, response: Response<ResponseHome>) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    responseData?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
+                        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
+                        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+
+                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
+
+                        // 데이터를 그룹화하여 RecyclerView에 설정
+                        setupIntakeCountRecyclerView(it)
+
+                        if (it.medicineList.isNullOrEmpty()) {
+                            Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
+                        } else {
+                            with(binding) {
+                                tvNum.text = it.countAll.toString()
+                                if (it.countLeft == 0) {
+                                    tvRemain.text = "복약 완료"
+                                } else {
+                                    tvRemain.text = "${it.countLeft}회 남음"
+                                }
+                            }
+                        }
+                    } ?: Log.e("데이터 전송 실패", "데이터 전송에 실패했습니다.")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터 그룹화
         val groupedMedicines = groupMedicines(responseHome)
 
         // intakeCount RecyclerView 설정
-        val intakeCountAdapter = IntakeCountAdapter(groupedMedicines)
-        binding.intakeCountRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = intakeCountAdapter
+        if (binding.intakeCountRecyclerView.adapter == null) {
+            val intakeCountAdapter =
+                IntakeCountAdapter(groupedMedicines, expandedStates) { medicineScheduleId, eatCheck ->
+                    patchMedicineCheckData(medicineScheduleId, eatCheck)
+                }
+            binding.intakeCountRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = intakeCountAdapter
+            }
+        } else {
+            val adapter = binding.intakeCountRecyclerView.adapter as IntakeCountAdapter
+            adapter.updateData(groupedMedicines)
         }
     }
 

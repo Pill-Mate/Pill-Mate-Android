@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.databinding.ItemTimeHeaderBinding
 
 class IntakeTimeAdapter(
-    private val timeGroups: List<TimeGroup>
+    private val timeGroups: List<TimeGroup>, private val onCheckedChange: (Long, Boolean) -> Unit
 ) : RecyclerView.Adapter<IntakeTimeAdapter.IntakeTimeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeTimeViewHolder {
@@ -37,7 +37,7 @@ class IntakeTimeAdapter(
 
             binding.medicineRecyclerView.apply {
                 layoutManager = LinearLayoutManager(binding.root.context)
-                adapter = MedicineAdapter(timeGroup.medicines)
+                adapter = MedicineAdapter(timeGroup.medicines, onCheckedChange)
             }
         }
     }
@@ -53,7 +53,7 @@ class IntakeTimeAdapter(
     }
 
     fun formatMealUnitAndTime(medicines: List<ResponseHome.Data>): String? {
-        if (medicines.isEmpty()) return "" // 리스트가 비어있으면 빈 문자열 반환
+        if (medicines.isEmpty()) return ""
 
         val firstMedicine = medicines[0] // 첫 번째 약 정보 기준으로 처리
         val mealUnitText = when (firstMedicine.mealUnit) {

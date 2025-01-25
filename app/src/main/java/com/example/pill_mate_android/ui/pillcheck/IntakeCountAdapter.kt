@@ -9,10 +9,10 @@ import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.ItemCountHeaderBinding
 
 class IntakeCountAdapter(
-    private val groupedMedicines: List<GroupedMedicine>
+    private var groupedMedicines: List<GroupedMedicine>,
+    private val expandedStates: MutableSet<Int>,
+    private val onCheckedChange: (Long, Boolean) -> Unit
 ) : RecyclerView.Adapter<IntakeCountAdapter.IntakeCountViewHolder>() {
-
-    private val expandedStates = mutableSetOf<Int>() // 각 아이템의 확장 상태를 저장
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeCountViewHolder {
         val binding = ItemCountHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,7 +25,6 @@ class IntakeCountAdapter(
 
         holder.bind(group, isExpanded)
 
-        // [추가구현] : 아이템 클릭시 드롭다운 이미지 변경되어야 함
         holder.itemView.setOnClickListener {
             if (isExpanded) expandedStates.remove(position) else expandedStates.add(position)
             notifyItemChanged(position)
@@ -33,6 +32,11 @@ class IntakeCountAdapter(
     }
 
     override fun getItemCount() = groupedMedicines.size
+
+    fun updateData(newGroupedMedicines: List<GroupedMedicine>) {
+        groupedMedicines = newGroupedMedicines
+        notifyDataSetChanged() // 데이터 변경 시 전체 갱신
+    }
 
     inner class IntakeCountViewHolder(private val binding: ItemCountHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -63,7 +67,7 @@ class IntakeCountAdapter(
             binding.intakeTimeRecyclerView.apply {
                 layoutManager = LinearLayoutManager(binding.root.context)
                 visibility = if (isExpanded) View.VISIBLE else View.GONE
-                adapter = IntakeTimeAdapter(group.times)
+                adapter = IntakeTimeAdapter(group.times, onCheckedChange)
             }
         }
     }

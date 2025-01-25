@@ -8,7 +8,7 @@ import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.ItemMedicineBinding
 
 class MedicineAdapter(
-    private val medicines: List<ResponseHome.Data>
+    private val medicines: List<ResponseHome.Data>, private val onCheckedChange: (Long, Boolean) -> Unit
 ) : RecyclerView.Adapter<MedicineAdapter.MedicineViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicineViewHolder {
@@ -27,6 +27,8 @@ class MedicineAdapter(
 
         fun bind(medicine: ResponseHome.Data, isLastItem: Boolean) {
             binding.tvMedicineName.text = medicine.medicineName
+            binding.cbCheck.isChecked = medicine.eatCheck
+
             val unit = when (medicine.eatUnit) {
                 "JUNG" -> "정"
                 "CAPSULE" -> "캡슐"
@@ -37,8 +39,7 @@ class MedicineAdapter(
             binding.tvEatCount.text = "${medicine.eatCount}${unit}"
 
             // Glide로 이미지 로드
-            Glide.with(binding.root.context).load(medicine.medicineImage)
-                .error(R.drawable.img_default) // 로드 실패 시 or 이미지 없는 경우
+            Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default)
                 .into(binding.imgMedicine)
 
             // 마지막 아이템일때 하단 모서리 둥글게
@@ -48,6 +49,12 @@ class MedicineAdapter(
                 R.drawable.shape_normal_item
             }
             binding.itemMedicine.setBackgroundResource(backgroudResId)
+
+            // 체크박스 상태 및 클릭 이벤트 설정
+            binding.cbCheck.setOnClickListener {
+                val newCheckState = binding.cbCheck.isChecked
+                onCheckedChange(medicine.medicineScheduleId, newCheckState)
+            }
         }
     }
 }

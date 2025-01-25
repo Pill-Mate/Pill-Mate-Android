@@ -2,6 +2,7 @@ package com.example.pill_mate_android.ui.pillcheck
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface HomeService {
@@ -12,4 +13,9 @@ interface HomeService {
 interface WeeklyCalendarService {
     @POST("/api/v1/home/weekscroll")
     fun getWeeklyCalendarData(@Body home: HomeData): Call<ResponseWeeklyCalendar>
+}
+
+interface MedicineCheckService {
+    @PATCH("/api/v1/home/medicinecheck")
+    fun patchCheckData(@Body checkData: List<MedicineCheckData>): Call<ResponseHome>
 }

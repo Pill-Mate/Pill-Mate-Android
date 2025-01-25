@@ -213,7 +213,7 @@
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
                     android:visibility="visible"
-                    app:layout_constraintDimensionRatio="2.79:1"
+                    app:layout_constraintDimensionRatio="2.7:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
