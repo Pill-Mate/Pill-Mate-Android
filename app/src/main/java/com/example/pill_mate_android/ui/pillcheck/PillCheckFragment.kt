@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.ui.pillcheck
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Build.VERSION_CODES
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
+import com.example.pill_mate_android.SettingActivity
 import com.example.pill_mate_android.databinding.FragmentPillCheckBinding
 import com.example.pill_mate_android.ui.main.activity.MainActivity
 import retrofit2.Call
@@ -129,6 +131,8 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     private fun setMainButtonClickListener() {
         binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
+            val intent = Intent(requireContext(), SettingActivity::class.java)
+            startActivity(intent)
         }
     }
 
