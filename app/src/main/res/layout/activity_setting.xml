@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/setting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingActivity">
@@ -61,15 +61,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            style="@style/H1_SB18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="님"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@id/tv_nickname"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_kakao_email"
             android:layout_width="wrap_content"
@@ -100,7 +91,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profile"
             android:layout_width="50dp"
             android:layout_height="50dp"
