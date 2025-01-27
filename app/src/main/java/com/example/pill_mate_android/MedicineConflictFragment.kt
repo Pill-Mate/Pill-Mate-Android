@@ -1,5 +1,6 @@
 package com.example.pill_mate_android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.pill_mate_android.databinding.FragmentMedicineConflictBinding
 import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.pillSearch.model.EfcyDplctResponse
 import com.example.pill_mate_android.pillSearch.model.UsjntTabooResponse
+import com.example.pill_mate_android.ui.main.activity.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,21 +42,21 @@ class MedicineConflictFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
         loadMedicineData()
-        fetchUsjntTabooData() // 병용금기 데이터 가져오기
-        fetchEfcyDplctData()  // 효능군 중복 데이터 가져오기
+        fetchUsjntTabooData()
+        fetchEfcyDplctData()
     }
 
     private fun setupUI() {
-        binding.ivBack.setOnClickListener { requireActivity().onBackPressed() }
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
-        // 병용금기 RecyclerView 설정
         contraindicationAdapter = ConflictAdapter()
         binding.rvContraindication.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = contraindicationAdapter
         }
 
-        // 효능군 중복 RecyclerView 설정
         efficiencyOverlapAdapter = ConflictAdapter()
         binding.rvEfficiencyOverlap.apply {
             layoutManager = LinearLayoutManager(context)
@@ -62,21 +64,15 @@ class MedicineConflictFragment : Fragment() {
         }
 
         binding.btnSkip.setOnClickListener {
-            // 부모 Fragment 찾기
-            val parentFragment = parentFragment as? MedicineRegistrationFragment
-
-            // 부모 Fragment를 통해 네비게이션
-            parentFragment?.let {
-                // fullscreen_container 숨기기
-                it.hideFullscreenFragment()
-
-                // nav_host_fragment_steps에 StepThree로 이동
-                it.findNavController().navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
-            }
+            findNavController().navigate(R.id.action_medicineConflictFragment_to_stepThreeFragment)
         }
 
         binding.btnFinish.setOnClickListener {
-            // 등록 종료하기 로직 구현
+            // 메인 액티비티로 이동
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
+            startActivity(intent)
+            requireActivity().finish() // 현재 액티비티 종료
         }
     }
 

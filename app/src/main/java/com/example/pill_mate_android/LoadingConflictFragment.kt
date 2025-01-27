@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.pill_mate_android.databinding.FragmentLoadingConflictBinding
 
@@ -47,22 +46,10 @@ class LoadingConflictFragment : Fragment() {
 
                 Log.d("LoadingConflictFragment", "itemSeq: $itemSeq")
 
-                // 부모 Fragment 찾기
-                val parentFragment = parentFragment as? MedicineRegistrationFragment
-
-                // 부모 Fragment를 통해 네비게이션
-                parentFragment?.let {
-                    // fullscreen_container 숨기기
-                    it.hideFullscreenFragment()
-
-                    // nav_host_fragment_steps에 MedicineConflictFragment 표시
-                    val medicineConflictFragment = MedicineConflictFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("itemSeq", itemSeq)
-                        }
-                    }
-                    it.showFullscreenFragment(medicineConflictFragment)
-                }
+                findNavController().navigate(
+                    R.id.action_loadingConflictFragment_to_medicineConflictFragment,
+                    bundleOf("itemSeq" to itemSeq)
+                )
             } catch (e: Exception) {
                 Log.e("LoadingConflictFragment", "Error in btnCheck click: ${e.message}", e)
             }

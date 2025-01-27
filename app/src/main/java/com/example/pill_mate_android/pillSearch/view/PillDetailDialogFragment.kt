@@ -69,8 +69,6 @@ class PillDetailDialogFragment(
     }
 
     private fun checkMedicineConflicts(itemSeq: String) {
-        var hasConflicts = false
-
         ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
             .enqueue(object : Callback<List<UsjntTabooResponse>> {
                 override fun onResponse(
@@ -78,23 +76,20 @@ class PillDetailDialogFragment(
                     response: Response<List<UsjntTabooResponse>>
                 ) {
                     if (response.isSuccessful) {
-                        val responseBody = response.body() ?: emptyList()
-                        Log.d("PillDetailDialog", "병용 금기 API 응답: $responseBody")
-                        hasConflicts = responseBody.isNotEmpty()
+                        val hasUsjntTabooConflicts = response.body()?.isNotEmpty() ?: false
+                        checkEfcyDplct(itemSeq, hasUsjntTabooConflicts)
                     } else {
-                        Log.e("PillDetailDialog", "병용 금기 API 응답 실패: ${response.code()}")
+                        navigateToStepThree()
                     }
-                    checkEfcyDplct(itemSeq, hasConflicts)
                 }
 
                 override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
-                    Log.e("PillDetailDialog", "병용 금기 API 호출 실패", t)
-                    checkEfcyDplct(itemSeq, hasConflicts)
+                    navigateToStepThree()
                 }
             })
     }
 
-    private fun checkEfcyDplct(itemSeq: String, hasConflicts: Boolean) {
+    private fun checkEfcyDplct(itemSeq: String, hasUsjntTabooConflicts: Boolean) {
         ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
             .enqueue(object : Callback<List<EfcyDplctResponse>> {
                 override fun onResponse(
@@ -102,49 +97,38 @@ class PillDetailDialogFragment(
                     response: Response<List<EfcyDplctResponse>>
                 ) {
                     if (response.isSuccessful) {
-                        val responseBody = response.body() ?: emptyList()
-                        Log.d("PillDetailDialog", "효능 중복 데이터: $responseBody")
-
-                        // 이 부분을 수정
-                        if (responseBody.isNotEmpty()) {
-                            Log.d("PillDetailDialog", "Navigating to Conflict Fragment")
-                            navigateToConflictFragment()
+                        val hasEfcyDplctConflicts = response.body()?.isNotEmpty() ?: false
+                        if (hasUsjntTabooConflicts || hasEfcyDplctConflicts) {
+                            navigateToLoadingConflictFragment(itemSeq)
                         } else {
-                            Log.d("PillDetailDialog", "Navigating to Step Three Fragment")
-                            navigateToStepThreeFragment()
+                            navigateToStepThree()
                         }
                     } else {
-                        Log.e("PillDetailDialog", "효능 중복 API 응답 실패: ${response.code()}")
-                        navigateToStepThreeFragment() // 실패 시 기본적으로 Step Three로 이동
+                        navigateToStepThree()
                     }
                 }
 
                 override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
-                    Log.e("PillDetailDialog", "효능 중복 API 호출 실패", t)
-                    navigateToStepThreeFragment() // 실패 시 기본적으로 Step Three로 이동
+                    navigateToStepThree()
                 }
             })
     }
 
-    private fun navigateToConflictFragment() {
-        val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
-        val conflictFragment = LoadingConflictFragment().apply {
-            arguments = Bundle().apply {
-                putString("itemSeq", pillItem?.ITEM_SEQ)
-            }
-        }
+    private fun navigateToLoadingConflictFragment(itemSeq: String) {
         dismiss()
         bottomSheet.dismiss()
-        medicineRegistrationFragment.showFullscreenFragment(conflictFragment)
+        val navController = medicineRegistrationFragment.childFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()
+        navController?.navigate(R.id.action_stepTwoFragment_to_loadingConflictFragment,
+            Bundle().apply { putString("itemSeq", itemSeq) })
     }
 
-
-    private fun navigateToStepThreeFragment() {
-        val parentFragment = parentFragment as? MedicineRegistrationFragment
-        dismiss() // 다이얼로그 닫기
-        bottomSheet.dismiss() // 바텀 시트 닫기
-        parentFragment?.hideFullscreenFragment()
-        parentFragment?.findNavController()?.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
+    private fun navigateToStepThree() {
+        dismiss()
+        bottomSheet.dismiss()
+        val navController = medicineRegistrationFragment.childFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()
+        navController?.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
     }
 
     override fun onDestroyView() {

@@ -99,9 +99,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 R.id.stepSixFragment -> 6
                 R.id.stepSevenFragment -> 7
                 R.id.stepEightFragment -> 8
+                R.id.loadingConflictFragment, R.id.medicineConflictFragment -> 2
                 else -> 0
             }
             updateProgressBar(stepIndex)
+            updateViewVisibility(destination.id)
         }
     }
 
@@ -261,17 +263,22 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         dialog.show(childFragmentManager, "PillRegistrationDialog")
     }
 
-    fun showFullscreenFragment(fragment: Fragment) {
-        val transaction = childFragmentManager.beginTransaction()
-        transaction.replace(R.id.fullscreen_container, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-        binding.fullscreenContainer.visibility = View.VISIBLE
-    }
+    private fun updateViewVisibility(destinationId: Int) {
+        val isConflictFragment = destinationId == R.id.loadingConflictFragment || destinationId == R.id.medicineConflictFragment
+        val isStepEightFragment = destinationId == R.id.stepEightFragment
 
-    fun hideFullscreenFragment() {
-        childFragmentManager.popBackStack()
-        binding.fullscreenContainer.visibility = View.GONE
+        // 상단 뷰 (뒤로 가기 버튼, 제목, 삭제 버튼) 처리
+        binding.ivBack.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+        binding.tvTitle.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+        binding.ivDelete.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+
+        // ProgressBar, Next 버튼, RecyclerView 처리
+        binding.progressBarSteps.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+        binding.btnNext.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+        binding.rvData.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+
+        // StepEightFragment에서만 건너뛰기 버튼 표시
+        binding.btnSkip.visibility = if (isStepEightFragment) View.VISIBLE else View.GONE
     }
 
     fun hideKeyboard() {

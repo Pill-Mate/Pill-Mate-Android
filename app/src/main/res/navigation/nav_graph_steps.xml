@@ -23,7 +23,7 @@
             android:id="@+id/action_stepTwoFragment_to_stepThreeFragment"
             app:destination="@id/stepThreeFragment" />
         <action
-            android:id="@+id/action_loadingFragment_to_loadingConflictFragment"
+            android:id="@+id/action_stepTwoFragment_to_loadingConflictFragment"
             app:destination="@id/loadingConflictFragment" />
     </fragment>
 
@@ -39,7 +39,11 @@
     <fragment
         android:id="@+id/medicineConflictFragment"
         android:name="com.example.pill_mate_android.MedicineConflictFragment"
-        tools:layout="@layout/fragment_medicine_conflict" />
+        tools:layout="@layout/fragment_medicine_conflict">
+        <action
+            android:id="@+id/action_medicineConflictFragment_to_stepThreeFragment"
+            app:destination="@id/stepThreeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/stepThreeFragment"
