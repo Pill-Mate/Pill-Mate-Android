@@ -2,15 +2,20 @@ package com.example.pill_mate_android
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import com.example.pill_mate_android.databinding.FragmentSettingRoutineBottomDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRoutine? = null) :
     BottomSheetDialogFragment() {
@@ -33,8 +38,10 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
 
         initView()
         responseRoutine?.let { updateUI(it) } // 데이터 업데이트
+
         setupDropDownButtonListeners()
         onCloseButtonClick()
+        onDoneButtonClick()
     }
 
     private fun updateUI(responseRoutine: ResponseRoutine) {
@@ -269,6 +276,56 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
         binding.btnClose.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun onDoneButtonClick() {
+        binding.btnDone.setOnClickListener {
+            val routineData = RoutineData(
+                wakeupTime = getFormattedTime(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1),
+                bedTime = getFormattedTime(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2),
+                morningTime = getFormattedTime(binding.hrsPicker3, binding.minPicker3, binding.amPmPicker3),
+                lunchTime = getFormattedTime(binding.hrsPicker4, binding.minPicker4, binding.amPmPicker4),
+                dinnerTime = getFormattedTime(binding.hrsPicker5, binding.minPicker5, binding.amPmPicker5)
+            )
+            sendRoutineData(routineData)
+        }
+    }
+
+    private fun sendRoutineData(routineData: RoutineData) {
+        val call: Call<Void> = ServiceCreator.patchRoutineService.patchRoutineData(routineData)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.i("Routine Update", "루틴 업데이트 성공")
+                    Toast.makeText(context, "개인루틴이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    dismiss() // 바텀시트 닫기
+                } else {
+                    Log.e("Routine Update Error", "서버 에러: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("Routine Update Failure", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    private fun getFormattedTime(
+        hourPicker: NumberPicker, minutePicker: NumberPicker, amPmPicker: NumberPicker
+    ): String {
+        val amPm = amPmValues[amPmPicker.value] // 오전 또는 오후
+        var hour = hourPicker.value
+        val minute = minValues[minutePicker.value].toInt()
+
+        // 오전과 오후를 고려하여 24시간 형식으로 변환
+        if (amPm == "오후" && hour != 12) {
+            hour += 12
+        } else if (amPm == "오전" && hour == 12) {
+            hour = 0
+        }
+
+        return String.format("%02d:%02d:%02d", hour, minute, 0)
     }
 
     private fun customizeNumberPicker(numberPicker: NumberPicker, fontResId: Int) {
