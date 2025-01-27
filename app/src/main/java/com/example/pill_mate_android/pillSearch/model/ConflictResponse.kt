@@ -1,17 +1,20 @@
 package com.example.pill_mate_android.pillSearch.model
 
-data class UsjntTabooResponse(
-    val MIXTURE_ITEM_NAME: String? = null,
-    val MIXTURE_ITEM_SEQ: String? = null,
-    val PROHBT_CONTENT: String? = null,
-    val CLASS_NAME: String? = null,
-    val ENTP_NAME: String? = null,
-)
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
+data class UsjntTabooResponse(
+    val CLASS_NAME: String,
+    val MIXTURE_ITEM_NAME: String,
+    val ENTP_NAME: String,
+    val PROHBT_CONTENT: String
+) : Parcelable
+
+@Parcelize
 data class EfcyDplctResponse(
-    val ITEM_NAME: String? = null,
-    val ITEM_SEQ: String? = null,
-    val EFFECT_NAME: String? = null,
-    val CLASS_NAME: String? = null,
-    val ENTP_NAME: String? = null,
-)
+    val CLASS_NAME: String,
+    val ITEM_NAME: String,
+    val ENTP_NAME: String,
+    val EFFECT_NAME: String
+) : Parcelable

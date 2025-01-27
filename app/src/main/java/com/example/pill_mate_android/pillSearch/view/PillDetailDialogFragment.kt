@@ -76,8 +76,8 @@ class PillDetailDialogFragment(
                     response: Response<List<UsjntTabooResponse>>
                 ) {
                     if (response.isSuccessful) {
-                        val hasUsjntTabooConflicts = response.body()?.isNotEmpty() ?: false
-                        checkEfcyDplct(itemSeq, hasUsjntTabooConflicts)
+                        val usjntTabooData = response.body().orEmpty()
+                        checkEfcyDplct(itemSeq, usjntTabooData)
                     } else {
                         navigateToStepThree()
                     }
@@ -89,7 +89,7 @@ class PillDetailDialogFragment(
             })
     }
 
-    private fun checkEfcyDplct(itemSeq: String, hasUsjntTabooConflicts: Boolean) {
+    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
         ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
             .enqueue(object : Callback<List<EfcyDplctResponse>> {
                 override fun onResponse(
@@ -97,9 +97,9 @@ class PillDetailDialogFragment(
                     response: Response<List<EfcyDplctResponse>>
                 ) {
                     if (response.isSuccessful) {
-                        val hasEfcyDplctConflicts = response.body()?.isNotEmpty() ?: false
-                        if (hasUsjntTabooConflicts || hasEfcyDplctConflicts) {
-                            navigateToLoadingConflictFragment(itemSeq)
+                        val efcyDplctData = response.body().orEmpty()
+                        if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
+                            navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
                         } else {
                             navigateToStepThree()
                         }
@@ -114,13 +114,21 @@ class PillDetailDialogFragment(
             })
     }
 
-    private fun navigateToLoadingConflictFragment(itemSeq: String) {
+    private fun navigateToLoadingConflictFragment(
+        usjntTabooData: List<UsjntTabooResponse>,
+        efcyDplctData: List<EfcyDplctResponse>
+    ) {
         dismiss()
         bottomSheet.dismiss()
+
+        val bundle = Bundle().apply {
+            putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
+            putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
+        }
+
         val navController = medicineRegistrationFragment.childFragmentManager
             .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()
-        navController?.navigate(R.id.action_stepTwoFragment_to_loadingConflictFragment,
-            Bundle().apply { putString("itemSeq", itemSeq) })
+        navController?.navigate(R.id.action_stepTwoFragment_to_loadingConflictFragment, bundle)
     }
 
     private fun navigateToStepThree() {

@@ -209,6 +209,7 @@
             android:background="@drawable/bg_btn_main_blue_1"
             android:text="건너뛰기"
             android:textColor="@color/white"
+            android:stateListAnimator="@null"
             app:layout_constraintBottom_toTopOf="@+id/btn_finish"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -221,6 +222,7 @@
             android:background="@drawable/bg_btn_gray_3"
             android:text="등록 종료하기"
             android:textColor="@color/black"
+            android:stateListAnimator="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

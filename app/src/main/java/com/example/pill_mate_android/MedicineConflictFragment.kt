@@ -15,13 +15,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentMedicineConflictBinding
 import com.example.pill_mate_android.pillSearch.model.*
 import com.example.pill_mate_android.ui.main.activity.MainActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MedicineConflictFragment : Fragment() {
 
@@ -32,6 +28,9 @@ class MedicineConflictFragment : Fragment() {
     private lateinit var efficiencyOverlapAdapter: ConflictAdapter
     private var contraindicationCount = 0
     private var efficiencyOverlapCount = 0
+
+    private var usjntTabooData: List<UsjntTabooResponse>? = null
+    private var efcyDplctData: List<EfcyDplctResponse>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,9 +46,9 @@ class MedicineConflictFragment : Fragment() {
 
         initializeSections()
         setupUI()
+        retrieveArguments()
         loadMedicineData()
-        fetchUsjntTabooData()
-        fetchEfcyDplctData()
+        displayConflictData()
     }
 
     private fun initializeSections() {
@@ -82,7 +81,7 @@ class MedicineConflictFragment : Fragment() {
 
     private fun setupAdapters() {
         contraindicationAdapter = ConflictAdapter { medicineName ->
-            fetchPharmacyAndHospitalData(medicineName)
+            Log.d("MedicineConflictFragment", "Contraindication item clicked: $medicineName")
         }
         binding.rvContraindication.apply {
             layoutManager = LinearLayoutManager(context)
@@ -90,11 +89,20 @@ class MedicineConflictFragment : Fragment() {
         }
 
         efficiencyOverlapAdapter = ConflictAdapter { medicineName ->
-            fetchPharmacyAndHospitalData(medicineName)
+            Log.d("MedicineConflictFragment", "Efficiency overlap item clicked: $medicineName")
         }
         binding.rvEfficiencyOverlap.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = efficiencyOverlapAdapter
+        }
+    }
+
+    private fun retrieveArguments() {
+        usjntTabooData = arguments?.getParcelableArrayList("usjntTabooData")
+        efcyDplctData = arguments?.getParcelableArrayList("efcyDplctData")
+
+        if (usjntTabooData == null || efcyDplctData == null) {
+            Log.e("MedicineConflictFragment", "Received null data")
         }
     }
 
@@ -134,106 +142,26 @@ class MedicineConflictFragment : Fragment() {
         }
     }
 
-    private fun fetchUsjntTabooData() {
-        val itemSeq = arguments?.getString("itemSeq") ?: return
-        medicineRegistrationService.getUsjntTaboo(itemSeq)
-            .enqueue(object : Callback<List<UsjntTabooResponse>> {
-                override fun onResponse(
-                    call: Call<List<UsjntTabooResponse>>,
-                    response: Response<List<UsjntTabooResponse>>
-                ) {
-                    if (response.isSuccessful) {
-                        val data = response.body().orEmpty()
-                        contraindicationCount = data.size
-                        contraindicationAdapter.submitList(data)
-                        toggleSectionVisibility(data.isNotEmpty(), SectionType.CONTRAINDICATION)
-                    } else {
-                        contraindicationCount = 0
-                        toggleSectionVisibility(false, SectionType.CONTRAINDICATION)
-                    }
-                    updateTitle()
-                }
+    private fun displayConflictData() {
+        usjntTabooData?.let { data ->
+            contraindicationCount = data.size
+            contraindicationAdapter.submitList(data)
+            toggleSectionVisibility(data.isNotEmpty(), SectionType.CONTRAINDICATION)
+        } ?: run {
+            contraindicationCount = 0
+            toggleSectionVisibility(false, SectionType.CONTRAINDICATION)
+        }
 
-                override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
-                    contraindicationCount = 0
-                    toggleSectionVisibility(false, SectionType.CONTRAINDICATION)
-                    updateTitle()
-                }
-            })
-    }
+        efcyDplctData?.let { data ->
+            efficiencyOverlapCount = data.size
+            efficiencyOverlapAdapter.submitList(data)
+            toggleSectionVisibility(data.isNotEmpty(), SectionType.EFFICIENCY_OVERLAP)
+        } ?: run {
+            efficiencyOverlapCount = 0
+            toggleSectionVisibility(false, SectionType.EFFICIENCY_OVERLAP)
+        }
 
-    private fun fetchEfcyDplctData() {
-        val itemSeq = arguments?.getString("itemSeq") ?: return
-        medicineRegistrationService.getEfcyDplct(itemSeq)
-            .enqueue(object : Callback<List<EfcyDplctResponse>> {
-                override fun onResponse(
-                    call: Call<List<EfcyDplctResponse>>,
-                    response: Response<List<EfcyDplctResponse>>
-                ) {
-                    if (response.isSuccessful) {
-                        val data = response.body().orEmpty()
-                        efficiencyOverlapCount = data.size
-                        efficiencyOverlapAdapter.submitList(data)
-                        toggleSectionVisibility(data.isNotEmpty(), SectionType.EFFICIENCY_OVERLAP)
-                    } else {
-                        efficiencyOverlapCount = 0
-                        toggleSectionVisibility(false, SectionType.EFFICIENCY_OVERLAP)
-                    }
-                    updateTitle()
-                }
-
-                override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
-                    efficiencyOverlapCount = 0
-                    toggleSectionVisibility(false, SectionType.EFFICIENCY_OVERLAP)
-                    updateTitle()
-                }
-            })
-    }
-
-    private fun fetchPharmacyAndHospitalData(medicineName: String) {
-        medicineRegistrationService.getPharmacyAndHospital(medicineName)
-            .enqueue(object : Callback<PharmacyAndHospitalResponse> {
-                override fun onResponse(
-                    call: Call<PharmacyAndHospitalResponse>,
-                    response: Response<PharmacyAndHospitalResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { data ->
-                            if (data.isSuccess) {
-                                val result = data.result
-                                val pharmacy = Pharmacy(
-                                    pharmacyName = result.pharmacyName,
-                                    pharmacyAddress = result.pharmacyAddress,
-                                    pharmacyPhone = result.pharmacyPhone
-                                )
-                                val hospital = if (result.hospitalName.isNotEmpty()) {
-                                    Hospital(
-                                        hospitalName = result.hospitalName,
-                                        hospitalAddress = result.hospitalAddress,
-                                        hospitalPhone = result.hospitalPhone
-                                    )
-                                } else {
-                                    null
-                                }
-                                showInquiryBottomSheet(pharmacy, hospital)
-                            } else {
-                                Log.e("MedicineConflict", "API Error: ${data.message}")
-                            }
-                        }
-                    } else {
-                        Log.e("MedicineConflict", "Failed to fetch data: ${response.errorBody()?.string()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<PharmacyAndHospitalResponse>, t: Throwable) {
-                    Log.e("MedicineConflict", "Network error: ${t.message}")
-                }
-            })
-    }
-
-    private fun showInquiryBottomSheet(pharmacy: Pharmacy, hospital: Hospital?) {
-        val bottomSheet = InquiryBottomSheetFragment.newInstance(pharmacy, hospital)
-        bottomSheet.show(childFragmentManager, bottomSheet.tag)
+        updateTitle()
     }
 
     private fun toggleSectionVisibility(isVisible: Boolean, sectionType: SectionType) {
