@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface LoginService {
     @POST("/api/v1/auth/signup")
-    fun login(@Body login: LoginData): Call<ResponseToken>
+    fun login(@Body login: KaKaoTokenData): Call<ResponseToken>
 }
 
 interface OnBoardingService {

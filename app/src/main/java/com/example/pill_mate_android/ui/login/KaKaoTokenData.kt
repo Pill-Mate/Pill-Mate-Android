@@ -1,5 +1,5 @@
 package com.example.pill_mate_android.ui.login
 
-data class LoginData(
+data class KaKaoTokenData(
     val kakaoAccessToken: String?
 )
