@@ -10,27 +10,6 @@
         <action
             android:id="@+id/action_loadingFragment_to_stepNineFragment"
             app:destination="@id/stepNineFragment" />
-        <action
-            android:id="@+id/action_loadingFragment_to_loadingConflictFragment"
-            app:destination="@id/loadingConflictFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/loadingConflictFragment"
-        android:name="com.example.pill_mate_android.LoadingConflictFragment"
-        tools:layout="@layout/fragment_loading_conflict">
-        <action
-            android:id="@+id/action_loadingConflictFragment_to_medicineConflictFragment"
-            app:destination="@id/medicineConflictFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/medicineConflictFragment"
-        android:name="com.example.pill_mate_android.MedicineConflictFragment"
-        tools:layout="@layout/fragment_medicine_conflict">
-        <action
-            android:id="@+id/action_medicineConflictFragment_to_stepNineFragment"
-            app:destination="@id/stepNineFragment" />
     </fragment>
 
     <fragment

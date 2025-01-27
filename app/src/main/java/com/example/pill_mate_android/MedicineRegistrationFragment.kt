@@ -14,7 +14,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pill_mate_android.databinding.FragmentMedicineRegistrationBinding
 import com.example.pill_mate_android.pillSearch.model.DataRepository
@@ -260,6 +259,19 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     private fun showPillRegistrationDialog() {
         val dialog = PillRegistrationDialogFragment()
         dialog.show(childFragmentManager, "PillRegistrationDialog")
+    }
+
+    fun showFullscreenFragment(fragment: Fragment) {
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.replace(R.id.fullscreen_container, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+        binding.fullscreenContainer.visibility = View.VISIBLE
+    }
+
+    fun hideFullscreenFragment() {
+        childFragmentManager.popBackStack()
+        binding.fullscreenContainer.visibility = View.GONE
     }
 
     fun hideKeyboard() {

@@ -60,37 +60,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_warning_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/main_pink_1"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/iv_image"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="겹치는 효능군명" />
-
-    <TextView
-        android:id="@+id/tv_warning_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/tv_warning_1"
-        app:layout_constraintTop_toTopOf="@+id/tv_warning_1"
-        tools:text="효능군 중복" />
-
-    <TextView
         android:id="@+id/tv_warning_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_warning_1"
+        app:layout_constraintTop_toBottomOf="@+id/iv_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="복약 중인 동일 효능군이 있어요" />
@@ -99,7 +75,7 @@
         android:id="@+id/layout_buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:gravity="right"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/tv_warning_detail"

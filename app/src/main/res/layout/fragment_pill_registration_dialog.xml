@@ -50,6 +50,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="종료"
+            android:stateListAnimator="@null"
             android:textColor="@color/main_blue_1"
             android:background="@drawable/bg_btn_main_blue_2" />
 
@@ -59,6 +60,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="계속하기"
+            android:stateListAnimator="@null"
             android:textColor="@color/white"
             android:background="@drawable/bg_btn_main_blue_1" />
     </LinearLayout>

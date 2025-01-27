@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".StepNineFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,10 +36,11 @@
 
         <ImageView
             android:id="@+id/iv_pill"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginTop="24dp"
             android:src="@drawable/ic_pill"
+            app:tint="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
@@ -72,6 +74,7 @@
                 android:id="@+id/iv_medicine_image"
                 android:layout_width="100dp"
                 android:layout_height="54dp"
+                android:layout_gravity="center"
                 android:src="@drawable/ic_default_pill"
                 android:scaleType="centerCrop" />
 
@@ -198,76 +201,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- 동일성분 중복 섹션 -->
-        <ImageView
-            android:id="@+id/iv_same_ingredient_overlap_start"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/ic_warning"
-            app:layout_constraintTop_toBottomOf="@id/rv_efficiency_overlap"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_same_ingredient_overlap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="동일성분 중복"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_same_ingredient_overlap_start"
-            app:layout_constraintStart_toEndOf="@id/iv_same_ingredient_overlap_start"
-            app:layout_constraintTop_toTopOf="@+id/iv_same_ingredient_overlap_start" />
-
-        <ImageView
-            android:id="@+id/iv_same_ingredient_overlap_end"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="2dp"
-            android:src="@drawable/ic_link"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_same_ingredient_overlap"
-            app:layout_constraintStart_toEndOf="@id/tv_same_ingredient_overlap"
-            app:layout_constraintTop_toTopOf="@+id/tv_same_ingredient_overlap" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_same_ingredient_overlap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/iv_same_ingredient_overlap_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
         <Button
             android:id="@+id/btn_skip"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/bg_btn_main_blue_1"
             android:text="건너뛰기"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_finish"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_same_ingredient_overlap" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btn_finish"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/bg_btn_gray_3"
             android:text="등록 종료하기"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_skip" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

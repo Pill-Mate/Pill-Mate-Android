@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pill_mate_android.MedicineRegistrationFragment
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.example.pill_mate_android.pillSearch.model.PillIdntfcItem
@@ -27,7 +28,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PillSearchBottomSheetFragment(
-    private val stepTwoView: StepTwoView // StepTwoView를 인자로 받음
+    private val stepTwoView: StepTwoView, // StepTwoView를 인자로 받음
+    private val medicineRegistrationFragment: MedicineRegistrationFragment // 추가
 ) : BottomSheetDialogFragment(), PillSearchView {
 
     private var _binding: FragmentSearchPillBinding? = null
@@ -87,7 +89,12 @@ class PillSearchBottomSheetFragment(
     private fun initView() {
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
             // 아이템 클릭 시 다이얼로그 생성 및 표시
-            val dialog = PillDetailDialogFragment.newInstance(stepTwoPresenter, this, pillItem)
+            val dialog = PillDetailDialogFragment.newInstance(
+                stepTwoPresenter,
+                this,
+                medicineRegistrationFragment, // MedicineRegistrationFragment 전달
+                pillItem
+            )
             dialog.show(parentFragmentManager, "PillDetailDialog")
 
             // 아이템 클릭 시 데이터를 StepTwoFragment로 전달
@@ -172,5 +179,14 @@ class PillSearchBottomSheetFragment(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(
+            stepTwoView: StepTwoView,
+            medicineRegistrationFragment: MedicineRegistrationFragment
+        ): PillSearchBottomSheetFragment {
+            return PillSearchBottomSheetFragment(stepTwoView, medicineRegistrationFragment)
+        }
     }
 }

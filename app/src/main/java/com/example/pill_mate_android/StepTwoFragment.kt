@@ -73,8 +73,20 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     private fun openPillSearchBottomSheet() {
-        val bottomSheetFragment = PillSearchBottomSheetFragment(this)
-        bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
+        // 부모 Fragment를 정확하게 찾는 방법
+        val medicineRegistrationFragment = (parentFragment?.parentFragment as? MedicineRegistrationFragment)
+            ?: (requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment)
+
+        if (medicineRegistrationFragment != null) {
+            val bottomSheetFragment = PillSearchBottomSheetFragment.newInstance(
+                this,
+                medicineRegistrationFragment
+            )
+            bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
+        } else {
+            // 부모 Fragment를 찾을 수 없는 경우 처리
+            Log.e("StepTwoFragment", "Could not find MedicineRegistrationFragment")
+        }
     }
 
     private fun handleSearchResult(selectedPillItem: PillIdntfcItem) {

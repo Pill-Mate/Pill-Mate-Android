@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".StepNineFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,7 +38,7 @@
             android:id="@+id/iv_pill"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="26dp"
             android:src="@drawable/ic_pill"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title"
@@ -73,6 +74,7 @@
                 android:id="@+id/iv_medicine_image"
                 android:layout_width="100dp"
                 android:layout_height="54dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_default_pill"
                 android:scaleType="centerCrop" />
 
@@ -176,8 +178,7 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_alarm_toggle" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

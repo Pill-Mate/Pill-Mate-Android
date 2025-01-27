@@ -12,6 +12,7 @@
         android:layout_marginTop="26dp"
         android:layout_marginStart="20dp"
         android:text="요일을 선택해주세요"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"

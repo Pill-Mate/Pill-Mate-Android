@@ -41,6 +41,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="취소"
+            android:stateListAnimator="@null"
             android:textColor="@color/main_blue_1"
             android:background="@drawable/bg_btn_main_blue_2" />
 
@@ -50,6 +51,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="삭제하기"
+            android:stateListAnimator="@null"
             android:textColor="@color/main_pink_1"
             android:background="@drawable/bg_btn_pink_2" />
     </LinearLayout>

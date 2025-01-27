@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentStepNineBinding
 import com.example.pill_mate_android.pillSearch.model.DataRepository
@@ -163,6 +164,8 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
             binding.tvMedicineName.text = medicine.medicine_name
             binding.tvMedicineDose.text = "${schedule.eat_count}${schedule.eat_unit}"
             binding.ivMedicineImage.load(medicine.image) {
+                transformations(RoundedCornersTransformation(20f))
+                crossfade(true)
                 error(R.drawable.ic_default_pill)
             }
         } else {

@@ -41,7 +41,7 @@
     </style>
 
     <style name="TagTextStyle" parent="TextAppearance.MaterialComponents.Chip">
-        <!-- <item name="android:fontFamily">@font/pretendard</item>  Pretendard 폰트 적용 -->
+         <item name="android:fontFamily">@font/pretendard_regular</item>  Pretendard 폰트 적용
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/main_blue_1</item>
