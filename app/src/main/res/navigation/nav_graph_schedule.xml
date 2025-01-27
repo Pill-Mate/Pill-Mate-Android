@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/loadingFragment"
-        android:name="com.example.pill_mate_android.LoadingFragment"
+        android:name="com.example.pill_mate_android.medicine_conflict.LoadingFragment"
         tools:layout="@layout/fragment_loading">
         <action
             android:id="@+id/action_loadingFragment_to_stepNineFragment"
@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/stepNineFragment"
-        android:name="com.example.pill_mate_android.StepNineFragment"
+        android:name="com.example.pill_mate_android.schedule.StepNineFragment"
         tools:layout="@layout/fragment_step_nine">
         <action
             android:id="@+id/action_stepNineFragment_to_stepTenFragment"
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/stepTenFragment"
-        android:name="com.example.pill_mate_android.StepTenFragment"
+        android:name="com.example.pill_mate_android.schedule.StepTenFragment"
         tools:layout="@layout/fragment_step_ten">
         <action
             android:id="@+id/action_stepTenFragment_to_stepElevenFragment"
@@ -32,6 +32,6 @@
 
     <fragment
         android:id="@+id/stepElevenFragment"
-        android:name="com.example.pill_mate_android.StepElevenFragment"
+        android:name="com.example.pill_mate_android.schedule.StepElevenFragment"
         tools:layout="@layout/fragment_step_eleven" />
 </navigation>

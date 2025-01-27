@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StepTwoFragment">
+    tools:context=".search.view.StepTwoFragment">
 
     <TextView
         android:id="@+id/tv_title"

@@ -42,8 +42,8 @@
             android:layout_marginEnd="8dp"
             android:text="취소"
             android:stateListAnimator="@null"
-            android:textColor="@color/main_blue_1"
-            android:background="@drawable/bg_btn_main_blue_2" />
+            android:textColor="@color/black"
+            android:background="@drawable/bg_btn_gray_2_stoke" />
 
         <Button
             android:id="@+id/btn_delete"
@@ -52,8 +52,8 @@
             android:layout_weight="1"
             android:text="삭제하기"
             android:stateListAnimator="@null"
-            android:textColor="@color/main_pink_1"
-            android:background="@drawable/bg_btn_pink_2" />
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_pink_1" />
     </LinearLayout>
 
 </LinearLayout>

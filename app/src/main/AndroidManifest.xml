@@ -67,11 +67,11 @@
         </activity>
 
         <activity
-            android:name=".ScheduleActivity"
+            android:name=".schedule.ScheduleActivity"
             android:exported="true"
             android:theme="@style/Theme.PillMateAndroid" />
         <activity
-            android:name=".MedicineRegistrationActivity"
+            android:name=".medicine_registration.MedicineRegistrationActivity"
             android:exported="true"
             android:theme="@style/Theme.PillMateAndroid" />
     </application>
