@@ -13,7 +13,7 @@ import java.util.concurrent.*
 
 object ServiceCreator {
     //서버에서 준 URL 입력
-    private const val BASE_URL = "http://3.34.253.167:8080"
+    private const val BASE_URL = "https://ad0n0kzypg.execute-api.ap-northeast-2.amazonaws.com"
 
     private val userRetrofit: Retrofit = Retrofit.Builder().baseUrl(BASE_URL).client(provideOkHttpClient())
         .addConverterFactory(GsonConverterFactory.create()).build()
@@ -34,4 +34,6 @@ object ServiceCreator {
     val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
     val medicineCheckService: MedicineCheckService = userRetrofit.create(MedicineCheckService::class.java)
     val settingService: SettingService = userRetrofit.create(SettingService::class.java)
+    val signOutService: SignOutService = userRetrofit.create(SignOutService::class.java)
+    val logOutService: LogOutService = userRetrofit.create(LogOutService::class.java)
 }

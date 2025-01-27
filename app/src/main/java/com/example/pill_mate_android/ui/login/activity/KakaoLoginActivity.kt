@@ -1,6 +1,7 @@
 package com.example.pill_mate_android.ui.login.activity
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +13,7 @@ import com.example.pill_mate_android.GlobalApplication
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityKakaoLoginBinding
-import com.example.pill_mate_android.ui.login.LoginData
+import com.example.pill_mate_android.ui.login.KaKaoTokenData
 import com.example.pill_mate_android.ui.login.ResponseToken
 import com.example.pill_mate_android.ui.main.activity.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
@@ -52,7 +53,7 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-
+                saveAccessToken(token.accessToken) // 토큰 저장
                 loginNetwork(token.accessToken)
             }
         }
@@ -82,9 +83,14 @@ class KakaoLoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveAccessToken(accessToken: String) {
+        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("kakao_access_token", accessToken).apply()
+    }
+
     private fun loginNetwork(accessToken: String) {
 
-        val loginData = LoginData(kakaoAccessToken = accessToken)
+        val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
         val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
         call.enqueue(object : Callback<ResponseToken> {
