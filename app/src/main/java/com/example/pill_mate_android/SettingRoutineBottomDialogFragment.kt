@@ -12,7 +12,8 @@ import com.example.pill_mate_android.databinding.FragmentSettingRoutineBottomDia
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class SettingRoutineBottomDialogFragment(val itemClick: (Int) -> Unit) : BottomSheetDialogFragment() {
+class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRoutine? = null) :
+    BottomSheetDialogFragment() {
 
     private var _binding: FragmentSettingRoutineBottomDialogBinding? = null
     private val binding get() = _binding ?: error("binding not initialized")
@@ -31,8 +32,56 @@ class SettingRoutineBottomDialogFragment(val itemClick: (Int) -> Unit) : BottomS
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        responseRoutine?.let { updateUI(it) } // 데이터 업데이트
         setupDropDownButtonListeners()
         onCloseButtonClick()
+    }
+
+    private fun updateUI(responseRoutine: ResponseRoutine) {
+        responseRoutine.wakeupTime?.let {
+            setTime(
+                it, binding.tvWakeupTime, binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1
+            )
+        }
+        responseRoutine.bedTime?.let {
+            setTime(
+                it, binding.tvSleepTime, binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2
+            )
+        }
+        responseRoutine.morningTime?.let {
+            setTime(
+                it, binding.tvBreakfastTime, binding.hrsPicker3, binding.minPicker3, binding.amPmPicker3
+            )
+        }
+        responseRoutine.lunchTime?.let {
+            setTime(
+                it, binding.tvLunchTime, binding.hrsPicker4, binding.minPicker4, binding.amPmPicker4
+            )
+        }
+        responseRoutine.dinnerTime?.let {
+            setTime(
+                it, binding.tvDinnerTime, binding.hrsPicker5, binding.minPicker5, binding.amPmPicker5
+            )
+        }
+    }
+
+    private fun setTime(
+        time: String, textView: TextView, hrsPicker: NumberPicker, minPicker: NumberPicker, amPmPicker: NumberPicker
+    ) {
+        val (hour, minute, amPm) = parseTime(time)
+        textView.text = "$amPm $hour:${"%02d".format(minute)}"
+        hrsPicker.value = hour
+        minPicker.value = minute / 10
+        amPmPicker.value = if (amPm == "오전") 0 else 1
+    }
+
+    private fun parseTime(time: String): Triple<Int, Int, String> {
+        val parts = time.split(":")
+        val hour = parts[0].toInt()
+        val minute = parts[1].toInt()
+        val amPm = if (hour < 12) "오전" else "오후"
+        val adjustedHour = if (hour == 0) 12 else if (hour > 12) hour - 12 else hour
+        return Triple(adjustedHour, minute, amPm)
     }
 
     private fun initView() {

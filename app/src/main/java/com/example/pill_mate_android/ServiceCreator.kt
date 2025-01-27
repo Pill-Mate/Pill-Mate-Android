@@ -36,4 +36,5 @@ object ServiceCreator {
     val settingService: SettingService = userRetrofit.create(SettingService::class.java)
     val signOutService: SignOutService = userRetrofit.create(SignOutService::class.java)
     val logOutService: LogOutService = userRetrofit.create(LogOutService::class.java)
+    val getRoutineService: GetRoutineService = userRetrofit.create(GetRoutineService::class.java)
 }

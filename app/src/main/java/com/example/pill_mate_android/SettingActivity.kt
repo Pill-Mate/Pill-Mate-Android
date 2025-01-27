@@ -35,7 +35,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             insets
         }
 
-        //fetchUserInfoData()
+        fetchUserInfoData()
         setButtonClickListener()
     }
 
@@ -90,9 +90,10 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
 
         binding.btnPersonalRoutine.setOnClickListener {
-            val settingRoutineBottomDialogFragment: SettingRoutineBottomDialogFragment =
-                SettingRoutineBottomDialogFragment {}
-            settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
+            fetchRoutineData { responseRoutine ->
+                val settingRoutineBottomDialogFragment = SettingRoutineBottomDialogFragment(responseRoutine)
+                settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
+            }
         }
     }
 
@@ -157,6 +158,27 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
+        val call: Call<ResponseRoutine> = ServiceCreator.getRoutineService.getRoutineData()
+
+        call.enqueue(object : Callback<ResponseRoutine> {
+            override fun onResponse(call: Call<ResponseRoutine>, response: Response<ResponseRoutine>) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    responseData?.let {
+                        onSuccess(it) // 성공 시 콜백 호출
+                    } ?: Log.e("데이터 오류", "개인루틴 데이터가 없습니다.")
+                } else {
+                    Log.e("서버 응답 에러", "에러: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseRoutine>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
