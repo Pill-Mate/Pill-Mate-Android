@@ -26,11 +26,11 @@ class LoadingConflictFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lottieConflict.apply {
+        /*binding.lottieConflict.apply {
             setAnimation(R.raw.loading_animation)
             loop(true)
             playAnimation()
-        }
+        }*/
 
         setupButton()
     }
@@ -58,7 +58,7 @@ class LoadingConflictFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.lottieConflict.cancelAnimation()
+        //binding.lottieConflict.cancelAnimation()
         _binding = null
     }
 }

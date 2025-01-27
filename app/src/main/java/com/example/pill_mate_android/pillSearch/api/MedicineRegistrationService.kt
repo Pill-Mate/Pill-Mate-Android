@@ -3,6 +3,7 @@ package com.example.pill_mate_android.pillSearch.api
 import com.example.pill_mate_android.pillSearch.model.EfcyDplctResponse
 import com.example.pill_mate_android.pillSearch.model.MedicineRegisterRequest
 import com.example.pill_mate_android.pillSearch.model.OnboardingTimeResponse
+import com.example.pill_mate_android.pillSearch.model.PharmacyAndHospitalResponse
 import com.example.pill_mate_android.pillSearch.model.UsjntTabooResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -24,6 +25,9 @@ interface MedicineRegistrationService {
 
     @GET("/api/v1/dur/efcy-dplct") // 효능군 중복 데이터 가져오기
     fun getEfcyDplct(@Query("itemSeq") itemSeq: String): Call<List<EfcyDplctResponse>>
+
+    @GET("/api/v1/medicine/pharmacy-hospital") // 약국 병원 정보 가져오기
+    fun getPharmacyAndHospital(@Query("medicineName") medicineName: String): Call<PharmacyAndHospitalResponse>
 
     @DELETE("medicines/{name}")
     fun deleteMedicine(@Path("name") medicineName: String): Call<Void>

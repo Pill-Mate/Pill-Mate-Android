@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.pill_mate_android.databinding.FragmentPillRegistrationDialogBinding
+import com.example.pill_mate_android.pillSearch.model.DataRepository
 import com.example.pill_mate_android.ui.main.activity.MainActivity
 
 class PillRegistrationDialogFragment : DialogFragment() {
@@ -30,11 +31,7 @@ class PillRegistrationDialogFragment : DialogFragment() {
 
         binding.btnCancel.setOnClickListener {
             // 메인 액티비티로 이동
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
-            startActivity(intent)
-            requireActivity().finish() // 현재 액티비티 종료
-            dismiss() // 다이얼로그 닫기
+            clearRegistrationData()
         }
 
         binding.btnConfirm.setOnClickListener {
@@ -77,5 +74,15 @@ class PillRegistrationDialogFragment : DialogFragment() {
         }
 
         binding.tvMessage1.text = spannable
+    }
+
+    private fun clearRegistrationData() {
+        DataRepository.clearAll() // 모든 데이터를 초기화
+
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
+        startActivity(intent)
+        requireActivity().finish() // 현재 액티비티 종료
+        dismiss() // 다이얼로그 닫기
     }
 }

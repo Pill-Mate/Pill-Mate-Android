@@ -7,7 +7,9 @@ import com.example.pill_mate_android.databinding.ItemConflictBinding
 import com.example.pill_mate_android.pillSearch.model.EfcyDplctResponse
 import com.example.pill_mate_android.pillSearch.model.UsjntTabooResponse
 
-class ConflictAdapter : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
+class ConflictAdapter(
+    private val onInquiryClicked: (medicineName: String) -> Unit
+) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
 
     private var items: List<Any> = emptyList()
 
@@ -26,12 +28,20 @@ class ConflictAdapter : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
                     binding.tvPillName.text = item.MIXTURE_ITEM_NAME
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.PROHBT_CONTENT
+
+                    binding.btnInquiry.setOnClickListener {
+                        item.MIXTURE_ITEM_NAME?.let { it1 -> onInquiryClicked(it1) }
+                    }
                 }
                 is EfcyDplctResponse -> {
                     binding.tvClassName.text = item.CLASS_NAME
                     binding.tvPillName.text = item.ITEM_NAME
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.EFFECT_NAME
+
+                    binding.btnInquiry.setOnClickListener {
+                        item.ITEM_NAME?.let { it1 -> onInquiryClicked(it1) }
+                    }
                 }
                 else -> throw IllegalArgumentException("Unsupported item type")
             }

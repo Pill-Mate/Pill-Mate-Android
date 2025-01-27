@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="1dp"
+    android:padding="12dp"
     android:background="@drawable/rectangle_white_radius_20">
 
     <ImageView
@@ -89,6 +89,7 @@
             android:layout_height="38dp"
             android:layout_marginEnd="4dp"
             android:background="@drawable/bg_btn_pink_2"
+            android:stateListAnimator="@null"
             android:elevation="0dp"
             android:text="약물삭제"
             android:textColor="@color/main_pink_1"
@@ -100,8 +101,9 @@
             android:layout_height="38dp"
             android:layout_marginStart="4dp"
             android:background="@drawable/bg_btn_main_blue_2"
+            android:stateListAnimator="@null"
             android:elevation="0dp"
-            android:text="문의하기"
+            android:text="약국 문의"
             android:textColor="@color/main_blue_1"
             android:textSize="14sp" />
     </LinearLayout>

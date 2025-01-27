@@ -28,11 +28,11 @@ class LoadingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lottieLoading.apply {
+        /*binding.lottieLoading.apply {
             setAnimation(R.raw.loading_animation)
             loop(true)
             playAnimation()
-        }
+        }*/
 
         Handler(Looper.getMainLooper()).postDelayed({
             findNavController().navigate(
@@ -47,7 +47,7 @@ class LoadingFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.lottieLoading.cancelAnimation()
+        //binding.lottieLoading.cancelAnimation()
         _binding = null
     }
 }
