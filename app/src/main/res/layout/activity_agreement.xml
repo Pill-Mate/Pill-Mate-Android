@@ -318,7 +318,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

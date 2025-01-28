@@ -33,7 +33,7 @@ import java.util.*
 class PillCheckFragment : Fragment(), IDateClickListener {
 
     private var _binding: FragmentPillCheckBinding? = null
-    private val binding get() = _binding ?: error("binding not initialized")
+    private val binding get() = _binding!!
     private val expandedStates = mutableSetOf<Int>()
 
     @RequiresApi(VERSION_CODES.O)

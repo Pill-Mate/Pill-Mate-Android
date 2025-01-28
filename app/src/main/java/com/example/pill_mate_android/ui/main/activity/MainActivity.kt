@@ -28,11 +28,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         setDefaultStatusBar()
 
         presenter = MainPresenter(this)
-        presenter.onCreate()
-
-        // 기본 선택 아이템 설정
-        binding.bottomNavMain.selectedItemId = id.menu_home
         binding.bottomNavMain.itemIconTintList = null
+        binding.bottomNavMain.selectedItemId = id.menu_home
+
+        presenter.onCreate()
 
     }
 
