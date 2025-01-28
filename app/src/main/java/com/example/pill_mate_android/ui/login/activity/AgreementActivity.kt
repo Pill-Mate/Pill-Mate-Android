@@ -1,6 +1,8 @@
 package com.example.pill_mate_android.ui.login.activity
 
 import android.content.Intent
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.widget.CheckBox
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +33,7 @@ class AgreementActivity : AppCompatActivity() {
         setUpCheckBoxes()
         onDoneButtonClick()
         onBackButtonClick()
+        onDetailButtonClick()
 
     }
 
@@ -105,6 +108,15 @@ class AgreementActivity : AppCompatActivity() {
             val intent = Intent(this, TimePicker1Activity::class.java).apply {
                 putExtra("ALARM_MARKETING", binding.cb6.isChecked)
             }
+            startActivity(intent)
+        }
+    }
+
+    // 상세보기 클릭 시
+    private fun onDetailButtonClick() {
+        binding.tvDetail.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        binding.tvDetail.setOnClickListener {
+            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://slashpage.com/pillmate/4z7pvx2kzgqe7mek8653"))
             startActivity(intent)
         }
     }
