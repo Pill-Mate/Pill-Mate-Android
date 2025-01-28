@@ -3,6 +3,7 @@ package com.example.pill_mate_android
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -94,6 +95,16 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
                 val settingRoutineBottomDialogFragment = SettingRoutineBottomDialogFragment(responseRoutine)
                 settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
             }
+        }
+
+        binding.btnAboutPillmate.setOnClickListener {
+            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://slashpage.com/pillmate"))
+            startActivity(intent)
+        }
+
+        binding.btnSendComment.setOnClickListener {
+            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://slashpage.com/pillmate/3p4kj92y41dpkm57q1x8"))
+            startActivity(intent)
         }
     }
 
