@@ -1,6 +1,8 @@
 package com.example.pill_mate_android.ui.login.activity
 
 import android.content.Intent
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.widget.CheckBox
 import androidx.activity.enableEdgeToEdge
@@ -31,11 +33,12 @@ class AgreementActivity : AppCompatActivity() {
         setUpCheckBoxes()
         onDoneButtonClick()
         onBackButtonClick()
+        onDetailButtonClick()
 
     }
 
     private fun setUpCheckBoxes() {
-        individualCheckBoxes = listOf(binding.cb1, binding.cb2, binding.cb3, binding.cb4, binding.cb5)
+        individualCheckBoxes = listOf(binding.cb1, binding.cb2, binding.cb3, binding.cb4, binding.cb5, binding.cb6)
 
         // 개별 체크박스
         individualCheckBoxes.forEach { checkBox ->
@@ -45,7 +48,7 @@ class AgreementActivity : AppCompatActivity() {
                 updateAllAgreementBackground()
             }
         } // 모두 동의 체크박스
-        binding.cb6.setOnCheckedChangeListener { _, isChecked ->
+        binding.cb7.setOnCheckedChangeListener { _, isChecked ->
             individualCheckBoxes.forEach { checkBox ->
                 checkBox.isChecked = isChecked
             }
@@ -57,9 +60,9 @@ class AgreementActivity : AppCompatActivity() {
     // 모두 동의 체크박스 상태 변경
     private fun updateAllAgreementCheckBox() {
         val allChecked = individualCheckBoxes.all { it.isChecked }
-        binding.cb6.setOnCheckedChangeListener(null)
-        binding.cb6.isChecked = allChecked
-        binding.cb6.setOnCheckedChangeListener { _, isChecked ->
+        binding.cb7.setOnCheckedChangeListener(null)
+        binding.cb7.isChecked = allChecked
+        binding.cb7.setOnCheckedChangeListener { _, isChecked ->
             individualCheckBoxes.forEach { checkBox ->
                 checkBox.isChecked = isChecked
             }
@@ -71,7 +74,7 @@ class AgreementActivity : AppCompatActivity() {
     //모든 필수 체크박스가 체크된 경우 완료 버튼 활성화
     private fun updateDoneButtonState() {
         val allRequiredChecked = individualCheckBoxes.take(4).all { it.isChecked }
-        binding.btnDone.isEnabled = allRequiredChecked || binding.cb6.isChecked
+        binding.btnDone.isEnabled = allRequiredChecked || binding.cb7.isChecked
         updateDoneButtonBackground(binding.btnDone.isEnabled)
 
     }
@@ -103,8 +106,17 @@ class AgreementActivity : AppCompatActivity() {
     private fun onDoneButtonClick() {
         binding.btnDone.setOnClickListener {
             val intent = Intent(this, TimePicker1Activity::class.java).apply {
-                putExtra("ALARM_MARKETING", binding.cb5.isChecked)
+                putExtra("ALARM_MARKETING", binding.cb6.isChecked)
             }
+            startActivity(intent)
+        }
+    }
+
+    // 상세보기 클릭 시
+    private fun onDetailButtonClick() {
+        binding.tvDetail.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        binding.tvDetail.setOnClickListener {
+            var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://slashpage.com/pillmate/4z7pvx2kzgqe7mek8653"))
             startActivity(intent)
         }
     }

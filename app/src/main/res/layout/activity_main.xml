@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -9,21 +9,41 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.main.activity.MainActivity">
 
+    <!-- 메인 콘텐츠를 담을 프레임 레이아웃 -->
     <FrameLayout
         android:id="@+id/frm_main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bnv_main"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent" />
 
+    <!-- 하단 네비게이션 바 -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bnv_main"
+        android:id="@+id/bottom_nav_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@color/white"
+        android:paddingTop="7dp"
+        android:paddingBottom="13dp"
+        app:itemIconSize="24dp"
+        app:itemTextAppearanceActive="@style/B4_RG12"
+        app:itemTextAppearanceInactive="@style/B4_RG12"
         app:itemTextColor="@drawable/selector_menu_text_color"
         app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 플로팅 액션 버튼 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="13dp"
+        android:contentDescription="약물 등록"
+        android:src="@drawable/ic_plus"
+        app:backgroundTint="@color/main_blue_1"
+        app:elevation="8dp"
+        app:layout_anchor="@id/bottom_nav_main"
+        app:layout_anchorGravity="center"
+        app:maxImageSize="17dp" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

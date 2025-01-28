@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         presenter = MainPresenter(this)
         presenter.onCreate()
+
+        // 기본 선택 아이템 설정
+        binding.bottomNavMain.selectedItemId = id.menu_home
+        binding.bottomNavMain.itemIconTintList = null
+
     }
 
     override fun setWindowInsets() {
@@ -40,7 +45,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun initBottomNavi() {
-        binding.bnvMain.setOnItemSelectedListener {
+        binding.bottomNavMain.setOnItemSelectedListener {
             presenter.onBottomNavigationItemSelected(it.itemId)
             true
         }

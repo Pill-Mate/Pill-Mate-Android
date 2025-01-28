@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_check"
-        android:title="@string/pill_check" />
-    <item
-        android:id="@+id/menu_stats"
-        android:title="@string/pill_stats" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_edit"
+        android:icon="@drawable/selector_menu_edit"
+        app:showAsAction="always"
         android:title="@string/pill_edit" />
     <item
-        android:id="@+id/menu_search"
-        android:title="@string/pill_search" />
-    <item
-        android:id="@+id/menu_mypage"
-        android:title="@string/my_page" />
+        android:id="@+id/menu_home"
+        android:icon="@drawable/selector_menu_home"
+        app:showAsAction="always"
+        android:title="@string/pill_check" />
 </menu>
