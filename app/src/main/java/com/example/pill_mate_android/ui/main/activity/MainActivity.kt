@@ -1,7 +1,6 @@
 package com.example.pill_mate_android.ui.main.activity
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,11 +18,15 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
         setContentView(binding.root)
 
         presenter = MainPresenter(this)
         presenter.onCreate()
+
+        // 기본 선택 아이템 설정
+        binding.bottomNavMain.selectedItemId = id.menu_home
+        binding.bottomNavMain.itemIconTintList = null
+
     }
 
     override fun setWindowInsets() {
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun initBottomNavi() {
-        binding.bnvMain.setOnItemSelectedListener {
+        binding.bottomNavMain.setOnItemSelectedListener {
             presenter.onBottomNavigationItemSelected(it.itemId)
             true
         }
