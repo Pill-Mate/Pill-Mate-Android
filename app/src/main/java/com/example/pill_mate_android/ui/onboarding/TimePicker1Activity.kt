@@ -138,9 +138,13 @@ class TimePicker1Activity : AppCompatActivity() {
             val wakeupTime = getFormattedTime(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1)
             val bedTime = getFormattedTime(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2)
 
-            val intent = Intent(this@TimePicker1Activity, TimePicker2Activity::class.java)
-            intent.putExtra("WAKEUP_TIME", wakeupTime)
-            intent.putExtra("BED_TIME", bedTime)
+            val intent = Intent(this@TimePicker1Activity, TimePicker2Activity::class.java).apply {
+                putExtra("WAKEUP_TIME", wakeupTime)
+                putExtra("BED_TIME", bedTime)
+                val alarmMarketing = intent.getBooleanExtra("ALARM_MARKETING", false)
+                putExtra("ALARM_MARKETING", alarmMarketing)
+            }
+
             startActivity(intent)
 
         }
