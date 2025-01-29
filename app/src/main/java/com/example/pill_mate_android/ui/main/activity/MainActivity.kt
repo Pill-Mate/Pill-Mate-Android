@@ -1,5 +1,6 @@
 package com.example.pill_mate_android.ui.main.activity
 
+import android.content.Intent
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -11,6 +12,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.example.pill_mate_android.R.id
 import com.example.pill_mate_android.databinding.ActivityMainBinding
+import com.example.pill_mate_android.medicine_registration.MedicineRegistrationActivity
 import com.example.pill_mate_android.ui.main.contract.MainContract
 import com.example.pill_mate_android.ui.main.presenter.MainPresenter
 
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         setContentView(binding.root)
 
         setDefaultStatusBar()
+        onPlusButtonClick()
 
         presenter = MainPresenter(this)
         binding.bottomNavMain.itemIconTintList = null
@@ -33,6 +36,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         presenter.onCreate()
 
+    }
+
+    private fun onPlusButtonClick() {
+        binding.floatingBtnAdd.setOnClickListener { // 약물 등록 액티비티로 이동
+            val intent = Intent(this, MedicineRegistrationActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun setWindowInsets() {
