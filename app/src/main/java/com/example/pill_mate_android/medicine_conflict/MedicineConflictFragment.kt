@@ -16,11 +16,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.example.pill_mate_android.R
+import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentMedicineConflictBinding
+import com.example.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
 import com.example.pill_mate_android.medicine_registration.model.DataRepository
-import com.example.pill_mate_android.medicine_registration.model.EfcyDplctResponse
-import com.example.pill_mate_android.medicine_registration.model.UsjntTabooResponse
+import com.example.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.example.pill_mate_android.medicine_conflict.model.PharmacyAndHospital
+import com.example.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
+import com.example.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.example.pill_mate_android.medicine_registration.model.Hospital
+import com.example.pill_mate_android.medicine_registration.model.Pharmacy
 import com.example.pill_mate_android.ui.main.activity.MainActivity
+import com.example.pill_mate_android.util.CustomSnackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MedicineConflictFragment : Fragment() {
 
@@ -83,16 +93,19 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        contraindicationAdapter = ConflictAdapter { medicineName ->
-            Log.d("MedicineConflictFragment", "Contraindication item clicked: $medicineName")
-        }
+        contraindicationAdapter = ConflictAdapter(
+            onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
+            onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) }
+        )
+        efficiencyOverlapAdapter = ConflictAdapter(
+            onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
+            onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) }
+        )
+
+        // RecyclerView 설정
         binding.rvContraindication.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = contraindicationAdapter
-        }
-
-        efficiencyOverlapAdapter = ConflictAdapter { medicineName ->
-            Log.d("MedicineConflictFragment", "Efficiency overlap item clicked: $medicineName")
         }
         binding.rvEfficiencyOverlap.apply {
             layoutManager = LinearLayoutManager(context)
@@ -182,6 +195,99 @@ class MedicineConflictFragment : Fragment() {
                 binding.ivEfficiencyOverlapEnd.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
         }
+    }
+
+    private fun fetchPhoneAndAddress(itemSeq: String) {
+        medicineRegistrationService.getPhoneAndAddress(itemSeq).enqueue(object : Callback<PhoneAndAddressResponse> {
+            override fun onResponse(
+                call: Call<PhoneAndAddressResponse>,
+                response: Response<PhoneAndAddressResponse>
+            ) {
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    val result = response.body()?.result
+                    if (result != null) {
+                        showInquiryBottomSheet(result)
+                    } else {
+                        Log.e("MedicineConflictFragment", "Empty result from API")
+                    }
+                } else {
+                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address")
+                }
+            }
+
+            override fun onFailure(call: Call<PhoneAndAddressResponse>, t: Throwable) {
+                Log.e("MedicineConflictFragment", "API call failed", t)
+            }
+        })
+    }
+
+    private fun showInquiryBottomSheet(result: PharmacyAndHospital) {
+        val pharmacy = Pharmacy(
+            pharmacyName = result.pharmacyName,
+            pharmacyAddress = result.pharmacyAddress,
+            pharmacyPhone = result.pharmacyPhoneNumber
+        )
+
+        val hospital = if (result.hospitalName.isNotEmpty()) {
+            Hospital(
+                hospitalName = result.hospitalName,
+                hospitalAddress = result.hospitalAddress,
+                hospitalPhone = result.hospitalPhoneNumber
+            )
+        } else null
+
+        InquiryBottomSheetFragment.newInstance(pharmacy, hospital).show(parentFragmentManager, "inquiryBottomSheet")
+    }
+
+    private fun showDeleteDialog(itemSeq: String) {
+        PillDeleteDialogFragment.newInstance(itemSeq) { deletedItemSeq ->
+            removeConflict(deletedItemSeq)
+        }.show(childFragmentManager, "deleteDialog")
+    }
+
+    private fun removeConflict(itemSeq: String) {
+        medicineRegistrationService.removeConflict().enqueue(object : Callback<ConflictRemoveResponse> {
+            override fun onResponse(call: Call<ConflictRemoveResponse>, response: Response<ConflictRemoveResponse>) {
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    // 삭제 버튼 비활성화
+                    disableDeleteButton(itemSeq)
+                    // 스낵바 표시
+                    showDeleteSuccessSnackbar()
+                } else {
+                    // 에러 처리
+                    Log.e("MedicineConflictFragment", "Failed to remove conflict: ${response.errorBody()?.string()}")
+                    showDeleteErrorSnackbar()
+                }
+            }
+
+            override fun onFailure(call: Call<ConflictRemoveResponse>, t: Throwable) {
+                Log.e("MedicineConflictFragment", "Network error: ${t.message}")
+                showDeleteErrorSnackbar()
+            }
+        })
+    }
+
+    private fun disableDeleteButton(itemSeq: String) {
+        val contraindicationPosition = usjntTabooData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
+        val efficiencyOverlapPosition = efcyDplctData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
+
+        contraindicationPosition?.let {
+            val viewHolder = binding.rvContraindication.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
+            viewHolder?.disableDeleteButton()
+        }
+
+        efficiencyOverlapPosition?.let {
+            val viewHolder = binding.rvEfficiencyOverlap.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
+            viewHolder?.disableDeleteButton()
+        }
+    }
+
+    private fun showDeleteSuccessSnackbar() {
+        CustomSnackbar.showCustomSnackbar(requireContext(), binding.root, "약물을 삭제했어요.")
+    }
+
+    private fun showDeleteErrorSnackbar() {
+        CustomSnackbar.showCustomSnackbar(requireContext(), binding.root, "약물 삭제에 실패했어요.")
     }
 
     private fun clearRegistrationData() {

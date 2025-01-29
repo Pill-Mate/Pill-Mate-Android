@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pill_mate_android.databinding.ItemConflictBinding
-import com.example.pill_mate_android.medicine_registration.model.EfcyDplctResponse
-import com.example.pill_mate_android.medicine_registration.model.UsjntTabooResponse
+import com.example.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.example.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 
 class ConflictAdapter(
-    private val onInquiryClicked: (medicineName: String) -> Unit
+    private val onInquiryClicked: (itemSeq: String) -> Unit,
+    private val onDeleteClicked: (itemSeq: String) -> Unit
 ) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
 
     private var items: List<Any> = emptyList()
@@ -29,8 +30,14 @@ class ConflictAdapter(
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.PROHBT_CONTENT
 
+                    binding.btnDelete.setOnClickListener {
+                        item.ITEM_SEQ?.let { seq ->
+                            onDeleteClicked(seq)
+                        }
+                    }
+
                     binding.btnInquiry.setOnClickListener {
-                        item.MIXTURE_ITEM_NAME?.let { it1 -> onInquiryClicked(it1) }
+                        item.ITEM_SEQ?.let { it1 -> onInquiryClicked(it1) }
                     }
                 }
                 is EfcyDplctResponse -> {
@@ -39,12 +46,23 @@ class ConflictAdapter(
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.EFFECT_NAME
 
+                    binding.btnDelete.setOnClickListener {
+                        item.ITEM_SEQ?.let { seq ->
+                            onDeleteClicked(seq)
+                        }
+                    }
+
                     binding.btnInquiry.setOnClickListener {
-                        item.ITEM_NAME?.let { it1 -> onInquiryClicked(it1) }
+                        item.ITEM_SEQ?.let { it1 -> onInquiryClicked(it1) }
                     }
                 }
                 else -> throw IllegalArgumentException("Unsupported item type")
             }
+        }
+
+        fun disableDeleteButton() {
+            binding.btnDelete.isEnabled = false
+            binding.btnDelete.alpha = 0.5f
         }
     }
 

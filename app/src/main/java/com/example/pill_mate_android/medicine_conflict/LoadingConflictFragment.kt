@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentLoadingConflictBinding
-import com.example.pill_mate_android.medicine_registration.model.EfcyDplctResponse
-import com.example.pill_mate_android.medicine_registration.model.UsjntTabooResponse
+import com.example.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.example.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 
 class LoadingConflictFragment : Fragment() {
     private var _binding: FragmentLoadingConflictBinding? = null

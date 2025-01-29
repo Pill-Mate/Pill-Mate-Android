@@ -14,9 +14,9 @@ import com.example.pill_mate_android.medicine_registration.MedicineRegistrationF
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.FragmentPillDetailDialogBinding
-import com.example.pill_mate_android.medicine_registration.model.EfcyDplctResponse
+import com.example.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.example.pill_mate_android.search.model.PillIdntfcItem
-import com.example.pill_mate_android.medicine_registration.model.UsjntTabooResponse
+import com.example.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.example.pill_mate_android.search.presenter.StepTwoPresenter
 import com.example.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call

@@ -1,10 +1,11 @@
-package com.example.pill_mate_android.medicine_registration.model
+package com.example.pill_mate_android.medicine_conflict.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UsjntTabooResponse(
+    val ITEM_SEQ: String,
     val CLASS_NAME: String,
     val MIXTURE_ITEM_NAME: String,
     val ENTP_NAME: String,
@@ -13,6 +14,7 @@ data class UsjntTabooResponse(
 
 @Parcelize
 data class EfcyDplctResponse(
+    val ITEM_SEQ: String,
     val CLASS_NAME: String,
     val ITEM_NAME: String,
     val ENTP_NAME: String,

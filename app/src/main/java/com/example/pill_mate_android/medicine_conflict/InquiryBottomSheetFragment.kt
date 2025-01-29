@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentBottomSheetInquiryBinding
 import com.example.pill_mate_android.medicine_registration.model.Hospital
 import com.example.pill_mate_android.medicine_registration.model.Pharmacy
@@ -22,6 +23,10 @@ class InquiryBottomSheetFragment(
     ): View {
         _binding = FragmentBottomSheetInquiryBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun getTheme(): Int {
+        return R.style.RoundedBottomSheetDialogTheme
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,14 +56,12 @@ class InquiryBottomSheetFragment(
             }
         }
 
-        // 닫기 버튼 처리
         binding.ivClose.setOnClickListener {
             dismiss()
         }
     }
 
     private fun makeCall(phoneNumber: String) {
-        // 전화 연결 로직 (Intent 사용)
         val intent = android.content.Intent(android.content.Intent.ACTION_DIAL).apply {
             data = android.net.Uri.parse("tel:$phoneNumber")
         }

@@ -1,6 +1,6 @@
-package com.example.pill_mate_android.medicine_registration.model
+package com.example.pill_mate_android.medicine_conflict.model
 
-data class PharmacyAndHospitalResponse(
+data class PhoneAndAddressResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
@@ -10,8 +10,8 @@ data class PharmacyAndHospitalResponse(
 data class PharmacyAndHospital(
     val pharmacyName: String,
     val pharmacyAddress: String,
-    val pharmacyPhone: String,
+    val pharmacyPhoneNumber: String,
     val hospitalName: String,
     val hospitalAddress: String,
-    val hospitalPhone: String
+    val hospitalPhoneNumber: String
 )

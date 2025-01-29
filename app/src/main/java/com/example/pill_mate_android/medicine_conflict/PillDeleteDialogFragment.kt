@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.example.pill_mate_android.databinding.FragmentPillDeleteDialogBinding
+import com.example.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class PillDeleteDialogFragment(
-    private val medicineName: String,
-    private val onDeleteSuccess: () -> Unit
+    private val itemSeq: String,
+    private val onDeleteSuccess: (String) -> Unit
 ) : DialogFragment() {
 
     private var _binding: FragmentPillDeleteDialogBinding? = null
@@ -32,33 +33,19 @@ class PillDeleteDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 삭제 버튼 클릭 시 서버 요청
+        // 다이얼로그 배경을 투명하게 설정
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        // 다이얼로그 크기 설정
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
         binding.btnDelete.setOnClickListener {
-            deleteMedicineFromServer(medicineName)
+            onDeleteSuccess(itemSeq)
+            dismiss()
         }
 
-        // 취소 버튼 클릭 시 다이얼로그 닫기
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
-    }
-
-    private fun deleteMedicineFromServer(medicineName: String) {
-        medicineRegistrationService.deleteMedicine(medicineName)
-            .enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    if (response.isSuccessful) {
-                        onDeleteSuccess()
-                        dismiss()
-                    } else {
-                        Log.e("PillDeleteDialog", "Failed to delete medicine: ${response.errorBody()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Log.e("PillDeleteDialog", "Network error: ${t.message}")
-                }
-            })
     }
 
     override fun onDestroyView() {
@@ -67,8 +54,8 @@ class PillDeleteDialogFragment(
     }
 
     companion object {
-        fun newInstance(medicineName: String, onDeleteSuccess: () -> Unit): PillDeleteDialogFragment {
-            return PillDeleteDialogFragment(medicineName, onDeleteSuccess)
+        fun newInstance(itemSeq: String, onDeleteSuccess: (String) -> Unit): PillDeleteDialogFragment {
+            return PillDeleteDialogFragment(itemSeq, onDeleteSuccess)
         }
     }
 }
