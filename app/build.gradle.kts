@@ -12,11 +12,11 @@ val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
-    namespace = "com.example.pill_mate_android"
+    namespace = "com.pill_mate.pill_mate_android"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pill_mate_android"
+        applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
