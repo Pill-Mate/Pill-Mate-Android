@@ -5,7 +5,7 @@
     android:id="@+id/timepicker2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.onboarding.TimePicker2Activity">
+    tools:context=".ui.onboarding.activity.TimePicker2Activity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_backward"

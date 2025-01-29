@@ -3,6 +3,7 @@ package com.example.pill_mate_android.ui.pillcheck
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.pill_mate_android.ui.pillcheck.fragment.WeeklyCalendarFragment
 import java.time.LocalDate
 
 class CalendarVPAdapter(

@@ -1,4 +1,4 @@
-package com.example.pill_mate_android
+package com.example.pill_mate_android.ui.setting.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -7,17 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.pill_mate_android.databinding.DialogSignoutBinding
+import com.example.pill_mate_android.databinding.DialogLogoutBinding
+import com.example.pill_mate_android.ui.setting.ConfirmDialogInterface
 
-class SignoutDialog(private val confirmDialogInterface: ConfirmDialogInterface) : DialogFragment() {
+class LogoutDialog(private val confirmDialogInterface: ConfirmDialogInterface) : DialogFragment() {
 
-    private var _binding: DialogSignoutBinding? = null
+    private var _binding: DialogLogoutBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = DialogSignoutBinding.inflate(inflater, container, false) // 레이아웃 배경을 투명하게
+        _binding = DialogLogoutBinding.inflate(inflater, container, false) // 레이아웃 배경을 투명하게
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialogButtonClickEvent()
         return binding.root
@@ -28,8 +29,8 @@ class SignoutDialog(private val confirmDialogInterface: ConfirmDialogInterface) 
             dismiss()
         }
 
-        binding.btnSignout.setOnClickListener {
-            confirmDialogInterface.onSignOutButtonClick()
+        binding.btnLogout.setOnClickListener {
+            confirmDialogInterface.onLogOutButtonClick()
             dismiss()
         }
     }
@@ -49,4 +50,3 @@ class SignoutDialog(private val confirmDialogInterface: ConfirmDialogInterface) 
     }
 
 }
-

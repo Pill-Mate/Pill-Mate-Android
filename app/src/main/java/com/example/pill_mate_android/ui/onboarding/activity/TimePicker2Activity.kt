@@ -1,4 +1,4 @@
-package com.example.pill_mate_android.ui.onboarding
+package com.example.pill_mate_android.ui.onboarding.activity
 
 import android.content.Intent
 import android.graphics.Paint
@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivityTimePicker2Binding
+import com.example.pill_mate_android.ui.onboarding.OnBoardingData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

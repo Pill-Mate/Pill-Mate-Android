@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.ActivityAgreementBinding
-import com.example.pill_mate_android.ui.onboarding.TimePicker1Activity
+import com.example.pill_mate_android.ui.onboarding.activity.TimePicker1Activity
 
 class AgreementActivity : AppCompatActivity() {
 

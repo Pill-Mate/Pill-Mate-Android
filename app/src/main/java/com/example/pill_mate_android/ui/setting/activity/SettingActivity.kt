@@ -1,4 +1,4 @@
-package com.example.pill_mate_android
+package com.example.pill_mate_android.ui.setting.activity
 
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -12,9 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.example.pill_mate_android.R
+import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.ActivitySettingBinding
 import com.example.pill_mate_android.ui.login.KaKaoTokenData
 import com.example.pill_mate_android.ui.login.activity.KakaoLoginActivity
+import com.example.pill_mate_android.ui.setting.ConfirmDialogInterface
+import com.example.pill_mate_android.ui.setting.ResponseRoutine
+import com.example.pill_mate_android.ui.setting.ResponseUserInfo
+import com.example.pill_mate_android.ui.setting.SettingRoutineBottomDialogFragment
+import com.example.pill_mate_android.ui.setting.dialog.LogoutDialog
+import com.example.pill_mate_android.ui.setting.dialog.SignoutDialog
 import com.kakao.sdk.user.UserApiClient
 import retrofit2.Call
 import retrofit2.Callback

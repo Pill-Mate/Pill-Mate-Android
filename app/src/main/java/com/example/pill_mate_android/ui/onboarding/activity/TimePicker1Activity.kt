@@ -1,4 +1,4 @@
-package com.example.pill_mate_android.ui.onboarding
+package com.example.pill_mate_android.ui.onboarding.activity
 
 import android.content.Intent
 import android.graphics.Paint

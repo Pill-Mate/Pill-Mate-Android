@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_blue_1"
-    tools:context=".ui.pillcheck.PillCheckFragment">
+    tools:context=".ui.pillcheck.fragment.PillCheckFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_topbar"
@@ -175,7 +175,7 @@
 
         <fragment
             android:id="@+id/fg_weekly_calendar"
-            android:name="com.example.pill_mate_android.ui.pillcheck.WeeklyCalendarFragment"
+            android:name="com.example.pill_mate_android.ui.pillcheck.fragment.WeeklyCalendarFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"

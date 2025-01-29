@@ -3,7 +3,7 @@ package com.example.pill_mate_android.ui.main.presenter
 import androidx.fragment.app.Fragment
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ui.main.contract.MainContract
-import com.example.pill_mate_android.ui.pillcheck.PillCheckFragment
+import com.example.pill_mate_android.ui.pillcheck.fragment.PillCheckFragment
 import com.example.pill_mate_android.ui.pilledit.PillEditFragment
 
 class MainPresenter(private val view: MainContract.View) : MainContract.Presenter {

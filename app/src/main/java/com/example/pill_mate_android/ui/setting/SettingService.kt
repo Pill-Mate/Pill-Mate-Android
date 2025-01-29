@@ -1,4 +1,4 @@
-package com.example.pill_mate_android
+package com.example.pill_mate_android.ui.setting
 
 import com.example.pill_mate_android.ui.login.KaKaoTokenData
 import retrofit2.Call

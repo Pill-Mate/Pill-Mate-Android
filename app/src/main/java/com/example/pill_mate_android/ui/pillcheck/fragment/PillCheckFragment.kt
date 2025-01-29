@@ -1,4 +1,4 @@
-package com.example.pill_mate_android.ui.pillcheck
+package com.example.pill_mate_android.ui.pillcheck.fragment
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,10 +20,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
-import com.example.pill_mate_android.SettingActivity
 import com.example.pill_mate_android.databinding.FragmentPillCheckBinding
 import com.example.pill_mate_android.medicine_registration.MedicineRegistrationActivity
 import com.example.pill_mate_android.ui.main.activity.MainActivity
+import com.example.pill_mate_android.ui.pillcheck.CalendarVPAdapter
+import com.example.pill_mate_android.ui.pillcheck.GroupedMedicine
+import com.example.pill_mate_android.ui.pillcheck.HomeData
+import com.example.pill_mate_android.ui.pillcheck.IDateClickListener
+import com.example.pill_mate_android.ui.pillcheck.IntakeCountAdapter
+import com.example.pill_mate_android.ui.pillcheck.MedicineCheckData
+import com.example.pill_mate_android.ui.pillcheck.ResponseHome
+import com.example.pill_mate_android.ui.pillcheck.ResponseWeeklyCalendar
+import com.example.pill_mate_android.ui.pillcheck.TimeGroup
+import com.example.pill_mate_android.ui.setting.activity.SettingActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

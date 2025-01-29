@@ -1,4 +1,4 @@
-package com.example.pill_mate_android.ui.pillcheck
+package com.example.pill_mate_android.ui.pillcheck.fragment
 
 import android.content.Context
 import android.graphics.Typeface
@@ -15,6 +15,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.databinding.FragmentWeeklyCalendarBinding
+import com.example.pill_mate_android.ui.pillcheck.IDateClickListener
+import com.example.pill_mate_android.ui.pillcheck.WeeklyIconsData
 import java.time.LocalDate
 
 class WeeklyCalendarFragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.example.pill_mate_android
+package com.example.pill_mate_android.ui.setting
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -10,6 +10,8 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import com.example.pill_mate_android.R
+import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.databinding.FragmentSettingRoutineBottomDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
