@@ -19,16 +19,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.*
 
-object ServiceCreator {
-    // 서버 URL
-    private const val BASE_URL = "https://ad0n0kzypg.execute-api.ap-northeast-2.amazonaws.com"
-
+object ServiceCreator { // 서버 URL
     // Gson 설정 추가
     private val gson: Gson = GsonBuilder().setLenient() // 비표준 JSON 허용
         .create()
 
     // Retrofit 인스턴스 생성
-    private val userRetrofit: Retrofit = Retrofit.Builder().baseUrl(BASE_URL).client(provideOkHttpClient())
+    private val userRetrofit: Retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(provideOkHttpClient())
         .addConverterFactory(GsonConverterFactory.create(gson)) // 커스터마이징된 Gson 적용
         .build()
 

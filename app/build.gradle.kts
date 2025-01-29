@@ -1,10 +1,15 @@
+import java.util.*
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id ("kotlin-parcelize")
+    id("kotlin-parcelize")
     id("com.google.gms.google-services")
     id("kotlin-kapt")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.example.pill_mate_android"
@@ -21,6 +26,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String", "BASE_URL", properties.getProperty("BASE_URL")
+        )
+        buildConfigField(
+            "String", "KAKAO_NATIVE_APP_KEY", properties.getProperty("KAKAO_NATIVE_APP_KEY")
+        )
     }
 
     buildTypes {
@@ -70,14 +82,14 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0") // 이미지 로딩 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // retrofit2
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") //json
-    implementation ("com.tickaroo.tikxml:annotation:0.8.13")
-    implementation ("com.tickaroo.tikxml:core:0.8.13")
-    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
-    kapt ("com.tickaroo.tikxml:processor:0.8.13")
+    implementation("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation("com.tickaroo.tikxml:core:0.8.13")
+    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    kapt("com.tickaroo.tikxml:processor:0.8.13")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
-    implementation ("com.airbnb.android:lottie-compose:5.2.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
+    implementation("com.airbnb.android:lottie-compose:5.2.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

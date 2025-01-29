@@ -20,6 +20,6 @@ class GlobalApplication : Application() {
         instance = this
 
         // Kakao Sdk 초기화
-        KakaoSdk.init(this, "43540f4573a619d2d0c52342367ed58c")
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
     }
 }
