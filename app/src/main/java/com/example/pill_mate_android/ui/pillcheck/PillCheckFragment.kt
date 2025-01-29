@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,11 +18,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.pill_mate_android.medicine_registration.MedicineRegistrationActivity
 import com.example.pill_mate_android.R
 import com.example.pill_mate_android.ServiceCreator
 import com.example.pill_mate_android.SettingActivity
 import com.example.pill_mate_android.databinding.FragmentPillCheckBinding
+import com.example.pill_mate_android.medicine_registration.MedicineRegistrationActivity
 import com.example.pill_mate_android.ui.main.activity.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
@@ -128,8 +129,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             moveToTodayPage()
         }
 
-        binding.btnUpload.setOnClickListener {
-            // 약물 등록 액티비티로 이동
+        binding.btnUpload.setOnClickListener { // 약물 등록 액티비티로 이동
             val intent = Intent(requireContext(), MedicineRegistrationActivity::class.java)
             startActivity(intent)
         }
@@ -139,6 +139,10 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
             val intent = Intent(requireContext(), SettingActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.btnAlarm.setOnClickListener {
+            Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
         }
     }
 

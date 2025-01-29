@@ -212,7 +212,7 @@
                     android:backgroundTint="@color/main_blue_2"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:layout_constraintDimensionRatio="2.7:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
