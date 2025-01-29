@@ -65,7 +65,7 @@
         android:paddingStart="20dp"
         android:paddingTop="24dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="24dp"
+        android:paddingBottom="96dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
