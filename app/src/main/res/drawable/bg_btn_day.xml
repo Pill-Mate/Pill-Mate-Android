@@ -1,0 +1,13 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택된 상태 (하늘색) -->
+    <item android:state_selected="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/main_blue_2" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+</selector>

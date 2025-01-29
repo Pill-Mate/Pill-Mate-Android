@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 활성 상태 (선택됨: 화이트) -->
+    <item android:state_enabled="true" android:color="@android:color/white" />
+    <!-- 비활성 상태 (선택되지 않음: 블랙) -->
+    <item android:color="@android:color/black" />
+</selector>
