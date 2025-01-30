@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/stepOneFragment"
-        android:name="com.example.pill_mate_android.search.view.StepOneFragment"
+        android:name="com.pill_mate.pill_mate_android.search.view.StepOneFragment"
         android:label="Step One"
         tools:layout="@layout/fragment_step_one">
         <action
@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/stepTwoFragment"
-        android:name="com.example.pill_mate_android.search.view.StepTwoFragment"
+        android:name="com.pill_mate.pill_mate_android.search.view.StepTwoFragment"
         android:label="Step Two"
         tools:layout="@layout/fragment_step_two">
         <action
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/loadingConflictFragment"
-        android:name="com.example.pill_mate_android.medicine_conflict.LoadingConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.LoadingConflictFragment"
         tools:layout="@layout/fragment_loading_conflict">
         <action
             android:id="@+id/action_loadingConflictFragment_to_medicineConflictFragment"
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/medicineConflictFragment"
-        android:name="com.example.pill_mate_android.medicine_conflict.MedicineConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.MedicineConflictFragment"
         tools:layout="@layout/fragment_medicine_conflict">
         <action
             android:id="@+id/action_medicineConflictFragment_to_stepThreeFragment"
@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/stepThreeFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepThreeFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepThreeFragment"
         android:label="Step Three"
         tools:layout="@layout/fragment_step_three">
         <action
@@ -57,7 +57,7 @@
 
     <fragment
         android:id="@+id/stepFourFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepFourFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepFourFragment"
         android:label="Step Four"
         tools:layout="@layout/fragment_step_four">
         <action
@@ -70,7 +70,7 @@
 
     <fragment
         android:id="@+id/stepFiveFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepFiveFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepFiveFragment"
         android:label="Step Five"
         tools:layout="@layout/fragment_step_five">
         <action
@@ -80,7 +80,7 @@
 
     <fragment
         android:id="@+id/stepSixFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepSixFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepSixFragment"
         android:label="Step Six"
         tools:layout="@layout/fragment_step_six">
         <action
@@ -90,7 +90,7 @@
 
     <fragment
         android:id="@+id/stepSevenFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepSevenFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepSevenFragment"
         android:label="Step Seven"
         tools:layout="@layout/fragment_step_seven" >
         <action
@@ -100,7 +100,7 @@
 
     <fragment
         android:id="@+id/stepEightFragment"
-        android:name="com.example.pill_mate_android.medicine_registration.StepEightFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepEightFragment"
         android:label="Step Eight"
         tools:layout="@layout/fragment_step_eight">
     </fragment>

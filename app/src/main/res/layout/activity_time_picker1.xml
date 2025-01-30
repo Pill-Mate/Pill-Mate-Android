@@ -5,7 +5,7 @@
     android:id="@+id/timepicker1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.onboarding.TimePicker1Activity">
+    tools:context=".ui.onboarding.activity.TimePicker1Activity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_backward"
@@ -360,7 +360,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_end="122dp" />
 
     <Button
         android:id="@+id/btn_next"
