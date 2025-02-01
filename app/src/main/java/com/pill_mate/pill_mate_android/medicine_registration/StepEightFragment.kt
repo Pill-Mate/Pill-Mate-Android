@@ -114,6 +114,7 @@ class StepEightFragment : Fragment() {
     }
 
     fun saveData() {
+        registrationPresenter.resetSkipFlag() // 저장할 때 isSkipped 초기화
         val volume = binding.etMedicineVolume.text.toString().toFloatOrNull() ?: 0f
         val unit = binding.tvMedicineUnit.text.toString()
         registrationPresenter.updateSchedule { schedule ->

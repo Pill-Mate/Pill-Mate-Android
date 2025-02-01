@@ -1,13 +1,11 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -171,8 +169,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             else -> null
         }
 
-        // 🔹 사용자가 뒤로 갈 때, "바로 직전 Step"의 데이터를 초기화
-        currentStep?.let { presenter.clearDataForStep(it - 1) }
+        // 사용자가 뒤로 갈 때, "바로 직전 Step"의 데이터를 초기화
+        currentStep?.let {
+            presenter.clearDataForStep(it - 1)
+            presenter.updateView(it - 1)  // 뒤로 가기 후 뷰 업데이트
+        }
 
         navController.navigateUp()
     }
@@ -186,6 +187,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 is StepOneFragment -> {
                     currentFragment.onNextButtonClicked()
                     if (currentFragment.isValidInput()) {
+                        presenter.updateView(2) // 다음 단계에서 업데이트 반영
                         navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
                     }
                 }
@@ -224,7 +226,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
                 }
                 is StepEightFragment -> if (currentFragment.isValidInput()) {
-                    currentFragment.saveData()
+                    currentFragment.saveData()  // 저장
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
                             navigateToScheduleActivity()
@@ -246,6 +248,8 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         }
 
         binding.btnSkip.setOnClickListener {
+            presenter.skipVolumeAndUnit() // Presenter에서 건너뛰기 처리
+
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
                     navigateToScheduleActivity()

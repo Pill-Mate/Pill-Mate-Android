@@ -12,6 +12,15 @@ class MedicineRegistrationPresenter(
     private val view: MedicineRegistrationView
 ) {
     private var currentStep = 1
+    private var isSkipped = false
+
+    fun skipVolumeAndUnit() {
+        isSkipped = true
+    }
+
+    fun resetSkipFlag() {
+        isSkipped = false
+    }
 
     private fun getDisplayItems(): List<RegistrationData> {
         val schedule = repository.getSchedule() ?: Schedule()
@@ -58,30 +67,38 @@ class MedicineRegistrationPresenter(
         val currentSchedule = repository.getSchedule() ?: Schedule()
         Log.d("MedicineRegistrationPresenter", "Current schedule before update: $currentSchedule")
         val updatedSchedule = update(currentSchedule)
-        repository.saveSchedule(updatedSchedule)
+
+        // StepEightFragment에서 저장하는 경우 isSkipped 무시
+        val finalSchedule = if (isSkipped) {
+            updatedSchedule.copy(medicine_volume = 0f, medicine_unit = "")
+        } else {
+            updatedSchedule
+        }
+
+        repository.saveSchedule(finalSchedule)
         Log.d("MedicineRegistrationPresenter", "Updated schedule saved: ${repository.getSchedule()}")
     }
 
     fun updateView(step: Int) {
         currentStep = step
-        clearDataForStep(step) // 현재 Step을 초기화하여 한 스텝 밀리는 문제 해결
-        view.updateRecyclerView(getDisplayItems()) // UI 업데이트
+        clearDataForStep(step)
+        view.updateRecyclerView(getDisplayItems())
     }
-
 
     fun clearDataForStep(step: Int) {
         val currentSchedule = repository.getSchedule() ?: Schedule()
 
         val updatedSchedule = currentSchedule.copy(
-            intake_frequency = if (step == 2) "" else currentSchedule.intake_frequency,
-            intake_count = if (step == 3) "" else currentSchedule.intake_count,
-            meal_time = if (step == 4) 0 else currentSchedule.meal_time,
-            eat_count = if (step == 5) 0 else currentSchedule.eat_count,
-            intake_period = if (step == 6) 0 else currentSchedule.intake_period,
-            medicine_volume = if (step == 7) 0f else currentSchedule.medicine_volume
+            medicine_name = if (step <= 1) "" else currentSchedule.medicine_name,
+            intake_frequency = if (step <= 2) "" else currentSchedule.intake_frequency,
+            intake_count = if (step <= 3) "" else currentSchedule.intake_count,
+            meal_time = if (step <= 4) 0 else currentSchedule.meal_time,
+            eat_count = if (step <= 5) 0 else currentSchedule.eat_count,
+            intake_period = if (step <= 6) 0 else currentSchedule.intake_period,
+            medicine_volume = if (step <= 7) 0f else currentSchedule.medicine_volume
         )
 
         repository.saveSchedule(updatedSchedule)
-        view.updateRecyclerView(getDisplayItems()) // UI 업데이트
+        currentStep = step
     }
 }

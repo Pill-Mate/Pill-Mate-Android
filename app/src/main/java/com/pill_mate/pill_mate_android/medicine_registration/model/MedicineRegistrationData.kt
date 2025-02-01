@@ -10,8 +10,8 @@ data class MedicineRegisterRequest(
     val identifyNumber: String,
     val medicineName: String,
     val ingredient: String,
-    val ingredientUnit: String, // MG, ML 등
-    val ingredientAmount: Float,
+    val ingredientUnit: String?, // MG, ML 등
+    val ingredientAmount: Float?,
     val medicineImage: String?, // URI 대신 String으로 변경
     val entpName: String,
     val classname: String,

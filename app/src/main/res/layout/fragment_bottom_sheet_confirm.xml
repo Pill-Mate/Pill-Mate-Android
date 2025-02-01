@@ -5,21 +5,6 @@
     android:layout_height="wrap_content"
     android:padding="20dp">
 
-    <Button
-        android:id="@+id/btn_no2"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_btn_main_blue_2"
-        android:elevation="0dp"
-        android:paddingHorizontal="20dp"
-        android:text="아니에요"
-        android:textColor="@color/main_blue_1"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/btn_yes"
-        app:layout_constraintStart_toStartOf="@+id/btn_yes"
-        app:layout_constraintTop_toBottomOf="@id/btn_yes" />
-
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"

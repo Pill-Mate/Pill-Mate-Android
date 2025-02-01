@@ -14,11 +14,12 @@ class StepThreeFragment : Fragment() {
     private var _binding: FragmentStepThreeBinding? = null
     private val binding get() = _binding!!
 
-    // 요일 순서 고정 (일 > 월 > 화 > 수 > 목 > 금 > 토)
     private val dayOrder = listOf("일", "월", "화", "수", "목", "금", "토")
     private val dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
 
-    private var selectedDays = listOf<String>()
+    // ✅ 기본값을 "매일"로 설정
+    private var selectedDays = listOf("일", "월", "화", "수", "목", "금", "토")
+
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
     override fun onCreateView(
@@ -38,29 +39,25 @@ class StepThreeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDaySelection()
+
+        // ✅ 기본값을 UI에 반영
+        updateSelectedDaysText(selectedDays)
+
+        // ✅ 기본값을 레포지토리에 저장
+        saveSelectedDays(selectedDays)
+
         updateNextButtonState()
     }
 
     private fun setupDaySelection() {
         binding.layoutDay.setOnClickListener {
             val bottomSheetFragment = DaySelectionBottomSheetFragment(selectedDays) { newSelectedDays ->
-                // 사용자가 선택한 요일을 업데이트
                 selectedDays = newSelectedDays
 
-                // 요일을 정렬합니다.
                 val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
-
-                // 선택한 요일을 TextView에 반영
                 updateSelectedDaysText(sortedDays)
+                saveSelectedDays(sortedDays)
 
-                // Presenter에 Schedule 데이터를 업데이트 요청
-                registrationPresenter.updateSchedule { schedule ->
-                    schedule.copy(
-                        intake_frequency = if (sortedDays.size == 7) "매일" else sortedDays.joinToString(", ")
-                    )
-                }
-
-                // 다음 버튼 활성화/비활성화 상태를 갱신합니다.
                 updateNextButtonState()
             }
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
@@ -68,10 +65,7 @@ class StepThreeFragment : Fragment() {
     }
 
     private fun updateSelectedDaysText(selectedDays: List<String>) {
-        // 선택된 요일을 고정된 순서로 정렬합니다.
         val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
-
-        // TextView에 표시할 내용을 결정합니다.
         binding.tvDay.text = when {
             sortedDays.size == 7 -> "매일"
             sortedDays.isEmpty() -> ""
@@ -79,8 +73,16 @@ class StepThreeFragment : Fragment() {
         }
     }
 
+    // ✅ "매일"을 기본값으로 저장하는 함수
+    private fun saveSelectedDays(days: List<String>) {
+        val formattedDays = if (days.size == 7) "매일" else days.joinToString(", ")
+
+        registrationPresenter.updateSchedule { schedule ->
+            schedule.copy(intake_frequency = formattedDays)
+        }
+    }
+
     private fun updateNextButtonState() {
-        // 선택된 요일이 하나 이상일 때만 다음 버튼이 활성화
         val isInputValid = selectedDays.isNotEmpty()
         (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isInputValid)
     }
