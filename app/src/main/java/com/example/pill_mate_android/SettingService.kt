@@ -8,7 +8,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface SettingService {
-    @GET("/api/v1/mypage/userinforeturn")
+    @GET("/api/v1/mypage/mypagereturn")
     fun getUserInfoData(): Call<ResponseUserInfo>
 }
 
