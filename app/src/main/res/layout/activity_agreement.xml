@@ -141,7 +141,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -174,7 +174,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -207,7 +207,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -240,7 +240,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -262,7 +262,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:text="(선택) 마케팅 수신 동의"
+            android:text="(선택) 필메이트/복약 알림 동의"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -273,7 +273,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/btn_checkbox"
+            android:background="@drawable/btn_checkbox_gray3"
             android:button="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -283,6 +283,51 @@
 
     <TextView
         android:id="@+id/tv_cb5_description"
+        style="@style/B4_RG12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="12dp"
+        android:text="복약 알림, 복약 종료, 서비스 업데이트 등"
+        android:textColor="@color/gray_1"
+        app:layout_constraintBottom_toTopOf="@id/layout_cb6"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_cb6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_cb6_description"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/tv_cb6"
+            style="@style/B1_SB14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:text="(선택) 마케팅 수신 동의"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/cb_6"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/btn_checkbox_gray3"
+            android:button="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_cb6_description"
         style="@style/B4_RG12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -325,14 +370,14 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_cb6"
+                android:id="@+id/layout_cb7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/tv_cb6"
+                    android:id="@+id/tv_cb7"
                     style="@style/H2_SB16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -344,11 +389,11 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox
-                    android:id="@+id/cb_6"
+                    android:id="@+id/cb_7"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/btn_checkbox"
+                    android:background="@drawable/btn_checkbox_gray3"
                     android:button="@null"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -365,8 +410,8 @@
                 android:layout_marginTop="7dp"
                 android:text="약관 및 개인정보 보호방침, 마케팅 수신 동의"
                 android:textColor="@color/gray_1"
-                app:layout_constraintStart_toStartOf="@id/layout_cb6"
-                app:layout_constraintTop_toBottomOf="@id/layout_cb6" />
+                app:layout_constraintStart_toStartOf="@id/layout_cb7"
+                app:layout_constraintTop_toBottomOf="@id/layout_cb7" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
