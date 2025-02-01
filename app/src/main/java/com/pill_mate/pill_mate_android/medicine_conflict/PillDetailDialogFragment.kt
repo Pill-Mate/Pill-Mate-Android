@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android.medicine_conflict
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,46 +69,51 @@ class PillDetailDialogFragment(
     }
 
     private fun checkMedicineConflicts(itemSeq: String) {
+        Log.d("MedicineConflictCheck", "Checking medicine conflicts for itemSeq: $itemSeq")
+
+        // 병용금기 데이터 가져오기
         ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
             .enqueue(object : Callback<List<UsjntTabooResponse>> {
                 override fun onResponse(
                     call: Call<List<UsjntTabooResponse>>,
                     response: Response<List<UsjntTabooResponse>>
                 ) {
-                    if (response.isSuccessful) {
-                        val usjntTabooData = response.body().orEmpty()
-                        checkEfcyDplct(itemSeq, usjntTabooData)
-                    } else {
-                        navigateToStepThree()
-                    }
+                    val usjntTabooData = response.body().orEmpty()
+                    Log.d("MedicineConflictCheck", "UsjntTabooResponse: $usjntTabooData")
+
+                    // 병용금기 응답이 온 후 효능군 중복 API 호출
+                    checkEfcyDplct(itemSeq, usjntTabooData)
                 }
 
                 override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
+                    Log.e("MedicineConflictCheck", "Failed to fetch UsjntTabooResponse: ${t.message}")
                     navigateToStepThree()
                 }
             })
     }
 
     private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
+        Log.d("MedicineConflictCheck", "Checking efficiency duplicate for itemSeq: $itemSeq")
+
+        // 효능군 중복 데이터 가져오기
         ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
             .enqueue(object : Callback<List<EfcyDplctResponse>> {
                 override fun onResponse(
                     call: Call<List<EfcyDplctResponse>>,
                     response: Response<List<EfcyDplctResponse>>
                 ) {
-                    if (response.isSuccessful) {
-                        val efcyDplctData = response.body().orEmpty()
-                        if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
-                            navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
-                        } else {
-                            navigateToStepThree()
-                        }
+                    val efcyDplctData = response.body().orEmpty()
+                    Log.d("MedicineConflictCheck", "EfcyDplctResponse: $efcyDplctData")
+
+                    if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
+                        navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
                     } else {
                         navigateToStepThree()
                     }
                 }
 
                 override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
+                    Log.e("MedicineConflictCheck", "Failed to fetch EfcyDplctResponse: ${t.message}")
                     navigateToStepThree()
                 }
             })

@@ -34,15 +34,15 @@ data class MedicineRegisterRequest(
 )
 
 data class Hospital(
-    val hospitalName: String,
-    val hospitalAddress: String,
-    val hospitalPhone: String
+    val hospitalName: String = "",
+    val hospitalAddress: String = "",
+    val hospitalPhone: String = ""
 )
 
 data class Pharmacy(
-    val pharmacyName: String,
-    val pharmacyAddress: String,
-    val pharmacyPhone: String
+    val pharmacyName: String = "",
+    val pharmacyAddress: String = "",
+    val pharmacyPhone: String = ""
 )
 
 data class Medicine(

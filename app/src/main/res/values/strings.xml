@@ -23,6 +23,10 @@
     <string name="search_pill">약물 검색</string>
     <string name="enter_pill_name">약물명을 입력하세요</string>
 
+    <!--StepOneFragment-->
+    <string name="one_title">처방받은 약국, 병원의 정보를\n등록해주세요</string>
+    <string name="one_sub_title">복용 중인 약물과 성분 충돌 시 문의를 할 수 있어요</string>
+
 
     <!--StepThreeFragment-->
     <string name="everyday">매일</string>

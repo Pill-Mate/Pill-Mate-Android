@@ -107,6 +107,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             }
             updateProgressBar(stepIndex)
             updateViewVisibility(destination.id)
+            presenter.updateView(stepIndex)
         }
     }
 
@@ -125,6 +126,8 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     override fun updateRecyclerView(data: List<RegistrationData>) {
         adapter.updateData(data)
         Log.d("MedicineRegistrationFragment", "RecyclerView updated: ${data.size} items")
+
+        // 🔹 데이터가 없으면 RecyclerView 숨김 처리
         binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
@@ -145,14 +148,33 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     private fun handleBackPressed() {
+        val presenter = getPresenter()
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        val navController = navHostFragment.navController
         val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
+        // StepOneFragment라면 다이얼로그 표시
         if (currentFragment is StepOneFragment) {
             showPillRegistrationDialog()
-        } else {
-            navHostFragment.navController.navigateUp()
+            return
         }
+
+        // 현재 프래그먼트 위치를 기반으로 Step 계산
+        val currentStep = when (navController.currentDestination?.id) {
+            R.id.stepTwoFragment -> 2
+            R.id.stepThreeFragment -> 3
+            R.id.stepFourFragment -> 4
+            R.id.stepFiveFragment -> 5
+            R.id.stepSixFragment -> 6
+            R.id.stepSevenFragment -> 7
+            R.id.stepEightFragment -> 8
+            else -> null
+        }
+
+        // 🔹 사용자가 뒤로 갈 때, "바로 직전 Step"의 데이터를 초기화
+        currentStep?.let { presenter.clearDataForStep(it - 1) }
+
+        navController.navigateUp()
     }
 
     private fun setupNextButton() {
@@ -169,17 +191,17 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 }
                 is StepTwoFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(3)
                     navHostFragment.navController.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
                 }
                 is StepThreeFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(4)
                     navHostFragment.navController.navigate(R.id.action_stepThreeFragment_to_stepFourFragment)
                 }
                 is StepFourFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(if (currentFragment.shouldMoveToStepFive()) 5 else 6)
                     if (currentFragment.shouldMoveToStepFive()) {
                         navHostFragment.navController.navigate(R.id.action_stepFourFragment_to_stepFiveFragment)
                     } else {
@@ -188,17 +210,17 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 }
                 is StepFiveFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(6)
                     navHostFragment.navController.navigate(R.id.action_stepFiveFragment_to_stepSixFragment)
                 }
                 is StepSixFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(7)
                     navHostFragment.navController.navigate(R.id.action_stepSixFragment_to_stepSevenFragment)
                 }
                 is StepSevenFragment -> if (currentFragment.isValidInput()) {
                     presenter.updateSchedule { it }
-                    presenter.updateView()
+                    presenter.updateView(8)
                     navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
                 }
                 is StepEightFragment -> if (currentFragment.isValidInput()) {
@@ -278,16 +300,22 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         // ProgressBar, Next 버튼, RecyclerView 처리
         binding.progressBarSteps.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
         binding.btnNext.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-        binding.rvData.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
+
+        // 🔹 충돌 프래그먼트일 경우 RecyclerView 숨김 및 데이터 초기화
+        if (isConflictFragment) {
+            adapter.updateData(emptyList()) // 🔹 어댑터 데이터 초기화
+            binding.rvData.visibility = View.GONE
+
+            // 🔹 RecyclerView 숨김이 확실하게 적용되도록 postDelayed 사용
+            binding.rvData.postDelayed({
+                binding.rvData.visibility = View.GONE
+            }, 50) // 50ms 후 강제 적용
+        } else {
+            binding.rvData.visibility = View.VISIBLE
+        }
 
         // StepEightFragment에서만 건너뛰기 버튼 표시
         binding.btnSkip.visibility = if (isStepEightFragment) View.VISIBLE else View.GONE
-    }
-
-    fun hideKeyboard() {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val view = requireActivity().currentFocus ?: View(requireContext())
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun showInvalidInputToast() {

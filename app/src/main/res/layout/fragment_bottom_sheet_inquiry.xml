@@ -65,14 +65,20 @@
 
         <TextView
             android:id="@+id/tv_pharmacy_address"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="부산광역시 해운대구 구3로 212"
             android:textColor="@color/gray_1"
             android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/tv_pharmacy_name"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="4dp" />
+            app:layout_constraintEnd_toStartOf="@id/layout_call_pharmacy"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"/>
+
 
         <LinearLayout
             android:id="@+id/layout_call_pharmacy"
@@ -128,14 +134,19 @@
 
         <TextView
             android:id="@+id/tv_hospital_address"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="부산광역시 해운대구 구3로 212"
             android:textColor="@color/gray_1"
             android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/tv_hospital_name"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="4dp" />
+            app:layout_constraintEnd_toStartOf="@id/layout_call_hospital"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"/>
 
         <LinearLayout
             android:id="@+id/layout_call_hospital"

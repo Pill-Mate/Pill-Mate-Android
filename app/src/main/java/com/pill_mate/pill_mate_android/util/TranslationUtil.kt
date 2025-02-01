@@ -1,6 +1,6 @@
 package com.pill_mate.pill_mate_android.util
 
-object TimeTranslationUtil {
+object TranslationUtil {
     // 시간대
     private val timeToEnglishMap = mapOf(
         "공복" to "EMPTY",
@@ -36,6 +36,13 @@ object TimeTranslationUtil {
     )
     private val eatUnitToKoreanMap = eatUnitToEnglishMap.entries.associate { it.value to it.key }
 
+    private val unitToUppercaseMap = mapOf(
+        "mg" to "MG",
+        "mcg" to "MCG",
+        "g" to "G",
+        "ml" to "ML"
+    )
+
     // 식사 단위
     private val mealUnitToEnglishMap = mapOf(
         "식전" to "MEALBEFORE",
@@ -57,6 +64,11 @@ object TimeTranslationUtil {
     // 변환 함수: 투약 단위
     fun translateEatUnitToEnglish(korean: String) = eatUnitToEnglishMap[korean]
     fun translateEatUnitToKorean(english: String) = eatUnitToKoreanMap[english]
+
+    // 변환 함수: 단위 (소문자 → 대문자 변환)
+    fun translateUnitToUppercase(unit: String): String {
+        return unitToUppercaseMap[unit.lowercase()] ?: unit.uppercase()
+    }
 
     // 변환 함수: 식사 단위
     fun translateMealUnitToEnglish(korean: String) = mealUnitToEnglishMap[korean]

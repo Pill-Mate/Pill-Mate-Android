@@ -198,6 +198,8 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun fetchPhoneAndAddress(itemSeq: String) {
+        Log.d("MedicineConflictFragment", "Fetching phone and address for itemSeq: $itemSeq")
+
         medicineRegistrationService.getPhoneAndAddress(itemSeq).enqueue(object : Callback<PhoneAndAddressResponse> {
             override fun onResponse(
                 call: Call<PhoneAndAddressResponse>,
@@ -205,23 +207,30 @@ class MedicineConflictFragment : Fragment() {
             ) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()?.result
+
+                    // API 응답 로그 출력
+                    Log.d("MedicineConflictFragment", "API Response: $result")
+
                     if (result != null) {
                         showInquiryBottomSheet(result)
                     } else {
                         Log.e("MedicineConflictFragment", "Empty result from API")
                     }
                 } else {
-                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address")
+                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address - Response Code: ${response.code()}, Error: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<PhoneAndAddressResponse>, t: Throwable) {
-                Log.e("MedicineConflictFragment", "API call failed", t)
+                Log.e("MedicineConflictFragment", "API call failed: ${t.message}")
             }
         })
     }
 
     private fun showInquiryBottomSheet(result: PharmacyAndHospital) {
+        // 데이터 로깅 (병원 & 약국 데이터 확인)
+        Log.d("InquiryBottomSheet", "Received PharmacyAndHospital Data: $result")
+
         val pharmacy = Pharmacy(
             pharmacyName = result.pharmacyName,
             pharmacyAddress = result.pharmacyAddress,
@@ -236,7 +245,12 @@ class MedicineConflictFragment : Fragment() {
             )
         } else null
 
-        InquiryBottomSheetFragment.newInstance(pharmacy, hospital).show(parentFragmentManager, "inquiryBottomSheet")
+        val bottomSheet = InquiryBottomSheetFragment.newInstance(pharmacy, hospital)
+
+        // post를 사용하여 안전하게 실행
+        binding.root.post {
+            bottomSheet.show(parentFragmentManager, "inquiryBottomSheet")
+        }
     }
 
     private fun showDeleteDialog(itemSeq: String) {
@@ -246,22 +260,25 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun removeConflict(itemSeq: String) {
-        medicineRegistrationService.removeConflict().enqueue(object : Callback<ConflictRemoveResponse> {
+        Log.d("MedicineConflictFragment", "Removing conflict for itemSeq: $itemSeq") // 🛠 디버깅용 로그 추가
+
+        medicineRegistrationService.removeConflict(itemSeq).enqueue(object : Callback<ConflictRemoveResponse> {
             override fun onResponse(call: Call<ConflictRemoveResponse>, response: Response<ConflictRemoveResponse>) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    // 삭제 버튼 비활성화
-                    disableDeleteButton(itemSeq)
-                    // 스낵바 표시
-                    showDeleteSuccessSnackbar()
+                    Log.d("MedicineConflictFragment", "Successfully removed conflict for itemSeq: $itemSeq") // ✅ 성공 로그 추가
+
+                    disableDeleteButton(itemSeq) // 삭제 버튼 비활성화
+                    showDeleteSuccessSnackbar() // 성공 메시지 표시
                 } else {
-                    // 에러 처리
-                    Log.e("MedicineConflictFragment", "Failed to remove conflict: ${response.errorBody()?.string()}")
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("MedicineConflictFragment", "Failed to remove conflict: $errorBody") // 🛠 오류 로그 추가
+
                     showDeleteErrorSnackbar()
                 }
             }
 
             override fun onFailure(call: Call<ConflictRemoveResponse>, t: Throwable) {
-                Log.e("MedicineConflictFragment", "Network error: ${t.message}")
+                Log.e("MedicineConflictFragment", "Network error while removing conflict: ${t.message}") // 🛠 네트워크 오류 로그 추가
                 showDeleteErrorSnackbar()
             }
         })
