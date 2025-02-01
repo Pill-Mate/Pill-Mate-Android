@@ -193,15 +193,16 @@ class TimePicker2Activity : AppCompatActivity() {
             val wakeupTime = intent.getStringExtra("WAKEUP_TIME")
             val bedTime = intent.getStringExtra("BED_TIME")
             val alarmMarketing = intent.getBooleanExtra("ALARM_MARKETING", false)
+            val alarmInfo = intent.getBooleanExtra("ALARM_INFO", false)
 
             val onBoardingData = OnBoardingData(
                 alarmMarketing = alarmMarketing,
+                alarmInfo = alarmInfo,
                 wakeupTime = wakeupTime,
                 bedTime = bedTime,
                 morningTime = breakfastTime,
                 lunchTime = lunchTime,
                 dinnerTime = dinnerTime
-
             )
 
             onBoardingNetwork(onBoardingData)
