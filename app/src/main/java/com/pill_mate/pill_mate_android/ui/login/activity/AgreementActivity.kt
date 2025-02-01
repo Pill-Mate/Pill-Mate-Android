@@ -107,6 +107,7 @@ class AgreementActivity : AppCompatActivity() {
         binding.btnDone.setOnClickListener {
             val intent = Intent(this, TimePicker1Activity::class.java).apply {
                 putExtra("ALARM_MARKETING", binding.cb6.isChecked)
+                putExtra("ALARM_INFO", binding.cb5.isChecked)
             }
             startActivity(intent)
         }

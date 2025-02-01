@@ -143,6 +143,8 @@ class TimePicker1Activity : AppCompatActivity() {
                 putExtra("BED_TIME", bedTime)
                 val alarmMarketing = intent.getBooleanExtra("ALARM_MARKETING", false)
                 putExtra("ALARM_MARKETING", alarmMarketing)
+                val alarmInfo = intent.getBooleanExtra("ALARM_INFO", false)
+                putExtra("ALARM_INFO", alarmInfo)
             }
 
             startActivity(intent)
