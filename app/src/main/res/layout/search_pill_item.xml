@@ -12,7 +12,7 @@
         android:layout_width="100dp"
         android:layout_height="54dp"
         android:layout_marginStart="10dp"
-        android:src="@drawable/img_default"
+        android:src="@drawable/ic_default_pill"
         android:background="@drawable/rectangle_radius_4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

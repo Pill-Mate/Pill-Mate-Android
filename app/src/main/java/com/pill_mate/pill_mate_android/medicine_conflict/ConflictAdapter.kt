@@ -1,8 +1,11 @@
 package com.pill_mate.pill_mate_android.medicine_conflict
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.pill_mate.pill_mate_android.databinding.ItemConflictBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
@@ -29,6 +32,12 @@ class ConflictAdapter(
                     binding.tvPillName.text = item.MIXTURE_ITEM_NAME
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.PROHBT_CONTENT
+                    if (!item.ITEM_IMAGE.isNullOrEmpty()) {
+                        binding.ivImage.load(item.ITEM_IMAGE) {
+                            crossfade(true)
+                            transformations(RoundedCornersTransformation(16f))
+                        }
+                    }
 
                     binding.btnDelete.setOnClickListener {
                         item.ITEM_SEQ?.let { seq ->
@@ -45,6 +54,12 @@ class ConflictAdapter(
                     binding.tvPillName.text = item.ITEM_NAME
                     binding.tvCompanyName.text = item.ENTP_NAME
                     binding.tvWarningDetail.text = item.EFFECT_NAME
+                    if (!item.ITEM_IMAGE.isNullOrEmpty()) {
+                        binding.ivImage.load(item.ITEM_IMAGE) {
+                            crossfade(true)
+                            transformations(RoundedCornersTransformation(16f))
+                        }
+                    }
 
                     binding.btnDelete.setOnClickListener {
                         item.ITEM_SEQ?.let { seq ->

@@ -88,14 +88,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="12dp"
-        app:layout_goneMarginBottom="16dp" />
+        app:layout_goneMarginBottom="26dp" />
 
     <Button
         android:id="@+id/btn_skip"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="26dp"
         android:background="@drawable/bg_btn_main_blue_2"
         android:textColor="@color/main_blue_1"
         android:text="건너뛰기"
