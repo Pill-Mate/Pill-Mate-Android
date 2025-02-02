@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -21,6 +22,7 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepositor
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
 import com.pill_mate.pill_mate_android.schedule.ScheduleActivity
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
@@ -51,6 +53,13 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         setupNextButton()
         setupSkipButton()
         setupNavigationListener()
+
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        KeyboardUtil.handleKeyboardVisibility(
+            binding.root,
+            binding.btnNext,
+            resources.getDimensionPixelSize(R.dimen.default_btn_margin)
+        )
     }
 
     private fun initializeProgressBar() {
