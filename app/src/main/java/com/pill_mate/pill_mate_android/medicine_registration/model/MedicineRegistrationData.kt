@@ -69,7 +69,7 @@ data class Schedule(
     val eat_count: Int = 0,             // 1회 투여량
     val start_date: String = "",        // 복용 시작일 (yyyy-MM-dd)
     val intake_period: Int = 0,         // 복용 기간 (일 단위)
-    val medicine_unit: String = "",     // 1회 투여 용량 단위
+    val medicine_unit: String = "SKIP",     // 1회 투여 용량 단위
     val medicine_volume: Float = 0.0f,  // 1회 투여 용량 (0.45mg)
     val is_alarm: Boolean = true,      // 알람 여부
     val caution_types: String = ""      // 주의 사항 (복용주의 타입)

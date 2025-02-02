@@ -62,7 +62,7 @@ class StepEightFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val inputText = s.toString().trim()
-                val floatValue = inputText.toFloatOrNull()?.takeIf { it > 0 }
+                val floatValue = inputText.toFloatOrNull()
                 if (floatValue != null) {
                     updateVolumeCount(floatValue)
                 }
@@ -110,16 +110,22 @@ class StepEightFragment : Fragment() {
     fun isValidInput(): Boolean {
         val volumeCountText = binding.etMedicineVolume.text.toString().trim()
         val volumeUnitText = binding.tvMedicineUnit.text.toString().trim()
-        return volumeCountText.isNotEmpty() && volumeCountText.toFloatOrNull() != null && volumeUnitText.isNotEmpty()
+        return volumeCountText.isNotEmpty() &&
+                volumeCountText.toFloatOrNull() != null &&
+                volumeUnitText.isNotEmpty() &&
+                volumeUnitText != "SKIP"
     }
 
     fun saveData() {
-        registrationPresenter.resetSkipFlag() // 저장할 때 isSkipped 초기화
         val volume = binding.etMedicineVolume.text.toString().toFloatOrNull() ?: 0f
-        val unit = binding.tvMedicineUnit.text.toString()
+        val unit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() } ?: "SKIP"
+
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(medicine_volume = volume, medicine_unit = unit)
         }
+
+        // 저장 후 isSkipped 플래그를 false로 설정
+        registrationPresenter.isSkipped = false
     }
 
     override fun onDestroyView() {

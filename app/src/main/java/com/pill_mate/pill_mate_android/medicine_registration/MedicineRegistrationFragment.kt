@@ -248,7 +248,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         }
 
         binding.btnSkip.setOnClickListener {
-            presenter.skipVolumeAndUnit() // Presenter에서 건너뛰기 처리
+            presenter.skipVolumeAndUnitInput() // 새로운 함수 호출
 
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
@@ -305,12 +305,12 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         binding.progressBarSteps.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
         binding.btnNext.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
 
-        // 🔹 충돌 프래그먼트일 경우 RecyclerView 숨김 및 데이터 초기화
+        // 충돌 프래그먼트일 경우 RecyclerView 숨김 및 데이터 초기화
         if (isConflictFragment) {
-            adapter.updateData(emptyList()) // 🔹 어댑터 데이터 초기화
+            adapter.updateData(emptyList()) // 어댑터 데이터 초기화
             binding.rvData.visibility = View.GONE
 
-            // 🔹 RecyclerView 숨김이 확실하게 적용되도록 postDelayed 사용
+            // RecyclerView 숨김이 확실하게 적용되도록 postDelayed 사용
             binding.rvData.postDelayed({
                 binding.rvData.visibility = View.GONE
             }, 50) // 50ms 후 강제 적용

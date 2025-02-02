@@ -12,15 +12,7 @@ class MedicineRegistrationPresenter(
     private val view: MedicineRegistrationView
 ) {
     private var currentStep = 1
-    private var isSkipped = false
-
-    fun skipVolumeAndUnit() {
-        isSkipped = true
-    }
-
-    fun resetSkipFlag() {
-        isSkipped = false
-    }
+    var isSkipped = false
 
     private fun getDisplayItems(): List<RegistrationData> {
         val schedule = repository.getSchedule() ?: Schedule()
@@ -49,7 +41,9 @@ class MedicineRegistrationPresenter(
             ),
             RegistrationData(
                 "투여용량",
-                if (schedule.medicine_volume > 0 && currentStep > 7) "${schedule.medicine_volume}${schedule.medicine_unit}" else ""
+                if (schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() && schedule.medicine_unit != "SKIP" && currentStep > 7)
+                    "${schedule.medicine_volume}${schedule.medicine_unit}"
+                else ""
             )
         ).filter { it.data.isNotEmpty() }
     }
@@ -66,16 +60,10 @@ class MedicineRegistrationPresenter(
     fun updateSchedule(update: (Schedule) -> Schedule) {
         val currentSchedule = repository.getSchedule() ?: Schedule()
         Log.d("MedicineRegistrationPresenter", "Current schedule before update: $currentSchedule")
+
         val updatedSchedule = update(currentSchedule)
+        repository.saveSchedule(updatedSchedule)
 
-        // StepEightFragment에서 저장하는 경우 isSkipped 무시
-        val finalSchedule = if (isSkipped) {
-            updatedSchedule.copy(medicine_volume = 0f, medicine_unit = "")
-        } else {
-            updatedSchedule
-        }
-
-        repository.saveSchedule(finalSchedule)
         Log.d("MedicineRegistrationPresenter", "Updated schedule saved: ${repository.getSchedule()}")
     }
 
@@ -95,10 +83,18 @@ class MedicineRegistrationPresenter(
             meal_time = if (step <= 4) 0 else currentSchedule.meal_time,
             eat_count = if (step <= 5) 0 else currentSchedule.eat_count,
             intake_period = if (step <= 6) 0 else currentSchedule.intake_period,
-            medicine_volume = if (step <= 7) 0f else currentSchedule.medicine_volume
+            medicine_volume = if (step <= 7) 0f else currentSchedule.medicine_volume,
+            medicine_unit = if (step <= 7) "SKIP" else currentSchedule.medicine_unit
         )
 
         repository.saveSchedule(updatedSchedule)
         currentStep = step
+    }
+
+    fun skipVolumeAndUnitInput() {
+        updateSchedule { schedule ->
+            schedule.copy(medicine_volume = 0f, medicine_unit = "SKIP")
+        }
+        isSkipped = true
     }
 }
