@@ -104,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="" />
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/fullscreen_container"

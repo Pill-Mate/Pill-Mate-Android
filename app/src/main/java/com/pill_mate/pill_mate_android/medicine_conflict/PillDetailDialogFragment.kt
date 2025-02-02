@@ -41,6 +41,8 @@ class PillDetailDialogFragment(
         return binding.root
     }
 
+    private var isProcessing = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,68 +60,78 @@ class PillDetailDialogFragment(
         }
 
         binding.btnYes.setOnClickListener {
-            pillItem?.let { item ->
-                checkMedicineConflicts(item.ITEM_SEQ) // 병용 금기 및 약물 금기 확인
+            if (!isProcessing) {
+                isProcessing = true
+                binding.btnYes.isEnabled = false // 버튼 비활성화
+                pillItem?.let { item ->
+                    checkMedicineConflicts(item.ITEM_SEQ)
+                }
             }
         }
 
         binding.btnNo.setOnClickListener {
-            dismiss() // 다이얼로그 닫기
+            dismiss()
         }
     }
+        private fun checkMedicineConflicts(itemSeq: String) {
+            Log.d("MedicineConflictCheck", "Checking medicine conflicts for itemSeq: $itemSeq")
 
-    private fun checkMedicineConflicts(itemSeq: String) {
-        Log.d("MedicineConflictCheck", "Checking medicine conflicts for itemSeq: $itemSeq")
+            ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
+                .enqueue(object : Callback<List<UsjntTabooResponse>> {
+                    override fun onResponse(
+                        call: Call<List<UsjntTabooResponse>>,
+                        response: Response<List<UsjntTabooResponse>>
+                    ) {
+                        val usjntTabooData = response.body().orEmpty()
+                        Log.d("MedicineConflictCheck", "UsjntTabooResponse: $usjntTabooData")
+                        checkEfcyDplct(itemSeq, usjntTabooData)
+                    }
 
-        // 병용금기 데이터 가져오기
-        ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
-            .enqueue(object : Callback<List<UsjntTabooResponse>> {
-                override fun onResponse(
-                    call: Call<List<UsjntTabooResponse>>,
-                    response: Response<List<UsjntTabooResponse>>
-                ) {
-                    val usjntTabooData = response.body().orEmpty()
-                    Log.d("MedicineConflictCheck", "UsjntTabooResponse: $usjntTabooData")
-
-                    // 병용금기 응답이 온 후 효능군 중복 API 호출
-                    checkEfcyDplct(itemSeq, usjntTabooData)
-                }
-
-                override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
-                    Log.e("MedicineConflictCheck", "Failed to fetch UsjntTabooResponse: ${t.message}")
-                    navigateToStepThree()
-                }
-            })
-    }
-
-    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
-        Log.d("MedicineConflictCheck", "Checking efficiency duplicate for itemSeq: $itemSeq")
-
-        // 효능군 중복 데이터 가져오기
-        ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
-            .enqueue(object : Callback<List<EfcyDplctResponse>> {
-                override fun onResponse(
-                    call: Call<List<EfcyDplctResponse>>,
-                    response: Response<List<EfcyDplctResponse>>
-                ) {
-                    val efcyDplctData = response.body().orEmpty()
-                    Log.d("MedicineConflictCheck", "EfcyDplctResponse: $efcyDplctData")
-
-                    if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
-                        navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
-                    } else {
+                    override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
+                        Log.e("MedicineConflictCheck", "Failed to fetch UsjntTabooResponse: ${t.message}")
+                        resetProcessingState() // 상태 초기화
                         navigateToStepThree()
                     }
-                }
+                })
+        }
 
-                override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
-                    Log.e("MedicineConflictCheck", "Failed to fetch EfcyDplctResponse: ${t.message}")
-                    navigateToStepThree()
-                }
-            })
-    }
+        private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
+            Log.d("MedicineConflictCheck", "Checking efficiency duplicate for itemSeq: $itemSeq")
 
-    private fun navigateToLoadingConflictFragment(
+            ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
+                .enqueue(object : Callback<List<EfcyDplctResponse>> {
+                    override fun onResponse(
+                        call: Call<List<EfcyDplctResponse>>,
+                        response: Response<List<EfcyDplctResponse>>
+                    ) {
+                        val efcyDplctData = response.body().orEmpty()
+                        Log.d("MedicineConflictCheck", "EfcyDplctResponse: $efcyDplctData")
+
+                        if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
+                            navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
+                        } else {
+                            navigateToStepThree()
+                        }
+
+                        resetProcessingState() // 모든 응답이 완료되면 상태 초기화
+                    }
+
+                    override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
+                        Log.e("MedicineConflictCheck", "Failed to fetch EfcyDplctResponse: ${t.message}")
+                        resetProcessingState()
+                        navigateToStepThree()
+                    }
+                })
+        }
+
+        //네트워크 요청이 끝났을 때 isProcessing 상태를 초기화하고 버튼을 다시 활성화
+        private fun resetProcessingState() {
+            isProcessing = false
+            binding.btnYes.isEnabled = true
+        }
+
+
+        private fun navigateToLoadingConflictFragment(
         usjntTabooData: List<UsjntTabooResponse>,
         efcyDplctData: List<EfcyDplctResponse>
     ) {
