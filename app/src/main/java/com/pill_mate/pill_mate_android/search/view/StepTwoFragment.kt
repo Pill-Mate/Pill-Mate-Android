@@ -73,18 +73,22 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     private fun openPillSearchBottomSheet() {
-        // 부모 Fragment를 정확하게 찾는 방법
         val medicineRegistrationFragment = (parentFragment?.parentFragment as? MedicineRegistrationFragment)
             ?: (requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment)
 
         if (medicineRegistrationFragment != null) {
             val bottomSheetFragment = PillSearchBottomSheetFragment.newInstance(
-                this,
-                medicineRegistrationFragment
+                this, medicineRegistrationFragment
             )
+
+            // 바텀시트가 닫힐 때 EditText 포커스 해제
+            bottomSheetFragment.setOnDismissListener {
+                Log.d("StepTwoFragment", "PillSearchBottomSheet dismissed, clearing focus.")
+                binding.etPillName.clearFocus()
+            }
+
             bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
         } else {
-            // 부모 Fragment를 찾을 수 없는 경우 처리
             Log.e("StepTwoFragment", "Could not find MedicineRegistrationFragment")
         }
     }

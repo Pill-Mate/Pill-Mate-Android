@@ -74,6 +74,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         val bottomSheetFragment = SearchBottomSheetFragment(searchType) {
             // BottomSheet가 닫힐 때 호출되는 콜백
             updateEditTextFromDataRepository()
+            clearEditTextFocus()
         }
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
@@ -89,6 +90,11 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
             binding.etHospital.setText(it.hospitalName)
             binding.etHospital.clearFocus()
         }
+    }
+
+    private fun clearEditTextFocus() {
+        binding.etPharmacy.clearFocus()
+        binding.etHospital.clearFocus()
     }
 
     override fun onResume() {

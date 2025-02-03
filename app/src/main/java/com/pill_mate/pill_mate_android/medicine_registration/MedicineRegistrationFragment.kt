@@ -55,11 +55,11 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         setupNavigationListener()
 
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        KeyboardUtil.handleKeyboardVisibility(
+        /*KeyboardUtil.handleKeyboardVisibility(
             binding.root,
             binding.btnNext,
             resources.getDimensionPixelSize(R.dimen.default_btn_margin)
-        )
+        )*/
     }
 
     private fun initializeProgressBar() {

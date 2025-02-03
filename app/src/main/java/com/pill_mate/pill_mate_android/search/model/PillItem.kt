@@ -3,23 +3,6 @@ package com.pill_mate.pill_mate_android.search.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-data class PillInfoItem(
-    val entpName: String,
-    val itemName: String,
-    val itemSeq: String,
-    val efcyQesitm: String,
-    val useMethodQesitm: String,
-    val atpnWarnQesitm: String?,
-    val atpnQesitm: String,
-    val intrcQesitm: String,
-    val seQesitm: String,
-    val depositMethodQesitm: String,
-    val openDe: String,
-    val updateDe: String,
-    val itemImage: String,
-    val bizrno: String
-)
-
 @Parcelize
 data class PillIdntfcItem(
     val ITEM_SEQ: String,   // 식별 번호

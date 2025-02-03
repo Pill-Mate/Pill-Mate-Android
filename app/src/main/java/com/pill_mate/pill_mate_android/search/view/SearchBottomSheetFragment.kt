@@ -17,7 +17,6 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepositor
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.model.PillInfoItem
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.model.SearchType
@@ -28,7 +27,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class SearchBottomSheetFragment(private val searchType: SearchType, private val onDismiss: (() -> Unit)? = null) : BottomSheetDialogFragment(), PillSearchView {
+class SearchBottomSheetFragment(
+    private val searchType: SearchType,
+    private val onDismiss: (() -> Unit)? = null
+) : BottomSheetDialogFragment(), PillSearchView {
 
     private var _binding: FragmentSearchBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -186,10 +188,6 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
             }
         }
         Log.d("SearchBottomSheet", "Saved $name with phone $phone and address $address to DataRepository")
-    }
-
-    override fun showPillInfo(pills: List<PillInfoItem>) {
-        Log.d("SearchFragment", "showPillInfo called with items")
     }
 
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {

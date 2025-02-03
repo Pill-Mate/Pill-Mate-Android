@@ -10,13 +10,12 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="어떤 약물을 등록할까요?"
+        android:text="@string/two_title"
         android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
+        style="@style/T1_B22"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="16dp" />
 
@@ -24,7 +23,7 @@
         android:id="@+id/layout_pill"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/bg_search_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,12 +38,13 @@
                 android:id="@+id/et_pillName"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="약물 검색"
+                android:text="@string/two_et_pill"
+                android:textColor="@color/gray_2"
+                style="@style/H3_RG16"
+                android:cursorVisible="false"
                 android:background="@drawable/bg_edittext_black"
                 android:paddingStart="48dp"
-                android:paddingEnd="16dp"
-                android:textColorHint="#BDBDBD"
-                android:textSize="16sp" />
+                android:paddingEnd="16dp" />
 
             <ImageView
                 android:id="@+id/iv_searchPill"
@@ -57,21 +57,5 @@
         </FrameLayout>
 
     </RelativeLayout>
-
-<!--    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:text="다음"
-        android:textColor="@android:color/black"
-        android:background="@drawable/bg_btn_gray_3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

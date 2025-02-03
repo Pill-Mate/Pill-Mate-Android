@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.search.view
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,7 +17,6 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailDialogFragment
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.model.PillInfoItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
@@ -157,10 +157,6 @@ class PillSearchBottomSheetFragment(
         binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
-    override fun showPillInfo(pills: List<PillInfoItem>) {
-        Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
-    }
-
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
         Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
         pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
@@ -180,6 +176,16 @@ class PillSearchBottomSheetFragment(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private var dismissListener: (() -> Unit)? = null
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        dismissListener?.invoke() // 바텀시트 닫힐 때 콜백 실행
+    }
+
+    fun setOnDismissListener(listener: () -> Unit) {
+        dismissListener = listener
     }
 
     companion object {
