@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.search.view
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.ImageLoader
+import coil.request.CachePolicy
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
@@ -39,6 +42,14 @@ class PillSearchBottomSheetFragment(
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
     private lateinit var adapter: PillIdntfcAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
+    // ✅ 수정됨: 전역 ImageLoader 생성 (한 번만 생성하여 최적화)
+    private val imageLoader by lazy {
+        ImageLoader.Builder(requireContext())
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .crossfade(false)
+            .build()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +58,7 @@ class PillSearchBottomSheetFragment(
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
         pillSearchPresenter = PillSearchPresenterImpl(this) // PillSearchPresenter 초기화
         stepTwoPresenter = StepTwoPresenterImpl(stepTwoView) // StepTwoPresenter 초기화
+
         return binding.root
     }
 
@@ -91,7 +103,6 @@ class PillSearchBottomSheetFragment(
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
             // 아이템 클릭 시 다이얼로그 생성 및 표시
             val dialog = PillDetailDialogFragment.newInstance(
-                stepTwoPresenter,
                 this,
                 medicineRegistrationFragment, // MedicineRegistrationFragment 전달
                 pillItem
@@ -100,10 +111,17 @@ class PillSearchBottomSheetFragment(
 
             // 아이템 클릭 시 데이터를 StepTwoFragment로 전달
             sendPillResult(pillItem)
-        })
+        },
+            imageLoader = imageLoader // ✅ 공용 이미지 로더 전달
+        )
 
         binding.ivExit.setOnClickListener {
             dismiss()
+        }
+
+        binding.rvSuggestion.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false // RecyclerView의 기본 스크롤 동작 유지
         }
 
         // 포커스 설정
@@ -158,7 +176,6 @@ class PillSearchBottomSheetFragment(
     }
 
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
         pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
 
         if (pills.isNotEmpty()) {
@@ -171,6 +188,12 @@ class PillSearchBottomSheetFragment(
 
     override fun showResults(results: List<Searchable>, type: SearchType) {
         Log.d("PillSearchFragment", "showPharmacy called with items")
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {
@@ -186,6 +209,22 @@ class PillSearchBottomSheetFragment(
 
     fun setOnDismissListener(listener: () -> Unit) {
         dismissListener = listener
+    }
+
+    object ImageLoaderProvider {
+        fun getImageLoader(context: Context): ImageLoader {
+            return ImageLoader.Builder(context)
+                .crossfade(false) // 부드러운 전환
+                .memoryCachePolicy(CachePolicy.ENABLED) // 메모리 캐싱 활성화
+                .diskCachePolicy(CachePolicy.ENABLED) // 디스크 캐싱 활성화
+                .diskCache {
+                    coil.disk.DiskCache.Builder()
+                        .directory(context.cacheDir.resolve("image_cache"))
+                        .maxSizePercent(0.02) // 디스크 캐시 크기 조정
+                        .build()
+                }
+                .build()
+        }
     }
 
     companion object {

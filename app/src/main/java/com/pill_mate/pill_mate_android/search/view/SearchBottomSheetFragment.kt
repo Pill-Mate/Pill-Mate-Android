@@ -84,6 +84,11 @@ class SearchBottomSheetFragment(
             dismiss()
         }
 
+        binding.rvSuggestion.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false // RecyclerView의 기본 스크롤 동작 유지
+        }
+
         adapter = SearchAdapter(
             onItemClick = { selectedTerm ->
                 binding.etSearch.setText(selectedTerm)
@@ -204,6 +209,12 @@ class SearchBottomSheetFragment(
             adapter.updateResults(emptyList(), "") // 빈 리스트와 빈 검색어 전달
             binding.rvSuggestion.visibility = View.GONE
         }
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {

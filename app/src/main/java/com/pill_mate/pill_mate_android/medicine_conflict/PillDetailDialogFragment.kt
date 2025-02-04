@@ -18,14 +18,12 @@ import com.pill_mate.pill_mate_android.databinding.FragmentPillDetailDialogBindi
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
-import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class PillDetailDialogFragment(
-    private val presenter: StepTwoPresenter,
     private val bottomSheet: PillSearchBottomSheetFragment, // 바텀 시트 인스턴스 전달
     private val medicineRegistrationFragment: MedicineRegistrationFragment // 추가
 ) : DialogFragment() {
@@ -90,7 +88,7 @@ class PillDetailDialogFragment(
                     override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
                         Log.e("MedicineConflictCheck", "Failed to fetch UsjntTabooResponse: ${t.message}")
                         resetProcessingState() // 상태 초기화
-                        navigateToStepThree()
+                        dismiss() // 다이얼로그 닫기
                     }
                 })
         }
@@ -110,7 +108,7 @@ class PillDetailDialogFragment(
                         if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
                             navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
                         } else {
-                            navigateToStepThree()
+                            dismiss() // 다이얼로그 닫기
                         }
 
                         resetProcessingState() // 모든 응답이 완료되면 상태 초기화
@@ -119,7 +117,7 @@ class PillDetailDialogFragment(
                     override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
                         Log.e("MedicineConflictCheck", "Failed to fetch EfcyDplctResponse: ${t.message}")
                         resetProcessingState()
-                        navigateToStepThree()
+                        dismiss() // 다이얼로그 닫기
                     }
                 })
         }
@@ -148,14 +146,6 @@ class PillDetailDialogFragment(
         navController?.navigate(R.id.action_stepTwoFragment_to_loadingConflictFragment, bundle)
     }
 
-    private fun navigateToStepThree() {
-        dismiss()
-        bottomSheet.dismiss()
-        val navController = medicineRegistrationFragment.childFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()
-        navController?.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -163,14 +153,13 @@ class PillDetailDialogFragment(
 
     companion object {
         fun newInstance(
-            presenter: StepTwoPresenter,
             bottomSheet: PillSearchBottomSheetFragment,
             medicineRegistrationFragment: MedicineRegistrationFragment, // 추가
             pillItem: PillIdntfcItem
         ): PillDetailDialogFragment {
             val args = Bundle()
             args.putParcelable("pillItem", pillItem)
-            val fragment = PillDetailDialogFragment(presenter, bottomSheet, medicineRegistrationFragment)
+            val fragment = PillDetailDialogFragment(bottomSheet, medicineRegistrationFragment)
             fragment.arguments = args
             return fragment
         }
