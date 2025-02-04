@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBinding
@@ -147,11 +147,12 @@ class MedicineConflictFragment : Fragment() {
             binding.tvPillName.text = medicine.medicine_name
             binding.tvPillEntp.text = medicine.entp_name
             binding.tvPillClass.text = medicine.classname
-            binding.ivMedicineImage.load(medicine.image) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivMedicineImage.context)
+                .load(medicine.image)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivMedicineImage)
+
         } else {
             binding.tvPillName.text = "약물 없음"
             binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)

@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentStepNineBinding
@@ -163,11 +163,11 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
         if (medicine != null && schedule != null) {
             binding.tvMedicineName.text = medicine.medicine_name
             binding.tvMedicineDose.text = "${schedule.eat_count}${schedule.eat_unit}"
-            binding.ivMedicineImage.load(medicine.image) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivMedicineImage.context)
+                .load(medicine.image)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivMedicineImage)
         } else {
             binding.tvMedicineName.text = "약물 없음"
             binding.tvMedicineDose.text = ""

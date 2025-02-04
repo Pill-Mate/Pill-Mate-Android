@@ -79,9 +79,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx) // 카카오 로그인
-    implementation("io.coil-kt:coil:2.4.0") // 이미지 로딩 라이브러리
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // retrofit2
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") //json
     implementation("com.tickaroo.tikxml:annotation:0.8.13")

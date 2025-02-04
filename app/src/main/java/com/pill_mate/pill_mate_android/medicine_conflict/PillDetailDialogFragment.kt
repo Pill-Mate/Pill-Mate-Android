@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -49,9 +49,11 @@ class PillDetailDialogFragment(
         val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
 
         pillItem?.let {
-            binding.ivPillImage.load(it.ITEM_IMAGE) {
-                transformations(RoundedCornersTransformation(20f))
-            }
+            Glide.with(binding.ivPillImage.context)
+                .load(it.ITEM_IMAGE)
+                .transform(RoundedCorners(20))
+                .into(binding.ivPillImage)
+
             binding.tvPillClass.text = it.CLASS_NAME
             binding.tvPillName.text = it.ITEM_NAME
             binding.tvPillEntp.text = it.ENTP_NAME

@@ -8,17 +8,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.request.CachePolicy
-import coil.transform.RoundedCornersTransformation
 import androidx.core.content.ContextCompat
-import coil.ImageLoader
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.SearchPillItemBinding
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 
 class PillIdntfcAdapter(
-    private val imageLoader: ImageLoader, // ✅ 수정됨: ImageLoader를 외부에서 주입받도록 변경
     private val onItemClick: (PillIdntfcItem) -> Unit = {}, // 클릭 리스너
     private var query: String = "" // 검색어 저장
 ) : RecyclerView.Adapter<PillIdntfcAdapter.PillViewHolder>() {
@@ -29,18 +27,18 @@ class PillIdntfcAdapter(
         var binding: SearchPillItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pill: PillIdntfcItem, query: String, imageLoader: ImageLoader) = with(binding) {
-            if (ivImage.tag != pill.ITEM_IMAGE) { // ✅ 수정됨: 중복 로딩 방지
+        fun bind(pill: PillIdntfcItem, query: String) = with(binding) {
+            if (ivImage.tag != pill.ITEM_IMAGE) { // 중복 로딩 방지
                 ivImage.tag = pill.ITEM_IMAGE
 
-                ivImage.load(pill.ITEM_IMAGE, imageLoader) {
-                    diskCachePolicy(CachePolicy.ENABLED)
-                    memoryCachePolicy(CachePolicy.ENABLED)
-                    crossfade(false)
-                    size(100, 54) // ✅ 수정됨: 크기 최적화
-                    transformations(RoundedCornersTransformation(8f))
-                    //error(R.drawable.error_placeholder) // ✅ 오류 시 기본 이미지 추가
-                }
+                Glide.with(ivImage.context)
+                    .load(pill.ITEM_IMAGE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .skipMemoryCache(false)
+                    .dontAnimate()
+                    .transform(RoundedCorners(8))
+                    .error(R.drawable.ic_default_pill)
+                    .into(ivImage)
             }
 
             tvClassName.text = pill.CLASS_NAME
@@ -81,7 +79,7 @@ class PillIdntfcAdapter(
 
     override fun onBindViewHolder(holder: PillViewHolder, position: Int) {
         val pill = pillList[position]
-        holder.bind(pill, query, imageLoader)
+        holder.bind(pill, query)
         holder.itemView.setOnClickListener { onItemClick(pill) }
     }
 
