@@ -11,10 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
         android:layout_marginStart="20dp"
-        android:text="1일 복용횟수를 선택해주세요"
+        android:text="@string/select_times_title"
+        style="@style/T2_B20"
         android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -33,38 +32,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            android:layout_gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tv_fasting"
+                android:id="@+id/tv_empty"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="공복"
-                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/time_empty"
+                style="@style/H2_SB16"
                 android:textColor="@color/black" />
 
             <ImageView
-                android:id="@+id/iv_fasting_check"
+                android:id="@+id/iv_empty_check"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_btn_unselect"/>
         </LinearLayout>
 
-        <!-- 아침 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_morning"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="아침"
-                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/time_morning"
+                style="@style/H2_SB16"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -72,23 +74,24 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="아침 체크 아이콘" />
+                android:contentDescription="@string/time_morning" />
         </LinearLayout>
 
-        <!-- 점심 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_lunch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="점심"
-                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/time_lunch"
+                style="@style/H2_SB16"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -96,23 +99,24 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="점심 체크 아이콘" />
+                android:contentDescription="@string/time_lunch" />
         </LinearLayout>
 
-        <!-- 저녁 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_dinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="저녁"
-                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/time_dinner"
+                style="@style/H2_SB16"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -120,23 +124,24 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="저녁 체크 아이콘" />
+                android:contentDescription="@string/time_dinner" />
         </LinearLayout>
 
-        <!-- 취침전 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_before_sleep"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="취침전"
-                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/time_before_sleep"
+                style="@style/H2_SB16"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -144,7 +149,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_btn_unselect"
-                android:contentDescription="취침전 체크 아이콘" />
+                android:contentDescription="@string/time_before_sleep" />
         </LinearLayout>
 
     </LinearLayout>
@@ -156,7 +161,7 @@
         android:layout_marginTop="28dp"
         android:layout_marginBottom="26dp"
         android:layout_marginHorizontal="20dp"
-        android:text="0회 선택"
+        android:text="@string/select_times_confirm"
         style="@style/ButtonStyle1"
         android:enabled="false"
         app:layout_constraintTop_toBottomOf="@id/ll_time_buttons"

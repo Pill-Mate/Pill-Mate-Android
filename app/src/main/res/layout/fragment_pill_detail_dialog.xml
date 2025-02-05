@@ -13,10 +13,9 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="등록하려는 약물이 맞나요?"
-            android:textSize="20sp"
+            android:text="@string/pill_detail_title"
+            style="@style/T2_B20"
             android:textColor="@color/black"
-            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginBottom="12dp" />
@@ -47,9 +46,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_text_gray_3_radius_4"
-                android:text="약물분류명"
+                android:text="@string/pill_detail_class_name"
                 android:textColor="@color/gray_1"
-                android:textSize="12sp"
+                style="@style/B4_RG12"
                 android:paddingHorizontal="4dp"
                 android:layout_marginBottom="2dp" />
 
@@ -58,17 +57,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
-                android:text="오그맥스정375밀리그램가나다.."
+                android:text="@string/pill_detail_pill_name"
+                android:maxEms="20"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                style="@style/H2_SB16" />
 
             <TextView
                 android:id="@+id/tv_pill_Entp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="제약회사(주)"
+                android:text="@string/pill_detail_company_name"
+                android:maxLines="1"
                 android:textColor="@color/gray_1"
-                android:textSize="12sp" />
+                style="@style/B4_RG12"  />
         </LinearLayout>
 
         <Button
@@ -77,9 +78,9 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/bg_btn_main_blue_1"
-            android:text="맞아요"
+            android:text="@string/pill_detail_confirm"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            style="@style/H2_SB16"
             android:layout_marginTop="12dp"
             android:paddingHorizontal="12dp"
             android:stateListAnimator="@null"
@@ -93,9 +94,9 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/bg_btn_main_blue_2"
-            android:text="아니에요"
+            android:text="@string/pill_detail_cancel"
             android:textColor="@color/main_blue_1"
-            android:textSize="16sp"
+            style="@style/H2_SB16"
             android:layout_marginTop="12dp"
             android:paddingHorizontal="12dp"
             android:stateListAnimator="@null"

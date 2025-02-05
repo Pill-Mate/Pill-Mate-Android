@@ -31,7 +31,7 @@ class SelectTimeBottomSheetFragment(
         super.onViewCreated(view, savedInstanceState)
 
         val timeButtons = mapOf(
-            Pair(view.findViewById<ImageView>(R.id.iv_fasting_check), "공복"),
+            Pair(view.findViewById<ImageView>(R.id.iv_empty_check), "공복"),
             Pair(view.findViewById<ImageView>(R.id.iv_morning_check), "아침"),
             Pair(view.findViewById<ImageView>(R.id.iv_lunch_check), "점심"),
             Pair(view.findViewById<ImageView>(R.id.iv_dinner_check), "저녁"),
@@ -74,7 +74,7 @@ class SelectTimeBottomSheetFragment(
 
     private fun updateConfirmButton(button: Button) {
         val count = selectedTimes.size
-        button.text = getString(R.string.selected_count, count)
+        button.text = getString(R.string.four_selected_count, count)
         button.isEnabled = count > 0
     }
 }

@@ -9,11 +9,11 @@
 
     <TextView
         android:id="@+id/tv_label"
+        style="@style/B2_RG14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="약물명"
-        android:textSize="14sp"
         android:textColor="@color/gray_2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,14 +22,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:text="오그맥스정365그램"
-        android:textSize="14sp"
-        android:textColor="@color/black"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_label"
+        android:textColor="@color/black"
+        style="@style/B2_RG14"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -96,8 +96,8 @@ class StepFourFragment : Fragment() {
 
     private fun updateSelectedTimeText() {
         binding.tvDay.text = when {
-            selectedTimes.isEmpty() -> getString(R.string.enter_time)
-            else -> getString(R.string.selected_count, selectedTimes.size)
+            selectedTimes.isEmpty() -> getString(R.string.four_enter_time)
+            else -> getString(R.string.four_selected_count, selectedTimes.size)
         }
     }
 

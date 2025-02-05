@@ -67,9 +67,18 @@ class StepTwoFragment : Fragment(), StepTwoView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 presenter.handleTextChange(s.toString())
+                updateClearButtonVisibility(s)
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        binding.ivClear.setOnClickListener {
+            binding.etPillName.text?.clear()
+            updateClearButtonVisibility(null)
+        }
+
+        // 초기 상태 설정
+        updateClearButtonVisibility(binding.etPillName.text)
     }
 
     private fun openPillSearchBottomSheet() {
@@ -115,6 +124,11 @@ class StepTwoFragment : Fragment(), StepTwoView {
     override fun updatePillName(pillName: String) {
         binding.etPillName.setText(pillName)
         binding.etPillName.clearFocus() // 포커스 해제
+        updateClearButtonVisibility(pillName)
+    }
+
+    private fun updateClearButtonVisibility(text: CharSequence?) {
+        binding.ivClear.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
@@ -122,7 +136,7 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     fun isValidInput(): Boolean {
-        return binding.etPillName.text.isNotEmpty()
+        return binding.etPillName.text.toString().isNotEmpty()
     }
 
     override fun onDestroyView() {
