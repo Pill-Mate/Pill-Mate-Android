@@ -25,7 +25,7 @@ class CalendarPagerAdapter(
     }
 
     fun setInitialSelectedDate(date: String) {
-        initialSelectedDate = date // ✅ 초기 선택 날짜 저장
+        initialSelectedDate = date // 초기 선택 날짜 저장
     }
 
     private fun prepareInitialCalendarList() {
@@ -122,18 +122,19 @@ class CalendarPagerAdapter(
                 setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 layoutParams = createGridLayoutParams()
 
-                addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-                    val size = minOf(v.width, v.height)
-                    v.layoutParams.width = size
-                    v.layoutParams.height = size
-                    v.requestLayout()
+                post {
+                    val size = minOf(measuredWidth, measuredHeight)
+                    layoutParams.width = size
+                    layoutParams.height = size
+                    setPadding(0, 0, 0, 0)  // Padding 제거
+
+                    requestLayout()
                 }
 
                 val date = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
                     Calendar.getInstance().apply { set(year, month, day) }.time
                 )
 
-                // ✅ 기존 선택된 날짜 강조 표시
                 if (date == initialSelectedDate) {
                     background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
                     setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
@@ -152,17 +153,17 @@ class CalendarPagerAdapter(
                 height = 0
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(2, 2, 2, 2)
+                setMargins(6, 8, 6, 8)
             }
         }
 
         private fun updateSelectedDayView(selectedDay: Int) {
             for (i in 0 until gridLayout.childCount) {
-                val dayView = gridLayout.getChildAt(i)
-                if (dayView is TextView && dayView.text == selectedDay.toString()) {
+                val dayView = gridLayout.getChildAt(i) as? TextView ?: continue
+                if (dayView.text.toString() == selectedDay.toString()) {
                     dayView.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-                } else if (dayView is TextView && dayView.text.isNotEmpty()) {
+                } else {
                     dayView.background = null
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 }

@@ -133,8 +133,14 @@
     <string name="seven_title">복약 기간을 알려주세요</string>
     <string name="seven_start_date_label">시작일</string>
     <string name="seven_period_label">복약일수</string>
-    <string name="seven_enter_hint">숫자 입력</string>
+    <string name="seven_enter_hint">숫자입력</string>
     <string name="seven_end_date_chip">종료일: %s</string>
+
+    <!--StepEightFragment-->
+    <string name="eight_title">복약 기간을 알려주세요</string>
+    <string name="eight_volume_label">투여용량</string>
+    <string name="eight_unit_label">단위</string>
+    <string name="eight_tv_medicine_unit">단위선택</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
