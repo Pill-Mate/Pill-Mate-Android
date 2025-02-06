@@ -35,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:text="@string/four_enter_time"
-            style="@style/H2_SB16"
+            android:text="@string/four_title"
+            style="@style/H2_MD16"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/black" />
@@ -46,8 +46,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_dropdown"
-            android:contentDescription="Dropdown icon" />
+            android:src="@drawable/ic_dropdown"/>
     </LinearLayout>
 
     <LinearLayout

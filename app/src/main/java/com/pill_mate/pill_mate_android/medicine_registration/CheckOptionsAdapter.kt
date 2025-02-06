@@ -30,16 +30,13 @@ class CheckOptionsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val option = options[position]
 
-        // 🔥 텍스트 설정
         holder.textView.text = option
 
-        // 🔥 선택된 항목의 이미지 변경
         holder.imageView.setImageResource(
             if (position == selectedPosition) R.drawable.ic_btn_select
             else R.drawable.ic_btn_unselect
         )
 
-        // 🔥 클릭 리스너
         holder.itemView.setOnClickListener {
             val currentPosition = holder.bindingAdapterPosition
             if (currentPosition == RecyclerView.NO_POSITION) return@setOnClickListener

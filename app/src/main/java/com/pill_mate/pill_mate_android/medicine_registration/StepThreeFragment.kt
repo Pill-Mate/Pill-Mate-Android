@@ -14,11 +14,14 @@ class StepThreeFragment : Fragment() {
     private var _binding: FragmentStepThreeBinding? = null
     private val binding get() = _binding!!
 
-    private val dayOrder = listOf("일", "월", "화", "수", "목", "금", "토")
-    private val dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
+    private val dayOrder = listOf(
+        R.string.day_sunday, R.string.day_monday, R.string.day_tuesday,
+        R.string.day_wednesday, R.string.day_thursday, R.string.day_friday,
+        R.string.day_saturday
+    )
 
-    // ✅ 기본값을 "매일"로 설정
-    private var selectedDays = listOf("일", "월", "화", "수", "목", "금", "토")
+    private lateinit var dayOrderMap: Map<String, Int>
+    private lateinit var selectedDays: List<String>
 
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
@@ -40,10 +43,23 @@ class StepThreeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupDaySelection()
 
-        // ✅ 기본값을 UI에 반영
+        dayOrderMap = dayOrder.withIndex().associate { getString(it.value) to it.index }
+
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedDays = if (currentSchedule.intake_frequency.isNotEmpty()) {
+            if (currentSchedule.intake_frequency == getString(R.string.three_everyday)) {
+                dayOrder.map { getString(it) }
+            } else {
+                currentSchedule.intake_frequency.split(", ")
+            }
+        } else {
+            dayOrder.map { getString(it) }
+        }
+
+        // UI에 반영
         updateSelectedDaysText(selectedDays)
 
-        // ✅ 기본값을 레포지토리에 저장
+        // 레포지토리에 저장
         saveSelectedDays(selectedDays)
 
         updateNextButtonState()
@@ -67,15 +83,14 @@ class StepThreeFragment : Fragment() {
     private fun updateSelectedDaysText(selectedDays: List<String>) {
         val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
         binding.tvDay.text = when {
-            sortedDays.size == 7 -> "매일"
+            sortedDays.size == 7 -> getString(R.string.three_everyday)
             sortedDays.isEmpty() -> ""
             else -> sortedDays.joinToString(", ")
         }
     }
 
-    // ✅ "매일"을 기본값으로 저장하는 함수
     private fun saveSelectedDays(days: List<String>) {
-        val formattedDays = if (days.size == 7) "매일" else days.joinToString(", ")
+        val formattedDays = if (days.size == 7) getString(R.string.three_everyday) else days.joinToString(", ")
 
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(intake_frequency = formattedDays)

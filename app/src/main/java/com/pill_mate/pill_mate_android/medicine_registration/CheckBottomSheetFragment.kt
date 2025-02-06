@@ -49,16 +49,27 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
 
         val options = when (type) {
             BottomSheetType.MEAL_TIME -> {
-                binding.tvTitle.text = "복용 시간대를 선택하세요"
-                listOf("식전", "식후")
+                binding.tvTitle.setText(R.string.select_meal_time)
+                listOf(getString(R.string.meal_time_before_meal), getString(R.string.meal_time_after_meal))
             }
             BottomSheetType.DOSAGE_UNIT -> {
-                binding.tvTitle.text = "투약 단위를 선택해주세요"
-                listOf("정(개)", "캡슐", "ml", "포", "주사")
+                binding.tvTitle.setText(R.string.select_dosage_unit)
+                listOf(
+                    getString(R.string.dosage_unit_tablet),
+                    getString(R.string.dosage_unit_capsule),
+                    getString(R.string.dosage_unit_ml),
+                    getString(R.string.dosage_unit_packet),
+                    getString(R.string.dosage_unit_injection)
+                )
             }
             BottomSheetType.VOLUME_UNIT -> {
-                binding.tvTitle.text = "투약 단위를 선택하세요"
-                listOf("mg", "mcg", "g", "ml")
+                binding.tvTitle.setText(R.string.select_volume_unit)
+                listOf(
+                    getString(R.string.volume_unit_mg),
+                    getString(R.string.volume_unit_mcg),
+                    getString(R.string.volume_unit_g),
+                    getString(R.string.volume_unit_ml)
+                )
             }
             else -> emptyList()
         }

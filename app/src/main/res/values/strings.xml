@@ -69,6 +69,23 @@
     <string name="time_before_sleep">취침전</string>
     <string name="select_times_confirm">0회 선택</string>
 
+    <!-- fragment_bottom_sheet_check -->
+    <string name="select_confirm">선택</string>
+    <string name="select_meal_time">복용 시간대를 선택하세요</string>
+    <string name="select_dosage_unit">투약 단위를 선택해주세요</string>
+    <string name="select_volume_unit">투약 단위를 선택하세요</string>
+    <string name="meal_time_before_meal">식전</string>
+    <string name="meal_time_after_meal">식후</string>
+    <string name="dosage_unit_tablet">정(개)</string>
+    <string name="dosage_unit_capsule">캡슐</string>
+    <string name="dosage_unit_ml">ml</string>
+    <string name="dosage_unit_packet">포</string>
+    <string name="dosage_unit_injection">주사</string>
+    <string name="volume_unit_mg">mg</string>
+    <string name="volume_unit_mcg">mcg</string>
+    <string name="volume_unit_g">g</string>
+    <string name="volume_unit_ml">ml</string>
+
     <!--fragment_medicine_registration-->
     <string name="medicine_registration_title">약물등록</string>
     <string name="medicine_registration_next">다음</string>
@@ -92,10 +109,21 @@
     <string name="three_everyday">매일</string>
 
     <!--StepFourFragment-->
-    <string name="four_enter_time">1일 몇 회 복용하나요?</string>
+    <string name="four_title">1일 몇 회 복용하나요?</string>
     <string name="four_selected_none">0회 선택</string>
     <string name="four_selected_time">%1$d회 (%2$s)</string>
     <string name="four_selected_count">%1$d회</string>
+
+    <!-- StepFiveFragment -->
+    <string name="five_title">복용 시간대를 알려주세요</string>
+    <string name="five_meal_unit_after">식후</string>
+    <string name="five_enter_minutes">분</string>
+    <string name="five_default_minutes">30</string>
+    <string name="five_when_taking">복용시</string>
+
+    <!-- StepSixFragment -->
+    <string name="six_title">복용 시간대를 알려주세요</string>
+    <string name="six_default_count">1</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

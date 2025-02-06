@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:text="@string/three_everyday"
-            style="@style/H2_SB16"
+            style="@style/H2_MD16"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/black"/>

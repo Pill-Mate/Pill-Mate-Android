@@ -42,7 +42,7 @@
             android:hint="@string/two_et_pill"
             android:textColorHint="@color/gray_2"
             android:textColor="@color/black"
-            style="@style/H3_RG16"
+            style="@style/H2_MD16"
             android:inputType="text"
             android:maxLines="1"
             android:cursorVisible="false"

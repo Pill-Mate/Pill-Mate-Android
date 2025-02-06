@@ -14,6 +14,10 @@ class MedicineRegistrationPresenter(
     private var currentStep = 1
     var isSkipped = false
 
+    fun getCurrentSchedule(): Schedule {
+        return repository.getSchedule() ?: Schedule()
+    }
+
     private fun getDisplayItems(): List<RegistrationData> {
         val schedule = repository.getSchedule() ?: Schedule()
 
