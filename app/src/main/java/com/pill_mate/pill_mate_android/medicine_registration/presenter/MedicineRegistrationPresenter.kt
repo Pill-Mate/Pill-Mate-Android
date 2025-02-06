@@ -84,8 +84,11 @@ class MedicineRegistrationPresenter(
             medicine_name = if (step <= 1) "" else currentSchedule.medicine_name,
             intake_frequency = if (step <= 2) "" else currentSchedule.intake_frequency,
             intake_count = if (step <= 3) "" else currentSchedule.intake_count,
+            meal_unit = if (step <= 4) "" else currentSchedule.meal_unit,
             meal_time = if (step <= 4) 0 else currentSchedule.meal_time,
+            eat_unit = if (step <= 5) "" else currentSchedule.eat_unit,
             eat_count = if (step <= 5) 0 else currentSchedule.eat_count,
+            start_date = if (step <= 6) "" else currentSchedule.start_date,
             intake_period = if (step <= 6) 0 else currentSchedule.intake_period,
             medicine_volume = if (step <= 7) 0f else currentSchedule.medicine_volume,
             medicine_unit = if (step <= 7) "SKIP" else currentSchedule.medicine_unit

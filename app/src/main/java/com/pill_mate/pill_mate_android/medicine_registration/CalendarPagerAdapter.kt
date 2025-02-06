@@ -17,10 +17,15 @@ class CalendarPagerAdapter(
 ) : RecyclerView.Adapter<CalendarPagerAdapter.CalendarViewHolder>() {
 
     private val calendarList = mutableListOf<Calendar>()
-    private val initialMonthsCount = 12 // 초기 6개월 전후로 총 12개월
+    private val initialMonthsCount = 12 // 당월 기준 6개월 전후
+    private var initialSelectedDate: String? = null
 
     init {
         prepareInitialCalendarList()
+    }
+
+    fun setInitialSelectedDate(date: String) {
+        initialSelectedDate = date // ✅ 초기 선택 날짜 저장
     }
 
     private fun prepareInitialCalendarList() {
@@ -32,6 +37,7 @@ class CalendarPagerAdapter(
         }
     }
 
+    // 과거 3개월씩 추가 (스크롤 시)
     fun addPastMonths(count: Int) {
         val firstCalendar = calendarList.first().clone() as Calendar
         for (i in 1..count) {
@@ -41,6 +47,7 @@ class CalendarPagerAdapter(
         notifyItemRangeInserted(0, count)
     }
 
+    //미래 3개월씩 추가 (스크롤 시)
     fun addFutureMonths(count: Int) {
         val lastCalendar = calendarList.last().clone() as Calendar
         val startPosition = calendarList.size
@@ -53,7 +60,7 @@ class CalendarPagerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_month, parent, false)
-        return CalendarViewHolder(view)
+        return CalendarViewHolder(view, initialSelectedDate)
     }
 
     override fun onBindViewHolder(holder: CalendarViewHolder, position: Int) {
@@ -62,7 +69,7 @@ class CalendarPagerAdapter(
 
     override fun getItemCount(): Int = calendarList.size
 
-    class CalendarViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class CalendarViewHolder(view: View, private val initialSelectedDate: String?) : RecyclerView.ViewHolder(view) {
         private val gridLayout: GridLayout = view.findViewById(R.id.grid_dates)
 
         fun bind(calendar: Calendar, onDateSelected: (String) -> Unit) {
@@ -122,11 +129,18 @@ class CalendarPagerAdapter(
                     v.requestLayout()
                 }
 
+                val date = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
+                    Calendar.getInstance().apply { set(year, month, day) }.time
+                )
+
+                // ✅ 기존 선택된 날짜 강조 표시
+                if (date == initialSelectedDate) {
+                    background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
+                    setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
+                }
+
                 setOnClickListener {
-                    val selectedDate = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
-                        Calendar.getInstance().apply { set(year, month, day) }.time
-                    )
-                    onDateSelected(selectedDate)
+                    onDateSelected(date)
                     updateSelectedDayView(day)
                 }
             }

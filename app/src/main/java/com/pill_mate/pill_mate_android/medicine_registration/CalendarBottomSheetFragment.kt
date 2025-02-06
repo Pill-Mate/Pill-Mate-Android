@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.viewpager2.widget.ViewPager2
 import com.pill_mate.pill_mate_android.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.util.DateConversionUtil
 import java.util.*
 
 class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
@@ -19,12 +20,13 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var btnSelectDate: Button
     private lateinit var calendarAdapter: CalendarPagerAdapter
 
-    private var selectedDate: String? = null
+    private var selectedDate: String = DateConversionUtil.getCurrentDate()
     private lateinit var onDateSelected: (String) -> Unit
 
     companion object {
-        fun newInstance(onDateSelected: (String) -> Unit): CalendarBottomSheetFragment {
+        fun newInstance(initialSelectedDate: String?, onDateSelected: (String) -> Unit): CalendarBottomSheetFragment {
             val fragment = CalendarBottomSheetFragment()
+            fragment.selectedDate = initialSelectedDate ?: DateConversionUtil.getCurrentDate()
             fragment.onDateSelected = onDateSelected
             return fragment
         }
@@ -52,8 +54,11 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun setupCalendarAdapter() {
         calendarAdapter = CalendarPagerAdapter { date ->
-            selectedDate = date
+            selectedDate = date // 선택된 날짜 업데이트
         }
+
+        calendarAdapter.setInitialSelectedDate(selectedDate) // 초기 선택 날짜 설정
+
         viewPager.adapter = calendarAdapter
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -62,10 +67,14 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
                 }
                 updateMonthText(calendar)
 
+                // 이전 3개월 추가
                 if (position <= 2) {
                     calendarAdapter.addPastMonths(3)
                     viewPager.setCurrentItem(position + 3, false)
-                } else if (position >= calendarAdapter.itemCount - 3) {
+                }
+
+                // 다음 3개월 추가
+                if (position >= calendarAdapter.itemCount - 3) {
                     calendarAdapter.addFutureMonths(3)
                 }
             }
@@ -92,16 +101,14 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun setupSelectButton() {
         btnSelectDate.setOnClickListener {
-            selectedDate?.let { date ->
-                onDateSelected(date)
-                dismiss()
-            }
+            onDateSelected(selectedDate)
+            dismiss()
         }
     }
 
     private fun updateMonthText(calendar: Calendar) {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1
-        tvCalendarMonth.text = "${year}년 ${month}월"
+        tvCalendarMonth.text = getString(R.string.calendar_month_year_format, year, month)
     }
 }
