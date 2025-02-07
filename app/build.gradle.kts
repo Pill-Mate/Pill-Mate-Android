@@ -89,6 +89,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
     implementation("com.airbnb.android:lottie-compose:5.2.0")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

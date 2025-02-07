@@ -45,11 +45,11 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         setupInputField()
 
-        // FragmentResultListener 설정 (약물 검색 결과를 받음)
-        setFragmentResultListener("pillSearchResultKey") { _, bundle ->
-            val selectedPillItem = bundle.getParcelable<PillIdntfcItem>("selectedPillItem")
-            selectedPillItem?.let {
-                handleSearchResult(it) // PillIdntfcItem 객체 전달
+        // YES 클릭했을 때만 약물 정보를 업데이트하도록 설정
+        setFragmentResultListener("pillConfirmResultKey") { _, bundle ->
+            val confirmedPillItem = bundle.getParcelable<PillIdntfcItem>("confirmedPillItem")
+            confirmedPillItem?.let {
+                handleSearchResult(it) // YES 클릭한 경우에만 업데이트
             }
         }
     }
@@ -75,6 +75,14 @@ class StepTwoFragment : Fragment(), StepTwoView {
         binding.ivClear.setOnClickListener {
             binding.etPillName.text?.clear()
             updateClearButtonVisibility(null)
+
+            // Schedule의 약물 정보 초기화
+            registrationPresenter.updateSchedule { schedule ->
+                schedule.copy(
+                    medicine_name = "",
+                    medicine_id = 0
+                )
+            }
         }
 
         // 초기 상태 설정

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
-import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailDialogFragment
+import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailBottomSheetFragment
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
@@ -91,15 +91,12 @@ class PillSearchBottomSheetFragment(
     private fun initView() {
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
             // 아이템 클릭 시 다이얼로그 생성 및 표시
-            val dialog = PillDetailDialogFragment.newInstance(
+            val dialog = PillDetailBottomSheetFragment.newInstance(
                 this,
                 medicineRegistrationFragment, // MedicineRegistrationFragment 전달
                 pillItem
             )
             dialog.show(parentFragmentManager, "PillDetailDialog")
-
-            // 아이템 클릭 시 데이터를 StepTwoFragment로 전달
-            sendPillResult(pillItem)
         })
 
         binding.ivExit.setOnClickListener {
@@ -146,15 +143,6 @@ class PillSearchBottomSheetFragment(
 
             override fun afterTextChanged(text: Editable?) {}
         })
-    }
-
-    private fun sendPillResult(pillItem: PillIdntfcItem) {
-        val result = Bundle().apply {
-            putParcelable("selectedPillItem", pillItem)
-        }
-        Log.d("PillSearchBottomSheet", "Sending selected pill: ${pillItem.ITEM_NAME}")
-        parentFragmentManager.setFragmentResult("pillSearchResultKey", result)
-        dismiss() // 선택 후 바텀 시트 닫기
     }
 
     private fun updateUnderline(colorRes: Int) {
