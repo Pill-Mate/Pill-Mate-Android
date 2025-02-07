@@ -35,7 +35,7 @@
     <string name="alarm_switch_cancel">아니요</string>
     <string name="alarm_switch_confirm">네, 설정할게요</string>
 
-    <!--fragment_pill_detail_dialog-->
+    <!--fragment_bottom_sheet_pill_detail-->
     <string name="pill_detail_title">등록하려는 약물이 맞나요?</string>
     <string name="pill_detail_class_name">약물분류명</string>
     <string name="pill_detail_pill_name">약물 이름</string>
@@ -90,6 +90,9 @@
     <string name="calendar_title">복약 시작일</string>
     <string name="calendar_month_year_format">%1$d년 %2$d월</string>
 
+    <!--fragment_bottom_sheet_confirm-->
+    <string name="confirm_title">입력하신 정보가 맞나요?</string>
+
     <!--fragment_medicine_registration-->
     <string name="medicine_registration_title">약물등록</string>
     <string name="medicine_registration_next">다음</string>
@@ -141,6 +144,34 @@
     <string name="eight_volume_label">투여용량</string>
     <string name="eight_unit_label">단위</string>
     <string name="eight_tv_medicine_unit">단위선택</string>
+
+    <!-- StepNineFragment -->
+    <string name="nine_title">복약 스케줄을 생성했어요!</string>
+    <string name="nine_pill_title">등록중인 약물</string>
+    <string name="nine_pill_dose">2정</string>
+    <string name="nine_schedule_title">복약 스케줄</string>
+    <string name="nine_alarm_setting">복약 알림 설정</string>
+    <string name="nine_register_btn">등록</string>
+    <string name="am">오전</string>
+    <string name="pm">오후</string>
+    <string name="nine_no_medicine">약물 없음</string>
+    <string name="nine_time_not_registered">등록되지 않음</string>
+    <string name="nine_registration_data_insufficient">등록에 필요한 데이터가 부족합니다.</string>
+    <string name="nine_registration_failed">등록에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="nine_network_error">네트워크 오류가 발생했습니다.</string>
+
+    <!-- StepTenFragment -->
+    <string name="ten_title">더 등록할 약물이 있나요?</string>
+    <string name="ten_btn_yes">네, 있어요</string>
+    <string name="ten_btn_no">없어요</string>
+
+    <!-- StepLoadingFragment -->
+    <string name="loading_title">복약 스케줄을 만들고 있어요!</string>
+    <string name="loading_subtitle">메이트님의 스케줄을 고려한\n복약 스케줄을 생성중이에요</string>
+
+    <!-- StepElevenFragment -->
+    <string name="eleven_title">복약 스케줄 등록 완료!</string>
+    <string name="eleven_btn_home">홈으로</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

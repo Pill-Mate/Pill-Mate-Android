@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
-import com.pill_mate.pill_mate_android.databinding.FragmentPillDetailDialogBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
@@ -28,14 +28,14 @@ class PillDetailDialogFragment(
     private val medicineRegistrationFragment: MedicineRegistrationFragment // 추가
 ) : DialogFragment() {
 
-    private var _binding: FragmentPillDetailDialogBinding? = null
+    private var _binding: FragmentBottomSheetPillDetailBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPillDetailDialogBinding.inflate(inflater, container, false)
+        _binding = FragmentBottomSheetPillDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
