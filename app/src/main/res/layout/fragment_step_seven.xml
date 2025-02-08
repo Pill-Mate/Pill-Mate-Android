@@ -1,0 +1,103 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="복약 기간을 알려주세요"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="16dp" />
+
+    <TextView
+        android:id="@+id/tv_start_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="시작일"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp" />
+
+    <TextView
+        android:id="@+id/tv_period_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="복약일수"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/et_period"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <LinearLayout
+        android:id="@+id/layout_start_date"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_selector_edittext"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_start_date_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/et_period">
+
+        <TextView
+            android:id="@+id/tv_start_date"
+            android:layout_width="0dp"
+            android:layout_height="22dp"
+            android:layout_weight="1"
+            android:text="0000.00.00"
+            android:textSize="16sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/iv_start_date_dropdown"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_dropdown"
+            android:contentDescription="Dropdown icon" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_period"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_selector_edittext"
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        android:padding="12dp"
+        android:hint="입력 전"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_period_label"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_start_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/layout_start_date" />
+
+    <LinearLayout
+        android:id="@+id/layout_end_date_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/et_period"
+        app:layout_constraintTop_toBottomOf="@+id/et_period" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
