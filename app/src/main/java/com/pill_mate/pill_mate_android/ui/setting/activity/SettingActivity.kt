@@ -24,6 +24,8 @@ import com.pill_mate.pill_mate_android.ui.setting.SettingRoutineBottomDialogFrag
 import com.pill_mate.pill_mate_android.ui.setting.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.ui.setting.dialog.SignoutDialog
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.R
+import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,8 +46,28 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             insets
         }
 
+        initView()
         fetchUserInfoData()
         setButtonClickListener()
+
+    }
+
+    private fun initView() {
+        binding.btnPersonalRoutine.post {
+            binding.btnPersonalRoutine.expandTouchArea(20) // 20dp 만큼 터치 영역 확장
+        }
+
+        binding.btnSendComment.post {
+            binding.btnSendComment.expandTouchArea(20)
+        }
+
+        binding.btnAboutPillmate.post {
+            binding.btnAboutPillmate.expandTouchArea(20)
+        }
+
+        binding.btnBack.post {
+            binding.btnBack.expandTouchArea(20)
+        }
     }
 
     private fun fetchUserInfoData() {
@@ -210,4 +232,5 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     override fun onLogOutButtonClick() {
         logoutNetwork()
     }
+
 }
