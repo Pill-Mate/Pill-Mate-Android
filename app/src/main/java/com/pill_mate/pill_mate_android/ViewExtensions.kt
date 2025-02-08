@@ -1,4 +1,4 @@
-package com.example.pill_mate_android
+package com.pill_mate.pill_mate_android
 
 import android.graphics.Rect
 import android.view.TouchDelegate

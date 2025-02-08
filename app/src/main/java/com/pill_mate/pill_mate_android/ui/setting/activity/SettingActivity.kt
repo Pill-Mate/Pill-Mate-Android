@@ -12,9 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
+import com.pill_mate.pill_mate_android.expandTouchArea
 import com.pill_mate.pill_mate_android.ui.login.KaKaoTokenData
 import com.pill_mate.pill_mate_android.ui.login.activity.KakaoLoginActivity
 import com.pill_mate.pill_mate_android.ui.setting.ConfirmDialogInterface
@@ -23,9 +25,6 @@ import com.pill_mate.pill_mate_android.ui.setting.ResponseUserInfo
 import com.pill_mate.pill_mate_android.ui.setting.SettingRoutineBottomDialogFragment
 import com.pill_mate.pill_mate_android.ui.setting.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.ui.setting.dialog.SignoutDialog
-import com.kakao.sdk.user.UserApiClient
-import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,19 +53,19 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun initView() {
         binding.btnPersonalRoutine.post {
-            binding.btnPersonalRoutine.expandTouchArea(20) // 20dp 만큼 터치 영역 확장
+            binding.btnPersonalRoutine.expandTouchArea(40) // 20dp 만큼 터치 영역 확장
         }
 
         binding.btnSendComment.post {
-            binding.btnSendComment.expandTouchArea(20)
+            binding.btnSendComment.expandTouchArea(40)
         }
 
         binding.btnAboutPillmate.post {
-            binding.btnAboutPillmate.expandTouchArea(20)
+            binding.btnAboutPillmate.expandTouchArea(40)
         }
 
         binding.btnBack.post {
-            binding.btnBack.expandTouchArea(20)
+            binding.btnBack.expandTouchArea(40)
         }
     }
 
