@@ -1,5 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_conflict
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,11 +29,6 @@ class PillDeleteDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 다이얼로그 배경을 투명하게 설정
-        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        // 다이얼로그 크기 설정
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
         binding.btnDelete.setOnClickListener {
             onDeleteSuccess(itemSeq)
             dismiss()
@@ -40,6 +37,15 @@ class PillDeleteDialogFragment(
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onDestroyView() {

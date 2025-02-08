@@ -15,9 +15,11 @@
         style="@style/H2_SB16"
         android:textColor="@color/black" />
 
-    <ImageView
-        android:id="@+id/iv_check"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/ic_btn_unselect"/>
+    <CheckBox
+        android:id="@+id/cb_option_check"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:background="@drawable/btn_checkbox_gray2"
+        android:button="@null"
+        android:stateListAnimator="@null" />
 </LinearLayout>

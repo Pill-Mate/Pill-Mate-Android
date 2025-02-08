@@ -66,12 +66,10 @@ class MedicineConflictFragment : Fragment() {
 
     private fun initializeSections() {
         binding.rvContraindication.visibility = View.GONE
-        binding.ivContraindicationStart.visibility = View.GONE
         binding.tvContraindication.visibility = View.GONE
         binding.ivContraindicationEnd.visibility = View.GONE
 
         binding.rvEfficiencyOverlap.visibility = View.GONE
-        binding.ivEfficiencyOverlapStart.visibility = View.GONE
         binding.tvEfficiencyOverlap.visibility = View.GONE
         binding.ivEfficiencyOverlapEnd.visibility = View.GONE
     }
@@ -185,13 +183,11 @@ class MedicineConflictFragment : Fragment() {
         when (sectionType) {
             SectionType.CONTRAINDICATION -> {
                 binding.rvContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivContraindicationStart.visibility = if (isVisible) View.VISIBLE else View.GONE
                 binding.tvContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
                 binding.ivContraindicationEnd.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
             SectionType.EFFICIENCY_OVERLAP -> {
                 binding.rvEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivEfficiencyOverlapStart.visibility = if (isVisible) View.VISIBLE else View.GONE
                 binding.tvEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
                 binding.ivEfficiencyOverlapEnd.visibility = if (isVisible) View.VISIBLE else View.GONE
             }

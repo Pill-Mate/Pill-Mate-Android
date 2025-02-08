@@ -74,16 +74,15 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
             else -> emptyList()
         }
 
-        val adapter = CheckOptionsAdapter(options, selectedOption) { selectedOption ->
-            this.selectedOption = selectedOption
-            // 선택된 항목이 있으면 버튼 활성화, 없으면 비활성화
-            binding.btnConfirm.isEnabled = selectedOption != null
+        val adapter = CheckOptionsAdapter(options, selectedOption) { newSelectedOption ->
+            selectedOption = newSelectedOption
+            binding.btnConfirm.isEnabled = newSelectedOption != null
         }
 
         binding.rvOptions.layoutManager = LinearLayoutManager(context)
         binding.rvOptions.adapter = adapter
 
-        // 초기 상태에 따라 버튼 활성화
+        // 선택된 옵션이 있으면 버튼 활성화
         binding.btnConfirm.isEnabled = selectedOption != null
 
         // "확인" 버튼 클릭 리스너
@@ -93,8 +92,8 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
                     "selectedOptionKey",
                     Bundle().apply { putString("selectedOption", it) }
                 )
+                dismiss()
             }
-            dismiss()
         }
     }
 }

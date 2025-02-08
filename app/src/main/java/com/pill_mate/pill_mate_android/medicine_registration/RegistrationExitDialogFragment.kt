@@ -46,7 +46,7 @@ class RegistrationExitDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

@@ -19,6 +19,12 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="H1_B18">
+        <item name="android:includeFontPadding">false</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="H1_SB18">
         <item name="android:includeFontPadding">false</item>
         <item name="fontFamily">@font/pretendard_semibold</item>

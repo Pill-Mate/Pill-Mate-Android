@@ -29,6 +29,11 @@
     <string name="exit_registration_confirm">계속하기</string>
     <string name="exit_registration_cancel">종료</string>
 
+    <!--fragment_pill_delete_dialog-->
+    <string name="pill_delete_title">스케줄에 등록된 약물을\n삭제하시겠어요?</string>
+    <string name="pill_delete_btn_cancel">취소</string>
+    <string name="pill_delete_btn_delete">삭제하기</string>
+
     <!--fragment_alarm_switch_dialog-->
     <string name="alarm_switch_title">복약 알림을 권장드려요!</string>
     <string name="alarm_switch_message">약물을 제시간에 섭취할 수 있도록 도울게요.</string>
@@ -92,6 +97,15 @@
 
     <!--fragment_bottom_sheet_confirm-->
     <string name="confirm_title">입력하신 정보가 맞나요?</string>
+
+    <!--fragment_bottom_sheet_inquiry-->
+    <string name="inquiry_title">처방받은 약국, 병원에서\n확인해보세요</string>
+    <string name="inquiry_subtitle">복용하는 약물에 대한 정확한 정보가 중요해요.</string>
+    <string name="pharmacy_name">약국명</string>
+    <string name="pharmacy_address">약국 주소</string>
+    <string name="hospital_name">병원명</string>
+    <string name="hospital_address">병원 주소</string>
+    <string name="btn_call">통화</string>
 
     <!--fragment_medicine_registration-->
     <string name="medicine_registration_title">약물등록</string>
@@ -165,13 +179,19 @@
     <string name="ten_btn_yes">네, 있어요</string>
     <string name="ten_btn_no">없어요</string>
 
+    <!-- StepElevenFragment -->
+    <string name="eleven_title">복약 스케줄 등록 완료!</string>
+    <string name="eleven_btn_home">홈으로</string>
+
+
     <!-- StepLoadingFragment -->
     <string name="loading_title">복약 스케줄을 만들고 있어요!</string>
     <string name="loading_subtitle">메이트님의 스케줄을 고려한\n복약 스케줄을 생성중이에요</string>
 
-    <!-- StepElevenFragment -->
-    <string name="eleven_title">복약 스케줄 등록 완료!</string>
-    <string name="eleven_btn_home">홈으로</string>
+
+    <!-- fragment_loading_conflict -->
+    <string name="loading_conflict_title">복용하는 약물과\n충돌하는 성분을 발견했어요</string>
+    <string name="loading_conflict_btn">확인하기</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
