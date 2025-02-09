@@ -56,10 +56,10 @@
             android:ellipsize="end"
             android:ems="10"
             android:maxLines="1"
-            android:text="저는언제쯤건강해지나요옹오오옹"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="저는언제쯤건강해지나요옹오오옹" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_kakao_email"
@@ -83,11 +83,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Pillmate@kko.com"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_kakao"
-                app:layout_constraintTop_toTopOf="@id/iv_kakao" />
+                app:layout_constraintTop_toTopOf="@id/iv_kakao"
+                tools:text="Pillmate@kko.com" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
