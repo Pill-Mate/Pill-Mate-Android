@@ -20,9 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="아침"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        style="@style/H2_MD16"
         app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
         app:layout_constraintStart_toEndOf="@id/iv_icon"
         app:layout_constraintTop_toTopOf="@id/iv_icon" />
@@ -32,9 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="오전 8:00"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        style="@style/H2_MD16"
         app:layout_constraintStart_toStartOf="@+id/iv_icon"
         app:layout_constraintTop_toBottomOf="@+id/iv_icon" />
 
@@ -46,9 +44,8 @@
         android:paddingHorizontal="6dp"
         android:paddingVertical="2dp"
         android:background="@drawable/bg_text_gray_3_radius_4"
-        android:text="식전 30분"
         android:textColor="@color/gray_1"
-        android:textSize="12sp"
+        style="@style/B2_RG14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_time"
         app:layout_constraintStart_toEndOf="@id/tv_time"
         app:layout_constraintTop_toTopOf="@id/tv_time" />

@@ -17,10 +17,15 @@ class CalendarPagerAdapter(
 ) : RecyclerView.Adapter<CalendarPagerAdapter.CalendarViewHolder>() {
 
     private val calendarList = mutableListOf<Calendar>()
-    private val initialMonthsCount = 12 // 초기 6개월 전후로 총 12개월
+    private val initialMonthsCount = 12 // 당월 기준 6개월 전후
+    private var initialSelectedDate: String? = null
 
     init {
         prepareInitialCalendarList()
+    }
+
+    fun setInitialSelectedDate(date: String) {
+        initialSelectedDate = date // 초기 선택 날짜 저장
     }
 
     private fun prepareInitialCalendarList() {
@@ -32,6 +37,7 @@ class CalendarPagerAdapter(
         }
     }
 
+    // 과거 3개월씩 추가 (스크롤 시)
     fun addPastMonths(count: Int) {
         val firstCalendar = calendarList.first().clone() as Calendar
         for (i in 1..count) {
@@ -41,6 +47,7 @@ class CalendarPagerAdapter(
         notifyItemRangeInserted(0, count)
     }
 
+    //미래 3개월씩 추가 (스크롤 시)
     fun addFutureMonths(count: Int) {
         val lastCalendar = calendarList.last().clone() as Calendar
         val startPosition = calendarList.size
@@ -53,7 +60,7 @@ class CalendarPagerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_month, parent, false)
-        return CalendarViewHolder(view)
+        return CalendarViewHolder(view, initialSelectedDate)
     }
 
     override fun onBindViewHolder(holder: CalendarViewHolder, position: Int) {
@@ -62,7 +69,7 @@ class CalendarPagerAdapter(
 
     override fun getItemCount(): Int = calendarList.size
 
-    class CalendarViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class CalendarViewHolder(view: View, private val initialSelectedDate: String?) : RecyclerView.ViewHolder(view) {
         private val gridLayout: GridLayout = view.findViewById(R.id.grid_dates)
 
         fun bind(calendar: Calendar, onDateSelected: (String) -> Unit) {
@@ -115,18 +122,26 @@ class CalendarPagerAdapter(
                 setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 layoutParams = createGridLayoutParams()
 
-                addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-                    val size = minOf(v.width, v.height)
-                    v.layoutParams.width = size
-                    v.layoutParams.height = size
-                    v.requestLayout()
+                post {
+                    val size = minOf(measuredWidth, measuredHeight)
+                    layoutParams.width = size
+                    layoutParams.height = size
+                    setPadding(0, 0, 0, 0)  // Padding 제거
+
+                    requestLayout()
+                }
+
+                val date = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
+                    Calendar.getInstance().apply { set(year, month, day) }.time
+                )
+
+                if (date == initialSelectedDate) {
+                    background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
+                    setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
                 }
 
                 setOnClickListener {
-                    val selectedDate = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
-                        Calendar.getInstance().apply { set(year, month, day) }.time
-                    )
-                    onDateSelected(selectedDate)
+                    onDateSelected(date)
                     updateSelectedDayView(day)
                 }
             }
@@ -138,17 +153,17 @@ class CalendarPagerAdapter(
                 height = 0
                 columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-                setMargins(2, 2, 2, 2)
+                setMargins(6, 8, 6, 8)
             }
         }
 
         private fun updateSelectedDayView(selectedDay: Int) {
             for (i in 0 until gridLayout.childCount) {
-                val dayView = gridLayout.getChildAt(i)
-                if (dayView is TextView && dayView.text == selectedDay.toString()) {
+                val dayView = gridLayout.getChildAt(i) as? TextView ?: continue
+                if (dayView.text.toString() == selectedDay.toString()) {
                     dayView.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-                } else if (dayView is TextView && dayView.text.isNotEmpty()) {
+                } else {
                     dayView.background = null
                     dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 }

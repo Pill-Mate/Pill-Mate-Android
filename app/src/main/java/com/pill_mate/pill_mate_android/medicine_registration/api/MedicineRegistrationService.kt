@@ -29,6 +29,6 @@ interface MedicineRegistrationService {
     @GET("/api/v1/dur/get-phone-address") // 약국 병원 전화번호 및 주소 정보 가져오기
     fun getPhoneAndAddress(@Query("itemSeq") itemSeq: String): Call<PhoneAndAddressResponse>
 
-    @DELETE("/api/v1/dur/conflict-remove") // DUR 충돌 제거 요청
-    fun removeConflict(): Call<ConflictRemoveResponse>
+    @DELETE("/api/v1/dur/conflict-remove") // 충돌 약국 제거하기
+    fun removeConflict(@Query("itemSeq") itemSeq: String): Call<ConflictRemoveResponse>
 }

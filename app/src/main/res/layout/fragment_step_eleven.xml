@@ -4,38 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_finish"
-        android:layout_width="230dp"
-        android:layout_height="193dp"
-        android:layout_marginTop="220dp"
-        android:src="@drawable/ic_finish"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_title"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
         android:gravity="center"
-        android:text="복약 스케줄 등록 완료!"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_finish" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_finish"
+            android:layout_width="230dp"
+            android:layout_height="193dp"
+            android:src="@drawable/ic_finish" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/T2_B20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:gravity="center"
+            android:text="@string/eleven_title"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_home"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="26dp"
         style="@style/ButtonStyle1"
-        android:text="홈으로"
+        android:text="@string/eleven_btn_home"
         android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

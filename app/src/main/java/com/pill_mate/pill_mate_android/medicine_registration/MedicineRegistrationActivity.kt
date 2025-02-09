@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.pill_mate.pill_mate_android.R
 

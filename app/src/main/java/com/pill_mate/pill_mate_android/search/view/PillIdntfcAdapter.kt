@@ -8,16 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import androidx.core.content.ContextCompat
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.SearchPillItemBinding
+import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 
 class PillIdntfcAdapter(
-    private val onItemClick: (PillIdntfcItem) -> Unit = {}, // 람다 표현식의 타입 명시
-    private var query: String = "" // 검색어를 저장할 변수
+    private val onItemClick: (PillIdntfcItem) -> Unit = {}, // 클릭 리스너
+    private var query: String = "" // 검색어 저장
 ) : RecyclerView.Adapter<PillIdntfcAdapter.PillViewHolder>() {
 
     private val pillList = mutableListOf<PillIdntfcItem>()
@@ -27,24 +28,33 @@ class PillIdntfcAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pill: PillIdntfcItem, query: String) = with(binding) {
-            ivImage.load(pill.ITEM_IMAGE) {
-                transformations(RoundedCornersTransformation(4f))
+            if (ivImage.tag != pill.ITEM_IMAGE) { // 중복 로딩 방지
+                ivImage.tag = pill.ITEM_IMAGE
+
+                Glide.with(ivImage.context)
+                    .load(pill.ITEM_IMAGE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .skipMemoryCache(false)
+                    .dontAnimate()
+                    .transform(RoundedCorners(8))
+                    .error(R.drawable.ic_default_pill)
+                    .into(ivImage)
             }
+
             tvClassName.text = pill.CLASS_NAME
-            tvPillName.text = pill.ITEM_NAME
             tvCompanyName.text = pill.ENTP_NAME
 
-            // 약물명 자르기 (19자 초과 시 ...)
-            val pillName = if (pill.ITEM_NAME.length > 19) {
-                "${pill.ITEM_NAME.substring(0, 19)}.."
+            // 약물명 길이 제한 (17자 초과 시 ...)
+            val pillName = if (pill.ITEM_NAME.length > 17) {
+                "${pill.ITEM_NAME.substring(0, 17)}.."
             } else {
                 pill.ITEM_NAME
             }
 
-            // 검색어를 사용한 SpannableString 생성
+            // 검색어 하이라이트 (색상 강조)
             val spannableString = SpannableString(pillName)
-
             val queryIndex = pillName.indexOf(query, ignoreCase = true)
+
             if (queryIndex >= 0) {
                 val blueColor = ContextCompat.getColor(binding.root.context, R.color.main_blue_1)
                 spannableString.setSpan(
@@ -69,10 +79,8 @@ class PillIdntfcAdapter(
 
     override fun onBindViewHolder(holder: PillViewHolder, position: Int) {
         val pill = pillList[position]
-        holder.bind(pill, query) // 검색어와 아이템을 bind에 전달
-        holder.binding.root.setOnClickListener {
-            onItemClick(pill) // 클릭 시 콜백 호출
-        }
+        holder.bind(pill, query)
+        holder.itemView.setOnClickListener { onItemClick(pill) }
     }
 
     override fun getItemCount(): Int = pillList.size
@@ -82,7 +90,7 @@ class PillIdntfcAdapter(
         Log.d("PillAdapter", "updateItems called with ${newPillList.size} items")
         pillList.clear()
         pillList.addAll(newPillList)
-        query = newQuery // 검색어 업데이트
-        notifyDataSetChanged() // 데이터 변경 알림
+        query = newQuery
+        notifyDataSetChanged()
     }
 }

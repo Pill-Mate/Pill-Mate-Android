@@ -3,11 +3,14 @@ package com.pill_mate.pill_mate_android.search.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentStepOneBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
@@ -37,15 +40,29 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
         setupInputFields()
         setupSearchListeners()
+        setupEndIconListeners()
     }
 
     private fun setupInputFields() {
-        // 약국 입력 감지
         binding.etPharmacy.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                presenter.onPharmacyNameChanged(s.toString())
+                val hospitalText = binding.etHospital.text.toString()
+                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 🚀 병원 입력까지 함께 전달
+                updateClearButtonVisibility(binding.ivClearPharmacy, s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.etHospital.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val pharmacyText = binding.etPharmacy.text.toString()
+                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 🚀 약국 입력까지 함께 전달
+                updateClearButtonVisibility(binding.ivClearHospital, s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -74,6 +91,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         val bottomSheetFragment = SearchBottomSheetFragment(searchType) {
             // BottomSheet가 닫힐 때 호출되는 콜백
             updateEditTextFromDataRepository()
+            clearEditTextFocus()
         }
         bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
     }
@@ -83,12 +101,19 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         DataRepository.pharmacyData?.let {
             binding.etPharmacy.setText(it.pharmacyName)
             binding.etPharmacy.clearFocus()
+            updateClearButtonVisibility(binding.ivClearPharmacy, binding.etPharmacy.text)
         }
 
         DataRepository.hospitalData?.let {
             binding.etHospital.setText(it.hospitalName)
             binding.etHospital.clearFocus()
+            updateClearButtonVisibility(binding.ivClearHospital, binding.etHospital.text)
         }
+    }
+
+    private fun clearEditTextFocus() {
+        binding.etPharmacy.clearFocus()
+        binding.etHospital.clearFocus()
     }
 
     override fun onResume() {
@@ -97,15 +122,41 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         // DataRepository에서 데이터 가져와서 EditText에 반영
         DataRepository.pharmacyData?.let {
             binding.etPharmacy.setText(it.pharmacyName)
+            updateClearButtonVisibility(binding.ivClearPharmacy, binding.etPharmacy.text)
         }
 
         DataRepository.hospitalData?.let {
             binding.etHospital.setText(it.hospitalName)
+            updateClearButtonVisibility(binding.ivClearHospital, binding.etHospital.text)
         }
     }
 
-    override fun updateButtonState(isEnabled: Boolean) {
-        (parentFragment as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
+    private fun setupEndIconListeners() {
+        // 약국 X 버튼 클릭 시
+        binding.ivClearPharmacy.setOnClickListener {
+            clearPharmacyData()
+        }
+
+        // 병원 X 버튼 클릭 시
+        binding.ivClearHospital.setOnClickListener {
+            clearHospitalData()
+        }
+    }
+
+    private fun clearPharmacyData() {
+        binding.etPharmacy.text = null // EditText 내용 지우기
+        DataRepository.pharmacyData = null // DataRepository에서 약국 데이터 삭제
+        updateClearButtonVisibility(binding.ivClearPharmacy, null)
+    }
+
+    private fun clearHospitalData() {
+        binding.etHospital.text = null // EditText 내용 지우기
+        DataRepository.hospitalData = null // DataRepository에서 병원 데이터 삭제
+        updateClearButtonVisibility(binding.ivClearHospital, null)
+    }
+
+    private fun updateClearButtonVisibility(imageView: View, text: CharSequence?) {
+        imageView.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     fun onNextButtonClicked() {
@@ -115,10 +166,18 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
+
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
+        binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
+    }
+
+    override fun updateButtonState(isEnabled: Boolean) {
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isEnabled)
     }
 
     fun isValidInput(): Boolean {
-        return binding.etPharmacy.text.isNotEmpty()
+        return binding.etPharmacy.text.toString().isNotEmpty()
     }
 
     override fun onDestroyView() {

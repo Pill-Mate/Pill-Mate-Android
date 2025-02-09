@@ -9,24 +9,21 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="복용 요일을 알려주세요"
+        android:text="@string/three_title"
         android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
+        style="@style/T1_B22"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <LinearLayout
         android:id="@+id/layout_day"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/bg_edittext_black"
         android:padding="12dp"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
@@ -36,36 +33,22 @@
         <TextView
             android:id="@+id/tv_day"
             android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="매일"
-            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/three_everyday"
+            style="@style/H2_MD16"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"/>
 
         <ImageView
             android:id="@+id/iv_dropdown"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_dropdown"
             android:contentDescription="Dropdown icon" />
     </LinearLayout>
-
-<!--    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:text="다음"
-        android:textColor="@android:color/black"
-        android:background="@drawable/bg_btn_gray_3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

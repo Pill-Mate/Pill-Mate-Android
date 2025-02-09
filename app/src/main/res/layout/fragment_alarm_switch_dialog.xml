@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
     android:layout_height="wrap_content"
-    android:minWidth="320dp"
-    android:minHeight="250dp"
     android:orientation="vertical"
-    android:paddingVertical="20dp"
-    android:paddingHorizontal="16dp"
+    android:padding="20dp"
     android:background="@drawable/bg_dialog"
     android:gravity="center_horizontal">
 
@@ -15,22 +12,32 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_warning_pink" />
+        android:src="@drawable/ic_warning" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/pill_delete_title"
+        android:text="@string/alarm_switch_title"
         android:textColor="@color/black"
-        style="@style/H1_B18"
+        style="@style/T2_B20"
+        android:layout_marginBottom="8dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_switch_message"
+        android:textColor="@color/black"
+        style="@style/H3_RG16"
         android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="24dp">
 
         <Button
             android:id="@+id/btn_cancel"
@@ -38,21 +45,21 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="@string/pill_delete_btn_cancel"
+            android:text="@string/alarm_switch_cancel"
+            style="@style/H2_SB16"
             android:stateListAnimator="@null"
-            android:textColor="@color/black"
-            style="@style/H2_MD16"
-            android:background="@drawable/bg_btn_gray_2_stoke" />
+            android:textColor="@color/main_blue_1"
+            android:background="@drawable/bg_btn_main_blue_2" />
 
         <Button
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_confirm"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="@string/pill_delete_btn_delete"
+            android:text="@string/alarm_switch_confirm"
+            style="@style/H2_SB16"
             android:stateListAnimator="@null"
             android:textColor="@color/white"
-            style="@style/H2_MD16"
-            android:background="@drawable/bg_btn_pink_1" />
+            android:background="@drawable/bg_btn_main_blue_1" />
     </LinearLayout>
 </LinearLayout>

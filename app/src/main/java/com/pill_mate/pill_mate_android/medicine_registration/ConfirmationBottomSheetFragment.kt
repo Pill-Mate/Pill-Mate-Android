@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -91,11 +91,11 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         binding.tvPillEntp.text = medicine?.entp_name ?: "제약회사 정보 없음"
 
         medicine?.image?.let { imageUrl ->
-            binding.ivPillImage.load(imageUrl) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivPillImage.context)
+                .load(imageUrl)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivPillImage)
         } ?: run {
             binding.ivPillImage.setImageResource(R.drawable.ic_default_pill)
         }

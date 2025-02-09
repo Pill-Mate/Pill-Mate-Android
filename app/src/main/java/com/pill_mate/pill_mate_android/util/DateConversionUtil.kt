@@ -45,6 +45,18 @@ object DateConversionUtil {
         }
     }
 
+    // 현재 날짜를 yyyy.MM.dd 형식으로 반환
+    fun getCurrentDate(): String {
+        return try {
+            val currentDate = Date()
+            val displayFormat = SimpleDateFormat(DISPLAY_DATE_FORMAT, Locale.getDefault())
+            displayFormat.format(currentDate)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
     // 복약 기간 텍스트 생성
     fun calculateIntakePeriod(startDate: String, duration: Int): String {
         val endDate = calculateEndDate(startDate, duration)
