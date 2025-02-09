@@ -82,6 +82,8 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
                         with(binding) {
                             tvNickname.text = userInfo.userName + " 님"
                             tvKakaoEmail.text = userInfo.email
+                            tgPillmateAlarm.isChecked = userInfo.alarmInfo
+                            tgMarketingAlarm.isChecked = userInfo.alarmMarketing
 
                             Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
                                 .into(ivProfile)

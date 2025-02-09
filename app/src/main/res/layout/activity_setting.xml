@@ -183,7 +183,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tv_toggle_switch1"
+            android:id="@+id/tg_pillmate_alarm"
             style="@style/category_toggle"
             android:layout_width="52dp"
             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
             android:layout_marginTop="4dp"
             android:text="복약 알림, 복약 종료, 서비스 업데이트 등"
             android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tv_toggle_switch1" />
+            app:layout_constraintTop_toBottomOf="@id/tg_pillmate_alarm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -233,7 +233,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tv_toggle_switch2"
+            android:id="@+id/tg_marketing_alarm"
             style="@style/category_toggle"
             android:layout_width="52dp"
             android:layout_height="wrap_content"
@@ -249,7 +249,7 @@
             android:layout_marginTop="4dp"
             android:text="메이트님을 위한 마케팅 정보 등"
             android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tv_toggle_switch2" />
+            app:layout_constraintTop_toBottomOf="@id/tg_marketing_alarm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
