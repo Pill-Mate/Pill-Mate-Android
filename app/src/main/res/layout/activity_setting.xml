@@ -185,7 +185,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/tv_toggle_switch1"
             style="@style/category_toggle"
-            android:layout_width="50dp"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
             android:background="@null"
             app:layout_constraintEnd_toEndOf="parent"
@@ -235,7 +235,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/tv_toggle_switch2"
             style="@style/category_toggle"
-            android:layout_width="50dp"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
             android:background="@null"
             app:layout_constraintEnd_toEndOf="parent"

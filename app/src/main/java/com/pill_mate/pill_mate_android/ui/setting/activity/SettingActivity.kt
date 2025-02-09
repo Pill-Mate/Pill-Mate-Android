@@ -53,19 +53,19 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun initView() {
         binding.btnPersonalRoutine.post {
-            binding.btnPersonalRoutine.expandTouchArea(40) // 20dp 만큼 터치 영역 확장
+            binding.btnPersonalRoutine.expandTouchArea(100) // 100dp 만큼 터치 영역 확장
         }
 
         binding.btnSendComment.post {
-            binding.btnSendComment.expandTouchArea(40)
+            binding.btnSendComment.expandTouchArea(100)
         }
 
         binding.btnAboutPillmate.post {
-            binding.btnAboutPillmate.expandTouchArea(40)
+            binding.btnAboutPillmate.expandTouchArea(100)
         }
 
         binding.btnBack.post {
-            binding.btnBack.expandTouchArea(40)
+            binding.btnBack.expandTouchArea(100)
         }
     }
 
