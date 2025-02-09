@@ -18,6 +18,7 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepFiveBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepFiveFragment : Fragment() {
 
@@ -118,14 +119,16 @@ class StepFiveFragment : Fragment() {
             }
         })
 
-        binding.etMinutes.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+        binding.etMinutes.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etMinutes.clearFocus()
-                hideKeyboard()  // 키보드 닫기 추가
-                return@OnEditorActionListener true
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etMinutes) // 키보드 닫기
+                return@setOnEditorActionListener true
             }
             false
-        })
+        }
     }
 
     private fun openBottomSheet() {
@@ -191,11 +194,6 @@ class StepFiveFragment : Fragment() {
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(meal_time = mealTime)
         }
-    }
-
-    private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.etMinutes.windowToken, 0)
     }
 
     private fun updateNextButtonState() {

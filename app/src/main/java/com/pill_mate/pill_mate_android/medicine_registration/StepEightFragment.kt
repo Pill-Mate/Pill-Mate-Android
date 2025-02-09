@@ -15,6 +15,7 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepEightBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepEightFragment : Fragment() {
 
@@ -79,19 +80,14 @@ class StepEightFragment : Fragment() {
 
         binding.etMedicineVolume.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
-            ) {
+                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etMedicineVolume.clearFocus()
-                hideKeyboard()
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etMedicineVolume) // 키보드 닫기
                 return@setOnEditorActionListener true
             }
             false
         }
-    }
-
-    private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.etMedicineVolume.windowToken, 0)
     }
 
     private fun openBottomSheet() {
