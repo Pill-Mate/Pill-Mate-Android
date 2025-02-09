@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityTimePicker2Binding
+import com.pill_mate.pill_mate_android.expandTouchArea
 import com.pill_mate.pill_mate_android.ui.onboarding.OnBoardingData
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,6 +50,18 @@ class TimePicker2Activity : AppCompatActivity() {
     }
 
     private fun initView() { // NumberPicker 초기화
+        binding.btnDropdown1.post {
+            binding.btnDropdown1.expandTouchArea(200) // 200dp 만큼 터치 영역 확장
+        }
+
+        binding.btnDropdown2.post {
+            binding.btnDropdown2.expandTouchArea(200)
+        }
+
+        binding.btnDropdown3.post {
+            binding.btnDropdown3.expandTouchArea(200)
+        }
+
         with(binding) {
             initNumberPicker(hrsPicker1, 1, 12, 9) { updateBreakfastTime() }
             initNumberPicker(minPicker1, 0, minValues.size - 1, 0, minValues) { updateBreakfastTime() }
