@@ -2,7 +2,6 @@ package com.pill_mate.pill_mate_android.search.presenter
 
 import android.util.Log
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.model.PillInfoItem
 import com.pill_mate.pill_mate_android.search.model.PillRepository
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.model.SearchType
@@ -20,16 +19,11 @@ class PillSearchPresenterImpl(
     override fun searchPills(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val pillInfo = repository.getPillInfo(
-                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
-                    pageNo = 1,
-                    numOfRows = 8,
-                    itemName = query
-                )
+
                 val pillIdntfc = repository.getPillIdntfc(
                     serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
                     pageNo = 1,
-                    numOfRows = 8,
+                    numOfRows = 10,
                     item_name = query
                 )
 
@@ -39,15 +33,10 @@ class PillSearchPresenterImpl(
                         val filteredPills = filterPillIdntfc(pillIdntfc, query)
                         Log.d("PillSearchPresenterImpl", "Filtered pills: $filteredPills")
                         view.showPillIdntfc(filteredPills)
-                    } else {
-                        view.showPillInfo(emptyList())
                     }
                 }
             } catch (e: Exception) {
                 Log.e("PillSearchPresenterImpl", "Error fetching pills", e)
-                withContext(Dispatchers.Main) {
-                    view.showPillInfo(emptyList())
-                }
             }
         }
     }
@@ -75,12 +64,6 @@ class PillSearchPresenterImpl(
                 }
             }
         }
-    }
-
-    private fun filterPillInfo(pills: List<PillInfoItem>, query: String): List<PillInfoItem> {
-        val startsWithQuery = pills.filter { it.itemName?.startsWith(query, ignoreCase = true) == true }
-        val containsQuery = pills.filter { it.itemName?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
-        return (startsWithQuery + containsQuery).take(20)
     }
 
     private fun filterPillIdntfc(pills: List<PillIdntfcItem>, query: String): List<PillIdntfcItem> {

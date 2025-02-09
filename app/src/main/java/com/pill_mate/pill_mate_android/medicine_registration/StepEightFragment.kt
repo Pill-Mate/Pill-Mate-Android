@@ -52,6 +52,7 @@ class StepEightFragment : Fragment() {
             selectedOption?.let {
                 selectedVolumeUnit = it
                 updateVolumeUnit(it)
+                updateNextButtonState()
             }
         }
     }
@@ -59,12 +60,19 @@ class StepEightFragment : Fragment() {
     private fun setupVolumeCountEditText() {
         binding.etMedicineVolume.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateNextButtonState()
+            }
+
             override fun afterTextChanged(s: Editable?) {
                 val inputText = s.toString().trim()
-                val floatValue = inputText.toFloatOrNull()?.takeIf { it > 0 }
-                if (floatValue != null) {
+                val floatValue = inputText.toFloatOrNull()
+
+                if (floatValue != null && floatValue > 0.0) { // 0.0보다 클 때만 업데이트
                     updateVolumeCount(floatValue)
+                } else {
+                    updateVolumeCount(0f) // 잘못된 값 입력 시 기본값 설정
                 }
             }
         })
@@ -107,18 +115,32 @@ class StepEightFragment : Fragment() {
         }
     }
 
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
+    }
+
     fun isValidInput(): Boolean {
         val volumeCountText = binding.etMedicineVolume.text.toString().trim()
         val volumeUnitText = binding.tvMedicineUnit.text.toString().trim()
-        return volumeCountText.isNotEmpty() && volumeCountText.toFloatOrNull() != null && volumeUnitText.isNotEmpty()
+        return volumeCountText.isNotEmpty() &&
+                volumeCountText.toFloatOrNull() != null &&
+                volumeCountText.toFloat() > 0.0 &&
+                volumeUnitText.isNotEmpty() &&
+                volumeUnitText != "SKIP"
     }
 
     fun saveData() {
         val volume = binding.etMedicineVolume.text.toString().toFloatOrNull() ?: 0f
-        val unit = binding.tvMedicineUnit.text.toString()
+        val unit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() } ?: "SKIP"
+
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(medicine_volume = volume, medicine_unit = unit)
         }
+
+        // 저장 후 isSkipped 플래그를 false로 설정
+        registrationPresenter.isSkipped = false
     }
 
     override fun onDestroyView() {

@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="320dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:minHeight="254dp"
     android:orientation="vertical"
     android:padding="20dp"
     android:background="@drawable/bg_dialog"
@@ -11,30 +13,28 @@
 
     <ImageView
         android:id="@+id/iv_warning"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_warning"
-        android:contentDescription="경고 아이콘" />
+        android:src="@drawable/ic_warning" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="약물 등록을 종료하시나요?"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:text="@string/exit_registration_title"
+        android:textColor="@color/black"
+        style="@style/T2_B20"
         android:layout_marginBottom="8dp"
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/tv_message1"
+        android:id="@+id/tv_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="지금 종료하면 입력하신 내용이 사라져요."
-        android:textSize="14sp"
-        android:textColor="@android:color/black"
+        android:text="@string/exit_registration_message"
+        android:textColor="@color/black"
+        style="@style/H3_RG16"
         android:gravity="center" />
 
     <LinearLayout
@@ -49,7 +49,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="종료"
+            android:text="@string/exit_registration_cancel"
+            style="@style/H2_SB16"
             android:stateListAnimator="@null"
             android:textColor="@color/main_blue_1"
             android:background="@drawable/bg_btn_main_blue_2" />
@@ -59,10 +60,10 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="계속하기"
+            android:text="@string/exit_registration_confirm"
+            style="@style/H2_SB16"
             android:stateListAnimator="@null"
             android:textColor="@color/white"
             android:background="@drawable/bg_btn_main_blue_1" />
     </LinearLayout>
-
 </LinearLayout>

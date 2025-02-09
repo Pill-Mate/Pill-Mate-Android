@@ -1,69 +1,81 @@
 package com.pill_mate.pill_mate_android.medicine_conflict
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
-import com.pill_mate.pill_mate_android.databinding.FragmentPillDetailDialogBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
-import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PillDetailDialogFragment(
-    private val presenter: StepTwoPresenter,
-    private val bottomSheet: PillSearchBottomSheetFragment, // 바텀 시트 인스턴스 전달
-    private val medicineRegistrationFragment: MedicineRegistrationFragment // 추가
-) : DialogFragment() {
+class PillDetailBottomSheetFragment(
+    private val bottomSheet: PillSearchBottomSheetFragment,
+    private val medicineRegistrationFragment: MedicineRegistrationFragment
+) : BottomSheetDialogFragment() {
 
-    private var _binding: FragmentPillDetailDialogBinding? = null
+    private var _binding: FragmentBottomSheetPillDetailBinding? = null
     private val binding get() = _binding!!
+
+    override fun getTheme(): Int {
+        return R.style.RoundedBottomSheetDialogTheme
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPillDetailDialogBinding.inflate(inflater, container, false)
+        _binding = FragmentBottomSheetPillDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    private var isProcessing = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
         val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
 
         pillItem?.let {
-            binding.ivPillImage.load(it.ITEM_IMAGE) {
-                transformations(RoundedCornersTransformation(20f))
-            }
+            Glide.with(binding.ivPillImage.context)
+                .load(it.ITEM_IMAGE)
+                .transform(RoundedCorners(20))
+                .into(binding.ivPillImage)
+
             binding.tvPillClass.text = it.CLASS_NAME
             binding.tvPillName.text = it.ITEM_NAME
             binding.tvPillEntp.text = it.ENTP_NAME
         }
 
         binding.btnYes.setOnClickListener {
-            pillItem?.let { item ->
-                checkMedicineConflicts(item.ITEM_SEQ) // 병용 금기 및 약물 금기 확인
+            if (!isProcessing) {
+                isProcessing = true
+                binding.btnYes.isEnabled = false
+                pillItem?.let { item ->
+                    checkMedicineConflicts(item.ITEM_SEQ)
+
+                    // StepTwoFragment에 선택한 약물 정보 전달
+                    val result = Bundle().apply {
+                        putParcelable("confirmedPillItem", item)
+                    }
+                    parentFragmentManager.setFragmentResult("pillConfirmResultKey", result)
+                }
             }
         }
 
         binding.btnNo.setOnClickListener {
-            dismiss() // 다이얼로그 닫기
+            dismiss()
         }
     }
 
@@ -74,16 +86,13 @@ class PillDetailDialogFragment(
                     call: Call<List<UsjntTabooResponse>>,
                     response: Response<List<UsjntTabooResponse>>
                 ) {
-                    if (response.isSuccessful) {
-                        val usjntTabooData = response.body().orEmpty()
-                        checkEfcyDplct(itemSeq, usjntTabooData)
-                    } else {
-                        navigateToStepThree()
-                    }
+                    val usjntTabooData = response.body().orEmpty()
+                    checkEfcyDplct(itemSeq, usjntTabooData)
                 }
 
                 override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
-                    navigateToStepThree()
+                    resetProcessingState()
+                    dismiss()
                 }
             })
     }
@@ -95,22 +104,29 @@ class PillDetailDialogFragment(
                     call: Call<List<EfcyDplctResponse>>,
                     response: Response<List<EfcyDplctResponse>>
                 ) {
-                    if (response.isSuccessful) {
-                        val efcyDplctData = response.body().orEmpty()
-                        if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
-                            navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
-                        } else {
-                            navigateToStepThree()
-                        }
+                    val efcyDplctData = response.body().orEmpty()
+
+                    if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
+                        navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
                     } else {
-                        navigateToStepThree()
+                        dismiss()
+                        // PillSearchBottomSheetFragment도 닫기
+                        bottomSheet.dismiss()
                     }
+
+                    resetProcessingState()
                 }
 
                 override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
-                    navigateToStepThree()
+                    resetProcessingState()
+                    dismiss()
                 }
             })
+    }
+
+    private fun resetProcessingState() {
+        isProcessing = false
+        binding.btnYes.isEnabled = true
     }
 
     private fun navigateToLoadingConflictFragment(
@@ -130,14 +146,6 @@ class PillDetailDialogFragment(
         navController?.navigate(R.id.action_stepTwoFragment_to_loadingConflictFragment, bundle)
     }
 
-    private fun navigateToStepThree() {
-        dismiss()
-        bottomSheet.dismiss()
-        val navController = medicineRegistrationFragment.childFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()
-        navController?.navigate(R.id.action_stepTwoFragment_to_stepThreeFragment)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -145,14 +153,13 @@ class PillDetailDialogFragment(
 
     companion object {
         fun newInstance(
-            presenter: StepTwoPresenter,
             bottomSheet: PillSearchBottomSheetFragment,
-            medicineRegistrationFragment: MedicineRegistrationFragment, // 추가
+            medicineRegistrationFragment: MedicineRegistrationFragment,
             pillItem: PillIdntfcItem
-        ): PillDetailDialogFragment {
+        ): PillDetailBottomSheetFragment {
             val args = Bundle()
             args.putParcelable("pillItem", pillItem)
-            val fragment = PillDetailDialogFragment(presenter, bottomSheet, medicineRegistrationFragment)
+            val fragment = PillDetailBottomSheetFragment(bottomSheet, medicineRegistrationFragment)
             fragment.arguments = args
             return fragment
         }

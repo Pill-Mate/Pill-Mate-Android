@@ -17,11 +17,16 @@ class StepFourFragment : Fragment() {
     private var _binding: FragmentStepFourBinding? = null
     private val binding get() = _binding!!
 
-    // 시간대 순서 고정
-    private val timeOrder = listOf("공복", "아침", "점심", "저녁", "취침전")
-    private val timeOrderMap = timeOrder.withIndex().associate { it.value to it.index }
+    private val timeOrder = listOf(
+        R.string.time_empty,
+        R.string.time_morning,
+        R.string.time_lunch,
+        R.string.time_dinner,
+        R.string.time_before_sleep
+    )
 
-    private var selectedTimes: MutableSet<String> = linkedSetOf()
+    private lateinit var timeOrderMap: Map<String, Int>
+    private lateinit var selectedTimes: MutableSet<String>
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
     override fun onCreateView(
@@ -30,7 +35,6 @@ class StepFourFragment : Fragment() {
     ): View {
         _binding = FragmentStepFourBinding.inflate(inflater, container, false)
 
-        // Presenter는 MedicineRegistrationFragment에서 공유
         val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (parentFragment is MedicineRegistrationFragment) {
             registrationPresenter = parentFragment.getPresenter()
@@ -42,29 +46,36 @@ class StepFourFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupTimeSelection()
+
+        timeOrderMap = timeOrder.withIndex().associate { getString(it.value) to it.index }
+
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedTimes = if (currentSchedule.intake_count.isNotEmpty()) {
+            currentSchedule.intake_count.split(", ").toMutableSet()
+        } else {
+            mutableSetOf()
+        }
+
+        // UI에 반영
+        updateSelectedTimes(selectedTimes.toList())
         updateSelectedTimeText()
+
+        // 레포지토리에 저장
+        saveSelectedTimes(selectedTimes.toList())
     }
 
     private fun setupTimeSelection() {
         binding.layoutTime.setOnClickListener {
             val bottomSheet = SelectTimeBottomSheetFragment(selectedTimes.toList()) { newSelectedTimes ->
-                // 선택한 시간대 업데이트
                 selectedTimes.clear()
                 selectedTimes.addAll(newSelectedTimes)
 
-                // 시간대를 고정된 순서로 정렬
                 val sortedTimes = selectedTimes.sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
 
-                // UI 업데이트 (선택한 시간대 태그 생성)
                 updateSelectedTimes(sortedTimes)
-
-                // Presenter에 Schedule 데이터를 업데이트 요청
-                registrationPresenter.updateSchedule { schedule ->
-                    schedule.copy(intake_count = sortedTimes.joinToString(", "))
-                }
-
-                // 선택한 시간대의 수에 따라 텍스트 업데이트
+                saveSelectedTimes(sortedTimes)
                 updateSelectedTimeText()
+                updateNextButtonState()
             }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
@@ -73,14 +84,11 @@ class StepFourFragment : Fragment() {
     private fun updateSelectedTimes(sortedTimes: List<String>) {
         binding.llSelectedTimes.removeAllViews()
 
-        // 모든 선택된 시간대에 대해 동적 뷰 생성
         sortedTimes.forEach { time ->
             val textView = TextView(requireContext()).apply {
                 text = time
                 setPadding(12, 4, 12, 4)
-                background = ContextCompat.getDrawable(requireContext(),
-                    R.drawable.bg_tag_main_blue_2_radius_4
-                )
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag_main_blue_2_radius_4)
                 setTextAppearance(R.style.TagTextStyle)
 
                 val params = LinearLayout.LayoutParams(
@@ -94,15 +102,31 @@ class StepFourFragment : Fragment() {
         }
     }
 
+    private fun saveSelectedTimes(times: List<String>) {
+        registrationPresenter.updateSchedule { schedule ->
+            schedule.copy(intake_count = times.joinToString(", "))
+        }
+    }
+
     private fun updateSelectedTimeText() {
         binding.tvDay.text = when {
-            selectedTimes.isEmpty() -> getString(R.string.enter_time)
-            else -> getString(R.string.selected_count, selectedTimes.size)
+            selectedTimes.isEmpty() -> getString(R.string.four_title)
+            else -> getString(R.string.four_selected_count, selectedTimes.size)
         }
     }
 
     fun shouldMoveToStepFive(): Boolean {
-        return selectedTimes.any { it in listOf("아침", "점심", "저녁") }
+        return selectedTimes.any { it in listOf(
+            getString(R.string.time_morning),
+            getString(R.string.time_lunch),
+            getString(R.string.time_dinner)
+        ) }
+    }
+
+    private fun updateNextButtonState() {
+        val isInputValid = selectedTimes.isNotEmpty()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {

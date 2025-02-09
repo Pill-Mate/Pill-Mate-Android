@@ -11,21 +11,22 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.databinding.FragmentPillRegistrationDialogBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentExitRegistrationDialogBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
 
 class RegistrationExitDialogFragment : DialogFragment() {
 
-    private var _binding: FragmentPillRegistrationDialogBinding? = null
+    private var _binding: FragmentExitRegistrationDialogBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPillRegistrationDialogBinding.inflate(inflater, container, false)
+        _binding = FragmentExitRegistrationDialogBinding.inflate(inflater, container, false)
 
         // 부분 색상 변경된 메시지 설정
         setColoredMessage()
@@ -45,7 +46,7 @@ class RegistrationExitDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -59,22 +60,23 @@ class RegistrationExitDialogFragment : DialogFragment() {
     // 텍스트의 특정 부분만 빨간색으로 만드는 메서드
     @SuppressLint("ResourceAsColor")
     private fun setColoredMessage() {
-        val fullText = "지금 종료하면 입력하신 내용이 사라져요."
+        val fullText = getString(R.string.exit_registration_message)
         val spannable = SpannableString(fullText)
 
         val redText = "입력하신 내용이 사라져요."
         val startIndex = fullText.indexOf(redText)
 
         if (startIndex >= 0) {
+            val redColor = ContextCompat.getColor(requireContext(), R.color.status_red)
             spannable.setSpan(
-                ForegroundColorSpan(R.color.status_red), // 빨간색 적용
+                ForegroundColorSpan(redColor), // 빨간색 적용
                 startIndex,
                 startIndex + redText.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
 
-        binding.tvMessage1.text = spannable
+        binding.tvMessage.text = spannable
     }
 
     private fun clearRegistrationData() {
@@ -83,7 +85,7 @@ class RegistrationExitDialogFragment : DialogFragment() {
         val intent = Intent(requireContext(), MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
         startActivity(intent)
-        requireActivity().finish() // 현재 액티비티 종료
-        dismiss() // 다이얼로그 닫기
+        requireActivity().finish()
+        dismiss()
     }
 }
