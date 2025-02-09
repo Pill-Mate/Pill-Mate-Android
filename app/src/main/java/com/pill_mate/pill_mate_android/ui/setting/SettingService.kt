@@ -31,3 +31,13 @@ interface PatchRoutineService {
     @PATCH("/api/v1/mypage/routineupdate")
     fun patchRoutineData(@Body routine: RoutineData): Call<Void>
 }
+
+interface PatchAlarmMarketingService {
+    @PATCH("/api/v1/mypage/alarmupdate/marketing")
+    fun patchAlarmMarketingData(@Body alarmMarketing: AlarmMarketingData): Call<Void>
+}
+
+interface PatchAlarmInfoService {
+    @PATCH("/api/v1/mypage/alarmupdate/information")
+    fun patchAlarmInfoData(@Body alarmInfo: AlarmInfoData): Call<Void>
+}
