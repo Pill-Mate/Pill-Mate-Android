@@ -71,7 +71,7 @@ class StepSixFragment : Fragment() {
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
                 eat_unit = selectedDosageUnit,
-                eat_count = getString(R.string.five_default_minutes).toInt()
+                eat_count = getString(R.string.six_default_count).toInt()
             )
         }
 
