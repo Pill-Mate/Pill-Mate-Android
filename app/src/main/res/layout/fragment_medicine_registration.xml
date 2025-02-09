@@ -85,6 +85,7 @@
         android:layout_marginHorizontal="20dp"
         android:text="@string/medicine_registration_next"
         style="@style/ButtonStyle1"
+        android:enabled="false"
         app:layout_constraintBottom_toTopOf="@id/btn_skip"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

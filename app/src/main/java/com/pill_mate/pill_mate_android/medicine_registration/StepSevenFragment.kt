@@ -86,6 +86,7 @@ class StepSevenFragment : Fragment() {
                 } else {
                     binding.layoutEndDateChip.removeAllViews()
                 }
+                updateNextButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -131,6 +132,12 @@ class StepSevenFragment : Fragment() {
                 intake_period = dosageDays
             )
         }
+    }
+
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {

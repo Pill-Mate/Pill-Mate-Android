@@ -193,6 +193,12 @@
     <string name="loading_conflict_title">복용하는 약물과\n충돌하는 성분을 발견했어요</string>
     <string name="loading_conflict_btn">확인하기</string>
 
+    <!-- fragment_medicine_conflict -->
+    <string name="medicine_conflict_title">복약중인 %1$d개의 약물과\n충돌성분이 발견 됐어요</string>
+    <string name="medicine_conflict_btn_skip">건너뛰기</string>
+    <string name="medicine_conflict_btn_finish">등록 종료하기</string>
+    <string name="medicine_conflict_btn_inquiry">약국 문의</string>
+
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

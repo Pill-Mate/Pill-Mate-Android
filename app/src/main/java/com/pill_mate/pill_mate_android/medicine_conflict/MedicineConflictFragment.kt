@@ -122,8 +122,7 @@ class MedicineConflictFragment : Fragment() {
 
     private fun updateTitle() {
         val totalConflicts = contraindicationCount + efficiencyOverlapCount
-        val titleText = "복약중인 ${totalConflicts}개의 약물과\n충돌성분이 발견됐어요"
-
+        val titleText = getString(R.string.medicine_conflict_title, totalConflicts)
         val spannable = SpannableString(titleText)
         val startIndex = titleText.indexOf("${totalConflicts}개")
         val endIndex = startIndex + "${totalConflicts}개".length

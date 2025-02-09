@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        style="@style/B2_RG14"
         app:layout_constraintTop_toBottomOf="@+id/iv_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -116,9 +116,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="약국 문의"
+            android:text="@string/medicine_conflict_btn_inquiry"
             android:textColor="@color/main_blue_1"
-            android:textSize="14sp"
+            style="@style/H2_MD16"
             android:layout_marginEnd="4dp"/>
 
     </LinearLayout>

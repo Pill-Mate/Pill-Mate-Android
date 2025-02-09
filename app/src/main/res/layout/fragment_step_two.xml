@@ -65,7 +65,7 @@
         android:id="@+id/iv_clear"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_delete"
+        android:src="@drawable/ic_edit_text_delete"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/textInputLayoutPill"
         app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPill"

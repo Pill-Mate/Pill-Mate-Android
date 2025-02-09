@@ -7,7 +7,7 @@ interface StepOnePresenter {
     }
 
     interface Presenter {
-        fun onPharmacyNameChanged(text: String)
+        fun onPharmacyNameChanged(pharmacyText: String, hospitalText: String)
         fun onNextButtonClicked(pharmacyName: String)
     }
 }

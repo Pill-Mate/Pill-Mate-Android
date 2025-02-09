@@ -140,7 +140,8 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
-        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isEnabled)
     }
 
     fun isValidInput(): Boolean {

@@ -60,6 +60,7 @@ class StepFiveFragment : Fragment() {
                 updateMealUnit(it)
             }
         }
+        updateNextButtonState()
     }
 
     private fun setupMealTimeEditText() {
@@ -187,6 +188,12 @@ class StepFiveFragment : Fragment() {
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(meal_time = mealTime)
         }
+    }
+
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {

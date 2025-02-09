@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -99,7 +100,8 @@ class StepThreeFragment : Fragment() {
 
     private fun updateNextButtonState() {
         val isInputValid = selectedDays.isNotEmpty()
-        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isInputValid)
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {

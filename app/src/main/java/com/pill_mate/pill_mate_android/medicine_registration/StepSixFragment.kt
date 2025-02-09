@@ -57,8 +57,10 @@ class StepSixFragment : Fragment() {
             selectedOption?.let {
                 selectedDosageUnit = it
                 updateDosageUnit(it)
+                updateNextButtonState()
             }
         }
+        updateNextButtonState()
     }
 
     // EditText 설정 및 동작 구현
@@ -77,7 +79,7 @@ class StepSixFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 필요 시 입력값의 변화를 실시간으로 감지 (현재 비워둠)
+                updateNextButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -123,12 +125,18 @@ class StepSixFragment : Fragment() {
         }
     }
 
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
+    }
+
     fun isValidInput(): Boolean {
         val eatCountText = binding.etEatCount.text.toString().trim()
         val eatUnitText = binding.tvEatUnit.text.toString().trim()
+        val eatCount = eatCountText.toIntOrNull()
 
-        // 입력값이 모두 비어있지 않은지 확인
-        return eatCountText.isNotEmpty() && eatCountText.toIntOrNull() != null && eatUnitText.isNotEmpty()
+        return eatCount != null && eatCount > 0 && eatUnitText.isNotEmpty()
     }
 
     override fun onDestroyView() {

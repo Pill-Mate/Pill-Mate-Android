@@ -192,11 +192,14 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
             val currentFragment = navHostFragment.childFragmentManager.fragments.lastOrNull()
 
+            // 모든 이동 전에 기본적으로 버튼을 비활성화
+            updateNextButtonState(false)
+
             when (currentFragment) {
                 is StepOneFragment -> {
                     currentFragment.onNextButtonClicked()
                     if (currentFragment.isValidInput()) {
-                        presenter.updateView(2) // 다음 단계에서 업데이트 반영
+                        presenter.updateView(2)
                         navHostFragment.navController.navigate(R.id.action_stepOneFragment_to_stepTwoFragment)
                     }
                 }
@@ -235,7 +238,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     navHostFragment.navController.navigate(R.id.action_stepSevenFragment_to_stepEightFragment)
                 }
                 is StepEightFragment -> if (currentFragment.isValidInput()) {
-                    currentFragment.saveData()  // 저장
+                    currentFragment.saveData()
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
                             navigateToScheduleActivity()
@@ -294,6 +297,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
     fun updateNextButtonState(isEnabled: Boolean) {
         binding.btnNext.isEnabled = isEnabled
+        Log.d("ButtonState", "Next Button Enabled: $isEnabled") // 추가
     }
 
     private fun showPillRegistrationDialog() {

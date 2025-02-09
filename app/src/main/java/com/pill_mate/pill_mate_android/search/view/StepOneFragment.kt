@@ -3,11 +3,14 @@ package com.pill_mate.pill_mate_android.search.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentStepOneBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
@@ -41,23 +44,24 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     }
 
     private fun setupInputFields() {
-        // 약국 입력 감지
         binding.etPharmacy.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                presenter.onPharmacyNameChanged(s.toString())
+                val hospitalText = binding.etHospital.text.toString()
+                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 🚀 병원 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearPharmacy, s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // 병원 입력 감지
         binding.etHospital.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val pharmacyText = binding.etPharmacy.text.toString()
+                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 🚀 약국 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearHospital, s)
             }
 
@@ -155,10 +159,6 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         imageView.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
-    override fun updateButtonState(isEnabled: Boolean) {
-        (parentFragment as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
-    }
-
     fun onNextButtonClicked() {
         val pharmacyName = binding.etPharmacy.text.toString()
         presenter.onNextButtonClicked(pharmacyName)
@@ -166,6 +166,14 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
+
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
+        binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
+    }
+
+    override fun updateButtonState(isEnabled: Boolean) {
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isEnabled)
     }
 
     fun isValidInput(): Boolean {

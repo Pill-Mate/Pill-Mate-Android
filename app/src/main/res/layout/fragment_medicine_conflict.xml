@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/layout_buttons">
+        app:layout_constraintBottom_toBottomOf="parent" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="복약중인 2개의 약물과\n충돌성분이 발견됐어요"
+                    android:text="@string/medicine_conflict_title"
                     android:textColor="@color/black"
                     style="@style/T1_B22"
                     app:layout_constraintTop_toBottomOf="@id/iv_back"
@@ -204,39 +204,38 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
+                <!-- 버튼 영역 -->
+                <LinearLayout
+                    android:id="@+id/layout_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="26dp"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/rv_efficiency_overlap"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <Button
+                        android:id="@+id/btn_skip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_btn_main_blue_1"
+                        android:text="건너뛰기"
+                        android:textColor="@color/white"
+                        android:stateListAnimator="@null"/>
+
+                    <Button
+                        android:id="@+id/btn_finish"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_btn_gray_2_stoke"
+                        android:text="등록 종료하기"
+                        android:textColor="@color/black"
+                        android:stateListAnimator="@null"/>
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
-    <!-- 버튼 영역 -->
-    <LinearLayout
-        android:id="@+id/layout_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/btn_skip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_btn_main_blue_1"
-            android:text="건너뛰기"
-            android:textColor="@color/white"
-            android:stateListAnimator="@null"/>
-
-        <Button
-            android:id="@+id/btn_finish"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_btn_gray_2_stoke"
-            android:text="등록 종료하기"
-            android:textColor="@color/black"
-            android:stateListAnimator="@null"/>
-    </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

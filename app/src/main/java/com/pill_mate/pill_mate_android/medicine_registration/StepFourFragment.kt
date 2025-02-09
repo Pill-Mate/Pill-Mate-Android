@@ -75,6 +75,7 @@ class StepFourFragment : Fragment() {
                 updateSelectedTimes(sortedTimes)
                 saveSelectedTimes(sortedTimes)
                 updateSelectedTimeText()
+                updateNextButtonState()
             }
             bottomSheet.show(parentFragmentManager, bottomSheet.tag)
         }
@@ -120,6 +121,12 @@ class StepFourFragment : Fragment() {
             getString(R.string.time_lunch),
             getString(R.string.time_dinner)
         ) }
+    }
+
+    private fun updateNextButtonState() {
+        val isInputValid = selectedTimes.isNotEmpty()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {
