@@ -428,7 +428,7 @@
         android:backgroundTint="@color/gray_3"
         android:enabled="false"
         android:stateListAnimator="@null"
-        android:text="가입 완료"
+        android:text="다음"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

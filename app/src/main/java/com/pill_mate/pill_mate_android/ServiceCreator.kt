@@ -1,5 +1,7 @@
 package com.pill_mate.pill_mate_android
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
 import com.pill_mate.pill_mate_android.ui.login.LoginService
 import com.pill_mate.pill_mate_android.ui.login.OnBoardingService
@@ -8,11 +10,11 @@ import com.pill_mate.pill_mate_android.ui.pillcheck.MedicineCheckService
 import com.pill_mate.pill_mate_android.ui.pillcheck.WeeklyCalendarService
 import com.pill_mate.pill_mate_android.ui.setting.GetRoutineService
 import com.pill_mate.pill_mate_android.ui.setting.LogOutService
+import com.pill_mate.pill_mate_android.ui.setting.PatchAlarmInfoService
+import com.pill_mate.pill_mate_android.ui.setting.PatchAlarmMarketingService
 import com.pill_mate.pill_mate_android.ui.setting.PatchRoutineService
 import com.pill_mate.pill_mate_android.ui.setting.SettingService
 import com.pill_mate.pill_mate_android.ui.setting.SignOutService
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -52,4 +54,7 @@ object ServiceCreator { // 서버 URL
     val logOutService: LogOutService = userRetrofit.create(LogOutService::class.java)
     val getRoutineService: GetRoutineService = userRetrofit.create(GetRoutineService::class.java)
     val patchRoutineService: PatchRoutineService = userRetrofit.create(PatchRoutineService::class.java)
+    val patchAlarmMarketingService: PatchAlarmMarketingService =
+        userRetrofit.create(PatchAlarmMarketingService::class.java)
+    val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
 }

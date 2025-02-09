@@ -10,11 +10,12 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentSettingRoutineBottomDialogBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.expandTouchArea
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -94,6 +95,26 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
     }
 
     private fun initView() {
+        binding.btnDropdown1.post {
+            binding.btnDropdown1.expandTouchArea(200) // 200dp 만큼 터치 영역 확장
+        }
+
+        binding.btnDropdown2.post {
+            binding.btnDropdown2.expandTouchArea(200)
+        }
+
+        binding.btnDropdown3.post {
+            binding.btnDropdown3.expandTouchArea(200)
+        }
+
+        binding.btnDropdown4.post {
+            binding.btnDropdown4.expandTouchArea(200)
+        }
+
+        binding.btnDropdown5.post {
+            binding.btnDropdown5.expandTouchArea(200)
+        }
+
         with(binding) {
             initNumberPicker(hrsPicker1, 1, 12, 8) { updateWakeupTime() }
             initNumberPicker(minPicker1, 0, minValues.size - 1, 0, minValues) { updateWakeupTime() }

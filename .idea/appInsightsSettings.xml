@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.pill_mate.pill_mate_android" />
+                  <option name="mobileSdkAppId" value="1:703437140333:android:93ec7a5a89f4551490ea64" />
+                  <option name="projectId" value="pillmate-c9a64" />
+                  <option name="projectNumber" value="703437140333" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

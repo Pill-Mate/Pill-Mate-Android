@@ -56,10 +56,10 @@
             android:ellipsize="end"
             android:ems="10"
             android:maxLines="1"
-            android:text="저는언제쯤건강해지나요옹오오옹"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="저는언제쯤건강해지나요옹오오옹" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_kakao_email"
@@ -83,11 +83,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Pillmate@kko.com"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_kakao"
-                app:layout_constraintTop_toTopOf="@id/iv_kakao" />
+                app:layout_constraintTop_toTopOf="@id/iv_kakao"
+                tools:text="Pillmate@kko.com" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -183,9 +183,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tv_toggle_switch1"
+            android:id="@+id/tg_pillmate_alarm"
             style="@style/category_toggle"
-            android:layout_width="50dp"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
             android:background="@null"
             app:layout_constraintEnd_toEndOf="parent"
@@ -199,7 +199,7 @@
             android:layout_marginTop="4dp"
             android:text="복약 알림, 복약 종료, 서비스 업데이트 등"
             android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tv_toggle_switch1" />
+            app:layout_constraintTop_toBottomOf="@id/tg_pillmate_alarm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -233,9 +233,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tv_toggle_switch2"
+            android:id="@+id/tg_marketing_alarm"
             style="@style/category_toggle"
-            android:layout_width="50dp"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
             android:background="@null"
             app:layout_constraintEnd_toEndOf="parent"
@@ -249,7 +249,7 @@
             android:layout_marginTop="4dp"
             android:text="메이트님을 위한 마케팅 정보 등"
             android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tv_toggle_switch2" />
+            app:layout_constraintTop_toBottomOf="@id/tg_marketing_alarm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
