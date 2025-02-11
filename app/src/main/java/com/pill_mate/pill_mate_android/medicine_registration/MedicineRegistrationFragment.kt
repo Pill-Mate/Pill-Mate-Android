@@ -60,6 +60,17 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             binding.btnNext,
             resources.getDimensionPixelSize(R.dimen.default_btn_margin)
         )*/
+
+        // Activity에서 전달받은 destination 값 확인
+        val destination = activity?.intent?.getStringExtra("destination")
+
+        // Fragment 이동
+        when (destination) {
+            "step1" -> navigateToStepOne()
+            "step8" -> navigateToStepEight()
+            else -> navigateToStepOne()
+        }
+        Log.d("destination", "destination: $destination")
     }
 
     private fun initializeProgressBar() {
@@ -276,14 +287,14 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
         requireActivity().finish()
     }
 
-    fun navigateToStepOne() {
+    private fun navigateToStepOne() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
         val navController = navHostFragment?.navController
 
         navController?.navigate(R.id.stepOneFragment)
     }
 
-    fun navigateToStepEight() {
+    private fun navigateToStepEight() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
         val navController = navHostFragment?.navController
 
