@@ -6,51 +6,46 @@
     android:layout_height="match_parent"
     tools:context=".ui.pilledit.PillEditFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_none"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_none1"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="관리 중인 약물이 없어요"
-            android:textColor="@color/gray_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/iv_none"
-            android:layout_width="96dp"
-            android:layout_height="72dp"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/img_logo_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_none1" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_pill_edit"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tabIndicatorColor="@color/black"
+                app:tabPaddingBottom="10dp"
+                app:tabRippleColor="@color/gray_4"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextAppearance="@style/H2_SB16"
+                app:tabTextColor="@color/gray_2" />
 
-        <TextView
-            android:id="@+id/tv_none2"
-            style="@style/B2_RG14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="준비 중인 기능입니다."
-            android:textColor="@color/gray_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_none" />
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_pill_edit"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tab_pill_edit" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
