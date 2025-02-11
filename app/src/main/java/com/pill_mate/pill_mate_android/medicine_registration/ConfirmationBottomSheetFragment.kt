@@ -17,7 +17,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetConfirmBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Schedule
-import com.pill_mate.pill_mate_android.schedule.ScheduleActivity
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
 
@@ -45,7 +44,6 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         loadScheduleData()
 
         binding.btnYes.setOnClickListener {
-            navigateToScheduleActivity() // ScheduleActivity로 전환
             onConfirmed?.invoke(true)
             dismiss()
         }
@@ -123,12 +121,6 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
     private fun calculateIntakePeriod(schedule: Schedule): String {
         return DateConversionUtil.calculateIntakePeriod(schedule.start_date, schedule.intake_period)
-    }
-
-    private fun navigateToScheduleActivity() {
-        val intent = Intent(requireContext(), ScheduleActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish() // MedicineRegistrationActivity 종료
     }
 
     override fun onDestroyView() {

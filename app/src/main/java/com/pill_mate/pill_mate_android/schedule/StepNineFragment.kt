@@ -50,7 +50,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
     private fun setupUI() {
         // RecyclerView 설정
-        scheduleAdapter = ScheduleAdapter(emptyList(), timeMap)
+        scheduleAdapter = ScheduleAdapter(requireContext(), emptyList(), timeMap)
         binding.rvSchedule.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSchedule.adapter = scheduleAdapter
 

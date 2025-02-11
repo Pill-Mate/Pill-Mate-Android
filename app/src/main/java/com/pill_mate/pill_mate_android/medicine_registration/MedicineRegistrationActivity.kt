@@ -15,13 +15,5 @@ class MedicineRegistrationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
-
-        // Intent로 전달된 destination 확인
-        val destination = intent.getStringExtra("destination")
-
-        // MedicineRegistrationFragment에 destination 값을 전달
-        val bundle = Bundle()
-        bundle.putString("destination", destination)
-        fragment.arguments = bundle
     }
 }

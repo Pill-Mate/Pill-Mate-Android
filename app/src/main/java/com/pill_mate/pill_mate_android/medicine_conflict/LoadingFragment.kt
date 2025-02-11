@@ -43,7 +43,7 @@ class LoadingFragment : Fragment() {
                     popUpTo(R.id.loadingFragment) { inclusive = true } // 백 스택에서 제거
                 }
             )
-        }, 2000) // 2초 후 이동
+        }, 2000) // 1.5초 후 이동
     }
 
     override fun onDestroyView() {

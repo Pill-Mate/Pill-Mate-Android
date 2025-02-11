@@ -40,6 +40,12 @@ class StepEightFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedVolumeUnit = currentSchedule.medicine_unit.takeIf { it.isNotEmpty() } ?: "SKIP"
+        if (selectedVolumeUnit != "SKIP") {
+            binding.tvMedicineUnit.text = selectedVolumeUnit
+        }
+
         setupVolumeCountEditText()
 
         binding.layoutMedicineUnit.setOnClickListener {
