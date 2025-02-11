@@ -138,11 +138,19 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     override fun updateRecyclerView(data: List<RegistrationData>) {
-        adapter.updateData(data)
-        Log.d("MedicineRegistrationFragment", "RecyclerView updated: ${data.size} items")
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        val navController = navHostFragment.navController
+        val currentDestinationId = navController.currentDestination?.id
 
-        // 🔹 데이터가 없으면 RecyclerView 숨김 처리
-        binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
+        // 충돌 프래그먼트일 경우 항상 숨김
+        val hideRecyclerView = currentDestinationId in listOf(
+            R.id.loadingConflictFragment, R.id.medicineConflictFragment
+        )
+        adapter.updateData(data)
+
+        binding.rvData.visibility = if (hideRecyclerView) View.GONE else {
+            if (data.isNotEmpty()) View.VISIBLE else View.GONE
+        }
     }
 
     override fun showConfirmationBottomSheet() {
