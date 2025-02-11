@@ -12,18 +12,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
+import com.pill_mate.pill_mate_android.expandTouchArea
 import com.pill_mate.pill_mate_android.ui.login.KaKaoTokenData
 import com.pill_mate.pill_mate_android.ui.login.activity.KakaoLoginActivity
+import com.pill_mate.pill_mate_android.ui.setting.AlarmInfoData
+import com.pill_mate.pill_mate_android.ui.setting.AlarmMarketingData
 import com.pill_mate.pill_mate_android.ui.setting.ConfirmDialogInterface
 import com.pill_mate.pill_mate_android.ui.setting.ResponseRoutine
 import com.pill_mate.pill_mate_android.ui.setting.ResponseUserInfo
 import com.pill_mate.pill_mate_android.ui.setting.SettingRoutineBottomDialogFragment
 import com.pill_mate.pill_mate_android.ui.setting.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.ui.setting.dialog.SignoutDialog
-import com.kakao.sdk.user.UserApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,8 +47,29 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             insets
         }
 
+        initView()
         fetchUserInfoData()
         setButtonClickListener()
+        switchAlarmToggle()
+
+    }
+
+    private fun initView() {
+        binding.btnPersonalRoutine.post {
+            binding.btnPersonalRoutine.expandTouchArea(100) // 100dp 만큼 터치 영역 확장
+        }
+
+        binding.btnSendComment.post {
+            binding.btnSendComment.expandTouchArea(100)
+        }
+
+        binding.btnAboutPillmate.post {
+            binding.btnAboutPillmate.expandTouchArea(100)
+        }
+
+        binding.btnBack.post {
+            binding.btnBack.expandTouchArea(100)
+        }
     }
 
     private fun fetchUserInfoData() {
@@ -61,6 +85,8 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
                         with(binding) {
                             tvNickname.text = userInfo.userName + " 님"
                             tvKakaoEmail.text = userInfo.email
+                            tgPillmateAlarm.isChecked = userInfo.alarmInfo
+                            tgMarketingAlarm.isChecked = userInfo.alarmMarketing
 
                             Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
                                 .into(ivProfile)
@@ -203,6 +229,59 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         })
     }
 
+    private fun switchAlarmToggle() {
+        val marketingToggle = binding.tgMarketingAlarm
+        val infoToggle = binding.tgPillmateAlarm
+
+        marketingToggle.setOnCheckedChangeListener { _, isChecked ->
+            updateMarketingAlarm(isChecked)
+        }
+
+        infoToggle.setOnCheckedChangeListener { _, isChecked ->
+            updateInfoAlarm(isChecked)
+        }
+    }
+
+    private fun updateMarketingAlarm(isEnabled: Boolean) {
+        val alarmData = AlarmMarketingData(alarmMarketing = isEnabled)
+
+        val call: Call<Void> = ServiceCreator.patchAlarmMarketingService.patchAlarmMarketingData(alarmData)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.i(TAG, "마케팅 알람 설정 업데이트 성공")
+                } else {
+                    Log.e(TAG, "마케팅 알람 설정 업데이트 실패: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e(TAG, "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
+    private fun updateInfoAlarm(isEnabled: Boolean) {
+        val alarmData = AlarmInfoData(alarmInfo = isEnabled)
+
+        val call: Call<Void> = ServiceCreator.patchAlarmInfoService.patchAlarmInfoData(alarmData)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.i(TAG, "필메이트 알람 설정 업데이트 성공")
+                } else {
+                    Log.e(TAG, "필메이트 알람 설정 업데이트 실패: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e(TAG, "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
     override fun onSignOutButtonClick() {
         searchKakaoToken()
     }
@@ -210,4 +289,5 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     override fun onLogOutButtonClick() {
         logoutNetwork()
     }
+
 }

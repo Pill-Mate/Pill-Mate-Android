@@ -14,6 +14,7 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSixBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepSixFragment : Fragment() {
 
@@ -71,7 +72,7 @@ class StepSixFragment : Fragment() {
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
                 eat_unit = selectedDosageUnit,
-                eat_count = getString(R.string.five_default_minutes).toInt()
+                eat_count = getString(R.string.six_default_count).toInt()
             )
         }
 
@@ -92,13 +93,16 @@ class StepSixFragment : Fragment() {
         })
 
         // 엔터 키 입력 처리 (포커스 해제)
-        binding.etEatCount.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                binding.etEatCount.clearFocus() // 포커스 해제
-                return@OnEditorActionListener true
+        binding.etEatCount.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                binding.etEatCount.clearFocus()
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etEatCount)
+                return@setOnEditorActionListener true
             }
             false
-        })
+        }
     }
 
     private fun openBottomSheet() {

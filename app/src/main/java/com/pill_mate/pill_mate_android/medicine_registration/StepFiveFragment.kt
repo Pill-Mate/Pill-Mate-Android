@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -16,6 +18,7 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepFiveBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepFiveFragment : Fragment() {
 
@@ -116,13 +119,16 @@ class StepFiveFragment : Fragment() {
             }
         })
 
-        binding.etMinutes.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+        binding.etMinutes.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etMinutes.clearFocus()
-                return@OnEditorActionListener true
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etMinutes) // 키보드 닫기
+                return@setOnEditorActionListener true
             }
             false
-        })
+        }
     }
 
     private fun openBottomSheet() {
