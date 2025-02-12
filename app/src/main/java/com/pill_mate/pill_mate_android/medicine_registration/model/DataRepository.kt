@@ -88,7 +88,7 @@ object DataRepository {
                 medicineId = schedule.medicine_id.toLong(),
                 intakeCounts = intakeCounts,
                 intakeFrequencys = intakeFrequencies,
-                mealUnit = TranslationUtil.translateMealUnitToEnglish(schedule.meal_unit) ?: "UNKNOWN",
+                mealUnit = if (schedule.meal_unit.isEmpty()) "UNKNOWN" else TranslationUtil.translateMealUnitToEnglish(schedule.meal_unit) ?: "UNKNOWN",
                 mealTime = schedule.meal_time,
                 eatUnit = TranslationUtil.translateEatUnitToEnglish(schedule.eat_unit) ?: "UNKNOWN",
                 eatCount = schedule.eat_count,

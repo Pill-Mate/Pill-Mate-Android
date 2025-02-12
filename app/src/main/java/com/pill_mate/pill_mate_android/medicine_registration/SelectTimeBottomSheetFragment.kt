@@ -30,12 +30,13 @@ class SelectTimeBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val context = view.context
         val timeCheckboxes = mapOf(
-            Pair(view.findViewById<CheckBox>(R.id.cb_empty_check), "공복"),
-            Pair(view.findViewById<CheckBox>(R.id.cb_morning_check), "아침"),
-            Pair(view.findViewById<CheckBox>(R.id.cb_lunch_check), "점심"),
-            Pair(view.findViewById<CheckBox>(R.id.cb_dinner_check), "저녁"),
-            Pair(view.findViewById<CheckBox>(R.id.cb_before_sleep_check), "취침전")
+            Pair(view.findViewById<CheckBox>(R.id.cb_empty_check), context.getString(R.string.time_empty)),
+            Pair(view.findViewById<CheckBox>(R.id.cb_morning_check), context.getString(R.string.time_morning)),
+            Pair(view.findViewById<CheckBox>(R.id.cb_lunch_check), context.getString(R.string.time_lunch)),
+            Pair(view.findViewById<CheckBox>(R.id.cb_dinner_check), context.getString(R.string.time_dinner)),
+            Pair(view.findViewById<CheckBox>(R.id.cb_before_sleep_check), context.getString(R.string.time_before_sleep))
         )
 
         val confirmButton = view.findViewById<Button>(R.id.btn_confirm)
@@ -70,7 +71,7 @@ class SelectTimeBottomSheetFragment(
 
     private fun updateConfirmButton(button: Button) {
         val count = selectedTimes.size
-        button.text = getString(R.string.four_selected_count, count)
+        button.text = getString(R.string.select_times_confirm, count)
         button.isEnabled = count > 0
     }
 }
