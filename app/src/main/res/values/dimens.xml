@@ -3,4 +3,5 @@
     <dimen name="schedule_item_spacing">12dp</dimen>
     <dimen name="snackbar_margin_bottom">12dp</dimen>
     <dimen name="default_btn_margin">26dp</dimen>
+    <dimen name="calendar_cell_size">38dp</dimen>
 </resources>

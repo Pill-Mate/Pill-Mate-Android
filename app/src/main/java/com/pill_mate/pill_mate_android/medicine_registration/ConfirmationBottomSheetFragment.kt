@@ -112,7 +112,7 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             RegistrationData("약물명", schedule.medicine_name).takeIf { schedule.medicine_name.isNotEmpty() },
             RegistrationData("요일", schedule.intake_frequency).takeIf { schedule.intake_frequency.isNotEmpty() },
             RegistrationData("횟수", "${schedule.intake_count.split(",").size}회(${schedule.intake_count})").takeIf { schedule.intake_count.isNotEmpty() },
-            RegistrationData("시간대", "${schedule.meal_unit} ${schedule.meal_time}분").takeIf { schedule.meal_unit.isNotEmpty() && schedule.meal_time > 0 },
+            RegistrationData("시간대", "${schedule.meal_unit} ${schedule.meal_time}분").takeIf { schedule.meal_unit.isNotEmpty() && schedule.meal_time >= 0 },
             RegistrationData("투약량", "${schedule.eat_count}${schedule.eat_unit}").takeIf { schedule.eat_count > 0 && schedule.eat_unit.isNotEmpty() },
             RegistrationData("복약기간", calculateIntakePeriod(schedule)).takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
             RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}").takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() }
