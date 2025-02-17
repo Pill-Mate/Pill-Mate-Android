@@ -2,6 +2,7 @@ package com.pill_mate.pill_mate_android
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.pill_mate.pill_mate_android.medicine_edit.api.MedicineEditService
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
 import com.pill_mate.pill_mate_android.ui.login.LoginService
 import com.pill_mate.pill_mate_android.ui.login.OnBoardingService
@@ -53,7 +54,7 @@ object ServiceCreator { // 서버 URL
     val logOutService: LogOutService = userRetrofit.create(LogOutService::class.java)
     val getRoutineService: GetRoutineService = userRetrofit.create(GetRoutineService::class.java)
     val patchRoutineService: PatchRoutineService = userRetrofit.create(PatchRoutineService::class.java)
-    val patchAlarmMarketingService: PatchAlarmMarketingService =
-        userRetrofit.create(PatchAlarmMarketingService::class.java)
+    val patchAlarmMarketingService: PatchAlarmMarketingService = userRetrofit.create(PatchAlarmMarketingService::class.java)
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
+    val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
 }
