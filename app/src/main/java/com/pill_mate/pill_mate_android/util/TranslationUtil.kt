@@ -42,6 +42,7 @@ object TranslationUtil {
         "g" to "G",
         "ml" to "ML"
     )
+    private val unitToLowercaseMap = unitToUppercaseMap.entries.associate { it.value to it.key }
 
     // 식사 단위
     private val mealUnitToEnglishMap = mapOf(
@@ -65,9 +66,12 @@ object TranslationUtil {
     fun translateEatUnitToEnglish(korean: String) = eatUnitToEnglishMap[korean]
     fun translateEatUnitToKorean(english: String) = eatUnitToKoreanMap[english]
 
-    // 변환 함수: 단위 (소문자 → 대문자 변환)
+    // 변환 함수: 1회 투여 용량 단위 (대소문자 변환)
     fun translateUnitToUppercase(unit: String): String {
         return unitToUppercaseMap[unit.lowercase()] ?: unit.uppercase()
+    }
+    fun translateUnitToLowercase(unit: String): String {
+        return unitToLowercaseMap[unit.uppercase()] ?: unit.lowercase()
     }
 
     // 변환 함수: 식사 단위

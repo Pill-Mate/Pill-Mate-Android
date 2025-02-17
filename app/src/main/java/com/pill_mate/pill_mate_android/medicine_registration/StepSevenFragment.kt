@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSevenBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.CustomChip
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
@@ -112,14 +113,7 @@ class StepSevenFragment : Fragment() {
         binding.layoutEndDateChip.removeAllViews()
 
         val endDate = DateConversionUtil.calculateEndDate(selectedStartDate, dosageDays) ?: ""
-        val endDateChip = TextView(requireContext()).apply {
-            text = getString(R.string.seven_end_date_chip, endDate)
-            setPadding(12, 4, 12, 4)
-            background = ContextCompat.getDrawable(requireContext(),
-                R.drawable.bg_tag_main_blue_2_radius_4
-            )
-            setTextAppearance(R.style.TagTextStyle)
-        }
+        val endDateChip = CustomChip.createChip(requireContext(), getString(R.string.seven_end_date_chip, endDate))
 
         binding.layoutEndDateChip.addView(endDateChip)
     }

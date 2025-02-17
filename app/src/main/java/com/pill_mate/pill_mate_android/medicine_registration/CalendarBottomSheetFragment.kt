@@ -121,7 +121,9 @@ class CalendarBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getCalendarFromDate(date: String): Calendar {
-        val parts = date.split(".")
+        val delimiter = if (date.contains("-")) "-" else "." // 날짜 구분자 테스트 임시로 추가
+        val parts = date.split(delimiter)
+
         return Calendar.getInstance().apply {
             set(parts[0].toInt(), parts[1].toInt() - 1, parts[2].toInt())
         }

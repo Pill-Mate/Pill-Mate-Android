@@ -1,14 +1,24 @@
 package com.pill_mate.pill_mate_android.medicine_edit
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
+import com.pill_mate.pill_mate_android.ServiceCreator.mockMedicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditInfo
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditResponse
 import com.pill_mate.pill_mate_android.medicine_registration.*
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
+import com.pill_mate.pill_mate_android.util.CustomChip
+import com.pill_mate.pill_mate_android.util.DateConversionUtil
+import com.pill_mate.pill_mate_android.util.TranslationUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,8 +59,8 @@ class MedicineEditActivity : AppCompatActivity() {
             Toast.makeText(this, "약물 정보를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
-
-        medicineEditService.getMedicineInfo(itemSeq!!).enqueue(object :
+        //medicineEditService
+        mockMedicineEditService.getMedicineInfo(itemSeq!!).enqueue(object :
             Callback<MedicineEditResponse> {
             override fun onResponse(call: Call<MedicineEditResponse>, response: Response<MedicineEditResponse>) {
                 if (response.isSuccessful) {
@@ -78,16 +88,17 @@ class MedicineEditActivity : AppCompatActivity() {
             tvCompanyName.text = info.entpName
 
             // 복약 정보 매핑
-            intakeFrequency = info.intakeFrequencys.toList()
-            intakeCount = info.intakeCounts.toList()
-            mealUnit = info.mealUnit
+            intakeFrequency = info.intakeFrequencys.mapNotNull { TranslationUtil.translateDayToKorean(it) }
+            intakeCount = info.intakeCounts.mapNotNull { TranslationUtil.translateTimeToKorean(it) }
+            mealUnit = TranslationUtil.translateMealUnitToKorean(info.mealUnit ?: "")
             mealTime = info.mealTime
             eatCount = info.eatCount
-            eatUnit = info.eatUnit
+            eatUnit = TranslationUtil.translateEatUnitToKorean(info.eatUnit)
             startDate = info.startDate
             intakePeriod = info.intakePeriod
             medicineVolume = info.ingredientAmount
-            medicineUnit = info.ingredientUnit
+            medicineUnit = TranslationUtil.translateUnitToLowercase(info.ingredientUnit ?: "")
+            isAlarmOn = info.isAlarm
 
             // UI에 표시
             tvDay.text = intakeFrequency.joinToString(", ")
@@ -100,10 +111,31 @@ class MedicineEditActivity : AppCompatActivity() {
             etPeriod.setText(intakePeriod.toString()) // Null 가능성 없음
             etMedicineVolume.setText(medicineVolume.toString()) // Null 가능성 없음
             tvMedicineUnit.text = medicineUnit ?: "-"
+            switchAlarm.isChecked = isAlarmOn
+            updateSelectedTimes(intakeCount) // 복용 시간 Chip 추가
+            updateEndDateChip()             // 복용 종료일 Chip 추가
 
             // 변경 불가 필드 저장
-            medicineImage = data.result.medicineImage
+            medicineImage = info.medicineImage
         }
+    }
+
+    private fun updateSelectedTimes(selectedTimes: List<String>) {
+        binding.llSelectedTimes.removeAllViews()
+
+        selectedTimes.forEach { time ->
+            val chip = CustomChip.createChip(this, time)
+            binding.llSelectedTimes.addView(chip)
+        }
+        val dosingTextView = CustomChip.createDosingTextView(this)
+        binding.llSelectedTimes.addView(dosingTextView)
+    }
+
+    private fun updateEndDateChip() {
+        binding.layoutEndDateChip.removeAllViews()
+        val endDate = DateConversionUtil.calculateEndDate(startDate ?: "", intakePeriod ?: 0) ?: return
+        val chip = CustomChip.createChip(this, getString(R.string.seven_end_date_chip, endDate))
+        binding.layoutEndDateChip.addView(chip)
     }
 
     private fun setupClickListeners() {
@@ -113,7 +145,29 @@ class MedicineEditActivity : AppCompatActivity() {
             layoutMealUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.MEAL_TIME, mealUnit) }
             layoutEatUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.DOSAGE_UNIT, eatUnit) }
             layoutStartDate.setOnClickListener { showCalendarBottomSheet() }
+            // 3자리 제한 적용
+            etPeriod.filters = arrayOf(InputFilter.LengthFilter(3))
+            binding.etPeriod.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val inputText = s.toString().trim()
+                    intakePeriod = inputText.toIntOrNull() ?: 0
+
+                    if (intakePeriod!! > 0) {
+                        updateEndDateChip()
+                    } else {
+                        binding.layoutEndDateChip.removeAllViews()
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
             layoutMedicineUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.VOLUME_UNIT, medicineUnit) }
+            switchAlarm.setOnCheckedChangeListener { _, isChecked ->
+                isAlarmOn = isChecked
+            }
         }
     }
 
@@ -122,6 +176,19 @@ class MedicineEditActivity : AppCompatActivity() {
             initiallySelectedDays = intakeFrequency
         ) { selectedDays ->
             intakeFrequency = selectedDays
+
+            val allDaysKorean = listOf(
+                getString(R.string.day_sunday), getString(R.string.day_monday), getString(R.string.day_tuesday),
+                getString(R.string.day_wednesday), getString(R.string.day_thursday), getString(R.string.day_friday),
+                getString(R.string.day_saturday)
+            )
+
+            // 모든 요일이 선택되었을 경우 "매일" 표시, 아니면 선택한 요일 표시
+            binding.tvDay.text = if (selectedDays.toSet() == allDaysKorean.toSet()) {
+                getString(R.string.three_everyday)
+            } else {
+                selectedDays.joinToString(", ")
+            }
         }
         bottomSheet.show(supportFragmentManager, "DaySelectionBottomSheet")
     }
@@ -131,6 +198,8 @@ class MedicineEditActivity : AppCompatActivity() {
             initiallySelectedTimes = intakeCount
         ) { selectedTimes ->
             intakeCount = selectedTimes
+            binding.tvTimeCount.text = selectedTimes.joinToString(", ") // 텍스트뷰 업데이트
+            updateSelectedTimes(selectedTimes) // Chip UI 업데이트
         }
         bottomSheet.show(supportFragmentManager, "SelectTimeBottomSheet")
     }
@@ -138,11 +207,35 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun showCheckBottomSheet(type: BottomSheetType, selectedOption: String?) {
         val bottomSheet = CheckBottomSheetFragment.newInstance(type, selectedOption)
         bottomSheet.show(supportFragmentManager, "CheckBottomSheet")
+
+        // 선택한 옵션이 dismiss될 때 결과 반영
+        supportFragmentManager.setFragmentResultListener(
+            "selectedOptionKey", this
+        ) { _, bundle ->
+            val selectedValue = bundle.getString("selectedOption") ?: return@setFragmentResultListener
+
+            when (type) {
+                BottomSheetType.MEAL_TIME -> {
+                    mealUnit = selectedValue
+                    binding.tvMealUnit.text = selectedValue // 식사 시간 반영
+                }
+                BottomSheetType.DOSAGE_UNIT -> {
+                    eatUnit = selectedValue
+                    binding.tvEatUnit.text = selectedValue // 복용 단위 반영
+                }
+                BottomSheetType.VOLUME_UNIT -> {
+                    medicineUnit = selectedValue
+                    binding.tvMedicineUnit.text = selectedValue // 약물 단위 반영
+                }
+            }
+        }
     }
 
     private fun showCalendarBottomSheet() {
         val bottomSheet = CalendarBottomSheetFragment.newInstance(startDate) { selectedDate ->
             startDate = selectedDate
+            binding.tvStartDate.text = selectedDate // 선택한 날짜 업데이트
+            updateEndDateChip()
         }
         bottomSheet.show(supportFragmentManager, "CalendarBottomSheet")
     }
@@ -168,15 +261,18 @@ class MedicineEditActivity : AppCompatActivity() {
                 className = binding.tvClassName.text.toString(),
                 entpName = binding.tvCompanyName.text.toString(),
 
-                intakeCounts = intakeCount.toSet(),
-                intakeFrequencys = intakeFrequency.toSet(),
-                mealUnit = mealUnit,
+                // 변환 적용 (한국어 → 영어)
+                intakeCounts = intakeCount.mapNotNull { TranslationUtil.translateTimeToEnglish(it) }.toSet(),
+                intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten().toSet(),
+                mealUnit = mealUnit?.let { TranslationUtil.translateMealUnitToEnglish(it) },
                 mealTime = binding.etMinutes.text.toString().toIntOrNull(),
-                eatUnit = binding.tvEatUnit.text.toString(),
+                eatUnit = binding.tvEatUnit.text.toString().let { TranslationUtil.translateEatUnitToEnglish(it) ?: it },
                 eatCount = binding.etEatCount.text.toString().toIntOrNull() ?: 0,
                 startDate = binding.tvStartDate.text.toString(),
                 intakePeriod = binding.etPeriod.text.toString().toIntOrNull() ?: 0,
-                ingredientUnit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() },
+                ingredientUnit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() }?.let {
+                    TranslationUtil.translateUnitToUppercase(it)
+                },
                 ingredientAmount = binding.etMedicineVolume.text.toString().toFloatOrNull(),
                 isAlarm = binding.switchAlarm.isChecked,
             )
@@ -187,7 +283,14 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun sendUpdateRequest(request: MedicineEditInfo) {
-        medicineEditService.editMedicineInfo(request).enqueue(object : Callback<Void> {
+        // JSON 변환을 위한 Gson 객체 생성
+        val gson = Gson()
+        val jsonRequest = gson.toJson(request)
+
+        // 데이터 로그 출력
+        Log.d("MedicineEditActivity", "Sending update request: $jsonRequest")
+        //medicineEditService
+        mockMedicineEditService.editMedicineInfo(request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MedicineEditActivity, "수정이 완료되었습니다.", Toast.LENGTH_SHORT).show()

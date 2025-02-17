@@ -71,7 +71,7 @@
         </activity>
 
         <activity
-            android:name="com.pill_mate.pill_mate_android.schedule.ScheduleActivity"
+            android:name="com.pill_mate.pill_mate_android.medicine_edit.MedicineEditActivity"
             android:exported="true"
             android:theme="@style/Theme.PillMateAndroid" />
         <activity

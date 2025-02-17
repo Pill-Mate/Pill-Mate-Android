@@ -9,9 +9,9 @@ import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface MedicineEditService {
-    @PUT("/api/v1/management") // 약물 수정
+    @PUT("/api/v1/management/detail") // 약물 수정
     fun editMedicineInfo(@Body request: MedicineEditInfo): Call<Void>
 
-    @GET("/api/v1/get-editMedicineInfo") // 약물 정보 가져오기
+    @GET("/api/v1/management/detail") // 약물 정보 가져오기
     fun getMedicineInfo(@Query("itemSeq") itemSeq: String): Call<MedicineEditResponse>
 }
