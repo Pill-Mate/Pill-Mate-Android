@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_active_inactive_medicine"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="24dp">
+
+    <TextView
+        android:id="@+id/tv_medication_period"
+        style="@style/B2_RG14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2024.07.22~08.22 · 31일" />
+
+    <TextView
+        android:id="@+id/tv_medicine_status"
+        style="@style/B3_SB12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_round_box_4dp"
+        android:backgroundTint="@color/main_pink_2"
+        android:paddingStart="6dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="2dp"
+        android:text="복용중지"
+        android:textColor="@color/main_pink_1"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_medication_period" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_medicine_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_medication_period">
+
+        <ImageView
+            android:id="@+id/img_medicine"
+            android:layout_width="100dp"
+            android:layout_height="54dp"
+            android:src="@drawable/img_default"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_medicine_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_medicine"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_medicine_type"
+                style="@style/B3_SB12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_round_box_4dp"
+                android:backgroundTint="@color/gray_3"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/gray_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="항생제" />
+
+            <TextView
+                android:id="@+id/tv_medicine_name"
+                style="@style/H2_SB16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLength="29"
+                android:maxLines="2"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_medicine_type"
+                tools:text="오그맥스정" />
+
+            <TextView
+                android:id="@+id/tv_medicine_entp"
+                style="@style/B4_RG12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/gray_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_medicine_name"
+                tools:text="종근당" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/layout_medicine_item">
+
+        <Button
+            android:id="@+id/btn_edit"
+            style="@style/H2_SB16"
+            android:layout_width="98dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/btn_basic_storke"
+            android:stateListAnimator="@null"
+            android:text="수정"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@id/btn_stop"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            style="@style/H2_SB16"
+            android:layout_width="98dp"
+            android:layout_height="42dp"
+            android:background="@drawable/btn_basic"
+            android:backgroundTint="@color/main_pink_2"
+            android:stateListAnimator="@null"
+            android:text="복용중지"
+            android:textColor="@color/main_pink_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/gray_3"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/layout_btn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
