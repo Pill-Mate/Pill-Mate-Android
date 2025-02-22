@@ -357,6 +357,18 @@
                 app:layout_constraintStart_toEndOf="@id/layout_meal_unit"
                 app:layout_constraintTop_toTopOf="@+id/layout_meal_unit" />
 
+            <TextView
+                android:id="@+id/tv_warning_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/medicine_edit_warning_minutes"
+                android:textColor="@color/status_red"
+                style="@style/B3_SB12"
+                android:layout_marginTop="6dp"
+                app:layout_constraintTop_toBottomOf="@+id/et_minutes"
+                app:layout_constraintStart_toStartOf="@+id/et_minutes"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:id="@+id/ll_selected_times"
                 android:layout_width="wrap_content"
@@ -391,6 +403,18 @@
                 app:layout_constraintEnd_toStartOf="@id/layout_eat_unit"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_eat" />
+
+            <TextView
+                android:id="@+id/tv_warning_eat_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/medicine_edit_warning_eat_count"
+                android:textColor="@color/status_red"
+                style="@style/B3_SB12"
+                android:layout_marginTop="6dp"
+                app:layout_constraintTop_toBottomOf="@+id/et_eat_count"
+                app:layout_constraintStart_toStartOf="@+id/et_eat_count"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/layout_eat_unit"
@@ -432,7 +456,7 @@
                 android:text="@string/seven_start_date_label"
                 android:textColor="@color/black"
                 style="@style/B1_SB14"
-                app:layout_constraintTop_toBottomOf="@id/et_eat_count"
+                app:layout_constraintTop_toBottomOf="@id/tv_warning_eat_count"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="28dp" />
 
@@ -494,6 +518,18 @@
                 app:layout_constraintBottom_toBottomOf="@+id/layout_start_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/layout_start_date" />
+
+            <TextView
+                android:id="@+id/tv_warning_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/medicine_edit_warning_period"
+                android:textColor="@color/status_red"
+                style="@style/B3_SB12"
+                android:layout_marginTop="6dp"
+                app:layout_constraintTop_toBottomOf="@+id/et_period"
+                app:layout_constraintStart_toStartOf="@+id/et_period"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/layout_end_date_chip"

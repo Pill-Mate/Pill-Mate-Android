@@ -5,6 +5,11 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -16,8 +21,10 @@ import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditInfo
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditResponse
 import com.pill_mate.pill_mate_android.medicine_registration.*
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
+import com.pill_mate.pill_mate_android.schedule.AlarmSwitchDialogFragment
 import com.pill_mate.pill_mate_android.util.CustomChip
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 import com.pill_mate.pill_mate_android.util.TranslationUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,6 +48,11 @@ class MedicineEditActivity : AppCompatActivity() {
     private var medicineVolume: Float? = null
     private var medicineUnit: String? = null
     private var isAlarmOn: Boolean = false
+
+    private val timeOrder = listOf(R.string.time_empty, R.string.time_morning, R.string.time_lunch, R.string.time_dinner, R.string.time_before_sleep)
+    private val timeOrderMap: Map<String, Int> by lazy {
+        timeOrder.withIndex().associate { getString(it.value) to it.index }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +114,12 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // UI에 표시
             tvDay.text = intakeFrequency.joinToString(", ")
-            tvTimeCount.text = intakeCount.joinToString(", ")
+            // N회 (공복, 아침, 점심, 저녁, 취침전) 형식으로 표시
+            val count = intakeCount.size
+            val selectedTimesText = intakeCount.joinToString(", ")
+            tvTimeCount.text = if (count > 0) {
+                getString(R.string.four_selected_time, count) + " ($selectedTimesText)"
+            } else { "" }
             tvMealUnit.text = mealUnit ?: "-"
             etMinutes.setText(mealTime?.toString() ?: "")
             etEatCount.setText(eatCount?.toString() ?: "")
@@ -123,19 +140,44 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun updateSelectedTimes(selectedTimes: List<String>) {
         binding.llSelectedTimes.removeAllViews()
 
-        selectedTimes.forEach { time ->
+        val filteredTimes = selectedTimes
+            .filter { it !in listOf(getString(R.string.time_empty), getString(R.string.time_before_sleep)) }
+            .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
+
+        filteredTimes.forEach { time ->
             val chip = CustomChip.createChip(this, time)
             binding.llSelectedTimes.addView(chip)
         }
-        val dosingTextView = CustomChip.createDosingTextView(this)
-        binding.llSelectedTimes.addView(dosingTextView)
+
+        if (filteredTimes.isNotEmpty()) {
+            val dosingTextView = CustomChip.createDosingTextView(this)
+            binding.llSelectedTimes.addView(dosingTextView)
+        }
     }
 
     private fun updateEndDateChip() {
-        binding.layoutEndDateChip.removeAllViews()
-        val endDate = DateConversionUtil.calculateEndDate(startDate ?: "", intakePeriod ?: 0) ?: return
-        val chip = CustomChip.createChip(this, getString(R.string.seven_end_date_chip, endDate))
-        binding.layoutEndDateChip.addView(chip)
+        val period = binding.etPeriod.text.toString().trim().toIntOrNull() ?: 0
+
+        if (period <= 0 || startDate.isNullOrEmpty()) {
+            binding.layoutEndDateChip.visibility = View.GONE
+            binding.tvWarningPeriod.visibility = View.VISIBLE
+            return
+        }
+
+        val endDate = DateConversionUtil.calculateEndDate(startDate!!, period)
+        if (endDate.isNullOrEmpty()) {
+            binding.layoutEndDateChip.visibility = View.GONE
+            binding.tvWarningPeriod.visibility = View.VISIBLE
+            return
+        }
+
+        binding.layoutEndDateChip.apply {
+            removeAllViews()
+            visibility = View.VISIBLE
+            val chip = CustomChip.createChip(context, getString(R.string.seven_end_date_chip, endDate))
+            addView(chip)
+        }
+        binding.tvWarningPeriod.visibility = View.GONE
     }
 
     private fun setupClickListeners() {
@@ -145,28 +187,101 @@ class MedicineEditActivity : AppCompatActivity() {
             layoutMealUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.MEAL_TIME, mealUnit) }
             layoutEatUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.DOSAGE_UNIT, eatUnit) }
             layoutStartDate.setOnClickListener { showCalendarBottomSheet() }
-            // 3자리 제한 적용
-            etPeriod.filters = arrayOf(InputFilter.LengthFilter(3))
-            binding.etPeriod.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    val inputText = s.toString().trim()
-                    intakePeriod = inputText.toIntOrNull() ?: 0
-
-                    if (intakePeriod!! > 0) {
-                        updateEndDateChip()
-                    } else {
-                        binding.layoutEndDateChip.removeAllViews()
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-
             layoutMedicineUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.VOLUME_UNIT, medicineUnit) }
             switchAlarm.setOnCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    showAlarmSwitchDialog()
+                }
                 isAlarmOn = isChecked
+            }
+
+            // etPeriod만 3자리 제한 적용 & 종료일 업데이트
+            setupEditTextValidation(
+                editText = etPeriod,
+                warningTextView = tvWarningPeriod,
+                isNumeric = true,
+                maxLength = 3
+            ) { input ->
+                intakePeriod = input.toIntOrNull() ?: 0
+                updateEndDateChip()
+            }
+            setupEditTextValidation(
+                editText = etEatCount,
+                warningTextView = tvWarningEatCount,
+                isNumeric = true,
+                minValue = 1
+            )
+            setupEditTextValidation(etMinutes, tvWarningMinutes, isNumeric = true)
+            setupKeyboardAction(etMedicineVolume)
+        }
+    }
+
+    private fun showAlarmSwitchDialog() {
+        val dialogFragment = AlarmSwitchDialogFragment()
+        dialogFragment.setAlarmSwitchDialogListener(object : AlarmSwitchDialogFragment.AlarmSwitchDialogListener {
+            override fun onDialogPositiveClick() {
+                binding.switchAlarm.isChecked = true
+                isAlarmOn = true
+            }
+
+            override fun onDialogNegativeClick() {
+                isAlarmOn = false
+            }
+        })
+        dialogFragment.show(supportFragmentManager, "AlarmSwitchDialog")
+    }
+
+    private fun setupEditTextValidation(
+        editText: EditText,
+        warningTextView: TextView,
+        isNumeric: Boolean = false,
+        maxLength: Int? = null,
+        minValue: Int? = null,
+        onValidInput: ((String) -> Unit)? = null
+    ) {
+        maxLength?.let { editText.filters = arrayOf(InputFilter.LengthFilter(it)) }
+
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val inputText = s.toString().trim()
+                val isInvalid = when {
+                    inputText.isEmpty() -> true
+                    isNumeric -> {
+                        val value = inputText.toIntOrNull()
+                        value == null || (minValue != null && value < minValue)
+                    }
+                    else -> false
+                }
+
+                warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black)
+
+                if (!isInvalid) {
+                    onValidInput?.invoke(inputText)
+                } else if (editText.id == R.id.et_period) {
+                    binding.layoutEndDateChip.visibility = View.GONE
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        setupKeyboardAction(editText)
+    }
+
+    private fun setupKeyboardAction(editText: EditText) {
+        editText.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_NEXT ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)
+            ) {
+                editText.clearFocus()
+                KeyboardUtil.hideKeyboard(this, editText)
+                true
+            } else {
+                false
             }
         }
     }
@@ -198,10 +313,25 @@ class MedicineEditActivity : AppCompatActivity() {
             initiallySelectedTimes = intakeCount
         ) { selectedTimes ->
             intakeCount = selectedTimes
-            binding.tvTimeCount.text = selectedTimes.joinToString(", ") // 텍스트뷰 업데이트
-            updateSelectedTimes(selectedTimes) // Chip UI 업데이트
+            val sortedTimes = selectedTimes
+                .filter { it !in listOf(getString(R.string.time_empty), getString(R.string.time_before_sleep)) }
+                .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
+
+            updateSelectedTimeText() // 텍스트뷰 업데이트
+            updateSelectedTimes(sortedTimes) // Chip UI 업데이트
         }
         bottomSheet.show(supportFragmentManager, "SelectTimeBottomSheet")
+    }
+
+    private fun updateSelectedTimeText() {
+        val count = intakeCount.size
+
+        val sortedTimes = intakeCount.sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
+        val selectedTimesText = sortedTimes.joinToString(", ") // 정렬된 선택된 시간 문자열
+
+        binding.tvTimeCount.text = if (count > 0) {
+            getString(R.string.four_selected_time, count) + " ($selectedTimesText)"
+        } else { "" }
     }
 
     private fun showCheckBottomSheet(type: BottomSheetType, selectedOption: String?) {
