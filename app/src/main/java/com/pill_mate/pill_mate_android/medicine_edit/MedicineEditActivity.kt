@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
 import com.pill_mate.pill_mate_android.ServiceCreator.mockMedicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditInfo
@@ -335,7 +334,7 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun showCheckBottomSheet(type: BottomSheetType, selectedOption: String?) {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(type, selectedOption)
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(type, selectedOption)
         bottomSheet.show(supportFragmentManager, "CheckBottomSheet")
 
         // 선택한 옵션이 dismiss될 때 결과 반영

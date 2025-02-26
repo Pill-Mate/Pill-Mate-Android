@@ -128,7 +128,7 @@ class StepFiveFragment : Fragment() {
     }
 
     private fun openBottomSheet() {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(
             type = BottomSheetType.MEAL_TIME,
             selectedOption = selectedMealUnit
         )

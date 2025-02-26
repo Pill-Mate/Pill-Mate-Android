@@ -95,7 +95,7 @@ class StepEightFragment : Fragment() {
     }
 
     private fun openBottomSheet() {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(
             type = BottomSheetType.VOLUME_UNIT,
             selectedOption = selectedVolumeUnit
         )

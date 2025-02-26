@@ -6,39 +6,36 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetCheckBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetRadiobuttonBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class CheckBottomSheetFragment : BottomSheetDialogFragment() {
+class RadioButtonBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentBottomSheetCheckBinding
+    private lateinit var binding: FragmentBottomSheetRadiobuttonBinding
     private var selectedOption: String? = null // 선택된 옵션 저장
 
     companion object {
         private const val ARG_TYPE = "type"
         private const val ARG_SELECTED_OPTION = "selected_option"
 
-        fun newInstance(type: BottomSheetType, selectedOption: String?): CheckBottomSheetFragment {
-            val fragment = CheckBottomSheetFragment()
-            val args = Bundle().apply {
-                putSerializable(ARG_TYPE, type)
-                putString(ARG_SELECTED_OPTION, selectedOption)
+        fun newInstance(type: BottomSheetType, selectedOption: String?): RadioButtonBottomSheetFragment {
+            return RadioButtonBottomSheetFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_TYPE, type)
+                    putString(ARG_SELECTED_OPTION, selectedOption)
+                }
             }
-            fragment.arguments = args
-            return fragment
         }
     }
 
-    override fun getTheme(): Int {
-        return R.style.RoundedBottomSheetDialogTheme
-    }
+    override fun getTheme(): Int = R.style.RoundedBottomSheetDialogTheme
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentBottomSheetCheckBinding.inflate(inflater, container, false)
+        binding = FragmentBottomSheetRadiobuttonBinding.inflate(inflater, container, false)
         setupUI()
         return binding.root
     }
@@ -74,25 +71,33 @@ class CheckBottomSheetFragment : BottomSheetDialogFragment() {
             else -> emptyList()
         }
 
-        val adapter = CheckOptionsAdapter(options, selectedOption) { newSelectedOption ->
+        setupRecyclerView(options)
+        setupConfirmButton()
+    }
+
+    private fun setupRecyclerView(options: List<String>) {
+        val adapter = RadioButtonOptionsAdapter(options, selectedOption) { newSelectedOption ->
             selectedOption = newSelectedOption
             binding.btnConfirm.isEnabled = newSelectedOption != null
         }
 
-        binding.rvOptions.layoutManager = LinearLayoutManager(context)
-        binding.rvOptions.adapter = adapter
+        binding.rvOptions.apply {
+            layoutManager = LinearLayoutManager(context)
+            this.adapter = adapter
+        }
+    }
 
-        // 선택된 옵션이 있으면 버튼 활성화
-        binding.btnConfirm.isEnabled = selectedOption != null
-
-        // "확인" 버튼 클릭 리스너
-        binding.btnConfirm.setOnClickListener {
-            selectedOption?.let {
-                parentFragmentManager.setFragmentResult(
-                    "selectedOptionKey",
-                    Bundle().apply { putString("selectedOption", it) }
-                )
-                dismiss()
+    private fun setupConfirmButton() {
+        binding.btnConfirm.apply {
+            isEnabled = selectedOption != null // 초기 비활성화 처리
+            setOnClickListener {
+                selectedOption?.let {
+                    parentFragmentManager.setFragmentResult(
+                        "selectedOptionKey",
+                        Bundle().apply { putString("selectedOption", it) }
+                    )
+                    dismiss()
+                }
             }
         }
     }
