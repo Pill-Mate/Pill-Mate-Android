@@ -8,6 +8,8 @@ import com.pill_mate.pill_mate_android.ui.login.OnBoardingService
 import com.pill_mate.pill_mate_android.ui.pillcheck.HomeService
 import com.pill_mate.pill_mate_android.ui.pillcheck.MedicineCheckService
 import com.pill_mate.pill_mate_android.ui.pillcheck.WeeklyCalendarService
+import com.pill_mate.pill_mate_android.ui.pilledit.ActiveMedicineService
+import com.pill_mate.pill_mate_android.ui.pilledit.InActiveMedicineService
 import com.pill_mate.pill_mate_android.ui.setting.GetRoutineService
 import com.pill_mate.pill_mate_android.ui.setting.LogOutService
 import com.pill_mate.pill_mate_android.ui.setting.PatchAlarmInfoService
@@ -57,4 +59,6 @@ object ServiceCreator { // 서버 URL
     val patchAlarmMarketingService: PatchAlarmMarketingService =
         userRetrofit.create(PatchAlarmMarketingService::class.java)
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
+    val activeMedicineService: ActiveMedicineService = userRetrofit.create(ActiveMedicineService::class.java)
+    val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(InActiveMedicineService::class.java)
 }
