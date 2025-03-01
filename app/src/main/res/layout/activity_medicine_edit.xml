@@ -3,54 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    android:background="@color/white" >
-
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        style="@style/H2_SB16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/medicine_edit_title"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_back" />
+    android:background="@color/white">
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp" >
+            android:paddingHorizontal="20dp">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="18dp"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/H2_SB16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/medicine_edit_title"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_back" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
+                android:id="@+id/layout_medicine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="29dp"
                 android:background="@drawable/bg_layout_gray_4"
-                android:paddingVertical="20dp"
                 android:paddingHorizontal="12dp"
-                app:layout_constraintTop_toTopOf="parent">
+                android:paddingVertical="20dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title">
 
                 <ImageView
                     android:id="@+id/iv_image"
@@ -63,7 +61,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
-                    android:id="@+id/layout_pillInfo"
+                    android:id="@+id/layout_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -110,97 +108,267 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/tv_meal"
+                style="@style/B1_SB14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/medicine_edit_label_meal"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_medicine" />
+
+            <ImageView
+                android:id="@+id/iv_meal_info"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_link"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_meal"
+                app:layout_constraintStart_toEndOf="@id/tv_meal"
+                app:layout_constraintTop_toTopOf="@id/tv_meal" />
+
+            <ImageView
+                android:id="@+id/iv_meal_tooltip"
+                android:layout_width="172dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_meal_tooltip"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_meal"
+                app:layout_constraintStart_toEndOf="@+id/iv_meal_info"
+                app:layout_constraintTop_toTopOf="@+id/tv_meal" />
+
             <LinearLayout
-                android:id="@+id/layout_alarm_toggle"
+                android:id="@+id/layout_intake_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
-
-                <TextView
-                    style="@style/H2_SB16"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:lineSpacingExtra="3sp"
-                    android:text="@string/nine_alarm_setting"
-                    android:textColor="@color/black" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switch_alarm"
-                    style="@style/category_toggle"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_alarm_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_edittext_black"
+                android:layout_marginVertical="8dp"
+                android:background="@drawable/bg_layout_gray_4"
                 android:orientation="vertical"
                 android:padding="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_alarm_toggle">
+                app:layout_constraintTop_toBottomOf="@id/tv_meal">
 
                 <LinearLayout
+                    android:id="@+id/layout_morning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_morning_label"
+                        style="@style/H3_RG16"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="아침"
+                        android:textColor="@color/gray_1" />
+
+                    <TextView
+                        android:id="@+id/tv_morning_time"
+                        style="@style/H2_MD16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 00:00"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/line_lunch"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/gray_3" />
+
+                <LinearLayout
+                    android:id="@+id/layout_lunch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_lunch_label"
+                        style="@style/H3_RG16"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="점심"
+                        android:textColor="@color/gray_1" />
+
+                    <TextView
+                        android:id="@+id/tv_lunch_time"
+                        style="@style/H2_MD16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 00:00"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/line_dinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/gray_3" />
+
+                <LinearLayout
+                    android:id="@+id/layout_dinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tv_time_morning"
-                        style="@style/H2_MD16"
+                        android:id="@+id/tv_dinner_label"
+                        style="@style/H3_RG16"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="오전 7:00"
-                        android:textColor="@color/black" />
+                        android:text="저녁"
+                        android:textColor="@color/gray_1" />
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="Dropdown icon"
-                        android:src="@drawable/ic_dropdown" />
+                    <TextView
+                        android:id="@+id/tv_dinner_time"
+                        style="@style/H2_MD16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오후 00:00"
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_time_lunch"
-                    style="@style/H2_MD16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="8dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="오후 12:00"
-                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_meal_unit"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edittext_black"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                app:layout_constraintEnd_toStartOf="@id/et_minutes"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_intake_schedule">
 
                 <TextView
-                    android:id="@+id/tv_time_dinner"
+                    android:id="@+id/tv_meal_unit"
                     style="@style/H2_MD16"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="오후 6:00"
                     android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_dropdown" />
             </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_minutes"
+                style="@style/H2_MD16"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_selector_edittext"
+                android:gravity="center_vertical"
+                android:inputType="number"
+                android:padding="12dp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_meal_unit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/layout_meal_unit"
+                app:layout_constraintTop_toTopOf="@+id/layout_meal_unit" />
+
+            <TextView
+                android:id="@+id/tv_warning_minutes"
+                style="@style/B3_SB12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/medicine_edit_warning_minutes"
+                android:textColor="@color/status_red"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/et_minutes"
+                app:layout_constraintTop_toBottomOf="@+id/et_minutes" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_alarm_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_edittext_black"
+                android:padding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_meal_unit">
+
+                <TextView
+                    android:id="@+id/tv_label_fasting"
+                    style="@style/H2_MD16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="공복"
+                    android:textColor="@color/gray_1"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_time_fasting"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_time_fasting"
+                    style="@style/H2_MD16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="26dp"
+                    android:text="오전 08:00"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_label_fasting"
+                    app:layout_constraintStart_toEndOf="@+id/tv_label_fasting"
+                    app:layout_constraintTop_toTopOf="@+id/tv_label_fasting" />
+
+                <TextView
+                    android:id="@+id/tv_label_bedtime"
+                    style="@style/H2_MD16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="취침전"
+                    android:textColor="@color/gray_1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_label_fasting" />
+
+                <TextView
+                    android:id="@+id/tv_time_before_sleep"
+                    style="@style/H2_MD16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="오후 12:00"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_label_bedtime"
+                    app:layout_constraintStart_toEndOf="@+id/tv_label_bedtime"
+                    app:layout_constraintTop_toTopOf="@+id/tv_label_bedtime" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_dropdown"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <TextView
                 android:id="@+id/tv_intake_frequency"
@@ -260,110 +428,32 @@
                 android:id="@+id/layout_intake_count"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:orientation="horizontal"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_edittext_black"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_intake_count"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/tv_intake_count">
 
                 <TextView
                     android:id="@+id/tv_time_count"
+                    style="@style/H2_MD16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/four_et_count"
-                    style="@style/H2_MD16"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:textColor="@color/black" />
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_dropdown"/>
+                    android:src="@drawable/ic_dropdown" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_meal"
-                style="@style/B1_SB14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="@string/medicine_edit_label_meal"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_intake_count" />
-
-            <LinearLayout
-                android:id="@+id/layout_meal_unit"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_edittext_black"
-                android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_meal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/et_minutes">
-
-                <TextView
-                    android:id="@+id/tv_meal_unit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    style="@style/H2_MD16"
-                    android:textColor="@color/black" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_dropdown"/>
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/et_minutes"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/bg_selector_edittext"
-                android:gravity="center_vertical"
-                android:inputType="number"
-                android:padding="12dp"
-                style="@style/H2_MD16"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_meal_unit"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_meal_unit"
-                app:layout_constraintTop_toTopOf="@+id/layout_meal_unit" />
-
-            <TextView
-                android:id="@+id/tv_warning_minutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/medicine_edit_warning_minutes"
-                android:textColor="@color/status_red"
-                style="@style/B3_SB12"
-                android:layout_marginTop="6dp"
-                app:layout_constraintTop_toBottomOf="@+id/et_minutes"
-                app:layout_constraintStart_toStartOf="@+id/et_minutes"
-                android:visibility="gone"/>
-
-            <LinearLayout
-                android:id="@+id/ll_selected_times"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@id/layout_meal_unit"
-                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/tv_eat"
@@ -374,7 +464,7 @@
                 android:text="@string/medicine_edit_label_eat"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_selected_times" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_intake_count" />
 
             <EditText
                 android:id="@+id/et_eat_count"
@@ -393,15 +483,15 @@
 
             <TextView
                 android:id="@+id/tv_warning_eat_count"
+                style="@style/B3_SB12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="@string/medicine_edit_warning_eat_count"
                 android:textColor="@color/status_red"
-                style="@style/B3_SB12"
-                android:layout_marginTop="6dp"
-                app:layout_constraintTop_toBottomOf="@+id/et_eat_count"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/et_eat_count"
-                android:visibility="gone"/>
+                app:layout_constraintTop_toBottomOf="@+id/et_eat_count" />
 
             <LinearLayout
                 android:id="@+id/layout_eat_unit"
@@ -438,23 +528,23 @@
 
             <TextView
                 android:id="@+id/tv_start_date_label"
+                style="@style/B1_SB14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
                 android:text="@string/seven_start_date_label"
                 android:textColor="@color/black"
-                style="@style/B1_SB14"
-                app:layout_constraintTop_toBottomOf="@id/tv_warning_eat_count"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="28dp" />
+                app:layout_constraintTop_toBottomOf="@id/tv_warning_eat_count" />
 
             <TextView
                 android:id="@+id/tv_period_label"
+                style="@style/B1_SB14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="@string/seven_period_label"
                 android:textColor="@color/black"
-                style="@style/B1_SB14"
                 app:layout_constraintStart_toStartOf="@+id/et_period"
                 app:layout_constraintTop_toBottomOf="@id/et_eat_count" />
 
@@ -462,61 +552,61 @@
                 android:id="@+id/layout_start_date"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:orientation="horizontal"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_selector_edittext"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_start_date_label"
+                app:layout_constraintEnd_toStartOf="@id/et_period"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/et_period">
+                app:layout_constraintTop_toBottomOf="@id/tv_start_date_label">
 
                 <TextView
                     android:id="@+id/tv_start_date"
+                    style="@style/H2_MD16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    style="@style/H2_MD16"
                     android:textColor="@color/black" />
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_dropdown"/>
+                    android:src="@drawable/ic_dropdown" />
             </LinearLayout>
 
             <EditText
                 android:id="@+id/et_period"
+                style="@style/H2_MD16"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_selector_edittext"
-                android:inputType="number"
-                android:imeOptions="actionDone"
-                android:padding="12dp"
                 android:hint="@string/seven_enter_hint"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:padding="12dp"
                 android:textColorHint="@color/gray_2"
-                style="@style/H2_MD16"
-                app:layout_constraintTop_toBottomOf="@id/tv_period_label"
                 app:layout_constraintBottom_toBottomOf="@+id/layout_start_date"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layout_start_date" />
+                app:layout_constraintStart_toEndOf="@id/layout_start_date"
+                app:layout_constraintTop_toBottomOf="@id/tv_period_label" />
 
             <TextView
                 android:id="@+id/tv_warning_period"
+                style="@style/B3_SB12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="@string/medicine_edit_warning_period"
                 android:textColor="@color/status_red"
-                style="@style/B3_SB12"
-                android:layout_marginTop="6dp"
-                app:layout_constraintTop_toBottomOf="@+id/et_period"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/et_period"
-                android:visibility="gone"/>
+                app:layout_constraintTop_toBottomOf="@+id/et_period" />
 
             <LinearLayout
                 android:id="@+id/layout_end_date_chip"
@@ -540,66 +630,96 @@
 
             <EditText
                 android:id="@+id/et_medicine_volume"
+                style="@style/H2_MD16"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/bg_selector_edittext"
+                android:hint="@string/seven_enter_hint"
                 android:inputType="number"
                 android:padding="12dp"
-                android:hint="@string/seven_enter_hint"
                 android:textColorHint="@color/gray_2"
-                style="@style/H2_MD16"
-                app:layout_constraintTop_toBottomOf="@id/tv_medicine_volume"
+                app:layout_constraintEnd_toStartOf="@id/layout_medicine_unit"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/layout_medicine_unit" />
+                app:layout_constraintTop_toBottomOf="@id/tv_medicine_volume" />
 
             <LinearLayout
                 android:id="@+id/layout_medicine_unit"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:orientation="horizontal"
                 android:layout_marginStart="12dp"
                 android:background="@drawable/bg_edittext_black"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                app:layout_constraintTop_toTopOf="@id/et_medicine_volume"
                 app:layout_constraintBottom_toBottomOf="@+id/et_medicine_volume"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/et_medicine_volume">
+                app:layout_constraintStart_toEndOf="@id/et_medicine_volume"
+                app:layout_constraintTop_toTopOf="@id/et_medicine_volume">
 
                 <TextView
                     android:id="@+id/tv_medicine_unit"
+                    style="@style/H2_MD16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:hint="@string/eight_tv_medicine_unit"
-                    android:textColorHint="@color/gray_2"
-                    style="@style/H2_MD16"
-                    android:textColor="@color/black" />
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray_2" />
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_dropdown"/>
+                    android:src="@drawable/ic_dropdown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_alarm_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_medicine_volume">
+
+                <TextView
+                    style="@style/H2_SB16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="3sp"
+                    android:text="@string/nine_alarm_setting"
+                    android:textColor="@color/black" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_alarm"
+                    style="@style/category_toggle"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null" />
+
             </LinearLayout>
 
             <Button
                 android:id="@+id/btn_finish"
+                style="@style/ButtonStyle1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="26dp"
-                android:text="@string/medicine_edit_btn"
-                style="@style/ButtonStyle1"
-                android:textColor="@color/white"
                 android:stateListAnimator="@null"
-                app:layout_constraintTop_toBottomOf="@+id/layout_medicine_unit"
+                android:text="@string/medicine_edit_btn"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_alarm_toggle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -6,6 +6,7 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -128,29 +129,10 @@ class MedicineEditActivity : AppCompatActivity() {
             etMedicineVolume.setText(medicineVolume.toString()) // Null 가능성 없음
             tvMedicineUnit.text = medicineUnit ?: "-"
             switchAlarm.isChecked = isAlarmOn
-            updateSelectedTimes(intakeCount) // 복용 시간 Chip 추가
             updateEndDateChip()             // 복용 종료일 Chip 추가
 
             // 변경 불가 필드 저장
             medicineImage = info.medicineImage
-        }
-    }
-
-    private fun updateSelectedTimes(selectedTimes: List<String>) {
-        binding.llSelectedTimes.removeAllViews()
-
-        val filteredTimes = selectedTimes
-            .filter { it !in listOf(getString(R.string.time_empty), getString(R.string.time_before_sleep)) }
-            .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
-
-        filteredTimes.forEach { time ->
-            val chip = CustomChip.createChip(this, time)
-            binding.llSelectedTimes.addView(chip)
-        }
-
-        if (filteredTimes.isNotEmpty()) {
-            val dosingTextView = CustomChip.createDosingTextView(this)
-            binding.llSelectedTimes.addView(dosingTextView)
         }
     }
 
@@ -187,6 +169,7 @@ class MedicineEditActivity : AppCompatActivity() {
             layoutEatUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.DOSAGE_UNIT, eatUnit) }
             layoutStartDate.setOnClickListener { showCalendarBottomSheet() }
             layoutMedicineUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.VOLUME_UNIT, medicineUnit) }
+
             switchAlarm.setOnCheckedChangeListener { _, isChecked ->
                 if (!isChecked) {
                     showAlarmSwitchDialog()
@@ -204,14 +187,22 @@ class MedicineEditActivity : AppCompatActivity() {
                 intakePeriod = input.toIntOrNull() ?: 0
                 updateEndDateChip()
             }
-            setupEditTextValidation(
-                editText = etEatCount,
-                warningTextView = tvWarningEatCount,
-                isNumeric = true,
-                minValue = 1
-            )
+            setupEditTextValidation(etEatCount, tvWarningEatCount, isNumeric = true, minValue = 1)
             setupEditTextValidation(etMinutes, tvWarningMinutes, isNumeric = true)
             setupKeyboardAction(etMedicineVolume)
+
+            // 클릭 시 tooltip 보이게
+            ivMealInfo.setOnClickListener {
+                binding.ivMealTooltip.visibility = View.VISIBLE
+            }
+
+            // tooltip 숨김
+            root.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN && binding.ivMealTooltip.visibility == View.VISIBLE) {
+                    binding.ivMealTooltip.visibility = View.GONE
+                }
+                false
+            }
         }
     }
 
@@ -317,7 +308,6 @@ class MedicineEditActivity : AppCompatActivity() {
                 .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
 
             updateSelectedTimeText() // 텍스트뷰 업데이트
-            updateSelectedTimes(sortedTimes) // Chip UI 업데이트
         }
         bottomSheet.show(supportFragmentManager, "SelectTimeBottomSheet")
     }
