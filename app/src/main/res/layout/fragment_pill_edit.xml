@@ -6,46 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.pilledit.PillEditFragment">
 
-    <androidx.core.widget.NestedScrollView
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_pill_edit"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/black"
+        app:tabPaddingBottom="10dp"
+        app:tabRippleColor="@color/gray_4"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextAppearance="@style/H2_SB16"
+        app:tabTextColor="@color/gray_2" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_pill_edit"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_pill_edit"
-                android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="19dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tabIndicatorColor="@color/black"
-                app:tabPaddingBottom="10dp"
-                app:tabRippleColor="@color/gray_4"
-                app:tabSelectedTextColor="@color/black"
-                app:tabTextAppearance="@style/H2_SB16"
-                app:tabTextColor="@color/gray_2" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/vp_pill_edit"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tab_pill_edit" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintTop_toBottomOf="@id/tab_pill_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
