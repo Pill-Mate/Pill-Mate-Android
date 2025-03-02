@@ -14,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InactiveMedicineFragment : Fragment() {
+class InActiveMedicineFragment : Fragment() {
 
     private lateinit var inActiveMedicineAdapter: InActiveMedicineAdapter
     private var _binding: FragmentInactiveMedicineBinding? = null
@@ -95,6 +95,12 @@ class InactiveMedicineFragment : Fragment() {
         }
         startActivity(intent)
          */
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        fetchInActiveMedicineData()
     }
 
     override fun onDestroyView() {

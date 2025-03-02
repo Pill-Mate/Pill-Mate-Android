@@ -38,7 +38,7 @@ class PillEditFragment : Fragment() {
         val pagerAdapter = PillEditViewPagerAdapter(this)
 
         pagerAdapter.addFragment(ActiveMedicineFragment())
-        pagerAdapter.addFragment(InactiveMedicineFragment())
+        pagerAdapter.addFragment(InActiveMedicineFragment())
 
         viewPager.adapter = pagerAdapter
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {})

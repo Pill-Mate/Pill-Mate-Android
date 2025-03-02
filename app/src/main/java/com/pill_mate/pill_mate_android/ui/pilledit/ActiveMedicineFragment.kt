@@ -39,9 +39,11 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        activeMedicineAdapter = ActiveMedicineAdapter(medicineItemDataList) { medicine ->
+        activeMedicineAdapter = ActiveMedicineAdapter(medicineItemDataList, { medicine ->
             navigateToEditPage(medicine)
-        }
+        }, { medicine ->
+            patchStopMedicineData(medicine)
+        })
         binding.rvActiveMedicine.adapter = activeMedicineAdapter
     }
 
@@ -95,12 +97,43 @@ class ActiveMedicineFragment : Fragment() {
         }
     }
 
+    private fun patchStopMedicineData(medicine: MedicineItemData) {
+        val call: Call<Void> = ServiceCreator.stopMedicineService.patchStopMedicineData(medicine.scheduleId)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.i("복용중지 성공", "해당 약물이 복용중지되었습니다.")
+                    medicineItemDataList.remove(medicine)
+                    activeMedicineAdapter.notifyDataSetChanged()
+
+                    // 마지막 아이템을 복용중지했을 때
+                    if (medicineItemDataList.isEmpty()) {
+                        showEmptyState()
+                    }
+                } else {
+                    Log.e("복용중지 실패", "복용중지 요청에 실패했습니다.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("네트워크 오류", "복용중지 요청 실패: ${t.message}")
+            }
+        })
+    }
+
     private fun navigateToEditPage(medicine: MedicineItemData) {/*
         val intent = Intent(requireContext(), ActiveMedicineEditActivity::class.java).apply {
             putExtra("scheduleId", medicine.scheduleId)
         }
         startActivity(intent)
          */
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        fetchActiveMedicineData()
     }
 
     override fun onDestroyView() {

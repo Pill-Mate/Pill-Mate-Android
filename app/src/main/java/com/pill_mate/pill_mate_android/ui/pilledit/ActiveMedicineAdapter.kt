@@ -10,7 +10,8 @@ import com.pill_mate.pill_mate_android.databinding.ItemActiveInactiveMedicineBin
 
 class ActiveMedicineAdapter(
     private val activeMedicineList: MutableList<MedicineItemData>,
-    private val onEditClickListener: (MedicineItemData) -> Unit
+    private val onEditClickListener: (MedicineItemData) -> Unit,
+    private val onStopClickListener: (MedicineItemData) -> Unit,
 ) : RecyclerView.Adapter<ActiveMedicineAdapter.ActiveMedicineViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveMedicineViewHolder {
@@ -55,8 +56,11 @@ class ActiveMedicineAdapter(
             /*binding.btnEdit.setOnClickListener {
                 onEditClickListener.invoke(medicine)
             }
-
              */
+
+            binding.btnStop.setOnClickListener {
+                onStopClickListener(medicine)
+            }
         }
     }
 }
