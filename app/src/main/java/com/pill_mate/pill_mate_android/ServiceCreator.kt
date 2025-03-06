@@ -34,7 +34,7 @@ object ServiceCreator { // 서버 URL
 
     // Mock URL을 사용하는 Retrofit 테스트용 인스턴스 생성
     private val mockRetrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("https://ce20678d-5506-4aa9-9d12-016828cd052f.mock.pstmn.io")
+        .baseUrl("https://22c22e92-02eb-46fc-bc94-a58e3edc4293.mock.pstmn.io")
         .client(provideOkHttpClient())
         .addConverterFactory(GsonConverterFactory.create())
         .build()

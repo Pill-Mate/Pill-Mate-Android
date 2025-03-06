@@ -17,7 +17,6 @@ import com.google.gson.Gson
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.mockMedicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
-import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditInfo
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditResponse
 import com.pill_mate.pill_mate_android.medicine_registration.*
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
@@ -76,22 +75,26 @@ class MedicineEditActivity : AppCompatActivity() {
             Callback<MedicineEditResponse> {
             override fun onResponse(call: Call<MedicineEditResponse>, response: Response<MedicineEditResponse>) {
                 if (response.isSuccessful) {
+                    val rawJson = response.body()?.toString() ?: "null"
+                    Log.d("MedicineEditActivity", "Raw Response: $rawJson")
+
                     response.body()?.let { data ->
                         updateUI(data)
-                    }
+                    } ?: Log.e("MedicineEditActivity", "Error: MedicineEditResponse is null")
                 } else {
-                    Toast.makeText(this@MedicineEditActivity, "데이터 로드 실패", Toast.LENGTH_SHORT).show()
+                    Log.e("MedicineEditActivity", "Failed to load data: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<MedicineEditResponse>, t: Throwable) {
+                Log.e("MedicineEditActivity", "Error: Network request failed", t)
                 Toast.makeText(this@MedicineEditActivity, "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun updateUI(data: MedicineEditResponse) {
-        val info = data.result // result 내부 데이터 사용
+        val info = data // result 내부 데이터 사용
 
         binding.apply {
             // 기본 정보
@@ -106,7 +109,7 @@ class MedicineEditActivity : AppCompatActivity() {
             mealTime = info.mealTime
             eatCount = info.eatCount
             eatUnit = TranslationUtil.translateEatUnitToKorean(info.eatUnit)
-            startDate = info.startDate
+            startDate = DateConversionUtil.formatServerDateToDisplay(info.startDate) // 변환 적용
             intakePeriod = info.intakePeriod
             medicineVolume = info.ingredientAmount
             medicineUnit = TranslationUtil.translateUnitToLowercase(info.ingredientUnit ?: "")
@@ -133,6 +136,47 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // 변경 불가 필드 저장
             medicineImage = info.medicineImage
+        }
+        // 복약 스케줄 UI 업데이트 적용
+        updateIntakeScheduleUI(data)
+    }
+
+    private fun updateIntakeScheduleUI(data: MedicineEditResponse) {
+        val intakeCounts = data.intakeCounts
+        val intakeTimes = data.intakeTimes
+
+        binding.apply {
+            // 아침, 점심, 저녁 UI 업데이트
+            updateIntakeTimeUI(layoutMorning, tvMorningTime, lineLunch, "MORNING", intakeCounts, intakeTimes)
+            updateIntakeTimeUI(layoutLunch, tvLunchTime, lineDinner, "LUNCH", intakeCounts, intakeTimes)
+            updateIntakeTimeUI(layoutDinner, tvDinnerTime, null, "DINNER", intakeCounts, intakeTimes)
+
+            // 공복, 취침전 UI 업데이트
+            updateIntakeTimeUI(layoutAlarmTime, tvTimeFasting, null, "FASTING", intakeCounts, intakeTimes)
+            updateIntakeTimeUI(layoutAlarmTime, tvTimeBedtime, null, "BEDTIME", intakeCounts, intakeTimes)
+        }
+    }
+
+    private fun updateIntakeTimeUI(
+        layout: View,
+        textView: TextView,
+        line: View?,  // 해당 섹션 아래의 구분선
+        intakeType: String,
+        intakeCounts: Set<String>,
+        intakeTimes: Set<String>
+    ) {
+        val intakeCountsList = intakeCounts.toList()
+        val intakeTimesList = intakeTimes.toList()
+
+        val index = intakeCountsList.indexOf(intakeType)
+
+        if (index != -1 && index < intakeTimesList.size) {
+            textView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
+            layout.visibility = View.VISIBLE
+            line?.visibility = View.VISIBLE
+        } else {
+            layout.visibility = View.GONE
+            line?.visibility = View.GONE
         }
     }
 
@@ -371,9 +415,9 @@ class MedicineEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun createEditMedicineInfo(): MedicineEditInfo? {
+    private fun createEditMedicineInfo(): MedicineEditResponse? {
         return try {
-            MedicineEditInfo(
+            MedicineEditResponse(
                 medicineImage = medicineImage, // 변경 불가
 
                 medicineName = binding.tvPillName.text.toString(),
@@ -382,6 +426,7 @@ class MedicineEditActivity : AppCompatActivity() {
 
                 // 변환 적용 (한국어 → 영어)
                 intakeCounts = intakeCount.mapNotNull { TranslationUtil.translateTimeToEnglish(it) }.toSet(),
+                intakeTimes = intakeCount.mapNotNull { time -> TranslationUtil.parseTimeToServerFormat(time) }.toSet(),
                 intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten().toSet(),
                 mealUnit = mealUnit?.let { TranslationUtil.translateMealUnitToEnglish(it) },
                 mealTime = binding.etMinutes.text.toString().toIntOrNull(),
@@ -401,7 +446,7 @@ class MedicineEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendUpdateRequest(request: MedicineEditInfo) {
+    private fun sendUpdateRequest(request: MedicineEditResponse) {
         // JSON 변환을 위한 Gson 객체 생성
         val gson = Gson()
         val jsonRequest = gson.toJson(request)

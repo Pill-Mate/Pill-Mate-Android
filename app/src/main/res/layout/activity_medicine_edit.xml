@@ -348,7 +348,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_label_fasting" />
 
                 <TextView
-                    android:id="@+id/tv_time_before_sleep"
+                    android:id="@+id/tv_time_bedtime"
                     style="@style/H2_MD16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
