@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:703437140333:android:93ec7a5a89f4551490ea64",
         "android_client_info": {
-          "package_name": "com.example.pill_mate_android"
+          "package_name": "com.pill_mate.pill_mate_android"
         }
       },
       "oauth_client": [],
