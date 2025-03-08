@@ -11,7 +11,7 @@ import com.pill_mate.pill_mate_android.databinding.ItemCountHeaderBinding
 class IntakeCountAdapter(
     private var groupedMedicines: List<GroupedMedicine>,
     private val expandedStates: MutableSet<Int>,
-    private val onCheckedChange: (Long, Boolean) -> Unit
+    private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<IntakeCountAdapter.IntakeCountViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeCountViewHolder {

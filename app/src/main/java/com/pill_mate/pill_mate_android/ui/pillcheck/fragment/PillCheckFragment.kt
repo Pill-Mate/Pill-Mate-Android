@@ -174,8 +174,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         binding.vpCalendar.setCurrentItem(currentItem - 1, true) // 이전 페이지로 이동
     }
 
+    // 오늘 날짜가 포함된 페이지로 이동
     @RequiresApi(VERSION_CODES.O)
-    private fun moveToTodayPage() { // 오늘 날짜가 포함된 페이지로 이동
+    private fun moveToTodayPage() {
         val startOfWeek = today.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
         val weeksFromStart = (today.toEpochDay() - startOfWeek.toEpochDay()) / 7
         val position = (Int.MAX_VALUE / 2) + weeksFromStart.toInt()
@@ -308,11 +309,8 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     //체크박스 체크여부 데이터 보내기
     @RequiresApi(VERSION_CODES.O)
-    private fun patchMedicineCheckData(medicineScheduleId: Long, eatCheck: Boolean) { // 로컬 상태 업데이트
-
-        val checkData = listOf(MedicineCheckData(medicineScheduleId, eatCheck))
-
-        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkData)
+    private fun patchMedicineCheckData(checkDataList: List<MedicineCheckData>) {
+        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkDataList)
 
         call.enqueue(object : Callback<ResponseHome> {
             override fun onResponse(call: Call<ResponseHome>, response: Response<ResponseHome>) {
@@ -356,10 +354,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {
-            val intakeCountAdapter =
-                IntakeCountAdapter(groupedMedicines, expandedStates) { medicineScheduleId, eatCheck ->
-                    patchMedicineCheckData(medicineScheduleId, eatCheck)
-                }
+            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList ->
+                patchMedicineCheckData(checkDataList)
+            }
             binding.intakeCountRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
