@@ -32,13 +32,6 @@ object ServiceCreator { // 서버 URL
         .addConverterFactory(GsonConverterFactory.create(gson)) // 커스터마이징된 Gson 적용
         .build()
 
-    // Mock URL을 사용하는 Retrofit 테스트용 인스턴스 생성
-    private val mockRetrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("https://22c22e92-02eb-46fc-bc94-a58e3edc4293.mock.pstmn.io")
-        .client(provideOkHttpClient())
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
     private fun provideOkHttpClient(): OkHttpClient =
         OkHttpClient.Builder().connectTimeout(100, TimeUnit.SECONDS).readTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS).run {
@@ -64,6 +57,4 @@ object ServiceCreator { // 서버 URL
     val patchAlarmMarketingService: PatchAlarmMarketingService = userRetrofit.create(PatchAlarmMarketingService::class.java)
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
     val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
-    // MedicineEditService 대신 Mock URL을 사용해서 테스트
-    val mockMedicineEditService: MedicineEditService = mockRetrofit.create(MedicineEditService::class.java)
 }

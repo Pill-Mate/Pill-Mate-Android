@@ -15,8 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.ServiceCreator.mockMedicineEditService
+import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
+import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditInfo
 import com.pill_mate.pill_mate_android.medicine_edit.model.MedicineEditResponse
 import com.pill_mate.pill_mate_android.medicine_registration.*
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
@@ -70,8 +71,7 @@ class MedicineEditActivity : AppCompatActivity() {
             Toast.makeText(this, "약물 정보를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
-        //medicineEditService
-        mockMedicineEditService.getMedicineInfo(itemSeq!!).enqueue(object :
+        medicineEditService.getMedicineInfo(itemSeq!!).enqueue(object :
             Callback<MedicineEditResponse> {
             override fun onResponse(call: Call<MedicineEditResponse>, response: Response<MedicineEditResponse>) {
                 if (response.isSuccessful) {
@@ -94,7 +94,7 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun updateUI(data: MedicineEditResponse) {
-        val info = data // result 내부 데이터 사용
+        val info = data.result // result 내부 데이터 사용
 
         binding.apply {
             // 기본 정보
@@ -141,17 +141,15 @@ class MedicineEditActivity : AppCompatActivity() {
         updateIntakeScheduleUI(data)
     }
 
-    private fun updateIntakeScheduleUI(data: MedicineEditResponse) {
-        val intakeCounts = data.intakeCounts
-        val intakeTimes = data.intakeTimes
+    private fun updateIntakeScheduleUI(data: MedicineEditResponse? = null) {
+        // 서버 응답이 있으면 서버 데이터 사용, 없으면 로컬 데이터 사용
+        val intakeCounts = data?.result?.intakeCounts ?: intakeCount.toSet()
+        val intakeTimes = data?.result?.intakeTimes ?: intakeCounts.mapNotNull { TranslationUtil.parseTimeToServerFormat(it) }.toSet()
 
         binding.apply {
-            // 아침, 점심, 저녁 UI 업데이트
             updateIntakeTimeUI(layoutMorning, tvMorningTime, lineLunch, "MORNING", intakeCounts, intakeTimes)
             updateIntakeTimeUI(layoutLunch, tvLunchTime, lineDinner, "LUNCH", intakeCounts, intakeTimes)
             updateIntakeTimeUI(layoutDinner, tvDinnerTime, null, "DINNER", intakeCounts, intakeTimes)
-
-            // 공복, 취침전 UI 업데이트
             updateIntakeTimeUI(layoutAlarmTime, tvTimeFasting, null, "FASTING", intakeCounts, intakeTimes)
             updateIntakeTimeUI(layoutAlarmTime, tvTimeBedtime, null, "BEDTIME", intakeCounts, intakeTimes)
         }
@@ -160,7 +158,7 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun updateIntakeTimeUI(
         layout: View,
         textView: TextView,
-        line: View?,  // 해당 섹션 아래의 구분선
+        line: View?,
         intakeType: String,
         intakeCounts: Set<String>,
         intakeTimes: Set<String>
@@ -235,13 +233,13 @@ class MedicineEditActivity : AppCompatActivity() {
             setupEditTextValidation(etMinutes, tvWarningMinutes, isNumeric = true)
             setupKeyboardAction(etMedicineVolume)
 
-            // 클릭 시 tooltip 보이게
+            // 클릭 시 tooltip VISIBLE
             ivMealInfo.setOnClickListener {
                 binding.ivMealTooltip.visibility = View.VISIBLE
             }
 
             // tooltip 숨김
-            root.setOnTouchListener { _, event ->
+            layoutRoot.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_DOWN && binding.ivMealTooltip.visibility == View.VISIBLE) {
                     binding.ivMealTooltip.visibility = View.GONE
                 }
@@ -290,7 +288,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 }
 
                 warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
-                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black)
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext)
 
                 if (!isInvalid) {
                     onValidInput?.invoke(inputText)
@@ -351,7 +349,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 .filter { it !in listOf(getString(R.string.time_empty), getString(R.string.time_before_sleep)) }
                 .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
 
-            updateSelectedTimeText() // 텍스트뷰 업데이트
+            updateSelectedTimeText() // 텍스트뷰 업데이트 + 아점저 공취 레이아웃에도 적용
         }
         bottomSheet.show(supportFragmentManager, "SelectTimeBottomSheet")
     }
@@ -415,9 +413,9 @@ class MedicineEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun createEditMedicineInfo(): MedicineEditResponse? {
+    private fun createEditMedicineInfo(): MedicineEditInfo? {
         return try {
-            MedicineEditResponse(
+            MedicineEditInfo(
                 medicineImage = medicineImage, // 변경 불가
 
                 medicineName = binding.tvPillName.text.toString(),
@@ -446,15 +444,14 @@ class MedicineEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendUpdateRequest(request: MedicineEditResponse) {
+    private fun sendUpdateRequest(request: MedicineEditInfo) {
         // JSON 변환을 위한 Gson 객체 생성
         val gson = Gson()
         val jsonRequest = gson.toJson(request)
 
         // 데이터 로그 출력
         Log.d("MedicineEditActivity", "Sending update request: $jsonRequest")
-        //medicineEditService
-        mockMedicineEditService.editMedicineInfo(request).enqueue(object : Callback<Void> {
+        medicineEditService.editMedicineInfo(request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MedicineEditActivity, "수정이 완료되었습니다.", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,13 @@
 package com.pill_mate.pill_mate_android.medicine_edit.model
 
 data class MedicineEditResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: MedicineEditInfo
+)
+
+data class MedicineEditInfo(
     val medicineName: String, // 약물명
     val medicineImage: String?, // URI 대신 String으로 변경
     val entpName: String, // 제약회사

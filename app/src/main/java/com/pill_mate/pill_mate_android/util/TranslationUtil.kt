@@ -109,10 +109,14 @@ object TranslationUtil {
             val formattedHour = if (hour == 0) 12 else if (hour > 12) hour - 12 else hour
             val period = if (isAM) "오전" else "오후"
 
-            "$period $formattedHour:${minute.toString().padStart(2, '0')}"
+            val formattedHourStr = formattedHour.toString().padStart(2, '0')
+            val formattedMinuteStr = minute.toString().padStart(2, '0')
+
+            "$period $formattedHourStr:$formattedMinuteStr"
         } catch (e: Exception) {
             e.printStackTrace()
             "오전 00:00"
         }
     }
+
 }
