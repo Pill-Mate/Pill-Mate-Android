@@ -361,6 +361,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
             }
+            intakeCountAdapter.updateExpandedStates()
         } else {
             val adapter = binding.intakeCountRecyclerView.adapter as IntakeCountAdapter
             adapter.updateData(groupedMedicines)

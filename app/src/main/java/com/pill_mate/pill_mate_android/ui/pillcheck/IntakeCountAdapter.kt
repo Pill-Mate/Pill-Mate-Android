@@ -35,7 +35,18 @@ class IntakeCountAdapter(
 
     fun updateData(newGroupedMedicines: List<GroupedMedicine>) {
         groupedMedicines = newGroupedMedicines
+
+        updateExpandedStates()
         notifyDataSetChanged() // 데이터 변경 시 전체 갱신
+    }
+
+    fun updateExpandedStates() {
+        expandedStates.clear()
+        groupedMedicines.forEachIndexed { index, group ->
+            if (!group.isAllChecked) {
+                expandedStates.add(index)
+            }
+        }
     }
 
     inner class IntakeCountViewHolder(private val binding: ItemCountHeaderBinding) :
