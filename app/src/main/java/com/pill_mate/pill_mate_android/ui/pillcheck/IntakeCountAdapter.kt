@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android.ui.pillcheck
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pill_mate.pill_mate_android.R
@@ -34,10 +35,12 @@ class IntakeCountAdapter(
     override fun getItemCount() = groupedMedicines.size
 
     fun updateData(newGroupedMedicines: List<GroupedMedicine>) {
-        groupedMedicines = newGroupedMedicines
+        val diffCallback = IntakeCountDiffUtil(groupedMedicines, newGroupedMedicines)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
 
+        groupedMedicines = newGroupedMedicines
         updateExpandedStates()
-        notifyDataSetChanged() // 데이터 변경 시 전체 갱신
+        diffResult.dispatchUpdatesTo(this) // 변경된 부분만 UI 갱신
     }
 
     fun updateExpandedStates() {
