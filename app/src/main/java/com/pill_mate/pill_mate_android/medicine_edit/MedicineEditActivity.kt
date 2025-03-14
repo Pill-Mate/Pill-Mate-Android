@@ -295,6 +295,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 } else if (editText.id == R.id.et_period) {
                     binding.layoutEndDateChip.visibility = View.GONE
                 }
+                updateFinishButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -400,6 +401,21 @@ class MedicineEditActivity : AppCompatActivity() {
         }
         bottomSheet.show(supportFragmentManager, "CalendarBottomSheet")
     }
+
+    private fun isFormValid(): Boolean {
+        val periodValid = binding.etPeriod.text.toString().toIntOrNull()?.let { it > 0 } ?: false
+        val eatCountValid = binding.etEatCount.text.toString().toIntOrNull()?.let { it > 0 } ?: false
+        val mealTimeValid = binding.etMinutes.text.toString().toIntOrNull()?.let { it >= 0 } ?: false
+        val medicineVolumeValid = binding.etMedicineVolume.text.toString().toFloatOrNull()?.let { it > 0 } ?: false
+
+        return periodValid && eatCountValid && mealTimeValid && medicineVolumeValid
+    }
+
+    private fun updateFinishButtonState() {
+        val isValid = isFormValid()
+        binding.btnFinish.isEnabled = isValid
+    }
+
 
     private fun setupSaveButton() {
         binding.btnFinish.setOnClickListener {
