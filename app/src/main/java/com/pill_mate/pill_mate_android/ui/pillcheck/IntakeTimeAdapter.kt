@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pill_mate.pill_mate_android.databinding.ItemTimeHeaderBinding
 
 class IntakeTimeAdapter(
-    private val timeGroups: List<TimeGroup>, private val onCheckedChange: (Long, Boolean) -> Unit
+    private val timeGroups: List<TimeGroup>, private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<IntakeTimeAdapter.IntakeTimeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeTimeViewHolder {
@@ -39,6 +39,26 @@ class IntakeTimeAdapter(
                 layoutManager = LinearLayoutManager(binding.root.context)
                 adapter = MedicineAdapter(timeGroup.medicines, onCheckedChange)
             }
+
+            binding.btnCheckAll.visibility = if (timeGroup.medicines.size >= 2) View.VISIBLE else View.GONE
+            updateCheckAllButtonText(timeGroup)
+
+            binding.btnCheckAll.setOnClickListener {
+                val allChecked = timeGroup.medicines.all { it.eatCheck }
+                updateCheckAllButtonText(timeGroup)
+
+                val updatedCheckList = timeGroup.medicines.map { medicine ->
+                    MedicineCheckData(medicine.medicineScheduleId, !allChecked)
+                }
+
+                onCheckedChange(updatedCheckList)
+
+            }
+        }
+
+        private fun updateCheckAllButtonText(timeGroup: TimeGroup) {
+            val allChecked = timeGroup.medicines.all { it.eatCheck }
+            binding.btnCheckAll.text = if (allChecked) "전체체크 해제" else "전체체크"
         }
     }
 

@@ -47,6 +47,13 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
     private val expandedStates = mutableSetOf<Int>()
 
+    private val homeDataCache = object : LinkedHashMap<LocalDate, Pair<ResponseHome?, Long>>(CACHE_SIZE, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<LocalDate, Pair<ResponseHome?, Long>>?): Boolean {
+            return size > CACHE_SIZE || System.currentTimeMillis() - eldest!!.value.second > CACHE_EXPIRATION_TIME
+        }
+    }
+    private var isFetchingHomeData = false
+
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
@@ -174,8 +181,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         binding.vpCalendar.setCurrentItem(currentItem - 1, true) // 이전 페이지로 이동
     }
 
+    // 오늘 날짜가 포함된 페이지로 이동
     @RequiresApi(VERSION_CODES.O)
-    private fun moveToTodayPage() { // 오늘 날짜가 포함된 페이지로 이동
+    private fun moveToTodayPage() {
         val startOfWeek = today.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
         val weeksFromStart = (today.toEpochDay() - startOfWeek.toEpochDay()) / 7
         val position = (Int.MAX_VALUE / 2) + weeksFromStart.toInt()
@@ -228,7 +236,22 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 홈 데이터 받아오기
     @RequiresApi(VERSION_CODES.O)
-    private fun fetchHomeData(selectedDate: LocalDate) {
+    private fun fetchHomeData(selectedDate: LocalDate) { // 캐시된 데이터가 있을 경우
+        val currentTime = System.currentTimeMillis()
+
+        homeDataCache[selectedDate]?.let { (data, timestamp) ->
+            if (currentTime - timestamp < CACHE_EXPIRATION_TIME) {
+                Log.d("fetchHomeData", "캐시 데이터 사용: $selectedDate")
+                updateHomeUI(data!!)
+                return
+            }
+            homeDataCache.remove(selectedDate)
+        }
+
+        // 이미 네트워크 요청 중이라면 중복 호출 방지
+        if (isFetchingHomeData) return
+        isFetchingHomeData = true
+
         val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
         val call: Call<ResponseHome> = ServiceCreator.homeService.getHomeData(homeData)
 
@@ -236,9 +259,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             override fun onResponse(
                 call: Call<ResponseHome>, response: Response<ResponseHome>
             ) {
+                isFetchingHomeData = false
                 if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
+                    response.body()?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
                         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
                         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
@@ -247,35 +270,41 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         // 데이터를 그룹화하여 RecyclerView에 설정
                         setupIntakeCountRecyclerView(it)
 
-                        if (it.medicineList.isNullOrEmpty()) {
-                            Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
-                            with(binding) {
-                                layoutNone.visibility = View.VISIBLE
-                                layoutProgressbar.visibility = View.INVISIBLE
-                                intakeCountRecyclerView.visibility = View.INVISIBLE
-                            }
-                        } else {
-                            with(binding) {
-                                layoutNone.visibility = View.INVISIBLE
-                                layoutProgressbar.visibility = View.VISIBLE
-                                intakeCountRecyclerView.visibility = View.VISIBLE
-                                tvNum.text = it.countAll.toString()
-                                if (it.countLeft == 0) {
-                                    tvRemain.text = "복약 완료"
-                                } else {
-                                    tvRemain.text = "${it.countLeft}회 남음"
-                                }
-                            }
-                            setupProgressBar(it.countAll, it.countLeft)
-                        }
-                    } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
+                        homeDataCache[selectedDate] = Pair(it, System.currentTimeMillis())
+                        updateHomeUI(it)
+
+                    }
+                } else {
+                    Log.e("fetchHomeData", "서버 응답 실패: ${response.errorBody()}")
                 }
             }
 
             override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
+                isFetchingHomeData = false
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    private fun updateHomeUI(responseData: ResponseHome) {
+        with(binding) {
+            if (responseData.medicineList.isNullOrEmpty()) {
+                layoutNone.visibility = View.VISIBLE
+                layoutProgressbar.visibility = View.INVISIBLE
+                intakeCountRecyclerView.visibility = View.INVISIBLE
+                Log.i("updateHomeUI", "불러올 리스트가 없습니다.")
+            } else {
+                layoutNone.visibility = View.INVISIBLE
+                layoutProgressbar.visibility = View.VISIBLE
+                intakeCountRecyclerView.visibility = View.VISIBLE
+                tvNum.text = responseData.countAll.toString()
+                tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
+
+                setupProgressBar(responseData.countAll, responseData.countLeft)
+                setupIntakeCountRecyclerView(responseData)
+            }
+        }
     }
 
     //주간 달력 스크롤 시 데이터 받아오기
@@ -308,11 +337,8 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     //체크박스 체크여부 데이터 보내기
     @RequiresApi(VERSION_CODES.O)
-    private fun patchMedicineCheckData(medicineScheduleId: Long, eatCheck: Boolean) { // 로컬 상태 업데이트
-
-        val checkData = listOf(MedicineCheckData(medicineScheduleId, eatCheck))
-
-        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkData)
+    private fun patchMedicineCheckData(checkDataList: List<MedicineCheckData>) {
+        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkDataList)
 
         call.enqueue(object : Callback<ResponseHome> {
             override fun onResponse(call: Call<ResponseHome>, response: Response<ResponseHome>) {
@@ -356,14 +382,14 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {
-            val intakeCountAdapter =
-                IntakeCountAdapter(groupedMedicines, expandedStates) { medicineScheduleId, eatCheck ->
-                    patchMedicineCheckData(medicineScheduleId, eatCheck)
-                }
+            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList ->
+                patchMedicineCheckData(checkDataList)
+            }
             binding.intakeCountRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
             }
+            intakeCountAdapter.updateExpandedStates()
         } else {
             val adapter = binding.intakeCountRecyclerView.adapter as IntakeCountAdapter
             adapter.updateData(groupedMedicines)
@@ -398,10 +424,6 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         return date.format(formatter)
     }
 
-    companion object {
-        const val DATE_PATTERN = "yyyy년 MM월"
-    }
-
     override fun onResume() {
         super.onResume() // 상태바를 메인블루 색상으로 변경
         (activity as? MainActivity)?.setStatusBarColor(R.color.main_blue_1, false)
@@ -412,4 +434,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         _binding = null
     }
 
+    companion object {
+        const val DATE_PATTERN = "yyyy년 MM월"
+        private const val CACHE_SIZE = 10 // 최대 10개 날짜만 저장
+        private const val CACHE_EXPIRATION_TIME = 10 * 60 * 1000 // 10분 후 캐시 삭제
+    }
 }
