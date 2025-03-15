@@ -40,7 +40,7 @@ class MedicineAdapter(
 
             // Glide로 이미지 로드
             Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default)
-                .into(binding.imgMedicine)
+                .placeholder(R.drawable.img_default).into(binding.imgMedicine)
 
             // 마지막 아이템일때 하단 모서리 둥글게
             val backgroudResId = if (isLastItem) {
