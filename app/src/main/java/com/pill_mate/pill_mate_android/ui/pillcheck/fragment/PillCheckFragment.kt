@@ -47,6 +47,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
     private val expandedStates = mutableSetOf<Int>()
 
+    private val homeDataCache = mutableMapOf<LocalDate, ResponseHome?>()
+    private var isFetchingHomeData = false
+
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
@@ -229,7 +232,17 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 홈 데이터 받아오기
     @RequiresApi(VERSION_CODES.O)
-    private fun fetchHomeData(selectedDate: LocalDate) {
+    private fun fetchHomeData(selectedDate: LocalDate) { // 캐시된 데이터가 있을 경우
+        homeDataCache[selectedDate]?.let {
+            Log.d("fetchHomeData", "캐시 데이터 사용: $selectedDate")
+            updateHomeUI(it)
+            return
+        }
+
+        // 이미 네트워크 요청 중이라면 중복 호출 방지
+        if (isFetchingHomeData) return
+        isFetchingHomeData = true
+
         val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
         val call: Call<ResponseHome> = ServiceCreator.homeService.getHomeData(homeData)
 
@@ -237,9 +250,9 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             override fun onResponse(
                 call: Call<ResponseHome>, response: Response<ResponseHome>
             ) {
+                isFetchingHomeData = false
                 if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
+                    response.body()?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
                         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
                         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
@@ -248,28 +261,10 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         // 데이터를 그룹화하여 RecyclerView에 설정
                         setupIntakeCountRecyclerView(it)
 
-                        if (it.medicineList.isNullOrEmpty()) {
-                            Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
-                            with(binding) {
-                                layoutNone.visibility = View.VISIBLE
-                                layoutProgressbar.visibility = View.INVISIBLE
-                                intakeCountRecyclerView.visibility = View.INVISIBLE
-                            }
-                        } else {
-                            with(binding) {
-                                layoutNone.visibility = View.INVISIBLE
-                                layoutProgressbar.visibility = View.VISIBLE
-                                intakeCountRecyclerView.visibility = View.VISIBLE
-                                tvNum.text = it.countAll.toString()
-                                if (it.countLeft == 0) {
-                                    tvRemain.text = "복약 완료"
-                                } else {
-                                    tvRemain.text = "${it.countLeft}회 남음"
-                                }
-                            }
-                            setupProgressBar(it.countAll, it.countLeft)
-                        }
-                    } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
+                        homeDataCache[selectedDate] = it
+                        updateHomeUI(it)
+
+                    }
                 }
             }
 
@@ -277,6 +272,27 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    private fun updateHomeUI(responseData: ResponseHome) {
+        with(binding) {
+            if (responseData.medicineList.isNullOrEmpty()) {
+                layoutNone.visibility = View.VISIBLE
+                layoutProgressbar.visibility = View.INVISIBLE
+                intakeCountRecyclerView.visibility = View.INVISIBLE
+                Log.i("updateHomeUI", "불러올 리스트가 없습니다.")
+            } else {
+                layoutNone.visibility = View.INVISIBLE
+                layoutProgressbar.visibility = View.VISIBLE
+                intakeCountRecyclerView.visibility = View.VISIBLE
+                tvNum.text = responseData.countAll.toString()
+                tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
+
+                setupProgressBar(responseData.countAll, responseData.countLeft)
+                setupIntakeCountRecyclerView(responseData)
+            }
+        }
     }
 
     //주간 달력 스크롤 시 데이터 받아오기
