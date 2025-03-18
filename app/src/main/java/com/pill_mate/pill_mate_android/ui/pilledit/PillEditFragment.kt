@@ -31,7 +31,7 @@ class PillEditFragment : Fragment() {
 
         binding.ivNone.setOnClickListener {
             val intent = Intent(requireContext(), MedicineEditActivity::class.java).apply {
-                putExtra("ITEM_SEQ", "200200720") // 임의의 itemSeq 값 전달
+                putExtra("ITEM_SEQ", "47") // 임의의 itemSeq 값 전달
             }
             startActivity(intent)
         }

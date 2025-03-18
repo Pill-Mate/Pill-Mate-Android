@@ -33,8 +33,17 @@ import retrofit2.Response
 class MedicineEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMedicineEditBinding
-    private var itemSeq: String? = null
+    private var itemSeq: Long? = null
     private var medicineImage: String? = null
+    private var identifyNumber: String? = null
+    private var medicineId: Int? = null
+    private var ingredient: String? = null
+    private var ingredientAmount: Int? = null
+    private var wakeupTime: String? = null
+    private var morningTime: String? = null
+    private var lunchTime: String? = null
+    private var dinnerTime: String? = null
+    private var bedTime: String? = null
 
     // 변수 저장
     private var intakeFrequency: List<String> = emptyList()
@@ -45,7 +54,7 @@ class MedicineEditActivity : AppCompatActivity() {
     private var eatUnit: String? = null
     private var startDate: String? = null
     private var intakePeriod: Int? = null
-    private var medicineVolume: Float? = null
+    private var medicineVolume: Int? = null
     private var medicineUnit: String? = null
     private var isAlarmOn: Boolean = false
 
@@ -59,7 +68,7 @@ class MedicineEditActivity : AppCompatActivity() {
         binding = ActivityMedicineEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        itemSeq = intent.getStringExtra("ITEM_SEQ")
+        itemSeq = intent.getStringExtra("ITEM_SEQ")?.toLong()
 
         fetchInitialData()
         setupClickListeners()
@@ -76,19 +85,16 @@ class MedicineEditActivity : AppCompatActivity() {
             override fun onResponse(call: Call<MedicineEditResponse>, response: Response<MedicineEditResponse>) {
                 if (response.isSuccessful) {
                     val rawJson = response.body()?.toString() ?: "null"
-                    Log.d("MedicineEditActivity", "Raw Response: $rawJson")
-
-                    response.body()?.let { data ->
-                        updateUI(data)
-                    } ?: Log.e("MedicineEditActivity", "Error: MedicineEditResponse is null")
+                    Log.d("MedicineEditActivityResponse", "Raw Response: $rawJson")
+                    response.body()?.let { data -> updateUI(data) }
                 } else {
-                    Log.e("MedicineEditActivity", "Failed to load data: ${response.message()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MedicineEditActivityResponse", "Failed to load data: ${response.message()} - Code: ${response.code()} - ErrorBody: $errorBody")
                 }
             }
 
             override fun onFailure(call: Call<MedicineEditResponse>, t: Throwable) {
-                Log.e("MedicineEditActivity", "Error: Network request failed", t)
-                Toast.makeText(this@MedicineEditActivity, "네트워크 오류", Toast.LENGTH_SHORT).show()
+                Log.e("MedicineEditActivityResponse", "Network Error", t)
             }
         })
     }
@@ -111,7 +117,7 @@ class MedicineEditActivity : AppCompatActivity() {
             eatUnit = TranslationUtil.translateEatUnitToKorean(info.eatUnit)
             startDate = DateConversionUtil.formatServerDateToDisplay(info.startDate) // 변환 적용
             intakePeriod = info.intakePeriod
-            medicineVolume = info.ingredientAmount
+            medicineVolume = info.medicineVolume
             medicineUnit = TranslationUtil.translateUnitToLowercase(info.ingredientUnit ?: "")
             isAlarmOn = info.isAlarm
 
@@ -123,8 +129,7 @@ class MedicineEditActivity : AppCompatActivity() {
             tvTimeCount.text = if (count > 0) {
                 getString(R.string.four_selected_time, count) + " ($selectedTimesText)"
             } else { "" }
-            tvMealUnit.text = mealUnit ?: "-"
-            etMinutes.setText(mealTime?.toString() ?: "")
+            tvMealUnit.text = listOfNotNull(mealUnit, mealTime).joinToString(" ").ifEmpty { "-" }
             etEatCount.setText(eatCount?.toString() ?: "")
             tvEatUnit.text = eatUnit ?: "-"
             tvStartDate.text = startDate ?: "-"
@@ -136,32 +141,87 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // 변경 불가 필드 저장
             medicineImage = info.medicineImage
+            identifyNumber = info.identifyNumber
+            medicineId = info.medicineId
+            ingredient = info.ingredient
+            ingredientAmount = info.ingredientAmount
+            wakeupTime = info.wakeupTime
+            morningTime = info.morningTime
+            lunchTime = info.lunchTime
+            dinnerTime = info.dinnerTime
+            bedTime = info.bedTime
         }
         // 복약 스케줄 UI 업데이트 적용
         updateIntakeScheduleUI(data)
     }
 
     private fun updateIntakeScheduleUI(data: MedicineEditResponse? = null) {
-        // 서버 응답이 있으면 서버 데이터 사용, 없으면 로컬 데이터 사용
         val intakeCounts = data?.result?.intakeCounts ?: intakeCount.toSet()
         val intakeTimes = data?.result?.intakeTimes ?: intakeCounts.mapNotNull { TranslationUtil.parseTimeToServerFormat(it) }.toSet()
 
+        val visibleLayouts = mutableListOf<String>()
+        var hasAlarm = false
+
         binding.apply {
-            updateIntakeTimeUI(layoutMorning, tvMorningTime, lineLunch, "MORNING", intakeCounts, intakeTimes)
-            updateIntakeTimeUI(layoutLunch, tvLunchTime, lineDinner, "LUNCH", intakeCounts, intakeTimes)
-            updateIntakeTimeUI(layoutDinner, tvDinnerTime, null, "DINNER", intakeCounts, intakeTimes)
-            updateIntakeTimeUI(layoutAlarmTime, tvTimeFasting, null, "FASTING", intakeCounts, intakeTimes)
-            updateIntakeTimeUI(layoutAlarmTime, tvTimeBedtime, null, "BEDTIME", intakeCounts, intakeTimes)
+            // 식사 시간 UI
+            updateIntakeTimeUI(layoutMorning, tvMorningTime, "MORNING", intakeCounts, intakeTimes, visibleLayouts)
+            updateIntakeTimeUI(layoutLunch, tvLunchTime, "LUNCH", intakeCounts, intakeTimes, visibleLayouts)
+            updateIntakeTimeUI(layoutDinner, tvDinnerTime, "DINNER", intakeCounts, intakeTimes, visibleLayouts)
+
+            // 알람 시간 UI (개별 뷰 제어)
+            hasAlarm = updateAlarmTimeUI(
+                labelView = tvLabelFasting,
+                timeView = tvTimeFasting,
+                intakeType = "EMPTY",
+                intakeCounts = intakeCounts,
+                intakeTimes = intakeTimes
+            ) || updateAlarmTimeUI(
+                labelView = tvLabelBedtime,
+                timeView = tvTimeBedtime,
+                intakeType = "SLEEP",
+                intakeCounts = intakeCounts,
+                intakeTimes = intakeTimes
+            )
+
+            // 전체 알람 레이아웃 제어
+            layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
+
+            // 라인 visibility 업데이트
+            lineLunch.visibility = if (visibleLayouts.contains("MORNING") && visibleLayouts.contains("LUNCH")) View.VISIBLE else View.GONE
+            lineDinner.visibility = if (visibleLayouts.contains("LUNCH") && visibleLayouts.contains("DINNER")) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun updateAlarmTimeUI(
+        labelView: TextView,
+        timeView: TextView,
+        intakeType: String,
+        intakeCounts: Set<String>,
+        intakeTimes: Set<String>
+    ): Boolean {
+        val intakeCountsList = intakeCounts.toList()
+        val intakeTimesList = intakeTimes.toList()
+        val index = intakeCountsList.indexOf(intakeType)
+
+        return if (index != -1 && index < intakeTimesList.size) {
+            timeView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
+            labelView.visibility = View.VISIBLE
+            timeView.visibility = View.VISIBLE
+            true
+        } else {
+            labelView.visibility = View.GONE
+            timeView.visibility = View.GONE
+            false
         }
     }
 
     private fun updateIntakeTimeUI(
         layout: View,
         textView: TextView,
-        line: View?,
         intakeType: String,
         intakeCounts: Set<String>,
-        intakeTimes: Set<String>
+        intakeTimes: Set<String>,
+        visibleLayouts: MutableList<String>
     ) {
         val intakeCountsList = intakeCounts.toList()
         val intakeTimesList = intakeTimes.toList()
@@ -171,10 +231,9 @@ class MedicineEditActivity : AppCompatActivity() {
         if (index != -1 && index < intakeTimesList.size) {
             textView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             layout.visibility = View.VISIBLE
-            line?.visibility = View.VISIBLE
+            visibleLayouts.add(intakeType)
         } else {
             layout.visibility = View.GONE
-            line?.visibility = View.GONE
         }
     }
 
@@ -207,7 +266,7 @@ class MedicineEditActivity : AppCompatActivity() {
         binding.apply {
             layoutIntakeFrequency.setOnClickListener { showDaySelectionBottomSheet() }
             layoutIntakeCount.setOnClickListener { showSelectTimeBottomSheet() }
-            layoutMealUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.MEAL_TIME, mealUnit) }
+            layoutMealUnit.setOnClickListener { showIntakeTimeBottomSheetFragment() }
             layoutEatUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.DOSAGE_UNIT, eatUnit) }
             layoutStartDate.setOnClickListener { showCalendarBottomSheet() }
             layoutMedicineUnit.setOnClickListener { showCheckBottomSheet(BottomSheetType.VOLUME_UNIT, medicineUnit) }
@@ -230,7 +289,6 @@ class MedicineEditActivity : AppCompatActivity() {
                 updateEndDateChip()
             }
             setupEditTextValidation(etEatCount, tvWarningEatCount, isNumeric = true, minValue = 1)
-            setupEditTextValidation(etMinutes, tvWarningMinutes, isNumeric = true)
             setupKeyboardAction(etMedicineVolume)
 
             // 클릭 시 tooltip VISIBLE
@@ -319,6 +377,17 @@ class MedicineEditActivity : AppCompatActivity() {
         }
     }
 
+    private fun showIntakeTimeBottomSheetFragment() {
+        val bottomSheet = IntakeTimeBottomSheetFragment.newInstance(mealUnit, mealTime ?: 0) { selectedMealUnit, selectedMealTime ->
+            mealUnit = selectedMealUnit
+            mealTime = selectedMealTime
+
+            // UI 업데이트: 즉시는 그대로, 나머지는 "10분", "20분" 등으로 표시
+            binding.tvMealUnit.text = if (selectedMealTime == 0) "$mealUnit 즉시" else "$mealUnit ${selectedMealTime}분"
+        }
+        bottomSheet.show(supportFragmentManager, "MealTimeBottomSheet")
+    }
+
     private fun showDaySelectionBottomSheet() {
         val bottomSheet = DaySelectionBottomSheetFragment(
             initiallySelectedDays = intakeFrequency
@@ -405,10 +474,9 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun isFormValid(): Boolean {
         val periodValid = binding.etPeriod.text.toString().toIntOrNull()?.let { it > 0 } ?: false
         val eatCountValid = binding.etEatCount.text.toString().toIntOrNull()?.let { it > 0 } ?: false
-        val mealTimeValid = binding.etMinutes.text.toString().toIntOrNull()?.let { it >= 0 } ?: false
         val medicineVolumeValid = binding.etMedicineVolume.text.toString().toFloatOrNull()?.let { it > 0 } ?: false
 
-        return periodValid && eatCountValid && mealTimeValid && medicineVolumeValid
+        return periodValid && eatCountValid && medicineVolumeValid
     }
 
     private fun updateFinishButtonState() {
@@ -433,7 +501,15 @@ class MedicineEditActivity : AppCompatActivity() {
         return try {
             MedicineEditInfo(
                 medicineImage = medicineImage, // 변경 불가
-
+                identifyNumber = identifyNumber ?: "",
+                medicineId = medicineId ?: 0,
+                ingredient = ingredient,
+                ingredientAmount = ingredientAmount,
+                wakeupTime = wakeupTime,
+                morningTime = morningTime,
+                lunchTime = lunchTime,
+                dinnerTime = dinnerTime,
+                bedTime = bedTime,
                 medicineName = binding.tvPillName.text.toString(),
                 className = binding.tvClassName.text.toString(),
                 entpName = binding.tvCompanyName.text.toString(),
@@ -443,7 +519,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 intakeTimes = intakeCount.mapNotNull { time -> TranslationUtil.parseTimeToServerFormat(time) }.toSet(),
                 intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten().toSet(),
                 mealUnit = mealUnit?.let { TranslationUtil.translateMealUnitToEnglish(it) },
-                mealTime = binding.etMinutes.text.toString().toIntOrNull(),
+                mealTime = mealTime,
                 eatUnit = binding.tvEatUnit.text.toString().let { TranslationUtil.translateEatUnitToEnglish(it) ?: it },
                 eatCount = binding.etEatCount.text.toString().toIntOrNull() ?: 0,
                 startDate = binding.tvStartDate.text.toString(),
@@ -451,7 +527,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 ingredientUnit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() }?.let {
                     TranslationUtil.translateUnitToUppercase(it)
                 },
-                ingredientAmount = binding.etMedicineVolume.text.toString().toFloatOrNull(),
+                medicineVolume = binding.etMedicineVolume.text.toString().toIntOrNull(),
                 isAlarm = binding.switchAlarm.isChecked,
             )
         } catch (e: Exception) {
