@@ -5,7 +5,7 @@
     android:id="@+id/success"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.onboarding.SuccessActivity">
+    tools:context=".ui.onboarding.activity.SuccessActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_success"

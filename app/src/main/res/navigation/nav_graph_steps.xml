@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/stepOneFragment">
+
+    <fragment
+        android:id="@+id/stepOneFragment"
+        android:name="com.pill_mate.pill_mate_android.search.view.StepOneFragment"
+        android:label="Step One"
+        tools:layout="@layout/fragment_step_one">
+        <action
+            android:id="@+id/action_stepOneFragment_to_stepTwoFragment"
+            app:destination="@id/stepTwoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepTwoFragment"
+        android:name="com.pill_mate.pill_mate_android.search.view.StepTwoFragment"
+        android:label="Step Two"
+        tools:layout="@layout/fragment_step_two">
+        <action
+            android:id="@+id/action_stepTwoFragment_to_stepThreeFragment"
+            app:destination="@id/stepThreeFragment" />
+        <action
+            android:id="@+id/action_stepTwoFragment_to_loadingConflictFragment"
+            app:destination="@id/loadingConflictFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loadingConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.LoadingConflictFragment"
+        tools:layout="@layout/fragment_loading_conflict">
+        <action
+            android:id="@+id/action_loadingConflictFragment_to_medicineConflictFragment"
+            app:destination="@id/medicineConflictFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/medicineConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.MedicineConflictFragment"
+        tools:layout="@layout/fragment_medicine_conflict">
+        <action
+            android:id="@+id/action_medicineConflictFragment_to_stepThreeFragment"
+            app:destination="@id/stepThreeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepThreeFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepThreeFragment"
+        android:label="Step Three"
+        tools:layout="@layout/fragment_step_three">
+        <action
+            android:id="@+id/action_stepThreeFragment_to_stepFourFragment"
+            app:destination="@id/stepFourFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepFourFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepFourFragment"
+        android:label="Step Four"
+        tools:layout="@layout/fragment_step_four">
+        <action
+            android:id="@+id/action_stepFourFragment_to_stepFiveFragment"
+            app:destination="@id/stepFiveFragment" />
+        <action
+            android:id="@+id/action_stepFourFragment_to_stepSixFragment"
+            app:destination="@id/stepSixFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepFiveFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepFiveFragment"
+        android:label="Step Five"
+        tools:layout="@layout/fragment_step_five">
+        <action
+            android:id="@+id/action_stepFiveFragment_to_stepSixFragment"
+            app:destination="@id/stepSixFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepSixFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepSixFragment"
+        android:label="Step Six"
+        tools:layout="@layout/fragment_step_six">
+        <action
+            android:id="@+id/action_stepSixFragment_to_stepSevenFragment"
+            app:destination="@id/stepSevenFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepSevenFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepSevenFragment"
+        android:label="Step Seven"
+        tools:layout="@layout/fragment_step_seven" >
+        <action
+            android:id="@+id/action_stepSevenFragment_to_stepEightFragment"
+            app:destination="@id/stepEightFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stepEightFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_registration.StepEightFragment"
+        android:label="Step Eight"
+        tools:layout="@layout/fragment_step_eight">
+    </fragment>
+
+</navigation>
