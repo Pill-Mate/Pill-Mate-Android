@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.util
 
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -79,6 +80,42 @@ object DateConversionUtil {
             "$startDate ~ $endDate(${duration}일)"
         } else {
             ""
+        }
+    }
+
+    fun adjustTimeByMinutes(timeString: String, minutes: Int): String {
+        return try {
+            val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            val date = timeFormat.parse(timeString) ?: return timeString
+
+            val calendar = Calendar.getInstance().apply {
+                time = date
+                add(Calendar.MINUTE, minutes)
+            }
+
+            val result = timeFormat.format(calendar.time)
+            result
+        } catch (e: Exception) {
+            e.printStackTrace()
+            timeString // 오류 발생 시 원래 값 반환
+        }
+    }
+
+    // 알림 시간 계산
+    fun calculateAdjustedTime(baseTime: String, additionalMinutes: Int): String {
+        return try {
+            val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = formatter.parse(baseTime) ?: return baseTime
+
+            val calendar = Calendar.getInstance().apply {
+                time = date
+                add(Calendar.MINUTE, additionalMinutes)
+            }
+
+            formatter.format(calendar.time) // "HH:mm" 포맷으로 반환
+        } catch (e: Exception) {
+            e.printStackTrace()
+            baseTime // 변환 실패 시 원래 시간 반환
         }
     }
 }

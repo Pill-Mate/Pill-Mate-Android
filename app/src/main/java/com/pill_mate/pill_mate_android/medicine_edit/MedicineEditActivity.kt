@@ -48,6 +48,7 @@ class MedicineEditActivity : AppCompatActivity() {
     // 변수 저장
     private var intakeFrequency: List<String> = emptyList()
     private var intakeCount: List<String> = emptyList()
+    private var intakeTime: List<String> = emptyList()
     private var mealUnit: String? = null
     private var mealTime: Int? = null
     private var eatCount: Int? = null
@@ -111,6 +112,7 @@ class MedicineEditActivity : AppCompatActivity() {
             // 복약 정보 매핑
             intakeFrequency = info.intakeFrequencys.mapNotNull { TranslationUtil.translateDayToKorean(it) }
             intakeCount = info.intakeCounts.mapNotNull { TranslationUtil.translateTimeToKorean(it) }
+            intakeTime = info.intakeTimes.toList()
             mealUnit = TranslationUtil.translateMealUnitToKorean(info.mealUnit ?: "")
             mealTime = info.mealTime
             eatCount = info.eatCount
@@ -152,43 +154,33 @@ class MedicineEditActivity : AppCompatActivity() {
             bedTime = info.bedTime
         }
         // 복약 스케줄 UI 업데이트 적용
-        updateIntakeScheduleUI(data)
+        updateIntakeScheduleUI()
+        updateFinishButtonState()
     }
 
-    private fun updateIntakeScheduleUI(data: MedicineEditResponse? = null) {
-        val intakeCounts = data?.result?.intakeCounts ?: intakeCount.toSet()
-        val intakeTimes = data?.result?.intakeTimes ?: intakeCounts.mapNotNull { TranslationUtil.parseTimeToServerFormat(it) }.toSet()
+    private fun updateIntakeScheduleUI() {
+        val intakeCounts = intakeCount.toSet()
+        val intakeTimes = intakeTime.toSet()
+
+        Log.d("updateIntakeScheduleUI", "intakeCounts: $intakeCounts")
+        Log.d("updateIntakeScheduleUI", "intakeTimes: $intakeTimes")
+
 
         val visibleLayouts = mutableListOf<String>()
         var hasAlarm = false
 
         binding.apply {
-            // 식사 시간 UI
-            updateIntakeTimeUI(layoutMorning, tvMorningTime, "MORNING", intakeCounts, intakeTimes, visibleLayouts)
-            updateIntakeTimeUI(layoutLunch, tvLunchTime, "LUNCH", intakeCounts, intakeTimes, visibleLayouts)
-            updateIntakeTimeUI(layoutDinner, tvDinnerTime, "DINNER", intakeCounts, intakeTimes, visibleLayouts)
+            updateIntakeTimeUI(layoutMorning, tvMorningTime, "아침", intakeCounts, intakeTimes, visibleLayouts)
+            updateIntakeTimeUI(layoutLunch, tvLunchTime, "점심", intakeCounts, intakeTimes, visibleLayouts)
+            updateIntakeTimeUI(layoutDinner, tvDinnerTime, "저녁", intakeCounts, intakeTimes, visibleLayouts)
 
-            // 알람 시간 UI (개별 뷰 제어)
-            hasAlarm = updateAlarmTimeUI(
-                labelView = tvLabelFasting,
-                timeView = tvTimeFasting,
-                intakeType = "EMPTY",
-                intakeCounts = intakeCounts,
-                intakeTimes = intakeTimes
-            ) || updateAlarmTimeUI(
-                labelView = tvLabelBedtime,
-                timeView = tvTimeBedtime,
-                intakeType = "SLEEP",
-                intakeCounts = intakeCounts,
-                intakeTimes = intakeTimes
-            )
+            hasAlarm = updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, "공복", intakeCounts, intakeTimes) ||
+                    updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, "취침전", intakeCounts, intakeTimes)
 
-            // 전체 알람 레이아웃 제어
             layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
 
-            // 라인 visibility 업데이트
-            lineLunch.visibility = if (visibleLayouts.contains("MORNING") && visibleLayouts.contains("LUNCH")) View.VISIBLE else View.GONE
-            lineDinner.visibility = if (visibleLayouts.contains("LUNCH") && visibleLayouts.contains("DINNER")) View.VISIBLE else View.GONE
+            lineLunch.visibility = if (visibleLayouts.contains("아침") && visibleLayouts.contains("점심")) View.VISIBLE else View.GONE
+            lineDinner.visibility = if (visibleLayouts.contains("점심") && visibleLayouts.contains("저녁")) View.VISIBLE else View.GONE
         }
     }
 
@@ -227,6 +219,7 @@ class MedicineEditActivity : AppCompatActivity() {
         val intakeTimesList = intakeTimes.toList()
 
         val index = intakeCountsList.indexOf(intakeType)
+        Log.d("updateIntakeTimeUI", "Checking intakeType: $intakeType, index: $index, intakeCountsList: $intakeCountsList")
 
         if (index != -1 && index < intakeTimesList.size) {
             textView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
@@ -235,6 +228,26 @@ class MedicineEditActivity : AppCompatActivity() {
         } else {
             layout.visibility = View.GONE
         }
+    }
+
+    private fun updateIntakeTimes() {
+        Log.d("updateIntakeTimes", "Before update - intakeTime: $intakeTime")
+
+        val updatedTimes = intakeTime.mapIndexed { index, originalTime ->
+            val mealType = mealUnit ?: "식후" // 기본값을 식후로 설정
+            val adjustment = if (mealType == "식전") -(mealTime ?: 0) else (mealTime ?: 0) // 식전이면 음수로 변환
+
+            when (intakeCount.getOrNull(index)) {
+                "아침" -> DateConversionUtil.adjustTimeByMinutes(morningTime ?: originalTime, adjustment)
+                "점심" -> DateConversionUtil.adjustTimeByMinutes(lunchTime ?: originalTime, adjustment)
+                "저녁" -> DateConversionUtil.adjustTimeByMinutes(dinnerTime ?: originalTime, adjustment)
+                else -> originalTime
+            }
+        }.toSet()
+
+        intakeTime = updatedTimes.toList()
+        updateIntakeScheduleUI() // UI 업데이트
+        Log.d("updateIntakeTimes", "Updated intakeTimes: $intakeTime")
     }
 
     private fun updateEndDateChip() {
@@ -384,6 +397,9 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // UI 업데이트: 즉시는 그대로, 나머지는 "10분", "20분" 등으로 표시
             binding.tvMealUnit.text = if (selectedMealTime == 0) "$mealUnit 즉시" else "$mealUnit ${selectedMealTime}분"
+
+            // 복약 시간 업데이트
+            updateIntakeTimes()
         }
         bottomSheet.show(supportFragmentManager, "MealTimeBottomSheet")
     }
@@ -474,9 +490,8 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun isFormValid(): Boolean {
         val periodValid = binding.etPeriod.text.toString().toIntOrNull()?.let { it > 0 } ?: false
         val eatCountValid = binding.etEatCount.text.toString().toIntOrNull()?.let { it > 0 } ?: false
-        val medicineVolumeValid = binding.etMedicineVolume.text.toString().toFloatOrNull()?.let { it > 0 } ?: false
 
-        return periodValid && eatCountValid && medicineVolumeValid
+        return periodValid && eatCountValid
     }
 
     private fun updateFinishButtonState() {
