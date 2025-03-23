@@ -123,11 +123,11 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     private fun navigateToEditPage(medicine: MedicineItemData) {/*
-        val intent = Intent(requireContext(), ActiveMedicineEditActivity::class.java).apply {
+        val intent = Intent(requireContext(), medicineEditActivity::class.java).apply {
             putExtra("scheduleId", medicine.scheduleId)
         }
         startActivity(intent)
-         */
+        */
     }
 
     @RequiresApi(VERSION_CODES.O)

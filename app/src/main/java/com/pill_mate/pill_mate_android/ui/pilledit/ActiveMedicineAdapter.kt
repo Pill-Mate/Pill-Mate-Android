@@ -51,12 +51,10 @@ class ActiveMedicineAdapter(
             Glide.with(binding.imgMedicine.context).load(medicine.image).placeholder(R.drawable.img_default)
                 .into(binding.imgMedicine)
 
-            //binding.root.setOnClickListener(null)
 
-            /*binding.btnEdit.setOnClickListener {
+            binding.btnEdit.setOnClickListener {
                 onEditClickListener.invoke(medicine)
             }
-             */
 
             binding.btnStop.setOnClickListener {
                 onStopClickListener(medicine)
