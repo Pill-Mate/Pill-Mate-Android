@@ -165,7 +165,6 @@ class MedicineEditActivity : AppCompatActivity() {
         Log.d("updateIntakeScheduleUI", "intakeCounts: $intakeCounts")
         Log.d("updateIntakeScheduleUI", "intakeTimes: $intakeTimes")
 
-
         val visibleLayouts = mutableListOf<String>()
         var hasAlarm = false
 
@@ -174,8 +173,11 @@ class MedicineEditActivity : AppCompatActivity() {
             updateIntakeTimeUI(layoutLunch, tvLunchTime, "점심", intakeCounts, intakeTimes, visibleLayouts)
             updateIntakeTimeUI(layoutDinner, tvDinnerTime, "저녁", intakeCounts, intakeTimes, visibleLayouts)
 
-            hasAlarm = updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, "공복", intakeCounts, intakeTimes) ||
-                    updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, "취침전", intakeCounts, intakeTimes)
+            // 선택 해제된 값 `updateAlarmTimeUI()`에서 제거
+            hasAlarm = listOf(
+                updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, "공복", intakeCounts, intakeTimes),
+                updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, "취침전", intakeCounts, intakeTimes)
+            ).any { it }
 
             layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
 
@@ -195,12 +197,16 @@ class MedicineEditActivity : AppCompatActivity() {
         val intakeTimesList = intakeTimes.toList()
         val index = intakeCountsList.indexOf(intakeType)
 
+        Log.d("updateAlarmTimeUI", "Checking intakeType: $intakeType, index: $index, intakeCountsList: $intakeCountsList, intakeTimesList: $intakeTimesList")
+
         return if (index != -1 && index < intakeTimesList.size) {
             timeView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             labelView.visibility = View.VISIBLE
             timeView.visibility = View.VISIBLE
             true
         } else {
+            // 선택 해제된 경우 UI 숨김 처리
+            Log.d("updateAlarmTimeUI", "$intakeType is removed from UI")
             labelView.visibility = View.GONE
             timeView.visibility = View.GONE
             false
@@ -233,20 +239,24 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun updateIntakeTimes() {
         Log.d("updateIntakeTimes", "Before update - intakeTime: $intakeTime")
 
-        val updatedTimes = intakeTime.mapIndexed { index, originalTime ->
-            val mealType = mealUnit ?: "식후" // 기본값을 식후로 설정
-            val adjustment = if (mealType == "식전") -(mealTime ?: 0) else (mealTime ?: 0) // 식전이면 음수로 변환
+        val updatedTimes = intakeCount.mapNotNull { time ->
+            val mealType = mealUnit ?: "식후"
+            val adjustment = if (mealType == "식전") -(mealTime ?: 0) else (mealTime ?: 0)
 
-            when (intakeCount.getOrNull(index)) {
-                "아침" -> DateConversionUtil.adjustTimeByMinutes(morningTime ?: originalTime, adjustment)
-                "점심" -> DateConversionUtil.adjustTimeByMinutes(lunchTime ?: originalTime, adjustment)
-                "저녁" -> DateConversionUtil.adjustTimeByMinutes(dinnerTime ?: originalTime, adjustment)
-                else -> originalTime
+            Log.d("updateIntakeTimes", "Processing time: $time, mealType: $mealType, adjustment: $adjustment")
+
+            when (time) {
+                "공복" -> wakeupTime ?: "07:00:00" // 그대로 유지
+                "아침" -> DateConversionUtil.adjustTimeByMinutes(morningTime ?: "08:00:00", adjustment)
+                "점심" -> DateConversionUtil.adjustTimeByMinutes(lunchTime ?: "12:00:00", adjustment)
+                "저녁" -> DateConversionUtil.adjustTimeByMinutes(dinnerTime ?: "18:00:00", adjustment)
+                "취침전" -> bedTime ?: "22:00:00" // 그대로 유지
+                else -> null // 선택 해제된 값은 제거
             }
-        }.toSet()
+        }
 
-        intakeTime = updatedTimes.toList()
-        updateIntakeScheduleUI() // UI 업데이트
+        intakeTime = updatedTimes.toList() // 리스트 반영
+        updateIntakeScheduleUI() // UI 업데이트 실행
         Log.d("updateIntakeTimes", "Updated intakeTimes: $intakeTime")
     }
 
@@ -430,15 +440,16 @@ class MedicineEditActivity : AppCompatActivity() {
         val bottomSheet = SelectTimeBottomSheetFragment(
             initiallySelectedTimes = intakeCount
         ) { selectedTimes ->
-            intakeCount = selectedTimes
-            val sortedTimes = selectedTimes
-                .filter { it !in listOf(getString(R.string.time_empty), getString(R.string.time_before_sleep)) }
-                .sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
+            Log.d("showSelectTimeBottomSheet", "Selected times: $selectedTimes")
 
-            updateSelectedTimeText() // 텍스트뷰 업데이트 + 아점저 공취 레이아웃에도 적용
+            // 기존 intakeCount에서 선택 해제된 값이 반영되도록 갱신
+            intakeCount = selectedTimes.sortedBy { timeOrderMap[it] ?: Int.MAX_VALUE }
+            updateSelectedTimeText()
+            updateIntakeTimes() // 선택한 시간 반영 후 업데이트
         }
         bottomSheet.show(supportFragmentManager, "SelectTimeBottomSheet")
     }
+
 
     private fun updateSelectedTimeText() {
         val count = intakeCount.size
