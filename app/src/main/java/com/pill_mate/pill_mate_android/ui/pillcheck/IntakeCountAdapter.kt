@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android.ui.pillcheck
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pill_mate.pill_mate_android.R
@@ -11,7 +12,7 @@ import com.pill_mate.pill_mate_android.databinding.ItemCountHeaderBinding
 class IntakeCountAdapter(
     private var groupedMedicines: List<GroupedMedicine>,
     private val expandedStates: MutableSet<Int>,
-    private val onCheckedChange: (Long, Boolean) -> Unit
+    private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<IntakeCountAdapter.IntakeCountViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeCountViewHolder {
@@ -34,8 +35,21 @@ class IntakeCountAdapter(
     override fun getItemCount() = groupedMedicines.size
 
     fun updateData(newGroupedMedicines: List<GroupedMedicine>) {
+        val diffCallback = IntakeCountDiffUtil(groupedMedicines, newGroupedMedicines)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         groupedMedicines = newGroupedMedicines
-        notifyDataSetChanged() // 데이터 변경 시 전체 갱신
+        updateExpandedStates()
+        diffResult.dispatchUpdatesTo(this) // 변경된 부분만 UI 갱신
+    }
+
+    fun updateExpandedStates() {
+        expandedStates.clear()
+        groupedMedicines.forEachIndexed { index, group ->
+            if (!group.isAllChecked) {
+                expandedStates.add(index)
+            }
+        }
     }
 
     inner class IntakeCountViewHolder(private val binding: ItemCountHeaderBinding) :
