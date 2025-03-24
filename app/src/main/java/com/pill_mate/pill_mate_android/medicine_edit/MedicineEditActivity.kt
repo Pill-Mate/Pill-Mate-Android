@@ -33,7 +33,7 @@ import retrofit2.Response
 class MedicineEditActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMedicineEditBinding
-    private var itemSeq: Long? = null
+    private var scheduleId: Long? = null
     private var medicineImage: String? = null
     private var identifyNumber: String? = null
     private var medicineId: Int? = null
@@ -69,7 +69,7 @@ class MedicineEditActivity : AppCompatActivity() {
         binding = ActivityMedicineEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        itemSeq = intent.getStringExtra("ITEM_SEQ")?.toLong()
+        scheduleId = intent.getLongExtra("scheduleId", -1)
 
         fetchInitialData()
         setupClickListeners()
@@ -77,11 +77,11 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun fetchInitialData() {
-        if (itemSeq == null) {
+        if (scheduleId == null) {
             Toast.makeText(this, "약물 정보를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
-        medicineEditService.getMedicineInfo(itemSeq!!).enqueue(object :
+        medicineEditService.getMedicineInfo(scheduleId!!).enqueue(object :
             Callback<MedicineEditResponse> {
             override fun onResponse(call: Call<MedicineEditResponse>, response: Response<MedicineEditResponse>) {
                 if (response.isSuccessful) {
@@ -287,6 +287,10 @@ class MedicineEditActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.apply {
+            binding.ivBack.setOnClickListener {
+                finish() // 현재 액티비티 종료하고 이전 액티비티로 돌아가기
+            }
+
             layoutIntakeFrequency.setOnClickListener { showDaySelectionBottomSheet() }
             layoutIntakeCount.setOnClickListener { showSelectTimeBottomSheet() }
             layoutMealUnit.setOnClickListener { showIntakeTimeBottomSheetFragment() }
@@ -526,7 +530,8 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun createEditMedicineInfo(): MedicineEditInfo? {
         return try {
             MedicineEditInfo(
-                medicineImage = medicineImage, // 변경 불가
+                // 변경 불가
+                medicineImage = medicineImage,
                 identifyNumber = identifyNumber ?: "",
                 medicineId = medicineId ?: 0,
                 ingredient = ingredient,
@@ -542,13 +547,13 @@ class MedicineEditActivity : AppCompatActivity() {
 
                 // 변환 적용 (한국어 → 영어)
                 intakeCounts = intakeCount.mapNotNull { TranslationUtil.translateTimeToEnglish(it) }.toSet(),
-                intakeTimes = intakeCount.mapNotNull { time -> TranslationUtil.parseTimeToServerFormat(time) }.toSet(),
+                intakeTimes = intakeTime.toSet(),
                 intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten().toSet(),
                 mealUnit = mealUnit?.let { TranslationUtil.translateMealUnitToEnglish(it) },
                 mealTime = mealTime,
                 eatUnit = binding.tvEatUnit.text.toString().let { TranslationUtil.translateEatUnitToEnglish(it) ?: it },
                 eatCount = binding.etEatCount.text.toString().toIntOrNull() ?: 0,
-                startDate = binding.tvStartDate.text.toString(),
+                startDate = DateConversionUtil.toIso8601(binding.tvStartDate.text.toString()) ?: "",
                 intakePeriod = binding.etPeriod.text.toString().toIntOrNull() ?: 0,
                 ingredientUnit = binding.tvMedicineUnit.text.toString().takeIf { it.isNotEmpty() }?.let {
                     TranslationUtil.translateUnitToUppercase(it)
@@ -563,26 +568,27 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun sendUpdateRequest(request: MedicineEditInfo) {
-        // JSON 변환을 위한 Gson 객체 생성
         val gson = Gson()
         val jsonRequest = gson.toJson(request)
 
-        // 데이터 로그 출력
-        Log.d("MedicineEditActivity", "Sending update request: $jsonRequest")
-        medicineEditService.editMedicineInfo(request).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@MedicineEditActivity, "수정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                    finish() // 수정 완료 후 화면 종료
-                } else {
-                    Toast.makeText(this@MedicineEditActivity, "수정 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
-                }
-            }
+        Log.d("sendUpdateRequest", "Requesting Update: $jsonRequest")
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@MedicineEditActivity, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                t.printStackTrace()
-            }
-        })
+        medicineEditService.editMedicineInfo(scheduleId!!, request)  // itemSeq 전달 추가
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@MedicineEditActivity, "수정 완료", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else {
+                        Log.e("sendUpdateRequest", "Response Failed: ${response.code()} - ${response.errorBody()?.string()}")
+                        Toast.makeText(this@MedicineEditActivity, "수정 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.e("sendUpdateRequest", "Network Error", t)
+                    Toast.makeText(this@MedicineEditActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 }

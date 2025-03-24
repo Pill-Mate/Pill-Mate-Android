@@ -1,6 +1,5 @@
 package com.pill_mate.pill_mate_android.ui.pilledit
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +12,6 @@ import com.pill_mate.pill_mate_android.databinding.FragmentPillEditBinding
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
 
 class PillEditFragment : Fragment() {
-    private var _binding: FragmentPillEditBinding? = null
-    private val binding get() = _binding!!
 
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout

@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.ui.pilledit
 
+import android.content.Intent
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentActiveMedicineBinding
+import com.pill_mate.pill_mate_android.medicine_edit.MedicineEditActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -122,12 +124,11 @@ class ActiveMedicineFragment : Fragment() {
         })
     }
 
-    private fun navigateToEditPage(medicine: MedicineItemData) {/*
-        val intent = Intent(requireContext(), medicineEditActivity::class.java).apply {
+    private fun navigateToEditPage(medicine: MedicineItemData) {
+        val intent = Intent(requireContext(), MedicineEditActivity::class.java).apply {
             putExtra("scheduleId", medicine.scheduleId)
         }
         startActivity(intent)
-        */
     }
 
     @RequiresApi(VERSION_CODES.O)
