@@ -319,7 +319,7 @@ class MedicineEditActivity : AppCompatActivity() {
             setupKeyboardAction(etMedicineVolume)
 
             // 클릭 시 tooltip VISIBLE
-            ivMealInfo.setOnClickListener {
+            layoutMealInfoClickArea.setOnClickListener {
                 binding.ivMealTooltip.visibility = View.VISIBLE
             }
 
@@ -329,6 +329,12 @@ class MedicineEditActivity : AppCompatActivity() {
                     binding.ivMealTooltip.visibility = View.GONE
                 }
                 false
+            }
+
+            layoutRoot.viewTreeObserver.addOnScrollChangedListener {
+                if (binding.ivMealTooltip.visibility == View.VISIBLE) {
+                    binding.ivMealTooltip.visibility = View.GONE
+                }
             }
         }
     }

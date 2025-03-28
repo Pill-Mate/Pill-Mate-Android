@@ -82,7 +82,7 @@
                     android:layout_width="100dp"
                     android:layout_height="54dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_default_pill"
+                    android:src="@drawable/img_default"
                     android:scaleType="centerCrop" />
 
                 <LinearLayout

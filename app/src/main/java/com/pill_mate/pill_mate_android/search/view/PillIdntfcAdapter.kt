@@ -43,7 +43,7 @@ class PillIdntfcAdapter(
                     .skipMemoryCache(false)
                     .dontAnimate()
                     .transform(RoundedCorners(8))
-                    .error(R.drawable.ic_default_pill) // Glide 로딩 실패 시 기본 이미지
+                    .error(R.drawable.img_default) // Glide 로딩 실패 시 기본 이미지
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,

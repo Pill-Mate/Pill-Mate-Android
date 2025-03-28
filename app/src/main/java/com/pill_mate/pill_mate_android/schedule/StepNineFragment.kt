@@ -166,12 +166,12 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
             Glide.with(binding.ivMedicineImage.context)
                 .load(medicine.image)
                 .transform(RoundedCorners(8))
-                .error(R.drawable.ic_default_pill)
+                .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
         } else {
             binding.tvMedicineName.text = getString(R.string.nine_no_medicine)
             binding.tvMedicineDose.text = ""
-            binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)
+            binding.ivMedicineImage.setImageResource(R.drawable.img_default)
         }
     }
 

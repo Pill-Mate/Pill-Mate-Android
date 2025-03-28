@@ -48,10 +48,15 @@ class PillDetailBottomSheetFragment(
         val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
 
         pillItem?.let {
-            Glide.with(binding.ivPillImage.context)
-                .load(it.ITEM_IMAGE)
-                .transform(RoundedCorners(20))
-                .into(binding.ivPillImage)
+            if (!it.ITEM_IMAGE.isNullOrEmpty()) {
+                Glide.with(binding.ivPillImage.context)
+                    .load(it.ITEM_IMAGE)
+                    .transform(RoundedCorners(20))
+                    .error(R.drawable.img_default)
+                    .into(binding.ivPillImage)
+            } else {
+                binding.ivPillImage.setImageResource(R.drawable.img_default) // 이미지 URL 없을 경우 기본 이미지
+            }
 
             binding.tvPillClass.text = it.CLASS_NAME
             binding.tvPillName.text = it.ITEM_NAME
