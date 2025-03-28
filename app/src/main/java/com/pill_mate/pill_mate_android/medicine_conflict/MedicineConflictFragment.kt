@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -84,6 +85,9 @@ class MedicineConflictFragment : Fragment() {
         binding.btnFinish.setOnClickListener {
             clearRegistrationData()
         }
+
+        setupTooltip(binding.layoutContraindicationClickArea, binding.ivContraindicationTooltip)
+        setupTooltip(binding.layoutEfficiencyOverlapClickArea, binding.ivEfficiencyOverlapTooltip)
     }
 
     private fun setupAdapters() {
@@ -150,12 +154,12 @@ class MedicineConflictFragment : Fragment() {
             Glide.with(binding.ivMedicineImage.context)
                 .load(medicine.image)
                 .transform(RoundedCorners(8))
-                .error(R.drawable.ic_default_pill)
+                .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
 
         } else {
             binding.tvPillName.text = getString(R.string.medicine_conflict_no_medicine)
-            binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)
+            binding.ivMedicineImage.setImageResource(R.drawable.img_default)
         }
     }
 
@@ -163,7 +167,17 @@ class MedicineConflictFragment : Fragment() {
         usjntTabooData?.let { data ->
             contraindicationCount = data.size
             contraindicationAdapter.submitList(data)
+
             toggleSectionVisibility(data.isNotEmpty(), SectionType.CONTRAINDICATION)
+
+            // 툴팁 표시 (post를 사용해 렌더링 이후 처리)
+            if (data.isNotEmpty()) {
+                binding.ivContraindicationTooltip.post {
+                    binding.ivContraindicationTooltip.visibility = View.VISIBLE
+                    binding.ivContraindicationTooltip.bringToFront()
+                }
+            }
+
         } ?: run {
             contraindicationCount = 0
             toggleSectionVisibility(false, SectionType.CONTRAINDICATION)
@@ -172,7 +186,16 @@ class MedicineConflictFragment : Fragment() {
         efcyDplctData?.let { data ->
             efficiencyOverlapCount = data.size
             efficiencyOverlapAdapter.submitList(data)
+
             toggleSectionVisibility(data.isNotEmpty(), SectionType.EFFICIENCY_OVERLAP)
+
+            if (data.isNotEmpty()) {
+                binding.ivEfficiencyOverlapTooltip.post {
+                    binding.ivEfficiencyOverlapTooltip.visibility = View.VISIBLE
+                    binding.ivEfficiencyOverlapTooltip.bringToFront()
+                }
+            }
+
         } ?: run {
             efficiencyOverlapCount = 0
             toggleSectionVisibility(false, SectionType.EFFICIENCY_OVERLAP)
@@ -322,6 +345,30 @@ class MedicineConflictFragment : Fragment() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    private fun setupTooltip(
+        clickArea: View,
+        tooltip: View
+    ) {
+        clickArea.setOnClickListener {
+            tooltip.visibility = View.VISIBLE
+        }
+
+        // 루트 터치 시 툴팁 숨김
+        binding.scrollContainer.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN && tooltip.visibility == View.VISIBLE) {
+                tooltip.visibility = View.GONE
+            }
+            false
+        }
+
+        // 스크롤 시 툴팁 숨김
+        binding.scrollContainer.viewTreeObserver.addOnScrollChangedListener {
+            if (tooltip.visibility == View.VISIBLE) {
+                tooltip.visibility = View.GONE
+            }
+        }
     }
 
     override fun onDestroyView() {

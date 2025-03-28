@@ -27,7 +27,7 @@
         android:id="@+id/iv_pill_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/ic_default_pill"
+        android:src="@drawable/img_default"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/layout_pill_info"
         app:layout_constraintDimensionRatio="100:54"

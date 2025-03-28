@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemConflictBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
@@ -35,7 +36,11 @@ class ConflictAdapter(
                         Glide.with(binding.ivImage.context)
                             .load(item.ITEM_IMAGE)
                             .transform(RoundedCorners(8))
+                            .error(R.drawable.img_default) // 에러 시 기본 이미지
                             .into(binding.ivImage)
+                    } else {
+                        // 이미지가 비어있을 경우 기본 이미지 수동 설정
+                        binding.ivImage.setImageResource(R.drawable.img_default)
                     }
 
                     binding.btnDelete.setOnClickListener {
@@ -57,7 +62,11 @@ class ConflictAdapter(
                         Glide.with(binding.ivImage.context)
                             .load(item.ITEM_IMAGE)
                             .transform(RoundedCorners(8))
+                            .error(R.drawable.img_default) // 에러 시 기본 이미지
                             .into(binding.ivImage)
+                    } else {
+                        // 이미지가 비어있을 경우 기본 이미지 수동 설정
+                        binding.ivImage.setImageResource(R.drawable.img_default)
                     }
 
                     binding.btnDelete.setOnClickListener {

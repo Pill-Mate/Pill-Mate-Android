@@ -11,11 +11,12 @@
         android:id="@+id/iv_image"
         android:layout_width="100dp"
         android:layout_height="54dp"
-        android:scaleType="centerCrop"
         android:background="@drawable/rectangle_radius_4"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_pillInfo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_default_pill" />
+        app:layout_constraintTop_toTopOf="@+id/layout_pillInfo"
+        tools:src="@drawable/img_default" />
 
     <LinearLayout
         android:id="@+id/layout_pillInfo"
@@ -23,10 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_image"
-        app:layout_constraintTop_toTopOf="@+id/iv_image">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_className"
@@ -46,9 +46,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxEms="20"
-            android:maxLines="1"
             android:text="@string/pill_detail_pill_name"
             android:textColor="@color/black" />
 

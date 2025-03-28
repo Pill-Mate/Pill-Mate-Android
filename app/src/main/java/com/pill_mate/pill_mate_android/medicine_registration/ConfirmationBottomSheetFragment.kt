@@ -92,10 +92,10 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             Glide.with(binding.ivPillImage.context)
                 .load(imageUrl)
                 .transform(RoundedCorners(8))
-                .error(R.drawable.ic_default_pill)
+                .error(R.drawable.img_default)
                 .into(binding.ivPillImage)
         } ?: run {
-            binding.ivPillImage.setImageResource(R.drawable.ic_default_pill)
+            binding.ivPillImage.setImageResource(R.drawable.img_default)
         }
     }
 
