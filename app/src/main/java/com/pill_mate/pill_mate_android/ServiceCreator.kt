@@ -1,10 +1,12 @@
 package com.pill_mate.pill_mate_android
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
 import com.pill_mate.pill_mate_android.ui.login.LoginService
 import com.pill_mate.pill_mate_android.ui.login.OnBoardingService
+import com.pill_mate.pill_mate_android.ui.login.RefreshTokenService
 import com.pill_mate.pill_mate_android.ui.pillcheck.HomeService
 import com.pill_mate.pill_mate_android.ui.pillcheck.MedicineCheckService
 import com.pill_mate.pill_mate_android.ui.pillcheck.WeeklyCalendarService
@@ -30,14 +32,15 @@ object ServiceCreator { // 서버 URL
         .create()
 
     // Retrofit 인스턴스 생성
-    private val userRetrofit: Retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(provideOkHttpClient())
-        .addConverterFactory(GsonConverterFactory.create(gson)) // 커스터마이징된 Gson 적용
-        .build()
+    private val userRetrofit: Retrofit =
+        Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(provideOkHttpClient(GlobalApplication.getInstance()!!))
+            .addConverterFactory(GsonConverterFactory.create(gson)) // 커스터마이징된 Gson 적용
+            .build()
 
-    private fun provideOkHttpClient(): OkHttpClient =
+    private fun provideOkHttpClient(context: Context): OkHttpClient =
         OkHttpClient.Builder().connectTimeout(100, TimeUnit.SECONDS).readTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS).run {
-                addInterceptor(TokenInterceptor())
+                addInterceptor(TokenInterceptor(context))
                 addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 })
@@ -46,6 +49,7 @@ object ServiceCreator { // 서버 URL
 
     // 서비스 인터페이스 초기화
     val loginService: LoginService = userRetrofit.create(LoginService::class.java)
+    val refreshTokenService: RefreshTokenService = userRetrofit.create(RefreshTokenService::class.java)
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
     val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
