@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.schedule
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,9 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemScheduleBinding
 
 class ScheduleAdapter(
+    private val context: Context,
     private var scheduleList: List<ScheduleItem>,
-    private val timeMap: Map<String, String> // 서버에서 가져온 시간을 전달받음
+    private val timeMap: Map<String, String> // 서버에서 가져온 시간을 전달받음){}
 ) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     data class ScheduleItem(
@@ -25,9 +27,10 @@ class ScheduleAdapter(
         fun bind(item: ScheduleItem) {
             binding.ivIcon.setImageResource(item.iconRes)
             binding.tvLabel.text = item.label
-            binding.tvTime.text = timeMap[item.label] ?: item.time // Use formatted time
+            binding.tvTime.text = timeMap[item.label] ?: item.time
 
-            if (item.label == "공복" || item.label == "취침전") {
+            if (item.label == context.getString(R.string.time_empty) ||
+                item.label == context.getString(R.string.time_before_sleep)) {
                 binding.tvMealTime.visibility = View.GONE
             } else if (item.mealTime != null) {
                 binding.tvMealTime.text = item.mealTime

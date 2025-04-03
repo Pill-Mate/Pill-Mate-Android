@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBinding
@@ -27,6 +27,7 @@ import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooRespons
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
+import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.CustomSnackbar
 import retrofit2.Call
 import retrofit2.Callback
@@ -65,15 +66,8 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun initializeSections() {
-        binding.rvContraindication.visibility = View.GONE
-        binding.ivContraindicationStart.visibility = View.GONE
-        binding.tvContraindication.visibility = View.GONE
-        binding.ivContraindicationEnd.visibility = View.GONE
-
-        binding.rvEfficiencyOverlap.visibility = View.GONE
-        binding.ivEfficiencyOverlapStart.visibility = View.GONE
-        binding.tvEfficiencyOverlap.visibility = View.GONE
-        binding.ivEfficiencyOverlapEnd.visibility = View.GONE
+        binding.layoutContraindication.visibility = View.GONE
+        binding.layoutEfficiencyOverlap.visibility = View.GONE
     }
 
     private fun setupUI() {
@@ -102,14 +96,21 @@ class MedicineConflictFragment : Fragment() {
             onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) }
         )
 
-        // RecyclerView 설정
+        val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 회색
+        val dividerHeight = 1f // 1dp
+        val marginStart = 12f
+        val marginEnd = 12f
+
         binding.rvContraindication.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = contraindicationAdapter
+            addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
         }
+
         binding.rvEfficiencyOverlap.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = efficiencyOverlapAdapter
+            addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
         }
     }
 
@@ -124,8 +125,7 @@ class MedicineConflictFragment : Fragment() {
 
     private fun updateTitle() {
         val totalConflicts = contraindicationCount + efficiencyOverlapCount
-        val titleText = "복약중인 ${totalConflicts}개의 약물과\n충돌성분이 발견됐어요"
-
+        val titleText = getString(R.string.medicine_conflict_title, totalConflicts)
         val spannable = SpannableString(titleText)
         val startIndex = titleText.indexOf("${totalConflicts}개")
         val endIndex = startIndex + "${totalConflicts}개".length
@@ -147,13 +147,14 @@ class MedicineConflictFragment : Fragment() {
             binding.tvPillName.text = medicine.medicine_name
             binding.tvPillEntp.text = medicine.entp_name
             binding.tvPillClass.text = medicine.classname
-            binding.ivMedicineImage.load(medicine.image) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivMedicineImage.context)
+                .load(medicine.image)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivMedicineImage)
+
         } else {
-            binding.tvPillName.text = "약물 없음"
+            binding.tvPillName.text = getString(R.string.medicine_conflict_no_medicine)
             binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)
         }
     }
@@ -183,21 +184,17 @@ class MedicineConflictFragment : Fragment() {
     private fun toggleSectionVisibility(isVisible: Boolean, sectionType: SectionType) {
         when (sectionType) {
             SectionType.CONTRAINDICATION -> {
-                binding.rvContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivContraindicationStart.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.tvContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivContraindicationEnd.visibility = if (isVisible) View.VISIBLE else View.GONE
+                binding.layoutContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
             SectionType.EFFICIENCY_OVERLAP -> {
-                binding.rvEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivEfficiencyOverlapStart.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.tvEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
-                binding.ivEfficiencyOverlapEnd.visibility = if (isVisible) View.VISIBLE else View.GONE
+                binding.layoutEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
         }
     }
 
     private fun fetchPhoneAndAddress(itemSeq: String) {
+        Log.d("MedicineConflictFragment", "Fetching phone and address for itemSeq: $itemSeq")
+
         medicineRegistrationService.getPhoneAndAddress(itemSeq).enqueue(object : Callback<PhoneAndAddressResponse> {
             override fun onResponse(
                 call: Call<PhoneAndAddressResponse>,
@@ -205,23 +202,30 @@ class MedicineConflictFragment : Fragment() {
             ) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()?.result
+
+                    // API 응답 로그 출력
+                    Log.d("MedicineConflictFragment", "API Response: $result")
+
                     if (result != null) {
                         showInquiryBottomSheet(result)
                     } else {
                         Log.e("MedicineConflictFragment", "Empty result from API")
                     }
                 } else {
-                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address")
+                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address - Response Code: ${response.code()}, Error: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<PhoneAndAddressResponse>, t: Throwable) {
-                Log.e("MedicineConflictFragment", "API call failed", t)
+                Log.e("MedicineConflictFragment", "API call failed: ${t.message}")
             }
         })
     }
 
     private fun showInquiryBottomSheet(result: PharmacyAndHospital) {
+        // 데이터 로깅 (병원 & 약국 데이터 확인)
+        Log.d("InquiryBottomSheet", "Received PharmacyAndHospital Data: $result")
+
         val pharmacy = Pharmacy(
             pharmacyName = result.pharmacyName,
             pharmacyAddress = result.pharmacyAddress,
@@ -236,7 +240,12 @@ class MedicineConflictFragment : Fragment() {
             )
         } else null
 
-        InquiryBottomSheetFragment.newInstance(pharmacy, hospital).show(parentFragmentManager, "inquiryBottomSheet")
+        val bottomSheet = InquiryBottomSheetFragment.newInstance(pharmacy, hospital)
+
+        // post를 사용하여 안전하게 실행
+        binding.root.post {
+            bottomSheet.show(parentFragmentManager, "inquiryBottomSheet")
+        }
     }
 
     private fun showDeleteDialog(itemSeq: String) {
@@ -246,22 +255,26 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun removeConflict(itemSeq: String) {
-        medicineRegistrationService.removeConflict().enqueue(object : Callback<ConflictRemoveResponse> {
+        Log.d("MedicineConflictFragment", "Removing conflict for itemSeq: $itemSeq") // 🛠 디버깅용 로그 추가
+
+        medicineRegistrationService.removeConflict(itemSeq).enqueue(object : Callback<ConflictRemoveResponse> {
             override fun onResponse(call: Call<ConflictRemoveResponse>, response: Response<ConflictRemoveResponse>) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    // 삭제 버튼 비활성화
-                    disableDeleteButton(itemSeq)
-                    // 스낵바 표시
-                    showDeleteSuccessSnackbar()
+                    Log.d("MedicineConflictFragment", "Successfully removed conflict for itemSeq: $itemSeq") // 성공 로그 추가
+
+                    disableDeleteButton(itemSeq) // 삭제 버튼 비활성화
+                    updateButtonText()    // "다음"으로 변경
+                    showDeleteSuccessSnackbar() // 성공 메시지 표시
                 } else {
-                    // 에러 처리
-                    Log.e("MedicineConflictFragment", "Failed to remove conflict: ${response.errorBody()?.string()}")
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("MedicineConflictFragment", "Failed to remove conflict: $errorBody") // 🛠 오류 로그 추가
+
                     showDeleteErrorSnackbar()
                 }
             }
 
             override fun onFailure(call: Call<ConflictRemoveResponse>, t: Throwable) {
-                Log.e("MedicineConflictFragment", "Network error: ${t.message}")
+                Log.e("MedicineConflictFragment", "Network error while removing conflict: ${t.message}") // 🛠 네트워크 오류 로그 추가
                 showDeleteErrorSnackbar()
             }
         })
@@ -282,12 +295,24 @@ class MedicineConflictFragment : Fragment() {
         }
     }
 
+    private fun updateButtonText() {
+        binding.btnSkip.text = getString(R.string.medicine_registration_next)
+    }
+
     private fun showDeleteSuccessSnackbar() {
-        CustomSnackbar.showCustomSnackbar(requireContext(), binding.root, "약물을 삭제했어요.")
+        CustomSnackbar.showCustomSnackbar(
+            requireContext(),
+            binding.root,
+            getString(R.string.medicine_conflict_delete_success)
+        )
     }
 
     private fun showDeleteErrorSnackbar() {
-        CustomSnackbar.showCustomSnackbar(requireContext(), binding.root, "약물 삭제에 실패했어요.")
+        CustomSnackbar.showCustomSnackbar(
+            requireContext(),
+            binding.root,
+            getString(R.string.medicine_conflict_delete_error)
+        )
     }
 
     private fun clearRegistrationData() {

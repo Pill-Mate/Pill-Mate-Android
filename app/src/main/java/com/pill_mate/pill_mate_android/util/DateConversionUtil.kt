@@ -7,6 +7,7 @@ object DateConversionUtil {
     private const val INPUT_DATE_FORMAT = "yyyy.MM.dd"
     private const val OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     private const val DISPLAY_DATE_FORMAT = "yyyy.MM.dd"
+    private const val SERVER_DATE_FORMAT = "yyyy-MM-dd"
 
     // 날짜 문자열을 `yyyy.MM.dd` 형식에서 ISO 8601 형식으로 변환
     fun toIso8601(dateString: String): String? {
@@ -42,6 +43,32 @@ object DateConversionUtil {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    // 현재 날짜를 yyyy.MM.dd 형식으로 반환
+    fun getCurrentDate(): String {
+        return try {
+            val currentDate = Date()
+            val displayFormat = SimpleDateFormat(DISPLAY_DATE_FORMAT, Locale.getDefault())
+            displayFormat.format(currentDate)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
+    // 서버 날짜 형식("yyyy-MM-dd")을 "yyyy.MM.dd" 형식으로 변환
+    fun formatServerDateToDisplay(dateString: String?): String {
+        return try {
+            if (dateString.isNullOrEmpty()) return "-"
+            val inputFormat = SimpleDateFormat(SERVER_DATE_FORMAT, Locale.getDefault())
+            val outputFormat = SimpleDateFormat(DISPLAY_DATE_FORMAT, Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "-"
         }
     }
 

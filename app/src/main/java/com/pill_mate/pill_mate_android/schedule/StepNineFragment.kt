@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentStepNineBinding
@@ -50,7 +50,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
     private fun setupUI() {
         // RecyclerView 설정
-        scheduleAdapter = ScheduleAdapter(emptyList(), timeMap)
+        scheduleAdapter = ScheduleAdapter(requireContext(), emptyList(), timeMap)
         binding.rvSchedule.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSchedule.adapter = scheduleAdapter
 
@@ -76,11 +76,11 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val times = response.body()?.result
                     times?.let {
-                        timeMap["아침"] = formatTime(it.morningTime)
-                        timeMap["점심"] = formatTime(it.lunchTime)
-                        timeMap["저녁"] = formatTime(it.dinnerTime)
-                        timeMap["공복"] = formatTime(it.wakeupTime)
-                        timeMap["취침전"] = formatTime(it.bedTime)
+                        timeMap[getString(R.string.time_morning)] = formatTime(it.morningTime)
+                        timeMap[getString(R.string.time_lunch)] = formatTime(it.lunchTime)
+                        timeMap[getString(R.string.time_dinner)] = formatTime(it.dinnerTime)
+                        timeMap[getString(R.string.time_empty)] = formatTime(it.wakeupTime)
+                        timeMap[getString(R.string.time_before_sleep)] = formatTime(it.bedTime)
 
                         loadScheduleData()
                     }
@@ -100,7 +100,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
         val hour = parts[0].toInt()
         val minute = parts[1].toInt()
 
-        val period = if (hour < 12) "오전" else "오후"
+        val period = if (hour < 12) getString(R.string.am) else getString(R.string.pm)
         val formattedHour = if (hour % 12 == 0) 12 else hour % 12
         return "$period $formattedHour:${if (minute < 10) "0$minute" else minute}"
     }
@@ -111,7 +111,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
             Log.d("MedicineRegisterRequest", Gson().toJson(request)) // JSON 데이터 확인
             sendRegisterRequest(request)
         } else {
-            showErrorMessage("등록에 필요한 데이터가 부족합니다.")
+            showErrorMessage(getString(R.string.nine_registration_data_insufficient))
         }
     }
 
@@ -123,12 +123,12 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
                 } else {
                     val errorMessage = response.errorBody()?.string()
                     Log.e("RegisterMedicine", "Error: $errorMessage")
-                    showErrorMessage("등록에 실패했습니다. 다시 시도해주세요.")
+                    showErrorMessage(getString(R.string.nine_registration_failed))
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                showErrorMessage("네트워크 오류가 발생했습니다.")
+                showErrorMessage(getString(R.string.nine_network_error))
             }
         })
     }
@@ -163,13 +163,13 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
         if (medicine != null && schedule != null) {
             binding.tvMedicineName.text = medicine.medicine_name
             binding.tvMedicineDose.text = "${schedule.eat_count}${schedule.eat_unit}"
-            binding.ivMedicineImage.load(medicine.image) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivMedicineImage.context)
+                .load(medicine.image)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivMedicineImage)
         } else {
-            binding.tvMedicineName.text = "약물 없음"
+            binding.tvMedicineName.text = getString(R.string.nine_no_medicine)
             binding.tvMedicineDose.text = ""
             binding.ivMedicineImage.setImageResource(R.drawable.ic_default_pill)
         }
@@ -189,11 +189,11 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
         for (group in timeGroups) {
             val iconRes = when (group.trim()) {
-                "아침" -> R.drawable.ic_breakfast
-                "점심" -> R.drawable.ic_lunch
-                "저녁" -> R.drawable.ic_dinner
-                "공복" -> R.drawable.ic_emptystomach
-                "취침전" -> R.drawable.ic_bedtime
+                getString(R.string.time_morning) -> R.drawable.ic_breakfast
+                getString(R.string.time_lunch) -> R.drawable.ic_lunch
+                getString(R.string.time_dinner) -> R.drawable.ic_dinner
+                getString(R.string.time_empty) -> R.drawable.ic_emptystomach
+                getString(R.string.time_before_sleep) -> R.drawable.ic_bedtime
                 else -> R.drawable.ic_breakfast
             }
 
@@ -201,7 +201,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
                 ScheduleAdapter.ScheduleItem(
                     iconRes = iconRes,
                     label = group.trim(),
-                    time = timeMap[group.trim()] ?: "등록되지 않음", // 서버 시간 사용
+                    time = timeMap[group.trim()] ?: getString(R.string.nine_time_not_registered),
                     mealTime = if (schedule.meal_unit.isNotEmpty()) "${schedule.meal_unit} ${schedule.meal_time}분" else null
                 )
             )

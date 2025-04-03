@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -17,7 +17,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetConfirmBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Schedule
-import com.pill_mate.pill_mate_android.schedule.ScheduleActivity
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
 
@@ -45,7 +44,6 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         loadScheduleData()
 
         binding.btnYes.setOnClickListener {
-            navigateToScheduleActivity() // ScheduleActivity로 전환
             onConfirmed?.invoke(true)
             dismiss()
         }
@@ -91,11 +89,11 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
         binding.tvPillEntp.text = medicine?.entp_name ?: "제약회사 정보 없음"
 
         medicine?.image?.let { imageUrl ->
-            binding.ivPillImage.load(imageUrl) {
-                transformations(RoundedCornersTransformation(20f))
-                crossfade(true)
-                error(R.drawable.ic_default_pill)
-            }
+            Glide.with(binding.ivPillImage.context)
+                .load(imageUrl)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.ic_default_pill)
+                .into(binding.ivPillImage)
         } ?: run {
             binding.ivPillImage.setImageResource(R.drawable.ic_default_pill)
         }
@@ -114,7 +112,7 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
             RegistrationData("약물명", schedule.medicine_name).takeIf { schedule.medicine_name.isNotEmpty() },
             RegistrationData("요일", schedule.intake_frequency).takeIf { schedule.intake_frequency.isNotEmpty() },
             RegistrationData("횟수", "${schedule.intake_count.split(",").size}회(${schedule.intake_count})").takeIf { schedule.intake_count.isNotEmpty() },
-            RegistrationData("시간대", "${schedule.meal_unit} ${schedule.meal_time}분").takeIf { schedule.meal_unit.isNotEmpty() && schedule.meal_time > 0 },
+            RegistrationData("시간대", "${schedule.meal_unit} ${schedule.meal_time}분").takeIf { schedule.meal_unit.isNotEmpty() && schedule.meal_time >= 0 },
             RegistrationData("투약량", "${schedule.eat_count}${schedule.eat_unit}").takeIf { schedule.eat_count > 0 && schedule.eat_unit.isNotEmpty() },
             RegistrationData("복약기간", calculateIntakePeriod(schedule)).takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
             RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}").takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() }
@@ -123,12 +121,6 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
     private fun calculateIntakePeriod(schedule: Schedule): String {
         return DateConversionUtil.calculateIntakePeriod(schedule.start_date, schedule.intake_period)
-    }
-
-    private fun navigateToScheduleActivity() {
-        val intent = Intent(requireContext(), ScheduleActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish() // MedicineRegistrationActivity 종료
     }
 
     override fun onDestroyView() {

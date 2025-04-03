@@ -8,19 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSixBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepSixFragment : Fragment() {
 
     private var _binding: FragmentStepSixBinding? = null
     private val binding get() = _binding!!
 
-    private var selectedDosageUnit: String = "정(개)" // 기본값 설정
+    private lateinit var selectedDosageUnit: String
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
     override fun onCreateView(
@@ -41,7 +41,8 @@ class StepSixFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 기존 선택된 단위를 TextView에 표시
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedDosageUnit = currentSchedule.eat_unit.ifEmpty { getString(R.string.dosage_unit_tablet) }
         binding.tvEatUnit.text = selectedDosageUnit
 
         setupDosageCountEditText()
@@ -56,19 +57,21 @@ class StepSixFragment : Fragment() {
             selectedOption?.let {
                 selectedDosageUnit = it
                 updateDosageUnit(it)
+                updateNextButtonState()
             }
         }
+        updateNextButtonState()
     }
 
     // EditText 설정 및 동작 구현
     private fun setupDosageCountEditText() {
         // 초기값 설정
-        binding.etEatCount.setText("1")
+        binding.etEatCount.setText(getString(R.string.six_default_count))
         // 초기값을 Presenter에 업데이트
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
                 eat_unit = selectedDosageUnit,
-                eat_count = 1
+                eat_count = getString(R.string.six_default_count).toInt()
             )
         }
 
@@ -76,7 +79,7 @@ class StepSixFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 필요 시 입력값의 변화를 실시간으로 감지 (현재 비워둠)
+                updateNextButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -89,17 +92,20 @@ class StepSixFragment : Fragment() {
         })
 
         // 엔터 키 입력 처리 (포커스 해제)
-        binding.etEatCount.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                binding.etEatCount.clearFocus() // 포커스 해제
-                return@OnEditorActionListener true
+        binding.etEatCount.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                binding.etEatCount.clearFocus()
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etEatCount)
+                return@setOnEditorActionListener true
             }
             false
-        })
+        }
     }
 
     private fun openBottomSheet() {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(
             type = BottomSheetType.DOSAGE_UNIT,
             selectedOption = selectedDosageUnit // 기존 선택된 값 전달
         )
@@ -122,12 +128,18 @@ class StepSixFragment : Fragment() {
         }
     }
 
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
+    }
+
     fun isValidInput(): Boolean {
         val eatCountText = binding.etEatCount.text.toString().trim()
         val eatUnitText = binding.tvEatUnit.text.toString().trim()
+        val eatCount = eatCountText.toIntOrNull()
 
-        // 입력값이 모두 비어있지 않은지 확인
-        return eatCountText.isNotEmpty() && eatCountText.toIntOrNull() != null && eatUnitText.isNotEmpty()
+        return eatCount != null && eatCount > 0 && eatUnitText.isNotEmpty()
     }
 
     override fun onDestroyView() {

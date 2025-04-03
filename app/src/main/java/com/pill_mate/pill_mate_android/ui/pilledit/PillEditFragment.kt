@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.ui.pilledit
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillEditBinding
+import com.pill_mate.pill_mate_android.medicine_edit.MedicineEditActivity
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
 
 class PillEditFragment : Fragment() {
+    private var _binding: FragmentPillEditBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
@@ -58,9 +62,19 @@ class PillEditFragment : Fragment() {
         (activity as? MainActivity)?.setDefaultStatusBar()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.ivNone.setOnClickListener {
+            val intent = Intent(requireContext(), MedicineEditActivity::class.java).apply {
+                putExtra("ITEM_SEQ", "200200720") // 임의의 itemSeq 값 전달
+            }
+            startActivity(intent)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -7,12 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.pill_mate.pill_mate_android.R
-import com.pill_mate.pill_mate_android.databinding.FragmentPillRegistrationDialogBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentAlarmSwitchDialogBinding
 
 class AlarmSwitchDialogFragment : DialogFragment() {
 
-    private var _binding: FragmentPillRegistrationDialogBinding? = null
+    private var _binding: FragmentAlarmSwitchDialogBinding? = null
     private val binding get() = _binding!!
 
     interface AlarmSwitchDialogListener {
@@ -27,7 +26,7 @@ class AlarmSwitchDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentPillRegistrationDialogBinding.inflate(inflater, container, false)
+        _binding = FragmentAlarmSwitchDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -38,10 +37,6 @@ class AlarmSwitchDialogFragment : DialogFragment() {
     }
 
     private fun setupUI() {
-        binding.ivWarning.setImageResource(R.drawable.ic_warning)
-        binding.tvTitle.text = "복약 알림을 권장드려요!"
-        binding.tvMessage1.text = "약물을 제시간에 섭취할 수 있도록 도울게요."
-
         binding.btnCancel.text = "아니요"
         binding.btnCancel.setOnClickListener {
             listener?.onDialogNegativeClick()
