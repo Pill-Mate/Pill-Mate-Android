@@ -9,9 +9,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillEditBinding
+import com.pill_mate.pill_mate_android.medicine_edit.MedicineEditActivity
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
 
 class PillEditFragment : Fragment() {
+    private var _binding: FragmentPillEditBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout

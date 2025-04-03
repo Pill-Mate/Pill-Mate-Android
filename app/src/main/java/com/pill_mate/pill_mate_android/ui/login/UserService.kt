@@ -14,3 +14,8 @@ interface OnBoardingService {
     @POST("/api/v1/auth/onboarding")
     fun sendOnBoardingData(@Body onBoardingData: OnBoardingData): Call<Void>
 }
+
+interface RefreshTokenService {
+    @POST("/api/v1/auth/reissue")
+    fun reissue(@Body refreshTokenData: RefreshTokenData): Call<ResponseRefreshToken>
+}
