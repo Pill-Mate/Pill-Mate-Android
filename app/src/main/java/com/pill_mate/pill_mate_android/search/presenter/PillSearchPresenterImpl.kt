@@ -67,16 +67,26 @@ class PillSearchPresenterImpl(
     }
 
     private fun filterPillIdntfc(pills: List<PillIdntfcItem>, query: String): List<PillIdntfcItem> {
-        val startsWithQuery = pills.filter { it.ITEM_NAME?.startsWith(query, ignoreCase = true) == true }
-        val containsQuery = pills.filter { it.ITEM_NAME?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
-        return (startsWithQuery + containsQuery).take(20)
+        val queryLower = query.lowercase()
+        val (startsWith, remaining) = pills.partition {
+            it.ITEM_NAME?.lowercase()?.startsWith(queryLower) == true
+        }
+        val contains = remaining.filter {
+            it.ITEM_NAME?.lowercase()?.contains(queryLower) == true
+        }
+        return (startsWith + contains).take(20)
     }
 
     private fun <T : Searchable> filterResults(items: List<T>?, query: String): List<T> {
         if (items.isNullOrEmpty()) return emptyList()
 
-        val startsWithQuery = items.filter { it.getName()?.startsWith(query, ignoreCase = true) == true }
-        val containsQuery = items.filter { it.getName()?.contains(query, ignoreCase = true) == true && it !in startsWithQuery }
-        return (startsWithQuery + containsQuery).take(20)
+        val queryLower = query.lowercase()
+        val (startsWith, remaining) = items.partition {
+            it.getName()?.lowercase()?.startsWith(queryLower) == true
+        }
+        val contains = remaining.filter {
+            it.getName()?.lowercase()?.contains(queryLower) == true
+        }
+        return (startsWith + contains).take(20)
     }
 }

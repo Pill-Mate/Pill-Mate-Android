@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchBottomSheetBinding
@@ -26,6 +27,10 @@ import com.pill_mate.pill_mate_android.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 class SearchBottomSheetFragment(
     private val searchType: SearchType,
@@ -38,6 +43,7 @@ class SearchBottomSheetFragment(
     private lateinit var adapter: SearchAdapter
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private var currentQuery: String = ""
+    private val searchQueryFlow = MutableStateFlow("")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -151,12 +157,23 @@ class SearchBottomSheetFragment(
                 if (currentQuery.isEmpty()) {
                     updateRecentSearches()
                 } else {
-                    presenter.search(currentQuery, searchType)
+                    searchQueryFlow.value = currentQuery
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        lifecycleScope.launch {
+            searchQueryFlow
+                .debounce(300) // 300ms 동안 입력이 없을 때만 검색 실행
+                .distinctUntilChanged() // 동일한 검색어 반복 요청 방지
+                .collect { query ->
+                    if (query.isNotEmpty()) {
+                        presenter.search(query, searchType)
+                    }
+                }
+        }
     }
 
     private fun updateUnderline(colorRes: Int) {

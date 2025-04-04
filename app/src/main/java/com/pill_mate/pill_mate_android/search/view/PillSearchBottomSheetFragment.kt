@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
@@ -27,6 +28,11 @@ import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 class PillSearchBottomSheetFragment(
     private val stepTwoView: StepTwoView, // StepTwoView를 인자로 받음
@@ -39,6 +45,7 @@ class PillSearchBottomSheetFragment(
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
     private lateinit var adapter: PillIdntfcAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
+    private val searchQueryFlow = MutableStateFlow("")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,12 +144,24 @@ class PillSearchBottomSheetFragment(
                     binding.rvSuggestion.visibility = View.GONE
                 } else {
                     currentQuery = text.toString() // 검색어 업데이트
-                    pillSearchPresenter.searchPills(currentQuery) // 검색 요청
+                    searchQueryFlow.value = currentQuery // 사용자의 입력 값을 Flow에 업데이트
                 }
             }
 
             override fun afterTextChanged(text: Editable?) {}
         })
+
+        lifecycleScope.launch {
+            searchQueryFlow
+                .debounce(300) // 300ms 동안 추가 입력이 없을 때만 실행
+                .distinctUntilChanged() // 같은 검색어 연속 입력 방지
+                .filter { it.isNotEmpty() } // 빈 검색어는 처리 안 함
+                .collect { query ->
+                    val underlineColor = if (query.isNotEmpty()) R.color.main_blue_1 else R.color.black
+                    updateUnderline(underlineColor)
+                    pillSearchPresenter.searchPills(query) // 최적화된 검색 실행
+                }
+        }
     }
 
     private fun updateUnderline(colorRes: Int) {
