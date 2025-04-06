@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
@@ -105,6 +107,11 @@ class MedicineEditActivity : AppCompatActivity() {
 
         binding.apply {
             // 기본 정보
+            Glide.with(ivImage.context)
+                .load(info.medicineImage)
+                .transform(RoundedCorners(8))
+                .error(R.drawable.img_default)
+                .into(ivImage)
             tvPillName.text = info.medicineName
             tvClassName.text = info.className
             tvCompanyName.text = info.entpName
@@ -112,7 +119,7 @@ class MedicineEditActivity : AppCompatActivity() {
             // 복약 정보 매핑
             intakeFrequency = info.intakeFrequencys.mapNotNull { TranslationUtil.translateDayToKorean(it) }
             intakeCount = info.intakeCounts.mapNotNull { TranslationUtil.translateTimeToKorean(it) }
-            intakeTime = info.intakeTimes.toList()
+            intakeTime = info.intakeTimes
             mealUnit = TranslationUtil.translateMealUnitToKorean(info.mealUnit ?: "")
             mealTime = info.mealTime
             eatCount = info.eatCount
@@ -124,7 +131,7 @@ class MedicineEditActivity : AppCompatActivity() {
             isAlarmOn = info.isAlarm
 
             // UI에 표시
-            tvDay.text = intakeFrequency.joinToString(", ")
+            tvDay.text = TranslationUtil.translateDayToKorean(info.intakeFrequencys)
             // N회 (공복, 아침, 점심, 저녁, 취침전) 형식으로 표시
             val count = intakeCount.size
             val selectedTimesText = intakeCount.joinToString(", ")
@@ -159,8 +166,8 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun updateIntakeScheduleUI() {
-        val intakeCounts = intakeCount.toSet()
-        val intakeTimes = intakeTime.toSet()
+        val intakeCounts = intakeCount
+        val intakeTimes = intakeTime
 
         Log.d("updateIntakeScheduleUI", "intakeCounts: $intakeCounts")
         Log.d("updateIntakeScheduleUI", "intakeTimes: $intakeTimes")
@@ -190,8 +197,8 @@ class MedicineEditActivity : AppCompatActivity() {
         labelView: TextView,
         timeView: TextView,
         intakeType: String,
-        intakeCounts: Set<String>,
-        intakeTimes: Set<String>
+        intakeCounts: List<String>,
+        intakeTimes: List<String>
     ): Boolean {
         val intakeCountsList = intakeCounts.toList()
         val intakeTimesList = intakeTimes.toList()
@@ -217,8 +224,8 @@ class MedicineEditActivity : AppCompatActivity() {
         layout: View,
         textView: TextView,
         intakeType: String,
-        intakeCounts: Set<String>,
-        intakeTimes: Set<String>,
+        intakeCounts: List<String>,
+        intakeTimes: List<String>,
         visibleLayouts: MutableList<String>
     ) {
         val intakeCountsList = intakeCounts.toList()
@@ -255,7 +262,7 @@ class MedicineEditActivity : AppCompatActivity() {
             }
         }
 
-        intakeTime = updatedTimes.toList() // 리스트 반영
+        intakeTime = updatedTimes
         updateIntakeScheduleUI() // UI 업데이트 실행
         Log.d("updateIntakeTimes", "Updated intakeTimes: $intakeTime")
     }
@@ -552,9 +559,9 @@ class MedicineEditActivity : AppCompatActivity() {
                 entpName = binding.tvCompanyName.text.toString(),
 
                 // 변환 적용 (한국어 → 영어)
-                intakeCounts = intakeCount.mapNotNull { TranslationUtil.translateTimeToEnglish(it) }.toSet(),
-                intakeTimes = intakeTime.toSet(),
-                intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten().toSet(),
+                intakeCounts = intakeCount.mapNotNull { TranslationUtil.translateTimeToEnglish(it) },
+                intakeTimes = intakeTime,
+                intakeFrequencys = intakeFrequency.mapNotNull { TranslationUtil.translateDayToEnglish(it) }.flatten(),
                 mealUnit = mealUnit?.let { TranslationUtil.translateMealUnitToEnglish(it) },
                 mealTime = mealTime,
                 eatUnit = binding.tvEatUnit.text.toString().let { TranslationUtil.translateEatUnitToEnglish(it) ?: it },

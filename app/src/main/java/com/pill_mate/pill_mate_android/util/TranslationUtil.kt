@@ -26,6 +26,20 @@ object TranslationUtil {
         .filter { it.value !is List<*> }
         .associate { it.value as String to it.key }
 
+    // 요일 변환 함수
+    fun translateDayToKorean(days: List<String>): String {
+        // 모든 요일 리스트
+        val allDaysInEnglish = listOf("SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
+
+        // 서버에서 받은 요일 리스트가 모든 요일을 포함하면 '매일' 반환
+        return if (days.containsAll(allDaysInEnglish) && days.size == allDaysInEnglish.size) {
+            "매일"
+        } else {
+            // 개별 요일을 한글로 변환 후 반환
+            days.mapNotNull { dayToKoreanMap[it] }.joinToString(", ")
+        }
+    }
+
     // 투약 단위
     private val eatUnitToEnglishMap = mapOf(
         "정(개)" to "JUNG",
