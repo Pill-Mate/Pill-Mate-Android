@@ -25,7 +25,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
 
     private var _binding: FragmentSettingRoutineBottomDialogBinding? = null
     private val binding get() = _binding ?: error("binding not initialized")
-    private val minValues = arrayOf("00", "10", "20", "30", "40")
+    private val minValues = arrayOf("00", "10", "20", "30", "40", "50")
     private val amPmValues = arrayOf("오전", "오후")
     private var currentOpenPicker: Int = 1 // 현재 열려 있는 타임피커 ID, 초기값은 기상 타임피커
 
@@ -179,13 +179,11 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
     }
 
     private fun setTimePickerVisibility(pickerId: Int) {
-        with(binding) {
-            showWakeUpTimePicker(pickerId == 1)
-            showSleepTimePicker(pickerId == 2)
-            showBreakfastTimePicker(pickerId == 3)
-            showLunchTimePicker(pickerId == 4)
-            showDinnerTimePicker(pickerId == 5)
-        }
+        showWakeUpTimePicker(pickerId == 1)
+        showSleepTimePicker(pickerId == 2)
+        showBreakfastTimePicker(pickerId == 3)
+        showLunchTimePicker(pickerId == 4)
+        showDinnerTimePicker(pickerId == 5)
         currentOpenPicker = pickerId // 현재 열려 있는 타임피커 업데이트
     }
 
