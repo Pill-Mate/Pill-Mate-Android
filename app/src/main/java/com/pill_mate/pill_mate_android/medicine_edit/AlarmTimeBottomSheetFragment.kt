@@ -46,8 +46,19 @@ class AlarmTimeBottomSheetFragment(
         )
 
         initView()
+        updateUI()
+
         setupDropDownButtonListeners()
         onDoneButtonClick()
+    }
+
+    private fun updateUI() {
+        if (showFastingPicker) setTime(
+            wakeupTime, binding.tvWakeupTime, binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1
+        )
+        if (showBedtimePicker) setTime(
+            bedTime, binding.tvSleepTime, binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2
+        )
     }
 
     private fun setTime(
@@ -75,13 +86,6 @@ class AlarmTimeBottomSheetFragment(
         binding.layoutTpWakeup.visibility = if (showFastingPicker) View.VISIBLE else View.GONE
         binding.layoutTvSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
         binding.layoutTpSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
-
-        if (showFastingPicker) setTime(
-            wakeupTime, binding.tvWakeupTime, binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1
-        )
-        if (showBedtimePicker) setTime(
-            bedTime, binding.tvSleepTime, binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2
-        )
 
         setTimePickerVisibility(
             when {
