@@ -9,6 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -16,10 +20,6 @@ import com.pill_mate.pill_mate_android.databinding.ActivityKakaoLoginBinding
 import com.pill_mate.pill_mate_android.ui.login.KaKaoTokenData
 import com.pill_mate.pill_mate_android.ui.login.ResponseToken
 import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,7 +53,7 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                saveAccessToken(token.accessToken) // 토큰 저장
+                saveAccessToken(token.accessToken) // 카카오 accessToken 저장(회원탈퇴 시 사용)
                 loginNetwork(token.accessToken)
             }
         }
@@ -101,7 +101,8 @@ class KakaoLoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     if (responseData?.jwtToken != null) {
-                        saveJwtToken(responseData.jwtToken)
+                        GlobalApplication.saveToken(responseData.jwtToken)
+                        GlobalApplication.saveRefreshToken(responseData.refreshToken)
 
                         Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
 
@@ -123,17 +124,6 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
-    }
-
-    // jwtToken 저장
-    private fun saveJwtToken(token: String) {
-        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("JWT_TOKEN", token)
-        editor.apply()
-
-        // GlobalApplication에 토큰 저장
-        GlobalApplication.getInstance()?.userToken = token
     }
 
     // 카카오 로그인 버튼 클릭 시
