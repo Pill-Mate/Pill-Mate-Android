@@ -47,13 +47,6 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
     private val expandedStates = mutableSetOf<Int>()
 
-    private val homeDataCache = object : LinkedHashMap<LocalDate, Pair<ResponseHome?, Long>>(CACHE_SIZE, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<LocalDate, Pair<ResponseHome?, Long>>?): Boolean {
-            return size > CACHE_SIZE || System.currentTimeMillis() - eldest!!.value.second > CACHE_EXPIRATION_TIME
-        }
-    }
-    private var isFetchingHomeData = false
-
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
     private lateinit var selectedDate: LocalDate
@@ -236,22 +229,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 홈 데이터 받아오기
     @RequiresApi(VERSION_CODES.O)
-    private fun fetchHomeData(selectedDate: LocalDate) { // 캐시된 데이터가 있을 경우
-        val currentTime = System.currentTimeMillis()
-
-        homeDataCache[selectedDate]?.let { (data, timestamp) ->
-            if (currentTime - timestamp < CACHE_EXPIRATION_TIME) {
-                Log.d("fetchHomeData", "캐시 데이터 사용: $selectedDate")
-                updateHomeUI(data!!)
-                return
-            }
-            homeDataCache.remove(selectedDate)
-        }
-
-        // 이미 네트워크 요청 중이라면 중복 호출 방지
-        if (isFetchingHomeData) return
-        isFetchingHomeData = true
-
+    private fun fetchHomeData(selectedDate: LocalDate) {
         val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
         val call: Call<ResponseHome> = ServiceCreator.homeService.getHomeData(homeData)
 
@@ -259,7 +237,6 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             override fun onResponse(
                 call: Call<ResponseHome>, response: Response<ResponseHome>
             ) {
-                isFetchingHomeData = false
                 if (response.isSuccessful) {
                     response.body()?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
                         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
@@ -270,7 +247,6 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         // 데이터를 그룹화하여 RecyclerView에 설정
                         setupIntakeCountRecyclerView(it)
 
-                        homeDataCache[selectedDate] = Pair(it, System.currentTimeMillis())
                         updateHomeUI(it)
 
                     }
@@ -280,7 +256,6 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             }
 
             override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
-                isFetchingHomeData = false
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
@@ -436,7 +411,5 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     companion object {
         const val DATE_PATTERN = "yyyy년 MM월"
-        private const val CACHE_SIZE = 10 // 최대 10개 날짜만 저장
-        private const val CACHE_EXPIRATION_TIME = 10 * 60 * 1000 // 10분 후 캐시 삭제
     }
 }
