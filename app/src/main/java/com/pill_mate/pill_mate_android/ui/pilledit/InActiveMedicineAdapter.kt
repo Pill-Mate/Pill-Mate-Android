@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemActiveInactiveMedicineBinding
 
@@ -48,8 +49,9 @@ class InActiveMedicineAdapter(
                 layoutBtn.visibility = View.GONE
             }
 
-            Glide.with(binding.imgMedicine.context).load(medicine.image).placeholder(R.drawable.img_default)
-                .into(binding.imgMedicine)
+            Glide.with(binding.imgMedicine.context).load(medicine.image).error(R.drawable.img_default).transform(
+                RoundedCorners(4)
+            ).placeholder(R.drawable.img_default).into(binding.imgMedicine)
 
             //binding.root.setOnClickListener(null)
 
