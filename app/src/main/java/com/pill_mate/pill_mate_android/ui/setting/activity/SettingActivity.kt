@@ -26,6 +26,7 @@ import com.pill_mate.pill_mate_android.ui.setting.ResponseRoutine
 import com.pill_mate.pill_mate_android.ui.setting.ResponseUserInfo
 import com.pill_mate.pill_mate_android.ui.setting.SettingRoutineBottomDialogFragment
 import com.pill_mate.pill_mate_android.ui.setting.dialog.LogoutDialog
+import com.pill_mate.pill_mate_android.ui.setting.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.ui.setting.dialog.SignoutDialog
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,6 +73,27 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
+    private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
+        val call: Call<ResponseRoutine> = ServiceCreator.getRoutineService.getRoutineData()
+
+        call.enqueue(object : Callback<ResponseRoutine> {
+            override fun onResponse(call: Call<ResponseRoutine>, response: Response<ResponseRoutine>) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    responseData?.let {
+                        onSuccess(it) // 성공 시 콜백 호출
+                    } ?: Log.e("데이터 오류", "개인루틴 데이터가 없습니다.")
+                } else {
+                    Log.e("서버 응답 에러", "에러: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseRoutine>, t: Throwable) {
+                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+            }
+        })
+    }
+
     private fun fetchUserInfoData() {
         val call: Call<ResponseUserInfo> = ServiceCreator.settingService.getUserInfoData()
 
@@ -111,6 +133,11 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         logOutDialog.show(supportFragmentManager, "LogoutDialog")
     }
 
+    private fun showSettingRoutineDialog() {
+        val settingRoutineDialog = SettingRoutineDialog(this)
+        settingRoutineDialog.show(supportFragmentManager, "SettingRoutineDialog")
+    }
+
     private fun setButtonClickListener() { // 뒤로 가기 버튼 클릭 시 -> 복약체크 페이지로 이동
         binding.btnBack.setOnClickListener {
             finish()
@@ -125,10 +152,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
 
         binding.btnPersonalRoutine.setOnClickListener {
-            fetchRoutineData { responseRoutine ->
-                val settingRoutineBottomDialogFragment = SettingRoutineBottomDialogFragment(responseRoutine)
-                settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
-            }
+            showSettingRoutineDialog()
         }
 
         binding.btnAboutPillmate.setOnClickListener {
@@ -208,27 +232,6 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         })
     }
 
-    private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
-        val call: Call<ResponseRoutine> = ServiceCreator.getRoutineService.getRoutineData()
-
-        call.enqueue(object : Callback<ResponseRoutine> {
-            override fun onResponse(call: Call<ResponseRoutine>, response: Response<ResponseRoutine>) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
-                        onSuccess(it) // 성공 시 콜백 호출
-                    } ?: Log.e("데이터 오류", "개인루틴 데이터가 없습니다.")
-                } else {
-                    Log.e("서버 응답 에러", "에러: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseRoutine>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
-    }
-
     private fun switchAlarmToggle() {
         val marketingToggle = binding.tgMarketingAlarm
         val infoToggle = binding.tgPillmateAlarm
@@ -288,6 +291,13 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     override fun onLogOutButtonClick() {
         logoutNetwork()
+    }
+
+    override fun onSettingRoutineButtonClick() {
+        fetchRoutineData { responseRoutine ->
+            val settingRoutineBottomDialogFragment = SettingRoutineBottomDialogFragment(responseRoutine)
+            settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
+        }
     }
 
 }
