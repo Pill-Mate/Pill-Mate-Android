@@ -45,11 +45,11 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         setupInputField()
 
-        // FragmentResultListener 설정 (약물 검색 결과를 받음)
-        setFragmentResultListener("pillSearchResultKey") { _, bundle ->
-            val selectedPillItem = bundle.getParcelable<PillIdntfcItem>("selectedPillItem")
-            selectedPillItem?.let {
-                handleSearchResult(it) // PillIdntfcItem 객체 전달
+        // YES 클릭했을 때만 약물 정보를 업데이트하도록 설정
+        setFragmentResultListener("pillConfirmResultKey") { _, bundle ->
+            val confirmedPillItem = bundle.getParcelable<PillIdntfcItem>("confirmedPillItem")
+            confirmedPillItem?.let {
+                handleSearchResult(it) // YES 클릭한 경우에만 업데이트
             }
         }
     }
@@ -67,24 +67,45 @@ class StepTwoFragment : Fragment(), StepTwoView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 presenter.handleTextChange(s.toString())
+                updateClearButtonVisibility(s)
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        binding.ivClear.setOnClickListener {
+            binding.etPillName.text?.clear()
+            updateClearButtonVisibility(null)
+
+            // Schedule의 약물 정보 초기화
+            registrationPresenter.updateSchedule { schedule ->
+                schedule.copy(
+                    medicine_name = "",
+                    medicine_id = 0
+                )
+            }
+        }
+
+        // 초기 상태 설정
+        updateClearButtonVisibility(binding.etPillName.text)
     }
 
     private fun openPillSearchBottomSheet() {
-        // 부모 Fragment를 정확하게 찾는 방법
         val medicineRegistrationFragment = (parentFragment?.parentFragment as? MedicineRegistrationFragment)
             ?: (requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment)
 
         if (medicineRegistrationFragment != null) {
             val bottomSheetFragment = PillSearchBottomSheetFragment.newInstance(
-                this,
-                medicineRegistrationFragment
+                this, medicineRegistrationFragment
             )
+
+            // 바텀시트가 닫힐 때 EditText 포커스 해제
+            bottomSheetFragment.setOnDismissListener {
+                Log.d("StepTwoFragment", "PillSearchBottomSheet dismissed, clearing focus.")
+                binding.etPillName.clearFocus()
+            }
+
             bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
         } else {
-            // 부모 Fragment를 찾을 수 없는 경우 처리
             Log.e("StepTwoFragment", "Could not find MedicineRegistrationFragment")
         }
     }
@@ -111,14 +132,20 @@ class StepTwoFragment : Fragment(), StepTwoView {
     override fun updatePillName(pillName: String) {
         binding.etPillName.setText(pillName)
         binding.etPillName.clearFocus() // 포커스 해제
+        updateClearButtonVisibility(pillName)
+    }
+
+    private fun updateClearButtonVisibility(text: CharSequence?) {
+        binding.ivClear.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun updateButtonState(isEnabled: Boolean) {
-        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isEnabled)
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isEnabled)
     }
 
     fun isValidInput(): Boolean {
-        return binding.etPillName.text.isNotEmpty()
+        return binding.etPillName.text.toString().isNotEmpty()
     }
 
     override fun onDestroyView() {

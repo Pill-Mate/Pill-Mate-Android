@@ -10,8 +10,8 @@ data class MedicineRegisterRequest(
     val identifyNumber: String,
     val medicineName: String,
     val ingredient: String,
-    val ingredientUnit: String, // MG, ML 등
-    val ingredientAmount: Float,
+    val ingredientUnit: String?, // MG, ML 등
+    val ingredientAmount: Float?,
     val medicineImage: String?, // URI 대신 String으로 변경
     val entpName: String,
     val classname: String,
@@ -22,8 +22,8 @@ data class MedicineRegisterRequest(
     val medicineId: Long,
     val intakeCounts: Set<String>, // 복용 시간
     val intakeFrequencys: Set<String>, // 복용 요일
-    val mealUnit: String, // MEALBEFORE, MEALAFTER 등
-    val mealTime: Int,
+    val mealUnit: String?, // MEALBEFORE, MEALAFTER 등
+    val mealTime: Int?,
     val eatUnit: String, // JUNG, ML 등
     val eatCount: Int,
     val startDate: String, // ISO 8601 형식
@@ -34,15 +34,15 @@ data class MedicineRegisterRequest(
 )
 
 data class Hospital(
-    val hospitalName: String,
-    val hospitalAddress: String,
-    val hospitalPhone: String
+    val hospitalName: String = "",
+    val hospitalAddress: String = "",
+    val hospitalPhone: String = ""
 )
 
 data class Pharmacy(
-    val pharmacyName: String,
-    val pharmacyAddress: String,
-    val pharmacyPhone: String
+    val pharmacyName: String = "",
+    val pharmacyAddress: String = "",
+    val pharmacyPhone: String = ""
 )
 
 data class Medicine(
@@ -69,7 +69,7 @@ data class Schedule(
     val eat_count: Int = 0,             // 1회 투여량
     val start_date: String = "",        // 복용 시작일 (yyyy-MM-dd)
     val intake_period: Int = 0,         // 복용 기간 (일 단위)
-    val medicine_unit: String = "",     // 1회 투여 용량 단위
+    val medicine_unit: String = "SKIP",     // 1회 투여 용량 단위
     val medicine_volume: Float = 0.0f,  // 1회 투여 용량 (0.45mg)
     val is_alarm: Boolean = true,      // 알람 여부
     val caution_types: String = ""      // 주의 사항 (복용주의 타입)

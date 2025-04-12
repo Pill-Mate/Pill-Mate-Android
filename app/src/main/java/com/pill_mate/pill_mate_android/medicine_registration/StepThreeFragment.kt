@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +15,15 @@ class StepThreeFragment : Fragment() {
     private var _binding: FragmentStepThreeBinding? = null
     private val binding get() = _binding!!
 
-    // 요일 순서 고정 (일 > 월 > 화 > 수 > 목 > 금 > 토)
-    private val dayOrder = listOf("일", "월", "화", "수", "목", "금", "토")
-    private val dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
+    private val dayOrder = listOf(
+        R.string.day_sunday, R.string.day_monday, R.string.day_tuesday,
+        R.string.day_wednesday, R.string.day_thursday, R.string.day_friday,
+        R.string.day_saturday
+    )
 
-    private var selectedDays = listOf<String>()
+    private lateinit var dayOrderMap: Map<String, Int>
+    private lateinit var selectedDays: List<String>
+
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
     override fun onCreateView(
@@ -38,29 +43,38 @@ class StepThreeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDaySelection()
+
+        dayOrderMap = dayOrder.withIndex().associate { getString(it.value) to it.index }
+
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedDays = if (currentSchedule.intake_frequency.isNotEmpty()) {
+            if (currentSchedule.intake_frequency == getString(R.string.three_everyday)) {
+                dayOrder.map { getString(it) }
+            } else {
+                currentSchedule.intake_frequency.split(", ")
+            }
+        } else {
+            dayOrder.map { getString(it) }
+        }
+
+        // UI에 반영
+        updateSelectedDaysText(selectedDays)
+
+        // 레포지토리에 저장
+        saveSelectedDays(selectedDays)
+
         updateNextButtonState()
     }
 
     private fun setupDaySelection() {
         binding.layoutDay.setOnClickListener {
             val bottomSheetFragment = DaySelectionBottomSheetFragment(selectedDays) { newSelectedDays ->
-                // 사용자가 선택한 요일을 업데이트
                 selectedDays = newSelectedDays
 
-                // 요일을 정렬합니다.
                 val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
-
-                // 선택한 요일을 TextView에 반영
                 updateSelectedDaysText(sortedDays)
+                saveSelectedDays(sortedDays)
 
-                // Presenter에 Schedule 데이터를 업데이트 요청
-                registrationPresenter.updateSchedule { schedule ->
-                    schedule.copy(
-                        intake_frequency = if (sortedDays.size == 7) "매일" else sortedDays.joinToString(", ")
-                    )
-                }
-
-                // 다음 버튼 활성화/비활성화 상태를 갱신합니다.
                 updateNextButtonState()
             }
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
@@ -68,21 +82,26 @@ class StepThreeFragment : Fragment() {
     }
 
     private fun updateSelectedDaysText(selectedDays: List<String>) {
-        // 선택된 요일을 고정된 순서로 정렬합니다.
         val sortedDays = selectedDays.sortedBy { dayOrderMap[it] ?: Int.MAX_VALUE }
-
-        // TextView에 표시할 내용을 결정합니다.
         binding.tvDay.text = when {
-            sortedDays.size == 7 -> "매일"
+            sortedDays.size == 7 -> getString(R.string.three_everyday)
             sortedDays.isEmpty() -> ""
             else -> sortedDays.joinToString(", ")
         }
     }
 
+    private fun saveSelectedDays(days: List<String>) {
+        val formattedDays = if (days.size == 7) getString(R.string.three_everyday) else days.joinToString(", ")
+
+        registrationPresenter.updateSchedule { schedule ->
+            schedule.copy(intake_frequency = formattedDays)
+        }
+    }
+
     private fun updateNextButtonState() {
-        // 선택된 요일이 하나 이상일 때만 다음 버튼이 활성화
         val isInputValid = selectedDays.isNotEmpty()
-        (requireActivity() as? MedicineRegistrationFragment)?.updateNextButtonState(isInputValid)
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
     }
 
     fun isValidInput(): Boolean {

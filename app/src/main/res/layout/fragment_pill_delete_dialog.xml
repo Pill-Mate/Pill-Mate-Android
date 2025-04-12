@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="320dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:minHeight="250dp"
     android:orientation="vertical"
     android:paddingVertical="20dp"
     android:paddingHorizontal="16dp"
@@ -10,21 +12,18 @@
 
     <ImageView
         android:id="@+id/iv_warning"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_warning_pink"
-        android:contentDescription="경고 아이콘" />
+        android:src="@drawable/ic_warning_pink" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="등록된 약물을 삭제하시겠어요?"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp"
+        android:text="@string/pill_delete_title"
+        android:textColor="@color/black"
+        style="@style/H1_B18"
         android:gravity="center" />
 
     <LinearLayout
@@ -39,9 +38,10 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="취소"
+            android:text="@string/pill_delete_btn_cancel"
             android:stateListAnimator="@null"
             android:textColor="@color/black"
+            style="@style/H2_MD16"
             android:background="@drawable/bg_btn_gray_2_stoke" />
 
         <Button
@@ -49,10 +49,10 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="삭제하기"
+            android:text="@string/pill_delete_btn_delete"
             android:stateListAnimator="@null"
             android:textColor="@color/white"
+            style="@style/H2_MD16"
             android:background="@drawable/bg_btn_pink_1" />
     </LinearLayout>
-
 </LinearLayout>

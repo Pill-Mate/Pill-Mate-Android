@@ -12,26 +12,210 @@
     <string name="pill_search">검색</string>
     <string name="my_page">마이</string>
 
-    <!-- SearchBottomSheetFragment -->
+    <!--SearchBottomSheetFragment-->
     <string name="search_pharmacy">약국 검색</string>
     <string name="search_hospital">병원 검색</string>
 
     <string name="enter_pharmacy_name">약국명을 입력하세요</string>
     <string name="enter_hospital_name">병원명을 입력하세요</string>
 
-    <!-- PillSearchBottomSheetFragment -->
+    <!--PillSearchBottomSheetFragment-->
     <string name="search_pill">약물 검색</string>
     <string name="enter_pill_name">약물명을 입력하세요</string>
 
+    <!--fragment_exit_registration_dialog-->
+    <string name="exit_registration_title">약물 등록을 종료하시나요?</string>
+    <string name="exit_registration_message">지금 종료하면 입력하신 내용이 사라져요.</string>
+    <string name="exit_registration_confirm">계속하기</string>
+    <string name="exit_registration_cancel">종료</string>
+
+    <!--fragment_pill_delete_dialog-->
+    <string name="pill_delete_title">스케줄에 등록된 약물을\n삭제하시겠어요?</string>
+    <string name="pill_delete_btn_cancel">취소</string>
+    <string name="pill_delete_btn_delete">삭제하기</string>
+
+    <!--fragment_alarm_switch_dialog-->
+    <string name="alarm_switch_title">복약 알림을 권장드려요!</string>
+    <string name="alarm_switch_message">약물을 제시간에 섭취할 수 있도록 도울게요.</string>
+    <string name="alarm_switch_cancel">아니요</string>
+    <string name="alarm_switch_confirm">네, 설정할게요</string>
+
+    <!--fragment_bottom_sheet_pill_detail-->
+    <string name="pill_detail_title">등록하려는 약물이 맞나요?</string>
+    <string name="pill_detail_class_name">약물분류명</string>
+    <string name="pill_detail_pill_name">약물 이름</string>
+    <string name="pill_detail_company_name">제약회사(주)</string>
+    <string name="pill_detail_confirm">맞아요</string>
+    <string name="pill_detail_cancel">아니에요</string>
+
+    <!--fragment_search_bottom_sheet-->
+    <string name="search_bottom_sheet_title">약국 검색</string>
+    <string name="search_bottom_sheet_et">약국명을 입력하세요</string>
+    <string name="search_bottom_sheet_recent">최근 검색어</string>
+    <string name="search_bottom_sheet_clear_all">전체 삭제</string>
+
+    <!--fragment_bottom_sheet_select_days-->
+    <string name="select_days_title">요일을 선택해주세요</string>
+    <string name="day_sunday">일</string>
+    <string name="day_monday">월</string>
+    <string name="day_tuesday">화</string>
+    <string name="day_wednesday">수</string>
+    <string name="day_thursday">목</string>
+    <string name="day_friday">금</string>
+    <string name="day_saturday">토</string>
+    <string name="select_days_confirm">선택</string>
+
+    <!--fragment_bottom_sheet_select_times-->
+    <string name="select_times_title">1일 복용횟수를 선택해주세요</string>
+    <string name="time_empty">공복</string>
+    <string name="time_morning">아침</string>
+    <string name="time_lunch">점심</string>
+    <string name="time_dinner">저녁</string>
+    <string name="time_before_sleep">취침전</string>
+    <string name="select_times_confirm">%1$d회 선택</string>
+
+    <!--fragment_bottom_sheet_check-->
+    <string name="select_confirm">선택</string>
+    <string name="select_meal_time">복용 시간대를 선택하세요</string>
+    <string name="select_dosage_unit">투약 단위를 선택해주세요</string>
+    <string name="select_volume_unit">투약 단위를 선택하세요</string>
+    <string name="meal_time_before_meal">식전</string>
+    <string name="meal_time_after_meal">식후</string>
+    <string name="dosage_unit_tablet">정(개)</string>
+    <string name="dosage_unit_capsule">캡슐</string>
+    <string name="dosage_unit_ml">ml</string>
+    <string name="dosage_unit_packet">포</string>
+    <string name="dosage_unit_injection">주사</string>
+    <string name="volume_unit_mg">mg</string>
+    <string name="volume_unit_mcg">mcg</string>
+    <string name="volume_unit_g">g</string>
+    <string name="volume_unit_ml">ml</string>
+
+    <!--fragment_bottom_sheet_calendar-->
+    <string name="calendar_title">복약 시작일</string>
+    <string name="calendar_month_year_format">%1$d년 %2$d월</string>
+
+    <!--fragment_bottom_sheet_confirm-->
+    <string name="confirm_title">입력하신 정보가 맞나요?</string>
+
+    <!--fragment_bottom_sheet_inquiry-->
+    <string name="inquiry_title">처방받은 약국, 병원에서\n확인해보세요</string>
+    <string name="inquiry_subtitle">복용하는 약물에 대한 정확한 정보가 중요해요.</string>
+    <string name="pharmacy_name">약국명</string>
+    <string name="pharmacy_address">약국 주소</string>
+    <string name="hospital_name">병원명</string>
+    <string name="hospital_address">병원 주소</string>
+    <string name="btn_call">통화</string>
+
+    <!--fragment_medicine_registration-->
+    <string name="medicine_registration_title">약물등록</string>
+    <string name="medicine_registration_next">다음</string>
+    <string name="medicine_registration_skip">건너뛰기</string>
+
+    <!--StepOneFragment-->
+    <string name="one_title">처방받은 약국, 병원의 정보를\n등록해주세요</string>
+    <string name="one_sub_title">등록되어 있는 약물과 성분 충돌시,\n해당 정보를 통해 손쉽게 연락이 가능해요</string>
+    <string name="one_tv_pharmacy">약국(필수)</string>
+    <string name="one_et_pharmacy">약국 검색</string>
+    <string name="one_tv_hospital">병원</string>
+    <string name="one_et_hospital">병원 검색</string>
+    <string name="one_warning">처방받은 약국을 등록해주세요.</string>
+
+    <!--StepTwoFragment-->
+    <string name="two_title">어떤 약물을 등록할까요?</string>
+    <string name="two_et_pill">약물 검색</string>
 
     <!--StepThreeFragment-->
-    <string name="everyday">매일</string>
+    <string name="three_title">복용 요일을 알려주세요</string>
+    <string name="three_everyday">매일</string>
 
     <!--StepFourFragment-->
-    <string name="enter_time">1일 몇 회 복용하나요?</string>
-    <string name="selected_none">0회 선택</string>
-    <string name="selected_time">%1$d회 (%2$s)</string>
-    <string name="selected_count">%1$d회</string>
+    <string name="four_title">복용 횟수를 알려주세요</string>
+    <string name="four_et_count">1일 몇 회 복용하나요?</string>
+    <string name="four_selected_time">%1$d회</string>
+
+    <!--StepFiveFragment-->
+    <string name="five_title">복용 시간대를 알려주세요</string>
+    <string name="five_meal_unit_after">식후</string>
+    <string name="five_enter_minutes">분</string>
+    <string name="five_default_minutes">30</string>
+    <string name="five_when_taking">복용시</string>
+
+    <!--StepSixFragment-->
+    <string name="six_title">1회 투약량을 알려주세요</string>
+    <string name="six_default_count">1</string>
+
+    <!--StepSevenFragment-->
+    <string name="seven_title">복약 기간을 알려주세요</string>
+    <string name="seven_start_date_label">시작일</string>
+    <string name="seven_period_label">복약일수</string>
+    <string name="seven_enter_hint">숫자입력</string>
+    <string name="seven_end_date_chip">종료일: %s</string>
+
+    <!--StepEightFragment-->
+    <string name="eight_title">1회 투여용량을 알려주세요</string>
+    <string name="eight_volume_label">투여용량</string>
+    <string name="eight_unit_label">단위</string>
+    <string name="eight_tv_medicine_unit">단위선택</string>
+
+    <!-- StepNineFragment -->
+    <string name="nine_title">복약 스케줄을 생성했어요!</string>
+    <string name="nine_pill_title">등록중인 약물</string>
+    <string name="nine_pill_dose">2정</string>
+    <string name="nine_schedule_title">복약 스케줄</string>
+    <string name="nine_alarm_setting">복약 알림 설정</string>
+    <string name="nine_register_btn">등록</string>
+    <string name="am">오전</string>
+    <string name="pm">오후</string>
+    <string name="nine_no_medicine">약물 없음</string>
+    <string name="nine_time_not_registered">등록되지 않음</string>
+    <string name="nine_registration_data_insufficient">등록에 필요한 데이터가 부족합니다.</string>
+    <string name="nine_registration_failed">등록에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="nine_network_error">네트워크 오류가 발생했습니다.</string>
+
+    <!-- StepTenFragment -->
+    <string name="ten_title">더 등록할 약물이 있나요?</string>
+    <string name="ten_btn_yes">네, 있어요</string>
+    <string name="ten_btn_no">없어요</string>
+
+    <!-- StepElevenFragment -->
+    <string name="eleven_title">복약 스케줄 등록 완료!</string>
+    <string name="eleven_btn_home">홈으로</string>
+
+
+    <!-- StepLoadingFragment -->
+    <string name="loading_title">복약 스케줄을 만들고 있어요!</string>
+    <string name="loading_subtitle">메이트님의 스케줄을 고려한\n복약 스케줄을 생성중이에요</string>
+
+    <!-- fragment_loading_conflict -->
+    <string name="loading_conflict_title">복용하는 약물과\n충돌하는 성분을 발견했어요</string>
+    <string name="loading_conflict_btn">확인하기</string>
+
+    <!-- fragment_medicine_conflict -->
+    <string name="medicine_conflict_title">복약중인 %1$d개의 약물과\n충돌성분이 발견 됐어요</string>
+    <string name="medicine_conflict_registration_in_progress">등록중인 약물</string>
+    <string name="medicine_conflict_currently_taking">복용중인 약물</string>
+    <string name="medicine_conflict_contraindication">병용금기</string>
+    <string name="medicine_conflict_efficiency_overlap">효능군 중복</string>
+    <string name="medicine_conflict_btn_skip">건너뛰기</string>
+    <string name="medicine_conflict_btn_finish">등록 종료하기</string>
+    <string name="medicine_conflict_btn_inquiry">약국 문의</string>
+    <string name="medicine_conflict_delete_success">약물을 삭제했어요.</string>
+    <string name="medicine_conflict_delete_error">약물 삭제에 실패했어요.</string>
+    <string name="medicine_conflict_no_medicine">약물 없음</string>
+
+    <!--fragment_medicine_edit-->
+    <string name="medicine_edit_title">약물수정</string>
+    <string name="medicine_edit_btn">완료</string>
+    <string name="medicine_edit_label_intake_frequency">복용요일</string>
+    <string name="medicine_edit_label_intake_count">복용횟수</string>
+    <string name="medicine_edit_label_meal">복용 시간대</string>
+    <string name="medicine_edit_label_eat">1회 투약량</string>
+    <string name="medicine_edit_label_intake_period">복약기간</string>
+    <string name="medicine_edit_label_medicine_volume">1회 투여용량</string>
+    <string name="medicine_edit_warning_minutes">복용 시간대를 입력해주세요</string>
+    <string name="medicine_edit_warning_eat_count">1회 투약량을 입력해주세요</string>
+    <string name="medicine_edit_warning_period">복약 일수를 입력해주세요</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

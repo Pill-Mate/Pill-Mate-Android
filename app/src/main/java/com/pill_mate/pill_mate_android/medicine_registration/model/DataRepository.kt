@@ -1,7 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_registration.model
 
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
-import com.pill_mate.pill_mate_android.util.TimeTranslationUtil
+import com.pill_mate.pill_mate_android.util.TranslationUtil
 
 object DataRepository {
     var hospitalData: Hospital? = null
@@ -56,41 +56,41 @@ object DataRepository {
             val formattedStartDate = DateConversionUtil.toIso8601(schedule.start_date) ?: return null
             val intakeCounts = schedule.intake_count
                 .split(",")
-                .mapNotNull { TimeTranslationUtil.translateTimeToEnglish(it.trim()) }
+                .mapNotNull { TranslationUtil.translateTimeToEnglish(it.trim()) }
                 .toSet()
 
             val intakeFrequencies = schedule.intake_frequency
                 .split(",")
                 .flatMap { day ->
-                    TimeTranslationUtil.translateDayToEnglish(day.trim()) ?: emptyList()
+                    TranslationUtil.translateDayToEnglish(day.trim()) ?: emptyList()
                 }
                 .toSet()
 
             return MedicineRegisterRequest(
-                pharmacyName = pharmacy?.pharmacyName ?: "string",
-                pharmacyPhone = pharmacy?.pharmacyPhone ?: "string",
-                pharmacyAddress = pharmacy?.pharmacyAddress ?: "string",
-                hospitalName = hospital?.hospitalName ?: "string",
-                hospitalPhone = hospital?.hospitalPhone ?: "string",
-                hospitalAddress = hospital?.hospitalAddress ?: "string",
+                pharmacyName = pharmacy?.pharmacyName ?: "",
+                pharmacyPhone = pharmacy?.pharmacyPhone ?: "",
+                pharmacyAddress = pharmacy?.pharmacyAddress ?: "",
+                hospitalName = hospital?.hospitalName ?: "",
+                hospitalPhone = hospital?.hospitalPhone ?: "",
+                hospitalAddress = hospital?.hospitalAddress ?: "",
                 identifyNumber = medicine.identify_number,
                 medicineName = medicine.medicine_name,
                 ingredient = medicine.ingredient,
-                ingredientUnit = "MG",
-                ingredientAmount = 0.0f,
-                medicineImage = medicine.image ?: "string",
+                ingredientUnit = if (schedule.medicine_volume == 0f && schedule.medicine_unit.isEmpty()) "SKIP" else TranslationUtil.translateUnitToUppercase(schedule.medicine_unit),
+                ingredientAmount = if (schedule.medicine_volume == 0f && schedule.medicine_unit.isEmpty()) 0.0f else schedule.medicine_volume,
+                medicineImage = medicine.image ?: "",
                 entpName = medicine.entp_name,
                 classname = medicine.classname,
-                efficacy = medicine.efficacy ?: "string",
-                sideEffect = medicine.side_effect ?: "string",
-                caution = medicine.caution ?: "string",
-                storage = medicine.storage ?: "string",
+                efficacy = medicine.efficacy ?: "",
+                sideEffect = medicine.side_effect ?: "",
+                caution = medicine.caution ?: "",
+                storage = medicine.storage ?: "",
                 medicineId = schedule.medicine_id.toLong(),
                 intakeCounts = intakeCounts,
                 intakeFrequencys = intakeFrequencies,
-                mealUnit = TimeTranslationUtil.translateMealUnitToEnglish(schedule.meal_unit) ?: "UNKNOWN",
-                mealTime = schedule.meal_time,
-                eatUnit = TimeTranslationUtil.translateEatUnitToEnglish(schedule.eat_unit) ?: "UNKNOWN",
+                mealUnit = if (schedule.meal_unit.isEmpty()) null else TranslationUtil.translateMealUnitToEnglish(schedule.meal_unit) ?: null,
+                mealTime = if (schedule.meal_unit == null) null else schedule.meal_time,
+                eatUnit = TranslationUtil.translateEatUnitToEnglish(schedule.eat_unit) ?: "UNKNOWN",
                 eatCount = schedule.eat_count,
                 startDate = formattedStartDate,
                 intakePeriod = schedule.intake_period,

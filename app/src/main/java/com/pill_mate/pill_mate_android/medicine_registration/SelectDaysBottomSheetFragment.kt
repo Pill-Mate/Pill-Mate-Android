@@ -9,12 +9,12 @@ import com.pill_mate.pill_mate_android.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class DaySelectionBottomSheetFragment(
-    private val initiallySelectedDays: List<String> = listOf("일", "월", "화", "수", "목", "금", "토"),
+    private val initiallySelectedDays: List<String> = emptyList(),
     private val onDaysSelected: (List<String>) -> Unit
 ) : BottomSheetDialogFragment() {
 
-    private val dayOrder = listOf("일", "월", "화", "수", "목", "금", "토")
-    private val dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
+    private lateinit var dayOrder: List<String>
+    private lateinit var dayOrderMap: Map<String, Int>
     private val selectedDays = mutableSetOf<String>()
 
     override fun onCreateView(
@@ -31,14 +31,20 @@ class DaySelectionBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dayOrder = listOf(getString(R.string.day_sunday), getString(R.string.day_monday), getString(R.string.day_tuesday),
+            getString(R.string.day_wednesday), getString(R.string.day_thursday), getString(R.string.day_friday),
+            getString(R.string.day_saturday))
+
+        dayOrderMap = dayOrder.withIndex().associate { it.value to it.index }
+
         val dayButtons = mapOf(
-            view.findViewById<Button>(R.id.btn_sun) to "일",
-            view.findViewById<Button>(R.id.btn_mon) to "월",
-            view.findViewById<Button>(R.id.btn_tue) to "화",
-            view.findViewById<Button>(R.id.btn_wed) to "수",
-            view.findViewById<Button>(R.id.btn_thu) to "목",
-            view.findViewById<Button>(R.id.btn_fri) to "금",
-            view.findViewById<Button>(R.id.btn_sat) to "토"
+            view.findViewById<Button>(R.id.btn_sun) to getString(R.string.day_sunday),
+            view.findViewById<Button>(R.id.btn_mon) to getString(R.string.day_monday),
+            view.findViewById<Button>(R.id.btn_tue) to getString(R.string.day_tuesday),
+            view.findViewById<Button>(R.id.btn_wed) to getString(R.string.day_wednesday),
+            view.findViewById<Button>(R.id.btn_thu) to getString(R.string.day_thursday),
+            view.findViewById<Button>(R.id.btn_fri) to getString(R.string.day_friday),
+            view.findViewById<Button>(R.id.btn_sat) to getString(R.string.day_saturday)
         )
 
         val confirmButton = view.findViewById<Button>(R.id.btn_confirm)

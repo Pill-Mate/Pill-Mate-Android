@@ -19,8 +19,8 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,7 +79,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx) // 카카오 로그인
-    implementation("io.coil-kt:coil:2.4.0") // 이미지 로딩 라이브러리
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // retrofit2
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") //json
     implementation("com.tickaroo.tikxml:annotation:0.8.13")
@@ -90,6 +89,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
     implementation("com.airbnb.android:lottie-compose:5.2.0")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -102,7 +102,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics") // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
     kapt("com.github.bumptech.glide:compiler:4.15.1")
-
+    implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.9.0")
 }

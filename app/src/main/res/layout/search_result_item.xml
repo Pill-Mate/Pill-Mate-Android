@@ -2,15 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="8dp">
+    android:paddingVertical="8dp">
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="자이언츠파이팅 약국"
-        android:textStyle="bold"
-        android:textSize="16sp"
+        android:textColor="@color/black"
+        style="@style/H2_SB16"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -18,29 +17,30 @@
         android:id="@+id/tv_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="부산광역시 해운대구 구3로 212"
-        android:textSize="14sp"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/black"
+        style="@style/B2_RG14"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_name"
-        android:layout_marginTop="2dp"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_name" />
 
     <ImageView
         android:id="@+id/iv_callIcon"
         android:layout_width="18dp"
         android:layout_height="18dp"
+        android:layout_marginTop="2dp"
         android:src="@drawable/ic_call"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_address"
-        android:layout_marginTop="2dp"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_address" />
 
     <TextView
         android:id="@+id/tv_number"
+        style="@style/B2_RG14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="051-333-3333"
-        android:textSize="14sp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/gray_1"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_callIcon"
         app:layout_constraintStart_toEndOf="@id/iv_callIcon"
-        app:layout_constraintTop_toTopOf="@id/iv_callIcon"
-        android:layout_marginStart="8dp"/>
+        app:layout_constraintTop_toTopOf="@id/iv_callIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

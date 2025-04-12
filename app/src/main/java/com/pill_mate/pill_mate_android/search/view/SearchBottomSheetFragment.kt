@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchBottomSheetBinding
@@ -17,7 +18,6 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepositor
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.model.PillInfoItem
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.model.SearchType
@@ -27,8 +27,15 @@ import com.pill_mate.pill_mate_android.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
-class SearchBottomSheetFragment(private val searchType: SearchType, private val onDismiss: (() -> Unit)? = null) : BottomSheetDialogFragment(), PillSearchView {
+class SearchBottomSheetFragment(
+    private val searchType: SearchType,
+    private val onDismiss: (() -> Unit)? = null
+) : BottomSheetDialogFragment(), PillSearchView {
 
     private var _binding: FragmentSearchBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -36,6 +43,7 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
     private lateinit var adapter: SearchAdapter
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private var currentQuery: String = ""
+    private val searchQueryFlow = MutableStateFlow("")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -80,6 +88,11 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
     private fun initView() {
         binding.ivExit.setOnClickListener {
             dismiss()
+        }
+
+        binding.rvSuggestion.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false // RecyclerView의 기본 스크롤 동작 유지
         }
 
         adapter = SearchAdapter(
@@ -144,12 +157,23 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
                 if (currentQuery.isEmpty()) {
                     updateRecentSearches()
                 } else {
-                    presenter.search(currentQuery, searchType)
+                    searchQueryFlow.value = currentQuery
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        lifecycleScope.launch {
+            searchQueryFlow
+                .debounce(300) // 300ms 동안 입력이 없을 때만 검색 실행
+                .distinctUntilChanged() // 동일한 검색어 반복 요청 방지
+                .collect { query ->
+                    if (query.isNotEmpty()) {
+                        presenter.search(query, searchType)
+                    }
+                }
+        }
     }
 
     private fun updateUnderline(colorRes: Int) {
@@ -188,10 +212,6 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
         Log.d("SearchBottomSheet", "Saved $name with phone $phone and address $address to DataRepository")
     }
 
-    override fun showPillInfo(pills: List<PillInfoItem>) {
-        Log.d("SearchFragment", "showPillInfo called with items")
-    }
-
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
         Log.d("SearchFragment", "showPillIdntfc called with items")
     }
@@ -206,6 +226,12 @@ class SearchBottomSheetFragment(private val searchType: SearchType, private val 
             adapter.updateResults(emptyList(), "") // 빈 리스트와 빈 검색어 전달
             binding.rvSuggestion.visibility = View.GONE
         }
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {

@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.search.view
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,13 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
-import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailDialogFragment
+import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailBottomSheetFragment
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.model.PillInfoItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
@@ -27,6 +28,11 @@ import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 class PillSearchBottomSheetFragment(
     private val stepTwoView: StepTwoView, // StepTwoView를 인자로 받음
@@ -39,6 +45,7 @@ class PillSearchBottomSheetFragment(
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
     private lateinit var adapter: PillIdntfcAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
+    private val searchQueryFlow = MutableStateFlow("")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +54,7 @@ class PillSearchBottomSheetFragment(
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
         pillSearchPresenter = PillSearchPresenterImpl(this) // PillSearchPresenter 초기화
         stepTwoPresenter = StepTwoPresenterImpl(stepTwoView) // StepTwoPresenter 초기화
+
         return binding.root
     }
 
@@ -90,20 +98,21 @@ class PillSearchBottomSheetFragment(
     private fun initView() {
         adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
             // 아이템 클릭 시 다이얼로그 생성 및 표시
-            val dialog = PillDetailDialogFragment.newInstance(
-                stepTwoPresenter,
+            val dialog = PillDetailBottomSheetFragment.newInstance(
                 this,
                 medicineRegistrationFragment, // MedicineRegistrationFragment 전달
                 pillItem
             )
             dialog.show(parentFragmentManager, "PillDetailDialog")
-
-            // 아이템 클릭 시 데이터를 StepTwoFragment로 전달
-            sendPillResult(pillItem)
         })
 
         binding.ivExit.setOnClickListener {
             dismiss()
+        }
+
+        binding.rvSuggestion.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false // RecyclerView의 기본 스크롤 동작 유지
         }
 
         // 포커스 설정
@@ -135,21 +144,24 @@ class PillSearchBottomSheetFragment(
                     binding.rvSuggestion.visibility = View.GONE
                 } else {
                     currentQuery = text.toString() // 검색어 업데이트
-                    pillSearchPresenter.searchPills(currentQuery) // 검색 요청
+                    searchQueryFlow.value = currentQuery // 사용자의 입력 값을 Flow에 업데이트
                 }
             }
 
             override fun afterTextChanged(text: Editable?) {}
         })
-    }
 
-    private fun sendPillResult(pillItem: PillIdntfcItem) {
-        val result = Bundle().apply {
-            putParcelable("selectedPillItem", pillItem)
+        lifecycleScope.launch {
+            searchQueryFlow
+                .debounce(300) // 300ms 동안 추가 입력이 없을 때만 실행
+                .distinctUntilChanged() // 같은 검색어 연속 입력 방지
+                .filter { it.isNotEmpty() } // 빈 검색어는 처리 안 함
+                .collect { query ->
+                    val underlineColor = if (query.isNotEmpty()) R.color.main_blue_1 else R.color.black
+                    updateUnderline(underlineColor)
+                    pillSearchPresenter.searchPills(query) // 최적화된 검색 실행
+                }
         }
-        Log.d("PillSearchBottomSheet", "Sending selected pill: ${pillItem.ITEM_NAME}")
-        parentFragmentManager.setFragmentResult("pillSearchResultKey", result)
-        dismiss() // 선택 후 바텀 시트 닫기
     }
 
     private fun updateUnderline(colorRes: Int) {
@@ -157,12 +169,7 @@ class PillSearchBottomSheetFragment(
         binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
-    override fun showPillInfo(pills: List<PillInfoItem>) {
-        Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
-    }
-
     override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        Log.d("PillSearchFragment", "showPills called with ${pills.size} items")
         pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
 
         if (pills.isNotEmpty()) {
@@ -177,9 +184,25 @@ class PillSearchBottomSheetFragment(
         Log.d("PillSearchFragment", "showPharmacy called with items")
     }
 
+    private fun hideKeyboard() {
+        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private var dismissListener: (() -> Unit)? = null
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        dismissListener?.invoke() // 바텀시트 닫힐 때 콜백 실행
+    }
+
+    fun setOnDismissListener(listener: () -> Unit) {
+        dismissListener = listener
     }
 
     companion object {

@@ -45,6 +45,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     private var _binding: FragmentPillCheckBinding? = null
     private val binding get() = _binding!!
+    private var isFirstLoad = true
     private val expandedStates = mutableSetOf<Int>()
 
     @RequiresApi(VERSION_CODES.O)
@@ -354,6 +355,14 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     @RequiresApi(VERSION_CODES.O)
     private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터 그룹화
         val groupedMedicines = groupMedicines(responseHome)
+
+        if (isFirstLoad) {
+            expandedStates.clear()
+            for (i in groupedMedicines.indices) {
+                expandedStates.add(i)
+            }
+            isFirstLoad = false
+        }
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {

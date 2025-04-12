@@ -1,23 +1,23 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSevenBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
-import java.text.SimpleDateFormat
-import java.util.*
+import com.pill_mate.pill_mate_android.util.CustomChip
+import com.pill_mate.pill_mate_android.util.DateConversionUtil
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepSevenFragment : Fragment() {
 
@@ -26,7 +26,7 @@ class StepSevenFragment : Fragment() {
 
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
 
-    private var selectedStartDate: String = "0000.00.00"
+    private lateinit var selectedStartDate: String
     private var dosageDays: Int = 0
 
     override fun onCreateView(
@@ -46,7 +46,10 @@ class StepSevenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val currentSchedule = registrationPresenter.getCurrentSchedule()
+        selectedStartDate = currentSchedule.start_date.takeIf { it.isNotEmpty() } ?: DateConversionUtil.getCurrentDate()
         binding.tvStartDate.text = selectedStartDate
+
         setupDosageDaysEditText()
         setupStartDateSelection()
 
@@ -55,7 +58,7 @@ class StepSevenFragment : Fragment() {
 
     private fun setupStartDateSelection() {
         binding.layoutStartDate.setOnClickListener {
-            val calendarBottomSheet = CalendarBottomSheetFragment.newInstance { selectedDate ->
+            val calendarBottomSheet = CalendarBottomSheetFragment.newInstance(selectedStartDate) { selectedDate ->
                 selectedStartDate = selectedDate
                 binding.tvStartDate.text = selectedDate
 
@@ -70,6 +73,9 @@ class StepSevenFragment : Fragment() {
     }
 
     private fun setupDosageDaysEditText() {
+        // 최대 3자리까지만 허용하는 InputFilter 적용
+        binding.etPeriod.filters = arrayOf(InputFilter.LengthFilter(3))
+
         binding.etPeriod.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -79,58 +85,37 @@ class StepSevenFragment : Fragment() {
 
                 updateSchedule()
 
-                if (dosageDays > 0 && selectedStartDate != "0000.00.00") {
+                if (dosageDays > 0) {
                     updateEndDateChip()
                 } else {
                     binding.layoutEndDateChip.removeAllViews()
                 }
+                updateNextButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // 기존의 setOnEditorActionListener 코드는 그대로 유지
         binding.etPeriod.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
-            ) {
+                actionId == EditorInfo.IME_ACTION_NEXT ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etPeriod.clearFocus()
-                hideKeyboard()
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etPeriod)
                 return@setOnEditorActionListener true
             }
             false
         }
     }
 
-    private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.etPeriod.windowToken, 0)
-    }
-
     private fun updateEndDateChip() {
         binding.layoutEndDateChip.removeAllViews()
 
-        val endDate = calculateEndDate(selectedStartDate, dosageDays)
-        val endDateChip = TextView(requireContext()).apply {
-            text = "종료일: $endDate"
-            setPadding(12, 4, 12, 4)
-            background = ContextCompat.getDrawable(requireContext(),
-                R.drawable.bg_tag_main_blue_2_radius_4
-            )
-            setTextAppearance(R.style.TagTextStyle)
-        }
+        val endDate = DateConversionUtil.calculateEndDate(selectedStartDate, dosageDays) ?: ""
+        val endDateChip = CustomChip.createChip(requireContext(), getString(R.string.seven_end_date_chip, endDate))
 
         binding.layoutEndDateChip.addView(endDateChip)
-    }
-
-    private fun calculateEndDate(startDate: String, days: Int): String {
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        val date = dateFormat.parse(startDate) ?: return "0000.00.00"
-
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        calendar.add(Calendar.DATE, days - 1)
-
-        return dateFormat.format(calendar.time)
     }
 
     private fun updateSchedule() {
@@ -142,12 +127,19 @@ class StepSevenFragment : Fragment() {
         }
     }
 
+    private fun updateNextButtonState() {
+        val isInputValid = isValidInput()
+        val parent = parentFragment?.parentFragment as? MedicineRegistrationFragment
+        parent?.updateNextButtonState(isInputValid)
+    }
+
     fun isValidInput(): Boolean {
         val periodText = binding.etPeriod.text.toString().trim()
         val startDateText = binding.tvStartDate.text.toString().trim()
 
-        // 입력값이 모두 비어있지 않은지 확인
-        return periodText.isNotEmpty() && periodText.toIntOrNull() != null && startDateText.isNotEmpty()
+        return periodText.isNotEmpty() &&
+                periodText.toIntOrNull()?.let { it > 0 } == true &&
+                startDateText.isNotEmpty()
     }
 
     override fun onDestroyView() {
