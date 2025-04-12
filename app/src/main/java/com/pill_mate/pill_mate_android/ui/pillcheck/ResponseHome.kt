@@ -28,7 +28,10 @@ data class ResponseHome(
 
 data class GroupedMedicine( // "MORNING", "AFTERNOON", "EVENING"
     val intakeCount: String, val times: List<TimeGroup>
-)
+) {
+    val isAllChecked: Boolean
+        get() = times.all { timeGroup -> timeGroup.medicines.all { it.eatCheck } }
+}
 
 data class TimeGroup( // 예: "08:00:00"
     val intakeTime: String, val medicines: List<ResponseHome.Data>

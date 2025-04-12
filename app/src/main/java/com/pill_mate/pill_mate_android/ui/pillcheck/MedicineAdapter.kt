@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemMedicineBinding
 
 class MedicineAdapter(
-    private val medicines: List<ResponseHome.Data>, private val onCheckedChange: (Long, Boolean) -> Unit
+    private val medicines: List<ResponseHome.Data>, private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<MedicineAdapter.MedicineViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicineViewHolder {
@@ -39,8 +40,9 @@ class MedicineAdapter(
             binding.tvEatCount.text = "${medicine.eatCount}${unit}"
 
             // Glide로 이미지 로드
-            Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default)
-                .into(binding.imgMedicine)
+            Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default).transform(
+                RoundedCorners(4)
+            ).placeholder(R.drawable.img_default).into(binding.imgMedicine)
 
             // 마지막 아이템일때 하단 모서리 둥글게
             val backgroudResId = if (isLastItem) {
@@ -53,7 +55,8 @@ class MedicineAdapter(
             // 체크박스 상태 및 클릭 이벤트 설정
             binding.cbCheck.setOnClickListener {
                 val newCheckState = binding.cbCheck.isChecked
-                onCheckedChange(medicine.medicineScheduleId, newCheckState)
+                val checkDataList = listOf(MedicineCheckData(medicine.medicineScheduleId, newCheckState))
+                onCheckedChange(checkDataList)
             }
         }
     }
