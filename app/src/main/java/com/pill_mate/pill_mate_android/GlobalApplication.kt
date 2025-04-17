@@ -12,6 +12,7 @@ class GlobalApplication : Application() {
 
     companion object {
         private lateinit var instance: GlobalApplication
+        private var isLoggingOut = false
 
         fun getInstance(): GlobalApplication = instance
 
@@ -48,8 +49,15 @@ class GlobalApplication : Application() {
         }
 
         fun logout(context: Context) {
+            if (isLoggingOut) return // 중복 로그아웃 방지
+
+            isLoggingOut = true
+
             val prefs = getSecurePrefs(context)
             prefs.edit().clear().apply()
+
+            val kakaoPrefs = context.getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
+            kakaoPrefs.edit().clear().apply()
 
             val intent = Intent(context, KakaoLoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
