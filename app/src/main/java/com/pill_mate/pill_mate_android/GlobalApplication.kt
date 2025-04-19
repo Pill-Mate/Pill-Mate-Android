@@ -48,14 +48,20 @@ class GlobalApplication : Application() {
             prefs.edit().putString(KEY_REFRESH_TOKEN, refreshToken).apply()
         }
 
+        fun resetLogoutFlag() {
+            isLoggingOut = false
+        }
+
         fun logout(context: Context) {
             if (isLoggingOut) return // 중복 로그아웃 방지
 
             isLoggingOut = true
 
+            // JWT, RefreshToken 삭제
             val prefs = getSecurePrefs(context)
             prefs.edit().clear().apply()
 
+            // Kakao accessToken 삭제
             val kakaoPrefs = context.getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
             kakaoPrefs.edit().clear().apply()
 
