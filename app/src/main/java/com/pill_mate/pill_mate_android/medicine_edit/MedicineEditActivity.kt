@@ -152,7 +152,8 @@ class MedicineEditActivity : AppCompatActivity() {
             } else {
                 ""
             }
-            tvMealUnit.text = listOfNotNull(mealUnit, mealTime).joinToString(" ").ifEmpty { "-" }
+            val mealTimeText = if (mealTime == 0) "즉시" else mealTime?.toString()
+            tvMealUnit.text = listOfNotNull(mealUnit, mealTimeText).joinToString(" ").ifEmpty { "-" }
             etEatCount.setText(eatCount?.toString() ?: "")
             tvEatUnit.text = eatUnit ?: "-"
             tvStartDate.text = startDate ?: "-"
@@ -225,7 +226,7 @@ class MedicineEditActivity : AppCompatActivity() {
         )
 
         return if (index != -1 && index < intakeTimesList.size) {
-            timeView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
+            timeView.text = DateConversionUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             labelView.visibility = View.VISIBLE
             timeView.visibility = View.VISIBLE
             true
@@ -254,7 +255,7 @@ class MedicineEditActivity : AppCompatActivity() {
         )
 
         if (index != -1 && index < intakeTimesList.size) {
-            textView.text = TranslationUtil.parseTimeToDisplayFormat(intakeTimesList[index])
+            textView.text = DateConversionUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             layout.visibility = View.VISIBLE
             visibleLayouts.add(intakeType)
         } else {
