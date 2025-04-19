@@ -17,9 +17,9 @@ data class MedicineEditInfo(
     val ingredient: String?, // 주성분 설명
     val ingredientAmount: Int?, // 주성분 양
 
-    val intakeCounts: Set<String>, // 복용 시간 라벨 (아침, 저녁 등)
-    val intakeTimes: Set<String>, // 복용 시간 리스트 ("08:30:00", "21:00:00")
-    val intakeFrequencys: Set<String>, // 복용 요일 리스트
+    val intakeCounts: List<String>, // 복용 시간 라벨 (아침, 저녁 등)
+    val intakeTimes: List<String>, // 복용 시간 리스트 ("08:30:00", "21:00:00")
+    val intakeFrequencys: List<String>, // 복용 요일 리스트
 
     val wakeupTime: String?, // 기상 시간
     val morningTime: String?, // 아침 시간

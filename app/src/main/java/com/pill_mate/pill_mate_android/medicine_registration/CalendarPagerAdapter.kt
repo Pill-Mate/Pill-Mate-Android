@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -158,6 +159,7 @@ class CalendarPagerAdapter(
                 }
 
                 setOnClickListener {
+                    Log.d("CalendarPagerAdapter", "Selected date: $date")
                     onDateSelected(date)
                     updateSelectedDayView(day)
                 }
