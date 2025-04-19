@@ -15,7 +15,6 @@ import com.pill_mate.pill_mate_android.ui.pilledit.ActiveMedicineService
 import com.pill_mate.pill_mate_android.ui.pilledit.InActiveMedicineService
 import com.pill_mate.pill_mate_android.ui.pilledit.StopMedicineService
 import com.pill_mate.pill_mate_android.ui.setting.GetRoutineService
-import com.pill_mate.pill_mate_android.ui.setting.LogOutService
 import com.pill_mate.pill_mate_android.ui.setting.PatchAlarmInfoService
 import com.pill_mate.pill_mate_android.ui.setting.PatchAlarmMarketingService
 import com.pill_mate.pill_mate_android.ui.setting.PatchRoutineService
@@ -54,14 +53,15 @@ object ServiceCreator { // 서버 URL
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
     val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
-    val medicineRegistrationService: MedicineRegistrationService = userRetrofit.create(MedicineRegistrationService::class.java)
+    val medicineRegistrationService: MedicineRegistrationService =
+        userRetrofit.create(MedicineRegistrationService::class.java)
     val medicineCheckService: MedicineCheckService = userRetrofit.create(MedicineCheckService::class.java)
     val settingService: SettingService = userRetrofit.create(SettingService::class.java)
     val signOutService: SignOutService = userRetrofit.create(SignOutService::class.java)
-    val logOutService: LogOutService = userRetrofit.create(LogOutService::class.java)
     val getRoutineService: GetRoutineService = userRetrofit.create(GetRoutineService::class.java)
     val patchRoutineService: PatchRoutineService = userRetrofit.create(PatchRoutineService::class.java)
-    val patchAlarmMarketingService: PatchAlarmMarketingService = userRetrofit.create(PatchAlarmMarketingService::class.java)
+    val patchAlarmMarketingService: PatchAlarmMarketingService =
+        userRetrofit.create(PatchAlarmMarketingService::class.java)
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
     val activeMedicineService: ActiveMedicineService = userRetrofit.create(ActiveMedicineService::class.java)
     val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(InActiveMedicineService::class.java)

@@ -12,13 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
 import com.pill_mate.pill_mate_android.expandTouchArea
 import com.pill_mate.pill_mate_android.ui.login.KaKaoTokenData
-import com.pill_mate.pill_mate_android.ui.login.activity.KakaoLoginActivity
 import com.pill_mate.pill_mate_android.ui.setting.AlarmInfoData
 import com.pill_mate.pill_mate_android.ui.setting.AlarmMarketingData
 import com.pill_mate.pill_mate_android.ui.setting.ConfirmDialogInterface
@@ -183,16 +182,16 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
+    // 회원 탈퇴 api 호출
     private fun sendKakaoTokenData(token: KaKaoTokenData) {
         val call: Call<Void> = ServiceCreator.signOutService.sendTokenData(token)
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
+                    GlobalApplication.logout(this@SettingActivity)
                     Log.i(TAG, "서버에서 카카오 연결 끊기 성공")
                     Toast.makeText(applicationContext, "탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@SettingActivity, KakaoLoginActivity::class.java)
-                    startActivity(intent)
 
                 } else {
                     Log.e(TAG, "서버에서 연결 끊기 실패: ${response.errorBody()?.string()}")
@@ -204,32 +203,6 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
         })
 
-    }
-
-    private fun logoutNetwork() {
-        val call: Call<Void> = ServiceCreator.logOutService.logout()
-
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    UserApiClient.instance.logout { error ->
-                        if (error != null) {
-                            Log.d("카카오", "카카오 로그아웃 실패")
-                        } else {
-                            Log.d("카카오", "카카오 로그아웃 성공!")
-                            val intent = Intent(this@SettingActivity, KakaoLoginActivity::class.java)
-                            startActivity(intent)
-                        }
-                    }
-                } else {
-                    Log.e(TAG, "데이터 전송 실패: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
     }
 
     private fun switchAlarmToggle() {
@@ -290,7 +263,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     override fun onLogOutButtonClick() {
-        logoutNetwork()
+        GlobalApplication.logout(this@SettingActivity)
     }
 
     override fun onSettingRoutineButtonClick() {
