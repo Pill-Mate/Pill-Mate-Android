@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:ems="8"
-                android:lines="2"
+                android:maxLines="2"
                 android:text="오그맥정375밀리그램"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"

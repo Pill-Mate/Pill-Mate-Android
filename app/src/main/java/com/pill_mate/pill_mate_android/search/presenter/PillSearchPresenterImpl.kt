@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.search.presenter
 
 import android.util.Log
+import com.pill_mate.pill_mate_android.BuildConfig
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.PillRepository
 import com.pill_mate.pill_mate_android.search.model.Searchable
@@ -21,7 +22,7 @@ class PillSearchPresenterImpl(
             try {
 
                 val pillIdntfc = repository.getPillIdntfc(
-                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
+                    serviceKey = BuildConfig.SERVICE_API_KEY,
                     pageNo = 1,
                     numOfRows = 10,
                     item_name = query
@@ -45,7 +46,7 @@ class PillSearchPresenterImpl(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val results = repository.getSearchResults(
-                    serviceKey = "g1IkFj8ICy3zimNJ5VsaEE4Wf24rGJeWKMy89pvDyZyHcuGqUHwqVv8UBxvCkCAdRJx3OpCe8yuG9tF/5JaiCg==",
+                    serviceKey = BuildConfig.SERVICE_API_KEY,
                     pageNo = 1,
                     numOfRows = 10,
                     name = query,

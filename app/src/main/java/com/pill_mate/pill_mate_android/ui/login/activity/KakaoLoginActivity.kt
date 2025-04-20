@@ -30,6 +30,10 @@ class KakaoLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //로그아웃 상태 초기화
+        GlobalApplication.resetLogoutFlag()
+
         binding = ActivityKakaoLoginBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)

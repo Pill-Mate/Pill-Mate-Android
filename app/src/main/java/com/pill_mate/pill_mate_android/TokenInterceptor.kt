@@ -81,6 +81,14 @@ class TokenInterceptor(private val context: Context) : Interceptor {
 
                     return createEmptyUnauthorizedResponse(originalRequest)
                 }
+
+                "USERNOTINDB401" -> {
+                    response.close()
+                    Log.i("토큰", "DB에 사용자 없음 → 로그아웃 처리")
+                    GlobalApplication.logout(context)
+
+                    return createEmptyUnauthorizedResponse(originalRequest)
+                }
             }
         }
         return response

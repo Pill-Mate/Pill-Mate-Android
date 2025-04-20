@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemMedicineBinding
 
@@ -39,8 +40,9 @@ class MedicineAdapter(
             binding.tvEatCount.text = "${medicine.eatCount}${unit}"
 
             // Glide로 이미지 로드
-            Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default)
-                .placeholder(R.drawable.img_default).into(binding.imgMedicine)
+            Glide.with(binding.root.context).load(medicine.medicineImage).error(R.drawable.img_default).transform(
+                RoundedCorners(4)
+            ).placeholder(R.drawable.img_default).into(binding.imgMedicine)
 
             // 마지막 아이템일때 하단 모서리 둥글게
             val backgroudResId = if (isLastItem) {

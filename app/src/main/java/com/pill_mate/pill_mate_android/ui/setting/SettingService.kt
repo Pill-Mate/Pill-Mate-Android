@@ -17,11 +17,6 @@ interface SignOutService {
     fun sendTokenData(@Body tokenData: KaKaoTokenData): Call<Void>
 }
 
-interface LogOutService {
-    @POST("/api/v1/auth/logout")
-    fun logout(): Call<Void>
-}
-
 interface GetRoutineService {
     @GET("/api/v1/mypage/routinedata")
     fun getRoutineData(): Call<ResponseRoutine>

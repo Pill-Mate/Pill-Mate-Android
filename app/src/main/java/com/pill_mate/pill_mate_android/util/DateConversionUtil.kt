@@ -1,6 +1,5 @@
 package com.pill_mate.pill_mate_android.util
 
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
