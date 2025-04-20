@@ -15,6 +15,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.math.MathUtils.clamp
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -30,16 +32,14 @@ import com.pill_mate.pill_mate_android.ui.pillcheck.IDateClickListener
 import com.pill_mate.pill_mate_android.ui.pillcheck.IntakeCountAdapter
 import com.pill_mate.pill_mate_android.ui.pillcheck.MedicineCheckData
 import com.pill_mate.pill_mate_android.ui.pillcheck.ResponseHome
-import com.pill_mate.pill_mate_android.ui.pillcheck.ResponseWeeklyCalendar
 import com.pill_mate.pill_mate_android.ui.pillcheck.TimeGroup
+import com.pill_mate.pill_mate_android.ui.pillcheck.fetch
 import com.pill_mate.pill_mate_android.ui.setting.activity.SettingActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
+import kotlin.math.max
 
 class PillCheckFragment : Fragment(), IDateClickListener {
 
@@ -229,40 +229,20 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     // 홈 데이터 받아오기
-    @RequiresApi(VERSION_CODES.O)
     private fun fetchHomeData(selectedDate: LocalDate) {
-        val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
-        val call: Call<ResponseHome> = ServiceCreator.homeService.getHomeData(homeData)
-
-        call.enqueue(object : Callback<ResponseHome> {
-            override fun onResponse(
-                call: Call<ResponseHome>, response: Response<ResponseHome>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
-                        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
-                        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
-
-                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
-
-                        // 데이터를 그룹화하여 RecyclerView에 설정
-                        setupIntakeCountRecyclerView(it)
-
-                        updateHomeUI(it)
-
-                    }
-                } else {
-                    Log.e("fetchHomeData", "서버 응답 실패: ${response.errorBody()}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
+        ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString()))
+            .fetch { handleHomeResponse(it) }
     }
 
-    @RequiresApi(VERSION_CODES.O)
+    private fun handleHomeResponse(data: ResponseHome) {
+        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
+        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+        currentFragment?.updateWeeklyIcons(data) // 데이터 전달
+        // 데이터를 그룹화하여 RecyclerView에 설정
+        setupIntakeCountRecyclerView(data)
+        updateHomeUI(data)
+    }
+
     private fun updateHomeUI(responseData: ResponseHome) {
         with(binding) {
             if (responseData.medicineList.isNullOrEmpty()) {
@@ -287,72 +267,43 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     @RequiresApi(VERSION_CODES.O)
     private fun fetchWeeklyCalendarData(selectedDate: LocalDate) {
         val homeData = HomeData(date = selectedDate.toString()) // 클릭한 날짜를 사용
-        val call: Call<ResponseWeeklyCalendar> = ServiceCreator.weeklyCalendarService.getWeeklyCalendarData(homeData)
 
-        call.enqueue(object : Callback<ResponseWeeklyCalendar> {
-            override fun onResponse(
-                call: Call<ResponseWeeklyCalendar>, response: Response<ResponseWeeklyCalendar>
-            ) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
-                        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
-                        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+        ServiceCreator.weeklyCalendarService.getWeeklyCalendarData(homeData).fetch {
+            val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
+            val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
-                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
-
-                    } ?: Log.e("데이터 전송 실패", "데이터 전송 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseWeeklyCalendar>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
+            currentFragment?.updateWeeklyIcons(it)
+        }
     }
 
     //체크박스 체크여부 데이터 보내기
-    @RequiresApi(VERSION_CODES.O)
     private fun patchMedicineCheckData(checkDataList: List<MedicineCheckData>) {
-        val call: Call<ResponseHome> = ServiceCreator.medicineCheckService.patchCheckData(checkDataList)
+        ServiceCreator.medicineCheckService.patchCheckData(checkDataList).fetch {
+            val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
+            val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
 
-        call.enqueue(object : Callback<ResponseHome> {
-            override fun onResponse(call: Call<ResponseHome>, response: Response<ResponseHome>) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let { // ViewPager2에 현재 표시된 WeeklyCalendarFragment에 데이터 전달
-                        val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
-                        val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+            currentFragment?.updateWeeklyIcons(it) // 데이터 전달
 
-                        currentFragment?.updateWeeklyIcons(it) // 데이터 전달
+            // 데이터를 그룹화하여 RecyclerView에 설정
+            setupIntakeCountRecyclerView(it)
 
-                        // 데이터를 그룹화하여 RecyclerView에 설정
-                        setupIntakeCountRecyclerView(it)
-
-                        if (it.medicineList.isNullOrEmpty()) {
-                            Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
-                        } else {
-                            with(binding) {
-                                tvNum.text = it.countAll.toString()
-                                if (it.countLeft == 0) {
-                                    tvRemain.text = "복약 완료"
-                                } else {
-                                    tvRemain.text = "${it.countLeft}회 남음"
-                                }
-                            }
-                            setupProgressBar(it.countAll, it.countLeft)
-                        }
-                    } ?: Log.e("데이터 전송 실패", "데이터 전송에 실패했습니다.")
+            if (it.medicineList.isNullOrEmpty()) {
+                Log.i("데이터 전송 성공", "불러올 리스트가 없습니다.")
+            } else {
+                with(binding) {
+                    tvNum.text = it.countAll.toString()
+                    if (it.countLeft == 0) {
+                        tvRemain.text = "복약 완료"
+                    } else {
+                        tvRemain.text = "${it.countLeft}회 남음"
+                    }
                 }
+                setupProgressBar(it.countAll, it.countLeft)
             }
+        }
 
-            override fun onFailure(call: Call<ResponseHome>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
     }
 
-    @RequiresApi(VERSION_CODES.O)
     private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터 그룹화
         val groupedMedicines = groupMedicines(responseHome)
 
@@ -398,8 +349,23 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 프로그래스바 값 설정
     private fun setupProgressBar(countAll: Int, countLeft: Int) {
-        binding.pbNumberOfMedications.max = countAll
-        binding.pbNumberOfMedications.progress = countAll - countLeft
+        val progress = countLeft.toDouble() / max(countAll, 1)
+
+        binding.root.doOnLayout {
+            binding.pbNumberOfMedications.let {
+                val progressBarWidth = it.width
+                val bubbleWidth = binding.layoutBubble.width
+
+                it.max = countAll
+                it.progress = countLeft
+
+                binding.layoutBubble.x = clamp(
+                    progressBarWidth * progress - bubbleWidth / 2,
+                    0.0,
+                    progressBarWidth.toDouble() - bubbleWidth.toDouble()
+                ).toFloat()
+            }
+        }
     }
 
     @RequiresApi(VERSION_CODES.O)

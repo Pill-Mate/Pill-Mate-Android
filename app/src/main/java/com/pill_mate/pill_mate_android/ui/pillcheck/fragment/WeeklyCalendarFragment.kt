@@ -131,7 +131,6 @@ class WeeklyCalendarFragment : Fragment() {
         textView.setTypeface(typeface, Typeface.NORMAL)
     }
 
-    @RequiresApi(VERSION_CODES.O)
     fun updateWeeklyIcons(responseData: WeeklyIconsData) {
         val icons = listOf(
             binding.icSun, binding.icMon, binding.icTue, binding.icWed, binding.icThu, binding.icFri, binding.icSat
