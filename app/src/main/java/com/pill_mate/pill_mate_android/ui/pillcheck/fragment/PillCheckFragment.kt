@@ -349,7 +349,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 프로그래스바 값 설정
     private fun setupProgressBar(countAll: Int, countLeft: Int) {
-        val progress = countLeft.toDouble() / max(countAll, 1)
+        val progress = (countAll - countLeft).toDouble() / max(countAll, 1)
 
         binding.root.doOnLayout {
             binding.pbNumberOfMedications.let {
@@ -357,7 +357,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 val bubbleWidth = binding.layoutBubble.width
 
                 it.max = countAll
-                it.progress = countLeft
+                it.progress = countAll - countLeft
 
                 binding.layoutBubble.x = clamp(
                     progressBarWidth * progress - bubbleWidth / 2,
