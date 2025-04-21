@@ -102,11 +102,11 @@
                     style="@style/H2_SB16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2024년 7월"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="2024년 7월" />
 
                 <ImageView
                     android:id="@+id/btn_today"
@@ -153,37 +153,37 @@
                 <TextView
                     android:id="@+id/tv_sun"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="일" />
+                    android:text="@string/day_sunday" />
 
                 <TextView
                     android:id="@+id/tv_mon"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="월" />
+                    android:text="@string/day_monday" />
 
                 <TextView
                     android:id="@+id/tv_tue"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="화" />
+                    android:text="@string/day_tuesday" />
 
                 <TextView
                     android:id="@+id/tv_wed"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="수" />
+                    android:text="@string/day_wednesday" />
 
                 <TextView
                     android:id="@+id/tv_thu"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="목" />
+                    android:text="@string/day_thursday" />
 
                 <TextView
                     android:id="@+id/tv_fri"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="금" />
+                    android:text="@string/day_friday" />
 
                 <TextView
                     android:id="@+id/tv_sat"
                     style="@style/tv_calendar_day_of_month"
-                    android:text="토" />
+                    android:text="@string/day_saturday" />
             </LinearLayout>
 
             <!-- Weekly Calendar Fragment -->
@@ -243,10 +243,10 @@
                             style="@style/T1_B22"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="99"
                             android:textColor="@color/black"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="99" />
 
                         <TextView
                             android:id="@+id/tv_text2"
@@ -255,7 +255,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="1dp"
                             android:layout_marginTop="4dp"
-                            android:text="회"
+                            android:text="@string/count"
                             android:textColor="@color/black"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/tv_num"
@@ -268,7 +268,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="4dp"
-                            android:text="복약예정"
+                            android:text="@string/planned_medication"
                             android:textColor="@color/gray_2"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/tv_text2"
@@ -320,12 +320,12 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp"
-                                android:text="99회 남음"
                                 android:textColor="@color/white"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/iv_pill"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="99회 남음" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -374,7 +374,7 @@
                     style="@style/H3_RG16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="등록된 약물이 없어요"
+                    android:text="@string/no_registered_medicine"
                     android:textColor="@color/gray_2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -399,7 +399,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:text="편리하게 복약관리를\n시작 해볼까요?"
+                    android:text="@string/no_registered_medicine_sub"
                     android:textColor="@color/gray_2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -414,7 +414,7 @@
                     android:background="@drawable/btn_basic"
                     android:backgroundTint="@color/main_blue_2"
                     android:stateListAnimator="@null"
-                    android:text="약물 등록하기"
+                    android:text="@string/register_medicine_button"
                     android:textColor="@color/main_blue_1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

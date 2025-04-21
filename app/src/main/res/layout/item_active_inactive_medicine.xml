@@ -28,7 +28,7 @@
         android:paddingTop="2dp"
         android:paddingEnd="6dp"
         android:paddingBottom="2dp"
-        android:text="복용중지"
+        android:text="@string/medicine_status_stopped"
         android:textColor="@color/main_pink_1"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +120,7 @@
             android:layout_marginEnd="12dp"
             android:background="@drawable/btn_basic_storke"
             android:stateListAnimator="@null"
-            android:text="수정"
+            android:text="@string/edit_button"
             android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@id/btn_stop"
             app:layout_constraintTop_toTopOf="parent" />
@@ -133,7 +133,7 @@
             android:background="@drawable/btn_basic"
             android:backgroundTint="@color/main_pink_2"
             android:stateListAnimator="@null"
-            android:text="복용중지"
+            android:text="@string/stop_medication_button"
             android:textColor="@color/main_pink_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

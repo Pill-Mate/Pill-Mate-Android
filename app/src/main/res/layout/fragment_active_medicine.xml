@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="복용중인 약물이 없어요"
+                android:text="@string/no_active_medicine"
                 android:textColor="@color/gray_2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
                     style="@style/B2_RG14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="복용중인 약물 갯수"
+                    android:text="@string/active_medicine_count_label"
                     android:textColor="@color/gray_1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_pill_cnt" />

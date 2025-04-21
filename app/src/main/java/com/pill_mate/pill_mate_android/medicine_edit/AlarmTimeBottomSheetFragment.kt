@@ -54,10 +54,10 @@ class AlarmTimeBottomSheetFragment(
 
     private fun updateUI() {
         if (showFastingPicker) setTime(
-            wakeupTime, binding.tvWakeupTime, binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1
+            wakeupTime, binding.tvFastingTime, binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1
         )
         if (showBedtimePicker) setTime(
-            bedTime, binding.tvSleepTime, binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2
+            bedTime, binding.tvBeforeSleepTime, binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2
         )
     }
 
@@ -82,10 +82,10 @@ class AlarmTimeBottomSheetFragment(
 
     private fun initView() {
 
-        binding.layoutTvWakeup.visibility = if (showFastingPicker) View.VISIBLE else View.GONE
-        binding.layoutTpWakeup.visibility = if (showFastingPicker) View.VISIBLE else View.GONE
-        binding.layoutTvSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
-        binding.layoutTpSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
+        binding.layoutTvFasting.visibility = if (showFastingPicker) View.VISIBLE else View.GONE
+        binding.layoutTpFasting.visibility = if (showFastingPicker) View.VISIBLE else View.GONE
+        binding.layoutTvBeforeSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
+        binding.layoutTpBeforeSleep.visibility = if (showBedtimePicker) View.VISIBLE else View.GONE
 
         setTimePickerVisibility(
             when {
@@ -159,14 +159,14 @@ class AlarmTimeBottomSheetFragment(
 
     private fun showWakeUpTimePicker(show: Boolean) {
         with(binding) {
-            layoutTpWakeup.visibility = if (show) View.VISIBLE else View.GONE
+            layoutTpFasting.visibility = if (show) View.VISIBLE else View.GONE
             btnDropdown1.setImageResource(if (show) R.drawable.btn_dropdown_down else R.drawable.btn_dropdown_up)
         }
     }
 
     private fun showSleepTimePicker(show: Boolean) {
         with(binding) {
-            layoutTpSleep.visibility = if (show) View.VISIBLE else View.GONE
+            layoutTpBeforeSleep.visibility = if (show) View.VISIBLE else View.GONE
             btnDropdown2.setImageResource(if (show) R.drawable.btn_dropdown_down else R.drawable.btn_dropdown_up)
         }
     }
@@ -207,14 +207,14 @@ class AlarmTimeBottomSheetFragment(
         val amPm = amPmValues[binding.amPmPicker1.value]
         val hour = binding.hrsPicker1.value
         val min = minValues[binding.minPicker1.value]
-        binding.tvWakeupTime.text = "$amPm $hour:$min"
+        binding.tvFastingTime.text = "$amPm $hour:$min"
     }
 
     private fun updateSleepTime() {
         val amPm = amPmValues[binding.amPmPicker2.value]
         val hour = binding.hrsPicker2.value
         val min = minValues[binding.minPicker2.value]
-        binding.tvSleepTime.text = "$amPm $hour:$min"
+        binding.tvBeforeSleepTime.text = "$amPm $hour:$min"
     }
 
     private fun onDoneButtonClick() {

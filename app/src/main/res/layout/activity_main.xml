@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="13dp"
-        android:contentDescription="약물 등록"
+        android:contentDescription="@string/fab_add_medicine"
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/main_blue_1"
         app:elevation="8dp"
