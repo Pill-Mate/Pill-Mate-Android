@@ -33,7 +33,9 @@ android {
             "String", "KAKAO_NATIVE_APP_KEY", properties.getProperty("KAKAO_NATIVE_APP_KEY")
         )
         buildConfigField(
-            "String", "SERVICE_API_KEY", properties.getProperty("SERVICE_API_KEY")
+            "String",
+            "SERVICE_API_KEY",
+            "\"${properties.getProperty("SERVICE_API_KEY")}\""
         )
     }
 
