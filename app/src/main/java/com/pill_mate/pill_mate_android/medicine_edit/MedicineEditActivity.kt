@@ -117,13 +117,9 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun updateUI(data: MedicineEditResponse) {
         val info = data.result // result 내부 데이터 사용
 
-        binding.apply {
-            // 기본 정보
-            Glide.with(ivImage.context)
-                .load(info.medicineImage)
-                .transform(RoundedCorners(8))
-                .error(R.drawable.img_default)
-                .into(ivImage)
+        binding.apply { // 기본 정보
+            Glide.with(ivImage.context).load(info.medicineImage).transform(RoundedCorners(8))
+                .error(R.drawable.img_default).into(ivImage)
             tvPillName.text = info.medicineName
             tvClassName.text = info.className
             tvCompanyName.text = info.entpName
@@ -143,8 +139,7 @@ class MedicineEditActivity : AppCompatActivity() {
             isAlarmOn = info.isAlarm
 
             // UI에 표시
-            tvDay.text = TranslationUtil.translateDayToKorean(info.intakeFrequencys)
-            // N회 (공복, 아침, 점심, 저녁, 취침전) 형식으로 표시
+            tvDay.text = TranslationUtil.translateDayToKorean(info.intakeFrequencys) // N회 (공복, 아침, 점심, 저녁, 취침전) 형식으로 표시
             val count = intakeCount.size
             val selectedTimesText = intakeCount.joinToString(", ")
             tvTimeCount.text = if (count > 0) {
@@ -152,7 +147,7 @@ class MedicineEditActivity : AppCompatActivity() {
             } else {
                 ""
             }
-            val mealTimeText = if (mealTime == 0) "즉시" else mealTime?.toString()
+            val mealTimeText = if (mealTime == 0) "즉시" else "${mealTime}분"
             tvMealUnit.text = listOfNotNull(mealUnit, mealTimeText).joinToString(" ").ifEmpty { "-" }
             etEatCount.setText(eatCount?.toString() ?: "")
             tvEatUnit.text = eatUnit ?: "-"
