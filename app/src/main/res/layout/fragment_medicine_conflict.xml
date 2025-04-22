@@ -11,7 +11,7 @@
     <ScrollView
         android:id="@+id/scroll_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" >
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:text="등록중인 약물"
+                    android:text="@string/medicine_conflict_registration_in_progress"
                     android:textColor="@color/black"
                     style="@style/H1_SB18"
                     app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
                         android:layout_width="100dp"
                         android:layout_height="54dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_default_pill"
+                        android:src="@drawable/img_default"
                         android:scaleType="centerCrop" />
 
                     <LinearLayout
@@ -93,29 +93,33 @@
                             android:id="@+id/tv_pill_class"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_text_gray_3_radius_4"
-                            android:text="약물분류명"
-                            android:textColor="@color/gray_1"
-                            android:textSize="12sp"
                             android:paddingHorizontal="4dp"
-                            android:layout_marginBottom="2dp" />
+                            android:text="@string/pill_detail_class_name"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:background="@drawable/bg_text_gray_3_radius_4"
+                            android:textColor="@color/gray_1"
+                            style="@style/B4_RG12" />
 
                         <TextView
                             android:id="@+id/tv_pill_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="2dp"
-                            android:text="오그맥스정375밀리그램가나다.."
+                            android:layout_marginTop="2dp"
+                            android:text="@string/pill_detail_pill_name"
                             android:textColor="@color/black"
-                            android:textSize="16sp" />
+                            style="@style/H2_SB16" />
 
                         <TextView
-                            android:id="@+id/tv_pill_Entp"
+                            android:id="@+id/tv_pill_entp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="제약회사(주)"
+                            android:text="@string/pill_detail_company_name"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
                             android:textColor="@color/gray_1"
-                            android:textSize="12sp" />
+                            style="@style/B4_RG12" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -125,7 +129,10 @@
                 android:id="@+id/layout_conflict_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingTop="20dp"
+                android:paddingHorizontal="20dp"
                 app:layout_constraintTop_toBottomOf="@id/layout_top_section"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -135,107 +142,175 @@
                     style="@style/H1_B18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="복용중인 약물"
+                    android:text="@string/medicine_conflict_currently_taking"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- 병용금기 -->
-                <TextView
-                    android:id="@+id/tv_contraindication"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="병용금기"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_intake_pill" />
-
-                <ImageView
-                    android:id="@+id/iv_contraindication_end"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="2dp"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_contraindication"
-                    app:layout_constraintStart_toEndOf="@id/tv_contraindication"
-                    app:layout_constraintTop_toTopOf="@id/tv_contraindication" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_contraindication"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_contraindication"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_contraindication"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="12dp"
+                    android:background="@drawable/bg_conflict_white"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_intake_pill">
+
+                    <TextView
+                        android:id="@+id/tv_contraindication"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/medicine_conflict_contraindication"
+                        android:textColor="@color/main_pink_1"
+                        style="@style/H2_MD16"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_contraindication"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        app:layout_constraintTop_toBottomOf="@id/tv_contraindication"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <FrameLayout
+                        android:id="@+id/layout_contraindication_click_area"
+                        android:layout_width="24dp"
+                        android:layout_height="30dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintStart_toEndOf="@id/tv_contraindication"
+                        app:layout_constraintTop_toTopOf="@id/tv_contraindication"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_contraindication">
+
+                        <ImageView
+                            android:id="@+id/iv_contraindication_info"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_link" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_contraindication_tooltip"
+                        android:layout_width="220dp"
+                        android:layout_height="78dp"
+                        android:layout_marginTop="11dp"
+                        android:src="@drawable/img_tooltip_contraindication"
+                        app:layout_constraintStart_toEndOf="@+id/layout_contraindication_click_area"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- 효능군 중복 -->
-                <TextView
-                    android:id="@+id/tv_efficiency_overlap"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_efficiency_overlap"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:layout_marginTop="12dp"
-                    android:text="효능군 중복"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/rv_contraindication"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <ImageView
-                    android:id="@+id/iv_efficiency_overlap_end"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="2dp"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_efficiency_overlap"
-                    app:layout_constraintStart_toEndOf="@id/tv_efficiency_overlap"
-                    app:layout_constraintTop_toTopOf="@id/tv_efficiency_overlap" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_efficiency_overlap"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_efficiency_overlap"
+                    android:paddingHorizontal="12dp"
+                    android:background="@drawable/bg_conflict_white"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_contraindication">
 
-                <!-- 버튼 영역 -->
-                <LinearLayout
-                    android:id="@+id/layout_buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="26dp"
-                    android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@id/rv_efficiency_overlap"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    <TextView
+                        android:id="@+id/tv_efficiency_overlap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/medicine_conflict_efficiency_overlap"
+                        android:textColor="@color/main_pink_1"
+                        style="@style/H2_MD16"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
-                    <Button
-                        android:id="@+id/btn_skip"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_efficiency_overlap"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:background="@drawable/bg_btn_main_blue_1"
-                        android:text="건너뛰기"
-                        android:textColor="@color/white"
-                        android:stateListAnimator="@null"/>
+                        android:nestedScrollingEnabled="false"
+                        app:layout_constraintTop_toBottomOf="@id/tv_efficiency_overlap"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
 
-                    <Button
-                        android:id="@+id/btn_finish"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_btn_gray_2_stoke"
-                        android:text="등록 종료하기"
-                        android:textColor="@color/black"
-                        android:stateListAnimator="@null"/>
-                </LinearLayout>
+                    <FrameLayout
+                        android:id="@+id/layout_efficiency_overlap_click_area"
+                        android:layout_width="24dp"
+                        android:layout_height="30dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintStart_toEndOf="@id/tv_efficiency_overlap"
+                        app:layout_constraintTop_toTopOf="@id/tv_efficiency_overlap"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_efficiency_overlap">
+
+                        <ImageView
+                            android:id="@+id/iv_efficiency_overlap_info"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_link" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_efficiency_overlap_tooltip"
+                        android:layout_width="210dp"
+                        android:layout_height="116dp"
+                        android:layout_marginTop="11dp"
+                        android:src="@drawable/img_tooltip_efficiency_overlap"
+                        app:layout_constraintStart_toEndOf="@+id/layout_efficiency_overlap_click_area"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Space
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="166dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_conflict_section" />
+
+            <!-- 버튼 영역 -->
+            <LinearLayout
+                android:id="@+id/layout_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:layout_marginBottom="26dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <Button
+                    android:id="@+id/btn_skip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_btn_main_blue_1"
+                    android:stateListAnimator="@null"
+                    android:text="@string/medicine_conflict_btn_skip"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btn_finish"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_btn_gray_2_stoke"
+                    android:stateListAnimator="@null"
+                    android:text="@string/medicine_conflict_btn_finish"
+                    android:textColor="@color/black" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

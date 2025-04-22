@@ -8,7 +8,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="복용 횟수를 알려주세요"
+        android:text="@string/four_title"
         android:textColor="@color/black"
         style="@style/T1_B22"
         android:layout_marginTop="24dp"
@@ -30,12 +30,12 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/tv_day"
+            android:id="@+id/tv_time_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:text="@string/four_title"
+            android:text="@string/four_et_count"
             style="@style/H2_MD16"
             android:ellipsize="end"
             android:maxLines="1"

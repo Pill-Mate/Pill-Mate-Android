@@ -118,7 +118,6 @@
         app:layout_constraintStart_toStartOf="@+id/tv_pharmacy"
         android:visibility="gone"/>
 
-
     <!-- Hospital -->
     <TextView
         android:id="@+id/hospitalLabel"

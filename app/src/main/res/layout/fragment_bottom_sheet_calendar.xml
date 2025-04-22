@@ -126,12 +126,11 @@
     <!-- 캘린더 페이지 슬라이딩 (ViewPager2) -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_calendar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="268dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        app:layout_constraintDimensionRatio="W,302:222"
         app:layout_constraintTop_toBottomOf="@id/layout_weekdays"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

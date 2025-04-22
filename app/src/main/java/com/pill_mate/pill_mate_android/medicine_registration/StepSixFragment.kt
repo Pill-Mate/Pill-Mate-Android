@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSixBinding
@@ -106,7 +105,7 @@ class StepSixFragment : Fragment() {
     }
 
     private fun openBottomSheet() {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(
             type = BottomSheetType.DOSAGE_UNIT,
             selectedOption = selectedDosageUnit // 기존 선택된 값 전달
         )

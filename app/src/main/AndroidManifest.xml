@@ -21,20 +21,25 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.setting.activity.SettingActivity"
-            android:exported="true" />
+            android:name="com.pill_mate.pill_mate_android.setting.view.SettingActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.onboarding.activity.SuccessActivity"
-            android:exported="false" />
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.SuccessActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.onboarding.activity.TimePicker2Activity"
-            android:exported="false" />
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker2Activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.onboarding.activity.TimePicker1Activity"
-            android:exported="false" />
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker1Activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.login.activity.SplashActivity"
-            android:exported="true">
+            android:name="com.pill_mate.pill_mate_android.login.view.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,22 +47,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.login.activity.AgreementActivity"
-            android:exported="true" />
+            android:name="com.pill_mate.pill_mate_android.login.view.AgreementActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.login.activity.KakaoLoginActivity"
-            android:exported="false" />
+            android:name="com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name="com.pill_mate.pill_mate_android.ui.main.activity.MainActivity"
-            android:exported="false" /> <!-- 카카오 로그인, 인가코드를 받기 위한 액티비티 -->
+            android:name="com.pill_mate.pill_mate_android.main.view.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" /> <!-- 카카오 로그인, 인가코드를 받기 위한 액티비티 -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -71,12 +80,14 @@
         </activity>
 
         <activity
-            android:name="com.pill_mate.pill_mate_android.schedule.ScheduleActivity"
+            android:name="com.pill_mate.pill_mate_android.pilledit.view.MedicineEditActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PillMateAndroid" />
         <activity
             android:name="com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PillMateAndroid" />
     </application>
 

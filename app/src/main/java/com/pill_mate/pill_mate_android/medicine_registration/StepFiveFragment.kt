@@ -1,6 +1,5 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,15 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepFiveBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.CustomChip
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
 class StepFiveFragment : Fragment() {
@@ -132,52 +128,27 @@ class StepFiveFragment : Fragment() {
     }
 
     private fun openBottomSheet() {
-        val bottomSheet = CheckBottomSheetFragment.newInstance(
+        val bottomSheet = RadioButtonBottomSheetFragment.newInstance(
             type = BottomSheetType.MEAL_TIME,
             selectedOption = selectedMealUnit
         )
         bottomSheet.show(parentFragmentManager, bottomSheet.tag)
     }
 
-    private fun setSelectedTimes(SelectedTimes: List<String>) {
+    private fun setSelectedTimes(selectedTimes: List<String>) {
         binding.llSelectedTimes.removeAllViews()
 
-        if (SelectedTimes.contains(getString(R.string.time_empty)) || SelectedTimes.contains(getString(R.string.time_before_sleep))) {
-            val filteredTimes = SelectedTimes.filter { it in listOf(
-                getString(R.string.time_morning),
-                getString(R.string.time_lunch),
-                getString(R.string.time_dinner)
-            ) }
-
+        if (selectedTimes.contains(getString(R.string.time_empty)) || selectedTimes.contains(getString(R.string.time_before_sleep))) {
+            val filteredTimes = selectedTimes.filter {
+                it in listOf(getString(R.string.time_morning), getString(R.string.time_lunch), getString(R.string.time_dinner))
+            }
             filteredTimes.forEach { time ->
-                val textView = TextView(requireContext()).apply {
-                    text = time
-                    setPadding(12, 4, 12, 4)
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_tag_main_blue_2_radius_4)
-                    setTextAppearance(R.style.TagTextStyle)
-
-                    val params = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
-                    params.marginEnd = 6
-                    layoutParams = params
-                }
-                binding.llSelectedTimes.addView(textView)
+                val chip = CustomChip.createChip(requireContext(), time)
+                binding.llSelectedTimes.addView(chip)
             }
 
-            val dosingTextView = TextView(requireContext()).apply {
-                text = getString(R.string.five_when_taking)
-                setPadding(8, 0, 8, 0)
-                setTextAppearance(R.style.TagTextStyle)
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_2))
-
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                layoutParams = params
-            }
+            // "복용 시" 텍스트뷰 추가
+            val dosingTextView = CustomChip.createDosingTextView(requireContext())
             binding.llSelectedTimes.addView(dosingTextView)
         }
     }

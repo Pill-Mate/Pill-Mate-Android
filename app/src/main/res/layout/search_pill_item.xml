@@ -10,7 +10,7 @@
         android:id="@+id/iv_image"
         android:layout_width="100dp"
         android:layout_height="54dp"
-        android:src="@drawable/ic_default_pill"
+        android:src="@drawable/img_default"
         android:background="@drawable/rectangle_radius_4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

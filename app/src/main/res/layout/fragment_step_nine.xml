@@ -10,7 +10,8 @@
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,7 +19,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingHorizontal="20dp">
 
             <ImageView
@@ -81,7 +82,7 @@
                     android:layout_width="100dp"
                     android:layout_height="54dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_default_pill"
+                    android:src="@drawable/img_default"
                     android:scaleType="centerCrop" />
 
                 <LinearLayout
@@ -151,7 +152,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="70dp"
                 android:paddingVertical="8dp"
                 android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/rv_schedule"
@@ -177,11 +177,19 @@
 
             </LinearLayout>
 
+            <Space
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_register"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_alarm_toggle" />
+
             <Button
                 android:id="@+id/btn_register"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="70dp"
                 android:layout_marginBottom="26dp"
                 android:background="@drawable/bg_btn_main_blue_1"
                 android:stateListAnimator="@null"
@@ -189,7 +197,6 @@
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_alarm_toggle"
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -33,7 +33,7 @@ class MedicineRegistrationPresenter(
             ),
             RegistrationData(
                 "시간대",
-                if (schedule.meal_time > 0 && currentStep > 4) "${schedule.meal_unit} ${schedule.meal_time}분" else ""
+                if (schedule.meal_time >= 0 && currentStep > 4) "${schedule.meal_unit} ${schedule.meal_time}분" else ""
             ),
             RegistrationData(
                 "투약량",
@@ -78,6 +78,9 @@ class MedicineRegistrationPresenter(
     }
 
     fun clearDataForStep(step: Int) {
+        // 8 이후는 삭제할 데이터가 없으므로 함수 실행 안 함
+        if (step >= 8) return
+
         val currentSchedule = repository.getSchedule() ?: Schedule()
 
         val updatedSchedule = currentSchedule.copy(

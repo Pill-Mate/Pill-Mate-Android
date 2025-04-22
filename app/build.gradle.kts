@@ -3,8 +3,7 @@ import java.util.*
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-parcelize")
-    id("com.google.gms.google-services")
+    id("kotlin-parcelize") //id("com.google.gms.google-services") // firebase
     id("kotlin-kapt")
 }
 
@@ -27,17 +26,37 @@ android {
             useSupportLibrary = true
         }
 
+        resValue("string", "kakao_app_key", "\"${properties["KAKAO_NATIVE_APP_KEY"]}\"")
+        resValue("string", "scheme_kakao_app_key", "\"kakao${properties["KAKAO_NATIVE_APP_KEY"]}\"")
+
         buildConfigField(
             "String", "BASE_URL", properties.getProperty("BASE_URL")
         )
         buildConfigField(
             "String", "KAKAO_NATIVE_APP_KEY", properties.getProperty("KAKAO_NATIVE_APP_KEY")
         )
+        buildConfigField(
+            "String", "SERVICE_API_KEY", "\"${properties.getProperty("SERVICE_API_KEY")}\""
+        )
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(properties["storeFile"] as String)
+            storePassword = properties["storePassword"] as String
+            keyAlias = properties["keyAlias"] as String
+            keyPassword = properties["keyPassword"] as String
+        }
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false //배포전 true로 변경하기
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -97,12 +116,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest) // Firebase BoM
-    //implementation(platform("com.google.firebase:firebase-bom:33.8.0")) -> 기존 버전(다운그레이드한 상태)
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
-    implementation("com.google.firebase:firebase-analytics") // Glide
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.github.bumptech.glide:glide:4.15.1") // Glide
     kapt("com.github.bumptech.glide:compiler:4.15.1")
-
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
 }

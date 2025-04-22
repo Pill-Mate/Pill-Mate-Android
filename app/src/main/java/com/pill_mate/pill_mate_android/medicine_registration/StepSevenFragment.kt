@@ -1,21 +1,21 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSevenBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.util.CustomChip
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
@@ -73,6 +73,9 @@ class StepSevenFragment : Fragment() {
     }
 
     private fun setupDosageDaysEditText() {
+        // 최대 3자리까지만 허용하는 InputFilter 적용
+        binding.etPeriod.filters = arrayOf(InputFilter.LengthFilter(3))
+
         binding.etPeriod.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -93,12 +96,13 @@ class StepSevenFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // 기존의 setOnEditorActionListener 코드는 그대로 유지
         binding.etPeriod.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                actionId == EditorInfo.IME_ACTION_NEXT ||
                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etPeriod.clearFocus()
-                KeyboardUtil.hideKeyboard(requireContext(), binding.etPeriod) // 키보드 닫기
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etPeriod)
                 return@setOnEditorActionListener true
             }
             false
@@ -109,14 +113,7 @@ class StepSevenFragment : Fragment() {
         binding.layoutEndDateChip.removeAllViews()
 
         val endDate = DateConversionUtil.calculateEndDate(selectedStartDate, dosageDays) ?: ""
-        val endDateChip = TextView(requireContext()).apply {
-            text = getString(R.string.seven_end_date_chip, endDate)
-            setPadding(12, 4, 12, 4)
-            background = ContextCompat.getDrawable(requireContext(),
-                R.drawable.bg_tag_main_blue_2_radius_4
-            )
-            setTextAppearance(R.style.TagTextStyle)
-        }
+        val endDateChip = CustomChip.createChip(requireContext(), getString(R.string.seven_end_date_chip, endDate))
 
         binding.layoutEndDateChip.addView(endDateChip)
     }

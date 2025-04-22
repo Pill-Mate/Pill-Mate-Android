@@ -5,7 +5,7 @@
     android:id="@+id/setting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.setting.activity.SettingActivity">
+    tools:context=".setting.view.SettingActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_backward"
@@ -31,7 +31,7 @@
             style="@style/H2_SB16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="설정"
+            android:text="@string/setting_title"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/btn_back"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:paddingStart="20dp"
-        android:text="개인설정"
+        android:text="@string/section_personal"
         android:textColor="@color/gray_2"
         app:layout_constraintTop_toBottomOf="@id/layout_profile" />
 
@@ -128,7 +128,7 @@
             style="@style/H3_RG16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="개인루틴 변경"
+            android:text="@string/personal_routine_edit"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -158,7 +158,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:paddingStart="20dp"
-        android:text="알림"
+        android:text="@string/section_alarm"
         android:textColor="@color/gray_2"
         app:layout_constraintTop_toBottomOf="@id/blank1" />
 
@@ -177,7 +177,7 @@
             style="@style/H3_RG16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="필메이트/복약 알림"
+            android:text="@string/pillmate_alarm"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -197,7 +197,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="복약 알림, 복약 종료, 서비스 업데이트 등"
+            android:text="@string/pillmate_alarm_description"
             android:textColor="@color/gray_1"
             app:layout_constraintTop_toBottomOf="@id/tg_pillmate_alarm" />
 
@@ -227,7 +227,7 @@
             style="@style/H3_RG16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="마케팅 알림"
+            android:text="@string/marketing_alarm"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -247,7 +247,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="메이트님을 위한 마케팅 정보 등"
+            android:text="@string/marketing_alarm_description"
             android:textColor="@color/gray_1"
             app:layout_constraintTop_toBottomOf="@id/tg_marketing_alarm" />
 
@@ -268,7 +268,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:paddingStart="20dp"
-        android:text="서비스"
+        android:text="@string/section_service"
         android:textColor="@color/gray_2"
         app:layout_constraintTop_toBottomOf="@id/blank2" />
 
@@ -288,7 +288,7 @@
             style="@style/H3_RG16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="필메이트에 대해"
+            android:text="@string/about_pillmate"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -327,7 +327,7 @@
             style="@style/H3_RG16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="의견 보내기"
+            android:text="@string/send_comment"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -355,7 +355,7 @@
             style="@style/B2_RG14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="탈퇴하기"
+            android:text="@string/sign_out"
             android:textColor="@color/gray_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/divide"
@@ -377,7 +377,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:text="로그아웃"
+            android:text="@string/logout"
             android:textColor="@color/gray_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/divide"

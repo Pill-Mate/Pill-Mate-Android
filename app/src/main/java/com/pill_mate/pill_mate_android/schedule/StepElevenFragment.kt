@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
-import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
+import com.pill_mate.pill_mate_android.main.view.MainActivity
 
 class StepElevenFragment : Fragment() {
 
@@ -15,8 +15,7 @@ class StepElevenFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStepElevenBinding.inflate(inflater, container, false)
         return binding.root
@@ -33,8 +32,7 @@ class StepElevenFragment : Fragment() {
         }
     }
 
-    private fun navigateToMainActivity() {
-        // home으로 이동
+    private fun navigateToMainActivity() { // home으로 이동
         val intent = Intent(requireContext(), MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.search.view
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -10,8 +11,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.SearchPillItemBinding
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
@@ -31,13 +36,36 @@ class PillIdntfcAdapter(
             if (ivImage.tag != pill.ITEM_IMAGE) { // 중복 로딩 방지
                 ivImage.tag = pill.ITEM_IMAGE
 
+                Glide.with(ivImage.context).clear(ivImage) // 기존 이미지 제거 후 로드
                 Glide.with(ivImage.context)
                     .load(pill.ITEM_IMAGE)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .skipMemoryCache(false)
                     .dontAnimate()
                     .transform(RoundedCorners(8))
-                    .error(R.drawable.ic_default_pill)
+                    .error(R.drawable.img_default) // Glide 로딩 실패 시 기본 이미지
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Log.e("GlideError", "Image Load Failed for URL: ${pill.ITEM_IMAGE}", e)
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Log.d("GlideSuccess", "Image Loaded Successfully: ${pill.ITEM_IMAGE}")
+                            return false
+                        }
+                    })
                     .into(ivImage)
             }
 

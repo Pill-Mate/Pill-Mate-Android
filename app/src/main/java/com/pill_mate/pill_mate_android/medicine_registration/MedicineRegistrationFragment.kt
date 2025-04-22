@@ -1,6 +1,5 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ import com.pill_mate.pill_mate_android.search.view.StepOneFragment
 import com.pill_mate.pill_mate_android.search.view.StepTwoFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
-import com.pill_mate.pill_mate_android.schedule.ScheduleActivity
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
 
@@ -109,12 +107,21 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                 R.id.stepSixFragment -> 6
                 R.id.stepSevenFragment -> 7
                 R.id.stepEightFragment -> 8
+                R.id.loadingFragment -> 9
+                R.id.stepNineFragment -> 10
+                R.id.stepTenFragment -> 11
+                R.id.stepElevenFragment -> 12
                 R.id.loadingConflictFragment, R.id.medicineConflictFragment -> 2
                 else -> 0
             }
+
             updateProgressBar(stepIndex)
             updateViewVisibility(destination.id)
-            presenter.updateView(stepIndex)
+
+            // Step 8까지는 presenter.updateView() 호출, Step 9 이상은 호출 안 함
+            if (stepIndex <= 8) {
+                presenter.updateView(stepIndex)
+            }
         }
     }
 
@@ -131,11 +138,19 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     override fun updateRecyclerView(data: List<RegistrationData>) {
-        adapter.updateData(data)
-        Log.d("MedicineRegistrationFragment", "RecyclerView updated: ${data.size} items")
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as NavHostFragment
+        val navController = navHostFragment.navController
+        val currentDestinationId = navController.currentDestination?.id
 
-        // 🔹 데이터가 없으면 RecyclerView 숨김 처리
-        binding.rvData.visibility = if (data.isNotEmpty()) View.VISIBLE else View.GONE
+        // 충돌 프래그먼트일 경우 항상 숨김
+        val hideRecyclerView = currentDestinationId in listOf(
+            R.id.loadingConflictFragment, R.id.medicineConflictFragment
+        )
+        adapter.updateData(data)
+
+        binding.rvData.visibility = if (hideRecyclerView) View.GONE else {
+            if (data.isNotEmpty()) View.VISIBLE else View.GONE
+        }
     }
 
     override fun showConfirmationBottomSheet() {
@@ -175,6 +190,10 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
             R.id.stepSixFragment -> 6
             R.id.stepSevenFragment -> 7
             R.id.stepEightFragment -> 8
+            R.id.loadingFragment -> 9
+            R.id.stepNineFragment -> 10
+            R.id.stepTenFragment -> 11
+            R.id.stepElevenFragment -> 12
             else -> null
         }
 
@@ -241,7 +260,7 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
                     currentFragment.saveData()
                     showConfirmationBottomSheet { confirmed ->
                         if (confirmed) {
-                            navigateToScheduleActivity()
+                            navHostFragment.navController.navigate(R.id.action_stepEightFragment_to_loadingFragment)
                         }
                     }
                 } else {
@@ -264,30 +283,10 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
 
             showConfirmationBottomSheet { confirmed ->
                 if (confirmed) {
-                    navigateToScheduleActivity()
+                    navHostFragment?.navController?.navigate(R.id.action_stepEightFragment_to_loadingFragment)
                 }
             }
         }
-    }
-
-    private fun navigateToScheduleActivity() {
-        val intent = Intent(requireContext(), ScheduleActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish()
-    }
-
-    fun navigateToStepOne() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
-        val navController = navHostFragment?.navController
-
-        navController?.navigate(R.id.stepOneFragment)
-    }
-
-    fun navigateToStepEight() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_steps) as? NavHostFragment
-        val navController = navHostFragment?.navController
-
-        navController?.navigate(R.id.stepEightFragment)
     }
 
     private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {
@@ -306,31 +305,19 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     private fun updateViewVisibility(destinationId: Int) {
-        val isConflictFragment = destinationId == R.id.loadingConflictFragment || destinationId == R.id.medicineConflictFragment
+        val hideUI = destinationId in listOf(
+            R.id.loadingConflictFragment, R.id.medicineConflictFragment,
+            R.id.loadingFragment, R.id.stepNineFragment, R.id.stepTenFragment, R.id.stepElevenFragment
+        )
+
+        binding.ivBack.visibility = if (hideUI) View.GONE else View.VISIBLE
+        binding.tvTitle.visibility = if (hideUI) View.GONE else View.VISIBLE
+        binding.ivDelete.visibility = if (hideUI) View.GONE else View.VISIBLE
+        binding.progressBarSteps.visibility = if (hideUI) View.GONE else View.VISIBLE
+        binding.btnNext.visibility = if (hideUI) View.GONE else View.VISIBLE
+        binding.rvData.visibility = if (hideUI) View.GONE else View.VISIBLE
+
         val isStepEightFragment = destinationId == R.id.stepEightFragment
-
-        // 상단 뷰 (뒤로 가기 버튼, 제목, 삭제 버튼) 처리
-        binding.ivBack.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-        binding.tvTitle.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-        binding.ivDelete.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-
-        // ProgressBar, Next 버튼, RecyclerView 처리
-        binding.progressBarSteps.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-        binding.btnNext.visibility = if (isConflictFragment) View.GONE else View.VISIBLE
-
-        // 충돌 프래그먼트일 경우 RecyclerView 숨김 및 데이터 초기화
-        if (isConflictFragment) {
-            adapter.updateData(emptyList()) // 어댑터 데이터 초기화
-            binding.rvData.visibility = View.GONE
-
-            // RecyclerView 숨김이 확실하게 적용되도록 postDelayed 사용
-            binding.rvData.postDelayed({
-                binding.rvData.visibility = View.GONE
-            }, 50) // 50ms 후 강제 적용
-        } else {
-            binding.rvData.visibility = View.VISIBLE
-        }
-
         // StepEightFragment에서만 건너뛰기 버튼 표시
         binding.btnSkip.visibility = if (isStepEightFragment) View.VISIBLE else View.GONE
     }
