@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">필메이트</string>
 
-    <!--카카오 로그인 네이티브 앱키-->
-    <string name="kakao_app_key">43540f4573a619d2d0c52342367ed58c</string>
-    <string name="scheme_kakao_app_key">kakao43540f4573a619d2d0c52342367ed58c</string>
-
     <!--BottomNavigation-->
     <string name="pill_check">복약체크</string>
     <string name="pill_stats">통계</string>

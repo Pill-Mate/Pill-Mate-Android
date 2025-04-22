@@ -26,6 +26,9 @@ android {
             useSupportLibrary = true
         }
 
+        resValue("string", "kakao_app_key", "\"${properties["KAKAO_NATIVE_APP_KEY"]}\"")
+        resValue("string", "scheme_kakao_app_key", "\"kakao${properties["KAKAO_NATIVE_APP_KEY"]}\"")
+
         buildConfigField(
             "String", "BASE_URL", properties.getProperty("BASE_URL")
         )
@@ -33,9 +36,7 @@ android {
             "String", "KAKAO_NATIVE_APP_KEY", properties.getProperty("KAKAO_NATIVE_APP_KEY")
         )
         buildConfigField(
-            "String",
-            "SERVICE_API_KEY",
-            "\"${properties.getProperty("SERVICE_API_KEY")}\""
+            "String", "SERVICE_API_KEY", "\"${properties.getProperty("SERVICE_API_KEY")}\""
         )
     }
 
