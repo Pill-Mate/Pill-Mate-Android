@@ -171,7 +171,7 @@ class SearchBottomSheetFragment(
                 .debounce(300) // 짧은 입력 무시
                 .distinctUntilChanged() // 중복 제거
                 .collect { query ->
-                    if (query.length < 2) return@collect // 너무 짧은 검색어 방지
+                    if (query.isEmpty()) return@collect // 검색어가 비어 있으면 요청하지 않음
 
                     searchJob?.cancel() // 중복 요청 중단
                     searchJob = launch {
