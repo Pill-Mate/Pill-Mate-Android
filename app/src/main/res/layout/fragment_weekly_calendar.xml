@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.pillcheck.fragment.WeeklyCalendarFragment">
+    tools:context=".pillcheck.view.WeeklyCalendarFragment">
 
     <LinearLayout
         style="@style/layout_calendar_date_item"

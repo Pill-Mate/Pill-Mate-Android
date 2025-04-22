@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.kakao.sdk.common.KakaoSdk
-import com.pill_mate.pill_mate_android.ui.login.activity.KakaoLoginActivity
+import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 
 class GlobalApplication : Application() {
 

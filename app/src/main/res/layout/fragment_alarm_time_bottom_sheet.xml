@@ -10,7 +10,7 @@
     android:clipToPadding="false"
     android:paddingTop="26dp"
     android:paddingBottom="26dp"
-    tools:context=".ui.setting.SettingRoutineBottomDialogFragment">
+    tools:context=".setting.view.SettingRoutineBottomDialogFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_title"

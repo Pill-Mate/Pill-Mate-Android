@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ui.pillcheck.fragment.PillCheckFragment">
+    tools:context=".pillcheck.view.PillCheckFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_scrollview"
@@ -189,7 +189,7 @@
             <!-- Weekly Calendar Fragment -->
             <fragment
                 android:id="@+id/fg_weekly_calendar"
-                android:name="com.pill_mate.pill_mate_android.ui.pillcheck.fragment.WeeklyCalendarFragment"
+                android:name="com.pill_mate.pill_mate_android.pillcheck.view.WeeklyCalendarFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"

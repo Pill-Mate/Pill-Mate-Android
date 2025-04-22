@@ -3,8 +3,8 @@ package com.pill_mate.pill_mate_android
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import com.pill_mate.pill_mate_android.ui.login.RefreshTokenData
-import com.pill_mate.pill_mate_android.ui.login.ResponseError
+import com.pill_mate.pill_mate_android.login.model.RefreshTokenData
+import com.pill_mate.pill_mate_android.login.model.ResponseError
 import okhttp3.Interceptor
 import okhttp3.Protocol.HTTP_1_1
 import okhttp3.Request
