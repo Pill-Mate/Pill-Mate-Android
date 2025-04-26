@@ -16,7 +16,7 @@ jobs: # 아래에 workflow 기능 정의한다.
           java-version: 11
 
       - name: Cache Gradle packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
