@@ -8,15 +8,22 @@ jobs: # 아래에 workflow 기능 정의한다.
   build: # 빌드 순서를 정한다.
     runs-on: ubuntu-latest # ubuntu 배포버전에서 실행되도록 설정
     steps: # 단계별로 수행해야하는 작업을 정의한다. n번째 단계가 실패하면, n+1 단계는 취소됨.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: set up JDK 11
+      - name: Generate local.properties
+        run: |
+          echo BASE_URL=\"${{ secrets.BASE_URL }}\" >> local.properties
+          echo KAKAO_NATIVE_APP_KEY=\"${{ secrets.KAKAO_NATIVE_APP_KEY }}\" >> local.properties
+          echo SCHEME_KAKAO_APP_KEY=\"kakao${{ secrets.KAKAO_NATIVE_APP_KEY }}\" >> local.properties
+          echo SERVICE_API_KEY=\"${{ secrets.SERVICE_API_KEY }}\" >> local.properties
+
+      - name: set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
 
       - name: Cache Gradle packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
