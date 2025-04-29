@@ -51,12 +51,12 @@ jobs: # 아래에 workflow 기능 정의한다.
         id: slack
         uses: slackapi/slack-github-action@v1.18.0
         with:
-          repo-token: ${{ secrets.GIT_TOKEN }}
-          channel-id: 'info_qa'
+          #repo-token: ${{ secrets.GIT_TOKEN }}
+          channel-id: 'C08Q5EZ4FNV'
           slack-message: '새로운 테스트 빌드 배포
                           ${{ github.event.head_commit.message }}'
-          file_path: 'app/build/outputs/apk/debug/app-debug.apk'
-          file_name: 'app-debug.apk'
-          file_type: 'apk'
+          #file_path: 'app/build/outputs/apk/debug/app-debug.apk'
+          #file_name: 'app-debug.apk'
+          #file_type: 'apk'
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
