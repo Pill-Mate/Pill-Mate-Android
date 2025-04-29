@@ -10,7 +10,6 @@ jobs: # 아래에 workflow 기능 정의한다.
     steps: # 단계별로 수행해야하는 작업을 정의한다. n번째 단계가 실패하면, n+1 단계는 취소됨.
       - uses: actions/checkout@v3
 
-      # local.properties 값 설정
       - name: Generate local.properties
         run: |
           echo BASE_URL=\"${{ secrets.BASE_URL }}\" >> local.properties
