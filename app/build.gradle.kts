@@ -19,7 +19,7 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 5
+        versionCode = 10000
         versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -58,9 +58,9 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
+        getByName("debug") { //applicationIdSuffix = ".debug" //debug와 release를 구분해야할 경우
             versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("release")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
