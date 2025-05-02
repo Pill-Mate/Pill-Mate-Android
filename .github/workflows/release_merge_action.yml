@@ -11,7 +11,7 @@ jobs: # 아래에 workflow 기능 정의한다.
       - uses: actions/checkout@v3
 
       - name: Decode release.keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/release.keystore
 
       - name: Generate local.properties
         run: |
