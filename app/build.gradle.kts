@@ -58,9 +58,9 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
+        getByName("debug") { //applicationIdSuffix = ".debug" //debug와 release를 구분해야할 경우
             versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("release")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")

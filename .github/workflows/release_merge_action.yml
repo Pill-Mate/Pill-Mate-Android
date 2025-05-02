@@ -10,12 +10,20 @@ jobs: # 아래에 workflow 기능 정의한다.
     steps: # 단계별로 수행해야하는 작업을 정의한다. n번째 단계가 실패하면, n+1 단계는 취소됨.
       - uses: actions/checkout@v3
 
+      - name: Decode release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
+
       - name: Generate local.properties
         run: |
           echo BASE_URL=\"${{ secrets.BASE_URL }}\" >> local.properties
           echo KAKAO_NATIVE_APP_KEY=\"${{ secrets.KAKAO_NATIVE_APP_KEY }}\" >> local.properties
           echo SCHEME_KAKAO_APP_KEY=\"kakao${{ secrets.KAKAO_NATIVE_APP_KEY }}\" >> local.properties
           echo SERVICE_API_KEY=${{ secrets.SERVICE_API_KEY }} >> local.properties
+          
+          echo storeFile=release.keystore >> local.properties
+          echo storePassword=${{ secrets.STORE_PASSWORD }} >> local.properties
+          echo keyAlias=${{ secrets.KEY_ALIAS }} >> local.properties
+          echo keyPassword=${{ secrets.KEY_PASSWORD }} >> local.properties
 
       - name: set up JDK 17
         uses: actions/setup-java@v1
@@ -53,8 +61,9 @@ jobs: # 아래에 workflow 기능 정의한다.
         with:
           #repo-token: ${{ secrets.GIT_TOKEN }}
           channel-id: 'C08Q5EZ4FNV'
-          slack-message: '새로운 테스트 빌드 배포
-                          ${{ github.event.head_commit.message }}'
+          slack-message: |
+            🚀 새로운 테스트 빌드가 배포되었습니다!
+            👉 커밋 메시지: ${{ github.event.head_commit.message }}
           #file_path: 'app/build/outputs/apk/debug/app-debug.apk'
           #file_name: 'app-debug.apk'
           #file_type: 'apk'
