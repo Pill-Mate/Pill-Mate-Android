@@ -46,7 +46,7 @@
 # 4. Tasks & Responsibilities (작업 및 역할 분담)
 |  |  |  |
 |-----------------|-----------------|-----------------|
-| 강현정    |  <img src="https://github.com/user-attachments/assets/b2fde1af-85e6-49cc-b46a-cb960c096130" alt="강현정" width="100"> | <ul><li>프로젝트 계획 및 관리</li><li>팀 리딩 및 커뮤니케이션</li><li>커스텀훅 개발</li></ul>     |
+| 강현정    |  <img src="https://github.com/user-attachments/assets/b2fde1af-85e6-49cc-b46a-cb960c096130" alt="강현정" width="100"> | <ul><li>💊약물 등록 기능(medicine_registration) 개발<br>&emsp;- 단계별 약물 등록 UI 및 스케줄 생성 기능 구현<br>&emsp;- 약국/병원 검색 & 일반/전문의약품 검색 기능 구현<br>&emsp;- 의약품 정보 및 기관 정보 API 연동</li><br><li>⚠️약물 충돌 확인 기능(medicine_conflict) 개발<br>&emsp;- 성분 기반 병용금기 확인 및 결과 시각화<br>&emsp;- 약물 상세 정보 및 사용자 병원/약국 연락 기능 구현</li><br><li>✏️약물 수정 기능(pilledit) 개발<br>&emsp;- 등록 약물의 복용 정보 수정 기능 구현<br>&emsp;- 시간 설정 BottomSheet 및 입력 유효성 검증 로직 적용</li></ul> |
 | 김다희   |  <img src="https://github.com/user-attachments/assets/a8c29331-5c90-4e82-bd9e-e5ab82334e1c" alt="김다희" width="100">| <ul><li>메인 페이지 개발</li><li>동아리 만들기 페이지 개발</li><li>커스텀훅 개발</li></ul> |
 
 <br/>
