@@ -8,15 +8,13 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="복용 시간대를 알려주세요"
+        android:text="@string/five_title"
         android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
+        style="@style/T1_B22"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"  />
 
     <LinearLayout
         android:id="@+id/layout_meal_unit"
@@ -24,8 +22,8 @@
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_edittext_gray_3"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_edittext_black"
         android:padding="12dp"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,20 +32,20 @@
         <TextView
             android:id="@+id/tv_meal_unit"
             android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="식후"
-            android:textSize="16sp"
             android:ellipsize="end"
             android:maxLines="1"
+            style="@style/H2_MD16"
             android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/iv_dropdown"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_dropdown"
-            android:contentDescription="Dropdown icon" />
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_dropdown"/>
     </LinearLayout>
 
     <EditText
@@ -60,8 +58,8 @@
         android:gravity="center_vertical"
         android:inputType="number"
         android:padding="12dp"
-        android:text="30"
-        android:textSize="16sp"
+        style="@style/H2_MD16"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/layout_meal_unit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/layout_meal_unit"

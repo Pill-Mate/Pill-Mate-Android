@@ -4,28 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StepOneFragment">
+    tools:context=".search.view.StepOneFragment">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="처방받은 약국, 병원의 정보를 등록해주세요"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
+        android:text="@string/one_title"
+        android:textColor="@color/black"
+        style="@style/T1_B22"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/tv_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="복용 중인 약물과 성분 충돌 시 문의를 할 수 있어요"
-        android:textSize="14sp"
+        android:text="@string/one_sub_title"
+        android:textColor="@color/black"
+        style="@style/B2_RG14"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
@@ -34,8 +34,9 @@
         android:id="@+id/tv_pharmacy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="약국 (필수)"
-        android:textSize="14sp"
+        android:text="@string/one_tv_pharmacy"
+        android:textColor="@color/black"
+        style="@style/B1_B14"
         app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="32dp"
@@ -47,124 +48,140 @@
         android:layout_marginStart="1dp"
         android:text="*"
         android:textColor="@color/status_red"
-        android:textSize="14sp"
+        style="@style/B1_B14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_pharmacy"
         app:layout_constraintStart_toEndOf="@id/tv_pharmacy"
         app:layout_constraintTop_toTopOf="@+id/tv_pharmacy" />
 
-    <RelativeLayout
-        android:id="@+id/layout_pill"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutPharmacy"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/bg_search_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_pharmacy">
+        app:layout_constraintTop_toBottomOf="@id/tv_pharmacy"
+        app:hintTextAppearance="@style/HintTextStyle"
+        app:hintEnabled="false"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
 
-        <FrameLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_pharmacy"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="48dp"
+            android:hint="@string/one_et_pharmacy"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_2"
+            style="@style/H2_MD16"
+            android:cursorVisible="false"
+            android:inputType="text"
+            android:maxLines="1"
+            android:background="@drawable/bg_edittext_black"
+            android:paddingStart="44dp"
+            android:paddingEnd="16dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/et_Pharmacy"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="약국 이름을 입력하세요"
-                android:background="@drawable/bg_edittext_gray_3"
-                android:paddingStart="48dp"
-                android:paddingEnd="16dp"
-                android:textColorHint="#BDBDBD"
-                android:textSize="16sp" />
+    <ImageView
+        android:id="@+id/iv_clear_pharmacy"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_edit_text_delete"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutPharmacy"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPharmacy"
+        app:layout_constraintEnd_toEndOf="@id/textInputLayoutPharmacy"
+        android:layout_marginEnd="12dp"/>
 
-            <ImageView
-                android:id="@+id/iv_searchPharmacy"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_search" />
-        </FrameLayout>
-
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/iv_searchPharmacy"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintStart_toStartOf="@id/textInputLayoutPharmacy"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutPharmacy"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPharmacy"/>
 
     <TextView
         android:id="@+id/tv_warning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="처방받은 약국을 등록해주세요."
+        android:text="@string/one_warning"
         android:textColor="@color/status_red"
-        android:textSize="12sp"
+        style="@style/B3_SB12"
         android:layout_marginTop="6dp"
-        app:layout_constraintTop_toBottomOf="@+id/layout_pill"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPharmacy"
         app:layout_constraintStart_toStartOf="@+id/tv_pharmacy"
         android:visibility="gone"/>
-
 
     <!-- Hospital -->
     <TextView
         android:id="@+id/hospitalLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="병원"
-        android:textSize="14sp"
+        android:text="@string/one_tv_hospital"
+        android:textColor="@color/black"
+        style="@style/B1_B14"
         app:layout_constraintTop_toBottomOf="@id/tv_warning"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="24dp"
         android:layout_marginStart="20dp" />
 
-    <RelativeLayout
-        android:id="@+id/layout_hospital"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutHospital"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/bg_search_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hospitalLabel">
+        app:layout_constraintTop_toBottomOf="@id/hospitalLabel"
+        app:hintTextAppearance="@style/HintTextStyle"
+        app:hintEnabled="false"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
 
-        <FrameLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_hospital"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="48dp"
+            android:hint="@string/one_et_hospital"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_2"
+            style="@style/H2_MD16"
+            android:cursorVisible="false"
+            android:inputType="text"
+            android:maxLines="1"
+            android:background="@drawable/bg_edittext_black"
+            android:paddingStart="44dp"
+            android:paddingEnd="16dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/et_hospital"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="병원 이름을 입력하세요"
-                android:background="@drawable/bg_edittext_gray_3"
-                android:paddingStart="48dp"
-                android:paddingEnd="16dp"
-                android:textColorHint="#BDBDBD"
-                android:textSize="16sp" />
+    <ImageView
+        android:id="@+id/iv_clear_hospital"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_edit_text_delete"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutHospital"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutHospital"
+        app:layout_constraintEnd_toEndOf="@id/textInputLayoutHospital"
+        android:layout_marginEnd="12dp"/>
 
-            <ImageView
-                android:id="@+id/iv_searchHospital"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_search"/>
-        </FrameLayout>
-
-    </RelativeLayout>
-
-<!--    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:text="다음"
-        android:textColor="@android:color/black"
-        android:background="@drawable/bg_btn_gray_3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp" />-->
+    <ImageView
+        android:id="@+id/iv_searchHospital"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintStart_toStartOf="@id/textInputLayoutHospital"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutHospital"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutHospital" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

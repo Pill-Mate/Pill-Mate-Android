@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.pill_mate_android">
+    package="com.pill_mate.pill_mate_android">
     <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
+        android:name="com.pill_mate.pill_mate_android.GlobalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,24 +18,76 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PillMateAndroid"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <activity
-            android:name=".MedicineRegistrationActivity"
-            android:windowSoftInputMode="adjustNothing"
+            android:name="com.pill_mate.pill_mate_android.setting.view.SettingActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.PillMateAndroid">
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.SuccessActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker2Activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker1Activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.login.view.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.pill_mate.pill_mate_android.login.view.AgreementActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".ScheduleActivity"
+            android:name="com.pill_mate.pill_mate_android.main.view.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" /> <!-- 카카오 로그인, 인가코드를 받기 위한 액티비티 -->
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="@string/scheme_kakao_app_key" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.pill_mate.pill_mate_android.pilledit.view.MedicineEditActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PillMateAndroid" />
+        <activity
+            android:name="com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PillMateAndroid" />
     </application>
 
