@@ -27,21 +27,35 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setDefaultStatusBar()
-        onPlusButtonClick()
-
         presenter = MainPresenter(this)
-        binding.bottomNavMain.itemIconTintList = null
-        binding.bottomNavMain.selectedItemId = id.menu_home
+        setDefaultStatusBar()
+        setupPlusButtonClickListener()
+        binding.bottomNavMain.itemIconTintList = null // 아이콘 원본 색상 적용
+        binding.bottomNavMain.selectedItemId = id.menu_home // 홈 메뉴를 기본 탭으로 지정
 
         presenter.onCreate()
 
     }
 
-    private fun onPlusButtonClick() {
+    private fun setupPlusButtonClickListener() {
         binding.floatingBtnAdd.setOnClickListener { // 약물 등록 액티비티로 이동
-            val intent = Intent(this, MedicineRegistrationActivity::class.java)
-            startActivity(intent)
+            presenter.onPlusButtonClicked()
+        }
+    }
+
+    // 기본 상태바로 설정
+    fun setDefaultStatusBar() {
+        window.apply {
+            statusBarColor = ContextCompat.getColor(this@MainActivity, android.R.color.transparent) // 기본 상태바 색상
+            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = true // 기본 상태바 아이콘(검정)
+        }
+    }
+
+    // 상태바 색상 변경
+    fun setStatusBarColor(colorResId: Int, isLightStatusBar: Boolean) {
+        window.apply {
+            statusBarColor = ContextCompat.getColor(this@MainActivity, colorResId) // 상태바 색상 변경
+            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = isLightStatusBar // 아이콘 색상 변경
         }
     }
 
@@ -64,20 +78,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         supportFragmentManager.beginTransaction().replace(id.frm_main, fragment).commitAllowingStateLoss()
     }
 
-    // 기본 상태바로 설정
-    fun setDefaultStatusBar() {
-        window.apply {
-            statusBarColor = ContextCompat.getColor(this@MainActivity, android.R.color.transparent) // 기본 상태바 색상
-            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = true // 기본 상태바 아이콘(검정)
-        }
+    override fun navigateToMedicineRegistration() {
+        val intent = Intent(this, MedicineRegistrationActivity::class.java)
+        startActivity(intent)
     }
-
-    // 상태바 색상 변경
-    fun setStatusBarColor(colorResId: Int, isLightStatusBar: Boolean) {
-        window.apply {
-            statusBarColor = ContextCompat.getColor(this@MainActivity, colorResId) // 상태바 색상 변경
-            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = isLightStatusBar // 아이콘 색상 변경
-        }
-    }
-
 }

@@ -7,10 +7,12 @@ interface MainContract {
         fun setWindowInsets()
         fun initBottomNavi()
         fun showFragment(fragment: Fragment)
+        fun navigateToMedicineRegistration()
     }
 
     interface Presenter {
         fun onCreate()
         fun onBottomNavigationItemSelected(itemId: Int)
+        fun onPlusButtonClicked()
     }
 }
