@@ -201,6 +201,19 @@ class MedicineEditActivity : AppCompatActivity() {
                 if (visibleLayouts.contains("아침") && visibleLayouts.contains("점심")) View.VISIBLE else View.GONE
             lineDinner.visibility =
                 if (visibleLayouts.contains("점심") && visibleLayouts.contains("저녁")) View.VISIBLE else View.GONE
+
+            // 아침/점심/저녁 전부 안 보이면 부모 레이아웃, 시간 바텀시트, 툴팁 숨김
+            if (visibleLayouts.isEmpty()) {
+                layoutIntakeSchedule.visibility = View.GONE
+                layoutMealUnit.visibility = View.GONE
+                binding.ivMealTooltip.visibility = View.GONE
+                binding.layoutMealInfoClickArea.visibility = View.GONE
+            } else {
+                layoutIntakeSchedule.visibility = View.VISIBLE
+                layoutMealUnit.visibility = View.VISIBLE
+                binding.ivMealTooltip.visibility = View.VISIBLE
+                binding.layoutMealInfoClickArea.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -400,7 +413,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 }
 
                 warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
-                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext)
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext_gray_2)
 
                 if (!isInvalid) {
                     onValidInput?.invoke(inputText)
