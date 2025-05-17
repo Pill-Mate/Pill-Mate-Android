@@ -21,4 +21,8 @@ class MainPresenter(private val view: MainContract.View) : MainContract.Presente
         }
         view.showFragment(fragment)
     }
+
+    override fun onPlusButtonClicked() {
+        view.navigateToMedicineRegistration()
+    }
 }
