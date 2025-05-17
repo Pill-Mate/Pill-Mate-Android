@@ -109,7 +109,7 @@
                         android:paddingVertical="2dp"
                         android:background="@drawable/bg_tag_main_blue_2_radius_4"
                         android:text="@string/nine_pill_dose"
-                        style="@style/B2_RG14"
+                        style="@style/B1_SB14"
                         android:textColor="@color/main_blue_1" />
                 </LinearLayout>
             </LinearLayout>

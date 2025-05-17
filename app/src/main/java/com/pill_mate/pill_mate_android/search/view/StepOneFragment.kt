@@ -3,7 +3,6 @@ package com.pill_mate.pill_mate_android.search.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -167,7 +166,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
 
-        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_2
         binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
     }
 
