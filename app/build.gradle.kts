@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
-    id("com.google.gms.google-services")
+    id("com.google.gms.google-services") // firebase
     id("kotlin-kapt")
 }
 
@@ -19,13 +19,16 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 10000
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resValue("string", "kakao_app_key", "\"${properties["KAKAO_NATIVE_APP_KEY"]}\"")
+        resValue("string", "scheme_kakao_app_key", "\"kakao${properties["KAKAO_NATIVE_APP_KEY"]}\"")
 
         buildConfigField(
             "String", "BASE_URL", properties.getProperty("BASE_URL")
@@ -33,10 +36,34 @@ android {
         buildConfigField(
             "String", "KAKAO_NATIVE_APP_KEY", properties.getProperty("KAKAO_NATIVE_APP_KEY")
         )
+        buildConfigField(
+            "String", "SERVICE_API_KEY", "\"${properties.getProperty("SERVICE_API_KEY")}\""
+        )
+    }
+
+    signingConfigs {
+        create("release") {
+            val storeFilePath = properties["storeFile"] as? String
+            val storePasswordProp = properties["storePassword"] as? String
+            val keyAliasProp = properties["keyAlias"] as? String
+            val keyPasswordProp = properties["keyPassword"] as? String
+
+            if (storeFilePath != null && storePasswordProp != null && keyAliasProp != null && keyPasswordProp != null) {
+                storeFile = file(storeFilePath)
+                storePassword = storePasswordProp
+                keyAlias = keyAliasProp
+                keyPassword = keyPasswordProp
+            }
+        }
     }
 
     buildTypes {
-        release {
+        getByName("debug") { //applicationIdSuffix = ".debug" //debug와 release를 구분해야할 경우
+            versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("release")
+        }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -89,20 +116,19 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("androidx.recyclerview:recyclerview:1.3.1") // recyclerview
     implementation("com.airbnb.android:lottie-compose:5.2.0")
-    implementation ("com.google.android.flexbox:flexbox:3.0.0")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest) // Firebase BoM
-    //implementation(platform("com.google.firebase:firebase-bom:33.8.0")) -> 기존 버전(다운그레이드한 상태)
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
-    implementation("com.google.firebase:firebase-analytics") // Glide
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.github.bumptech.glide:glide:4.15.1") // Glide
     kapt("com.github.bumptech.glide:compiler:4.15.1")
-    implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
+    implementation("com.google.firebase:firebase-analytics")
 }

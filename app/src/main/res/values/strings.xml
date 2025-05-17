@@ -1,16 +1,129 @@
 <resources>
     <string name="app_name">필메이트</string>
 
-    <!--카카오 로그인 네이티브 앱키-->
-    <string name="kakao_app_key">43540f4573a619d2d0c52342367ed58c</string>
-    <string name="scheme_kakao_app_key">kakao43540f4573a619d2d0c52342367ed58c</string>
-
-    <!--하단 네비게이션 메뉴-->
+    <!--BottomNavigation-->
     <string name="pill_check">복약체크</string>
     <string name="pill_stats">통계</string>
     <string name="pill_edit">약물관리</string>
     <string name="pill_search">검색</string>
-    <string name="my_page">마이</string>
+    <string name="fab_add_medicine">약물 등록</string>
+
+    <!--OnBoarding-->
+    <string name="num_1">1</string>
+    <string name="num_2">2</string>
+    <string name="num_3">3</string>
+    <string name="next_button">다음</string>
+
+    <!--OnBoarding_AgreementActivity-->
+    <string name="agreement_title">필메이트 약관 동의</string>
+    <string name="agreement_subtitle">메이트 여러분들의 개인정보를 보호할게요</string>
+
+    <string name="cb_1_text">(필수) 만 14세 이상이에요</string>
+    <string name="cb_2_text">(필수) 서비스 이용약관 동의</string>
+    <string name="cb_3_text">(필수) 개인정보 보호방침 동의</string>
+    <string name="cb_4_text">(필수) 민감정보수집 및 이용동의</string>
+    <string name="cb_5_text">(선택) 필메이트/복약 알림 동의</string>
+    <string name="cb_5_desc">복약 알림, 복약 종료, 서비스 업데이트 등</string>
+    <string name="cb_6_text">(선택) 마케팅 수신 동의</string>
+    <string name="cb_6_desc">다양한 복약정보 및 프로모션 정보를 알려드려요.</string>
+    <string name="cb_7_text">모두동의</string>
+    <string name="cb_7_desc">약관 및 개인정보 보호방침, 마케팅 수신 동의</string>
+
+    <string name="detail_view">상세보기</string>
+
+    <!--OnBoarding_TimePickerActivity-->
+    <string name="time_separator_colon">:</string>
+
+    <string name="timepicker1_title">기상, 취침시간을\n알려주세요</string>
+    <string name="timepicker1_subtitle">루틴에 맞는 복약시간을 알려드릴게요</string>
+    <string name="timepicker2_title">식사시간을 알려주세요</string>
+    <string name="timepicker2_subtitle">루틴에 맞는 복약시간을 알려드릴게요</string>
+
+    <string name="label_wakeup">기상</string>
+    <string name="label_sleep">취침</string>
+    <string name="label_breakfast">아침식사</string>
+    <string name="label_lunch">점심식사</string>
+    <string name="label_dinner">저녁식사</string>
+
+    <string name="default_wakeup_time">오전 8:00</string>
+    <string name="default_sleep_time">오후 8:00</string>
+    <string name="default_breakfast_time">오전 9:00</string>
+    <string name="default_lunch_time">오후 12:00</string>
+    <string name="default_dinner_time">오후 8:00</string>
+
+    <!--KakaoLoginActivity-->
+    <string name="login_greeting">반갑습니다 메이트님!</string>
+    <string name="login_subtitle">안전하고 편안한 복약관리\n필메이트가 함께합니다</string>
+    <string name="login_kakao_button">카카오로 시작하기</string>
+
+    <!--SettingActivity-->
+    <string name="setting_title">설정</string>
+
+    <string name="section_personal">개인설정</string>
+    <string name="section_alarm">알림</string>
+    <string name="section_service">서비스</string>
+
+    <string name="personal_routine_edit">개인루틴 변경</string>
+    <string name="pillmate_alarm">필메이트/복약 알림</string>
+    <string name="marketing_alarm">마케팅 알림</string>
+    <string name="about_pillmate">필메이트에 대해</string>
+    <string name="send_comment">의견 보내기</string>
+    <string name="sign_out">탈퇴하기</string>
+    <string name="logout">로그아웃</string>
+
+    <string name="pillmate_alarm_description">복약 알림, 복약 종료, 서비스 업데이트 등</string>
+    <string name="marketing_alarm_description">메이트님을 위한 마케팅 정보 등</string>
+
+    <!--SuccessActivity-->
+    <string name="success_title">루틴등록 완료!</string>
+    <string name="success_subtitle">복약관리를 시작해볼까요?</string>
+    <string name="ok_button">확인</string>
+
+    <!--logout_dialog-->
+    <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
+    <string name="cancel_button">취소</string>
+    <string name="confirm_logout_button">로그아웃</string>
+
+    <!--signout_dialog-->
+    <string name="signout_dialog_title">탈퇴 하시겠어요?</string>
+    <string name="signout_dialog_description">탈퇴하면 모든 정보가 삭제됩니다.\n그래도 탈퇴를 진행하시겠어요?</string>
+    <string name="confirm_signout_button">탈퇴하기</string>
+
+    <!--setting_routine_dialog-->
+    <string name="routine_change_title">모든 약물의 복약 시간이\n다음날부터 변경됩니다</string>
+    <string name="routine_change_description">개인 루틴을 변경하면, 등록된 모든 약물의\n복용 시간이 다음날부터 변경됩니다</string>
+    <string name="confirm_change_button">변경하기</string>
+
+    <!--ActiveMedicineFragment-->
+    <string name="no_active_medicine">복용중인 약물이 없어요</string>
+    <string name="active_medicine_count_label">복용중인 약물 갯수</string>
+
+    <!--PillCheckFragment-->
+    <string name="count">회</string>
+    <string name="planned_medication">복약예정</string>
+
+    <string name="no_registered_medicine">등록된 약물이 없어요</string>
+    <string name="no_registered_medicine_sub">편리하게 복약관리를\n시작 해볼까요?</string>
+    <string name="register_medicine_button">약물 등록하기</string>
+
+    <!--fragment_setting_routine_bottom_dialog-->
+    <string name="setting_routine_title">개인루틴 설정</string>
+    <string name="done_button">완료</string>
+
+    <!--item_active_inactive_medicine-->
+    <string name="medicine_status_stopped">복용중지</string>
+    <string name="edit_button">수정</string>
+    <string name="stop_medication_button">복용중지</string>
+
+    <!--item_time_header-->
+    <string name="check_all_button">전체체크</string>
+
+    <!--fragment_alarm_time_bottom_sheet-->
+    <string name="routine_time_setting_title">해당 복용 시간대를 설정해주세요</string>
+    <string name="label_fasting">공복</string>
+    <string name="label_before_sleep">취침전</string>
+    <string name="default_fasting_time">오전 7:00</string>
+    <string name="default_before_sleep_time">오후 11:00</string>
 
     <!--SearchBottomSheetFragment-->
     <string name="search_pharmacy">약국 검색</string>

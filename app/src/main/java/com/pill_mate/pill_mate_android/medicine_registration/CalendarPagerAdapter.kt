@@ -5,7 +5,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +20,7 @@ class CalendarPagerAdapter(
 ) : RecyclerView.Adapter<CalendarPagerAdapter.CalendarViewHolder>() {
 
     private val calendarList = mutableListOf<Calendar>()
-    private val initialMonthsCount = 12 // 당월 기준 6개월 전후
+    private val initialMonthsCount = 12
     private var initialSelectedDate: String? = null
 
     init {
@@ -26,19 +28,18 @@ class CalendarPagerAdapter(
     }
 
     fun setInitialSelectedDate(date: String) {
-        initialSelectedDate = date // 초기 선택 날짜 저장
+        initialSelectedDate = date
     }
 
     private fun prepareInitialCalendarList() {
         val currentCalendar = Calendar.getInstance()
-        currentCalendar.add(Calendar.MONTH, -6) // 6개월 전부터 시작
+        currentCalendar.add(Calendar.MONTH, -6)
         repeat(initialMonthsCount) {
             calendarList.add(currentCalendar.clone() as Calendar)
             currentCalendar.add(Calendar.MONTH, 1)
         }
     }
 
-    // 과거 3개월씩 추가 (스크롤 시)
     fun addPastMonths(count: Int) {
         val newCalendars = mutableListOf<Calendar>()
         val firstCalendar = calendarList.first().clone() as Calendar
@@ -52,7 +53,6 @@ class CalendarPagerAdapter(
         notifyItemRangeInserted(0, count)
     }
 
-    // 미래 3개월씩 추가 (스크롤 시)
     fun addFutureMonths(count: Int) {
         val lastCalendar = calendarList.last().clone() as Calendar
 
@@ -65,8 +65,7 @@ class CalendarPagerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_month, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_month, parent, false)
         return CalendarViewHolder(view, initialSelectedDate)
     }
 
@@ -91,7 +90,6 @@ class CalendarPagerAdapter(
             val month = calendar.get(Calendar.MONTH)
             val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-            // 달의 첫 날의 요일 (1=일요일, 7=토요일)
             val startDayOfWeek = calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.get(Calendar.DAY_OF_WEEK)
 
             populateGrid(year, month, maxDay, startDayOfWeek, onDateSelected)
@@ -104,10 +102,7 @@ class CalendarPagerAdapter(
             startDayOfWeek: Int,
             onDateSelected: (String) -> Unit
         ) {
-            // 빈 칸 추가 (달력의 첫 번째 줄에서 시작 요일 이전의 빈 칸)
             addEmptyViews(startDayOfWeek - 1, itemView.context)
-
-            // 실제 날짜 추가
             for (day in 1..maxDay) {
                 val dayView = createDayView(year, month, day, onDateSelected)
                 gridLayout.addView(dayView)
@@ -118,10 +113,8 @@ class CalendarPagerAdapter(
             if (count <= 0) return
 
             repeat(count) {
-                val emptyView = TextView(context).apply {
-                    text = ""  // 빈칸
-                    gravity = Gravity.CENTER
-                    layoutParams = createGridLayoutParams(context) // 크기 동일하게 적용
+                val emptyView = FrameLayout(context).apply {
+                    layoutParams = createGridLayoutParams(context)
                 }
                 gridLayout.addView(emptyView)
             }
@@ -132,49 +125,78 @@ class CalendarPagerAdapter(
             month: Int,
             day: Int,
             onDateSelected: (String) -> Unit
-        ): TextView {
-            return TextView(itemView.context).apply {
+        ): View {
+            val context = itemView.context
+            val layout = FrameLayout(context)
+            layout.layoutParams = createGridLayoutParams(context)
+
+            val cellSize = createGridCellSize(context) // width, height 계산하는 함수
+            val circleSize = minOf(cellSize.first, cellSize.second) * 0.8  // 80% 크기 원
+
+            val circle = ImageView(context).apply {
+                layoutParams = FrameLayout.LayoutParams(circleSize.toInt(), circleSize.toInt(), Gravity.CENTER)
+                setImageResource(R.drawable.bg_circle)
+                visibility = View.GONE
+            }
+
+            val label = TextView(context).apply {
                 text = day.toString()
                 gravity = Gravity.CENTER
-                setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
-                layoutParams = createGridLayoutParams(itemView.context) // context 전달
-
-                post {
-                    val size = minOf(measuredWidth, measuredHeight)
-                    layoutParams.width = size
-                    layoutParams.height = size
-                    setPadding(0, 0, 0, 0)
-                    requestLayout()
-                }
-
-                val date = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
-                    Calendar.getInstance().apply { set(year, month, day) }.time
+                setTextColor(ContextCompat.getColor(context, R.color.black))
+                layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
                 )
-
-                if (date == initialSelectedDate) {
-                    background =
-                        ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
-                    setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-                }
-
-                setOnClickListener {
-                    onDateSelected(date)
-                    updateSelectedDayView(day)
-                }
             }
+
+            layout.addView(circle)
+            layout.addView(label)
+
+            val date = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(
+                Calendar.getInstance().apply { set(year, month, day) }.time
+            )
+
+            if (date == initialSelectedDate) {
+                circle.visibility = View.VISIBLE
+                label.setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+
+            layout.setOnClickListener {
+                onDateSelected(date)
+                updateSelectedDayView(day)
+            }
+
+            return layout
         }
 
         private fun createGridLayoutParams(context: Context): GridLayout.LayoutParams {
-            return GridLayout.LayoutParams().apply {
-                width = dpToPx(context, 38)  // 빈칸 포함 크기 고정
-                height = dpToPx(context, 38)
+            val displayMetrics = context.resources.displayMetrics
+            val outerMargin = dpToPx(context, 25)
+            val totalWidth = displayMetrics.widthPixels - (outerMargin * 2)
 
-                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f) // 7열 균등 배분
-                setMargins(8, 8, 8, 8) // 여백 추가
+            val cellCount = 7
+            val cellWidth = totalWidth / cellCount
+            val cellHeight = (cellWidth * 0.85).toInt()
+
+            return GridLayout.LayoutParams().apply {
+                width = cellWidth
+                height = cellHeight
             }
         }
 
-        // dp → px 변환 함수
+        private fun createGridCellSize(context: Context): Pair<Int, Int> {
+            val displayMetrics = context.resources.displayMetrics
+
+            val outerMargin = dpToPx(context, 25) // ViewPager 좌우 margin (match your XML)
+            val totalWidth = displayMetrics.widthPixels - (outerMargin * 2)
+
+            val cellCount = 7
+            val cellWidth = totalWidth / cellCount
+            val cellHeight = (cellWidth * 0.85).toInt() // 높이를 더 작게
+
+            return Pair(cellWidth, cellHeight)
+        }
+
         private fun dpToPx(context: Context, dp: Int): Int {
             val density = context.resources.displayMetrics.density
             return (dp * density).toInt()
@@ -182,14 +204,16 @@ class CalendarPagerAdapter(
 
         private fun updateSelectedDayView(selectedDay: Int) {
             for (i in 0 until gridLayout.childCount) {
-                val dayView = gridLayout.getChildAt(i) as? TextView ?: continue
-                if (dayView.text.toString() == selectedDay.toString()) {
-                    dayView.background =
-                        ContextCompat.getDrawable(itemView.context, R.drawable.bg_date_selected)
-                    dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
+                val layout = gridLayout.getChildAt(i) as? FrameLayout ?: continue
+                val label = layout.getChildAt(1) as? TextView ?: continue
+                val circle = layout.getChildAt(0) as? ImageView ?: continue
+
+                if (label.text.toString() == selectedDay.toString()) {
+                    circle.visibility = View.VISIBLE
+                    label.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
                 } else {
-                    dayView.background = null
-                    dayView.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
+                    circle.visibility = View.GONE
+                    label.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
                 }
             }
         }

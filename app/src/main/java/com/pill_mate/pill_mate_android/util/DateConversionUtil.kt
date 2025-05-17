@@ -1,21 +1,22 @@
 package com.pill_mate.pill_mate_android.util
 
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DateConversionUtil {
     private const val INPUT_DATE_FORMAT = "yyyy.MM.dd"
-    private const val OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    private const val OUTPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX" // 서버 설정과 동일
     private const val DISPLAY_DATE_FORMAT = "yyyy.MM.dd"
     private const val SERVER_DATE_FORMAT = "yyyy-MM-dd"
 
-    // 날짜 문자열을 `yyyy.MM.dd` 형식에서 ISO 8601 형식으로 변환
+    // 날짜 문자열을 `yyyy.MM.dd` 형식에서 ISO 8601 형식 (KST) 으로 변환
     fun toIso8601(dateString: String): String? {
         return try {
-            val inputFormat = SimpleDateFormat(INPUT_DATE_FORMAT, Locale.getDefault())
+            val inputFormat = SimpleDateFormat(INPUT_DATE_FORMAT, Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("Asia/Seoul") // 입력은 KST 기준
+            }
             val outputFormat = SimpleDateFormat(OUTPUT_DATE_FORMAT, Locale.getDefault()).apply {
-                timeZone = TimeZone.getTimeZone("UTC")
+                timeZone = TimeZone.getTimeZone("Asia/Seoul") // 출력도 KST 기준
             }
             val date = inputFormat.parse(dateString)
             outputFormat.format(date!!)
@@ -26,7 +27,7 @@ object DateConversionUtil {
     }
 
     // `Date` 객체를 `yyyy.MM.dd` 형식으로 변환
-    fun formatToDisplayDate(date: Date): String {
+    private fun formatToDisplayDate(date: Date): String {
         val displayFormat = SimpleDateFormat(DISPLAY_DATE_FORMAT, Locale.getDefault())
         return displayFormat.format(date)
     }
@@ -101,21 +102,24 @@ object DateConversionUtil {
         }
     }
 
-    // 알림 시간 계산
-    fun calculateAdjustedTime(baseTime: String, additionalMinutes: Int): String {
+    // 서버 → UI 시간 변환 ("08:00:00" → "오전 08:00")
+    fun parseTimeToDisplayFormat(time: String): String {
         return try {
-            val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val date = formatter.parse(baseTime) ?: return baseTime
+            val parts = time.split(":")
+            val hour = parts[0].toInt()
+            val minute = parts[1].toInt()
 
-            val calendar = Calendar.getInstance().apply {
-                time = date
-                add(Calendar.MINUTE, additionalMinutes)
-            }
+            val isAM = hour < 12
+            val formattedHour = if (hour == 0) 12 else if (hour > 12) hour - 12 else hour
+            val period = if (isAM) "오전" else "오후"
 
-            formatter.format(calendar.time) // "HH:mm" 포맷으로 반환
+            val formattedHourStr = formattedHour.toString().padStart(2, '0')
+            val formattedMinuteStr = minute.toString().padStart(2, '0')
+
+            "$period $formattedHourStr:$formattedMinuteStr"
         } catch (e: Exception) {
             e.printStackTrace()
-            baseTime // 변환 실패 시 원래 시간 반환
+            "오전 00:00"
         }
     }
 }

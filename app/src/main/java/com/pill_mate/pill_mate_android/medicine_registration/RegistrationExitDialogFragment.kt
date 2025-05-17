@@ -15,8 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentExitRegistrationDialogBinding
+import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
-import com.pill_mate.pill_mate_android.ui.main.activity.MainActivity
 
 class RegistrationExitDialogFragment : DialogFragment() {
 
@@ -31,8 +31,7 @@ class RegistrationExitDialogFragment : DialogFragment() {
         // 부분 색상 변경된 메시지 설정
         setColoredMessage()
 
-        binding.btnCancel.setOnClickListener {
-            // 메인 액티비티로 이동
+        binding.btnCancel.setOnClickListener { // 메인 액티비티로 이동
             clearRegistrationData()
         }
 
@@ -70,9 +69,7 @@ class RegistrationExitDialogFragment : DialogFragment() {
             val redColor = ContextCompat.getColor(requireContext(), R.color.status_red)
             spannable.setSpan(
                 ForegroundColorSpan(redColor), // 빨간색 적용
-                startIndex,
-                startIndex + redText.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                startIndex, startIndex + redText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context=".ui.login.activity.KakaoLoginActivity">
+    tools:context=".login.view.KakaoLoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_login"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="반갑습니다 메이트님!"
+            android:text="@string/login_greeting"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="안전하고 편안한 복약관리\n필메이트가 함께합니다"
+            android:text="@string/login_subtitle"
             android:textAlignment="center"
             android:textColor="@color/gray_1"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="카카오로 시작하기"
+                android:text="@string/login_kakao_button"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toEndOf="@id/iv_kakao_logo"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -27,6 +27,7 @@ import com.pill_mate.pill_mate_android.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -44,6 +45,7 @@ class SearchBottomSheetFragment(
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private var currentQuery: String = ""
     private val searchQueryFlow = MutableStateFlow("")
+    private var searchJob: Job? = null // 중복 요청 방지용
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -166,11 +168,20 @@ class SearchBottomSheetFragment(
 
         lifecycleScope.launch {
             searchQueryFlow
-                .debounce(300) // 300ms 동안 입력이 없을 때만 검색 실행
-                .distinctUntilChanged() // 동일한 검색어 반복 요청 방지
+                .debounce(300) // 짧은 입력 무시
+                .distinctUntilChanged() // 중복 제거
                 .collect { query ->
-                    if (query.isNotEmpty()) {
+                    if (query.isEmpty()) return@collect // 검색어가 비어 있으면 요청하지 않음
+
+                    searchJob?.cancel() // 중복 요청 중단
+                    searchJob = launch {
+                        Log.d("SearchFragment", "검색 요청 시작: $query")
+                        val startTime = System.currentTimeMillis()
+
                         presenter.search(query, searchType)
+
+                        val elapsed = System.currentTimeMillis() - startTime
+                        Log.d("SearchFragment", "검색 완료: ${elapsed}ms")
                     }
                 }
         }
@@ -218,6 +229,8 @@ class SearchBottomSheetFragment(
 
     override fun showResults(results: List<Searchable>, type: SearchType) {
         if (_binding == null) return
+
+        Log.d("SearchFragment", "showResults called with ${results.size} results for query: $currentQuery") // ✅ 로그 추가
 
         if (results.isNotEmpty()) {
             adapter.updateResults(results, currentQuery) // currentQuery를 전달

@@ -10,7 +10,7 @@
     android:clipToPadding="false"
     android:paddingTop="26dp"
     android:paddingBottom="26dp"
-    tools:context=".ui.setting.SettingRoutineBottomDialogFragment">
+    tools:context=".setting.view.SettingRoutineBottomDialogFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_title"
@@ -19,13 +19,13 @@
         android:layout_marginBottom="16dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@id/layout_tv_wakeup">
+        app:layout_constraintBottom_toTopOf="@id/layout_tv_fasting">
 
         <TextView
             style="@style/T2_B20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="해당 복용 시간대를 설정해주세요"
+            android:text="@string/routine_time_setting_title"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,38 +33,38 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_tv_wakeup"
+        android:id="@+id/layout_tv_fasting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="218dp"
-        app:layout_constraintBottom_toTopOf="@id/layout_tp_wakeup"
+        app:layout_constraintBottom_toTopOf="@id/layout_tp_fasting"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/tv_wakeup"
+            android:id="@+id/tv_fasting"
             style="@style/H1_SB18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="공복"
+            android:text="@string/label_fasting"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_wakeup_time"
+            android:id="@+id/tv_fasting_time"
             style="@style/H1_SB18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="오전 7:00"
+            android:text="@string/default_fasting_time"
             android:textColor="@color/gray_1"
-            app:layout_constraintStart_toEndOf="@id/tv_wakeup"
-            app:layout_constraintTop_toTopOf="@id/tv_wakeup" />
+            app:layout_constraintStart_toEndOf="@id/tv_fasting"
+            app:layout_constraintTop_toTopOf="@id/tv_fasting" />
 
         <ImageView
             android:id="@+id/btn_dropdown1"
@@ -72,7 +72,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/btn_dropdown_down"
-            app:layout_constraintBottom_toBottomOf="@id/tv_wakeup"
+            app:layout_constraintBottom_toBottomOf="@id/tv_fasting"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -86,17 +86,17 @@
         android:background="@color/gray_4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_tv_wakeup" />
+        app:layout_constraintTop_toBottomOf="@id/layout_tv_fasting" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_tp_wakeup"
+        android:id="@+id/layout_tp_fasting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
         android:paddingTop="24dp"
-        app:layout_constraintBottom_toTopOf="@id/layout_tv_sleep"
+        app:layout_constraintBottom_toTopOf="@id/layout_tv_before_sleep"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -128,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="122dp"
             android:gravity="center"
-            android:text=":"
+            android:text="@string/time_separator_colon"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/minPicker1"
@@ -163,37 +163,37 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_tv_sleep"
+        android:id="@+id/layout_tv_before_sleep"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/layout_tp_sleep"
+        app:layout_constraintBottom_toTopOf="@id/layout_tp_before_sleep"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/tv_sleep"
+            android:id="@+id/tv_before_sleep"
             style="@style/H1_SB18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="취침전"
+            android:text="@string/label_before_sleep"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_sleep_time"
+            android:id="@+id/tv_before_sleep_time"
             style="@style/H1_SB18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="오후 11:00"
+            android:text="@string/default_before_sleep_time"
             android:textColor="@color/gray_1"
-            app:layout_constraintStart_toEndOf="@id/tv_sleep"
-            app:layout_constraintTop_toTopOf="@id/tv_sleep" />
+            app:layout_constraintStart_toEndOf="@id/tv_before_sleep"
+            app:layout_constraintTop_toTopOf="@id/tv_before_sleep" />
 
         <ImageView
             android:id="@+id/btn_dropdown2"
@@ -201,13 +201,13 @@
             android:layout_height="24dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/btn_dropdown_down"
-            app:layout_constraintBottom_toBottomOf="@id/tv_sleep"
+            app:layout_constraintBottom_toBottomOf="@id/tv_before_sleep"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_tp_sleep"
+        android:id="@+id/layout_tp_before_sleep"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -246,7 +246,7 @@
             android:layout_width="wrap_content"
             android:layout_height="122dp"
             android:gravity="center"
-            android:text=":"
+            android:text="@string/time_separator_colon"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/minPicker2"
@@ -291,10 +291,10 @@
         android:background="@drawable/btn_basic"
         android:backgroundTint="@color/main_blue_1"
         android:stateListAnimator="@null"
-        android:text="완료"
+        android:text="@string/done_button"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_tp_sleep" />
+        app:layout_constraintTop_toBottomOf="@id/layout_tp_before_sleep" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
