@@ -55,7 +55,7 @@ class MedicineAdapter(
                 R.drawable.shape_normal_item
             }
             binding.itemMedicine.setBackgroundResource(backgroudResId)
-            binding.itemLine.visibility = if (medicines.size >= 2) View.VISIBLE else View.INVISIBLE
+            binding.itemLine.visibility = if (medicines.size >= 2 && !isLastItem) View.VISIBLE else View.INVISIBLE
 
             // 체크박스 상태 및 클릭 이벤트 설정
             binding.cbCheck.setOnClickListener {
