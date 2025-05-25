@@ -65,7 +65,7 @@ class PillMateFcmService : FirebaseMessagingService() {
         }
 
         val notification =
-            NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.img_logo_blue).setContentTitle(title)
+            NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.img_fcm_logo).setContentTitle(title)
                 .setContentText(message).setContentIntent(pendingIntent).setAutoCancel(true).build()
 
         if (ActivityCompat.checkSelfPermission(
