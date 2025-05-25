@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.pillsearch
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +41,7 @@ class ConflictPillDetailBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.tvTitle.text = getString(R.string.search_conflict_pill_detail_title)
         binding.tvPillClass.text = pillItem.CLASS_NAME
         binding.tvPillName.text = pillItem.ITEM_NAME
         binding.tvPillEntp.text = pillItem.ENTP_NAME
@@ -125,7 +126,10 @@ class ConflictPillDetailBottomSheet(
         val bundle = Bundle().apply {
             putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
-            putString("pillName", pillItem.ITEM_NAME)
+            putParcelable("pillItem", pillItem)
+            if (hasConflict) {
+                putString("source", "pillSearch")  // source 추가
+            }
         }
 
         val actionId = if (hasConflict) {
@@ -134,7 +138,7 @@ class ConflictPillDetailBottomSheet(
             R.id.action_conflictPillSearchFragment_to_noConflictFragment
         }
 
-        android.util.Log.d("NavigateResult", "🔍 충돌 여부: $hasConflict")
+        Log.d("NavigateResult", "충돌 여부: $hasConflict")
 
         navController.navigate(actionId, bundle)
     }

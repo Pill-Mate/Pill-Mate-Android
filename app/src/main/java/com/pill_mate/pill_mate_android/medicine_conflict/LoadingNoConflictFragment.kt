@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentLoadingNoConflictBinding
+import com.pill_mate.pill_mate_android.main.view.MainActivity
 
 class LoadingNoConflictFragment : Fragment() {
     private var _binding: FragmentLoadingNoConflictBinding? = null
@@ -26,6 +28,7 @@ class LoadingNoConflictFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? MainActivity)?.hideBottomNav()
         setupButton()
     }
 
@@ -34,12 +37,18 @@ class LoadingNoConflictFragment : Fragment() {
             try {
                 findNavController().popBackStack(
                     R.id.ConflictPillSearchFragment,
-                    inclusive = false // false: 해당 fragment까지 되돌아가고 유지
+                    inclusive = false
                 )
             } catch (e: Exception) {
                 Log.e("LoadingNoConflictFragment", "Navigation error", e)
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigateUp()
+            }
+        })
     }
 
     override fun onDestroyView() {

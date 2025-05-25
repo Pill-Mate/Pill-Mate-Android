@@ -31,13 +31,16 @@
         tools:layout="@layout/fragment_loading_conflict"
         android:label="충돌 있음">
         <action
-            android:id="@+id/action_loadingConflictFragment_to_medicineConflictFragment"
-            app:destination="@id/medicineConflictFragment" />
+            android:id="@+id/action_loadingConflictFragment_to_ConflictPillDetailFragment"
+            app:destination="@id/ConflictPillDetailFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/medicineConflictFragment"
-        android:name="com.pill_mate.pill_mate_android.medicine_conflict.MedicineConflictFragment"
-        tools:layout="@layout/fragment_medicine_conflict">
+        android:id="@+id/ConflictPillDetailFragment"
+        android:name="com.pill_mate.pill_mate_android.pillsearch.ConflictPillDetailFragment"
+        tools:layout="@layout/fragment_conflict_pill_detail">
+        <action
+            android:id="@+id/action_medicineConflictFragment_to_ConflictPillSearchFragment"
+            app:destination="@id/ConflictPillSearchFragment" />
     </fragment>
 </navigation>

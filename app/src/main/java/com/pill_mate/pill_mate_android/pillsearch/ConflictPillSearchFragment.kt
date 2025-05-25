@@ -78,6 +78,7 @@ class ConflictPillSearchFragment : Fragment(), PillSearchResultView {
     override fun onResume() {
         super.onResume()
         (activity as? MainActivity)?.setDefaultStatusBar()
+        (activity as? MainActivity)?.showBottomNav()
     }
 
     override fun onDestroyView() {

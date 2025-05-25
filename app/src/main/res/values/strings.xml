@@ -333,6 +333,7 @@
 
     <!--PillSearchFragment-->
     <string name="search_conflict_pill">충돌 검색</string>
+    <string name="search_conflict_pill_detail_title">검색하려는 약물이 맞나요?</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
