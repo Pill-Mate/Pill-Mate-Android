@@ -18,8 +18,8 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepositor
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenterImpl
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
@@ -40,7 +40,7 @@ class SearchBottomSheetFragment(
 
     private var _binding: FragmentSearchBottomSheetBinding? = null
     private val binding get() = _binding!!
-    private lateinit var presenter: PillSearchPresenter
+    private lateinit var presenter: SearchPresenter
     private lateinit var adapter: SearchAdapter
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private var currentQuery: String = ""
@@ -51,7 +51,7 @@ class SearchBottomSheetFragment(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBottomSheetBinding.inflate(inflater, container, false)
-        presenter = PillSearchPresenterImpl(this)
+        presenter = SearchPresenterImpl(this)
         sharedPreferencesHelper = SharedPreferencesHelper(requireContext(), searchType) // SearchType 기반으로 초기화
         return binding.root
     }

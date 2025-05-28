@@ -7,6 +7,7 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.OnboardingTim
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
+import com.pill_mate.pill_mate_android.medicine_registration.model.PillCountCheckResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -15,6 +16,9 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface MedicineRegistrationService {
+    @GET("/api/v1/medicine/pill-count-check") // 등록한 약물 개수 4 초과여부
+    fun checkPillCount(): Call<PillCountCheckResponse>
+
     @POST("/api/v1/medicine/register") // 약물 등록
     fun registerMedicine(@Body request: MedicineRegisterRequest): Call<Void>
 

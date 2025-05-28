@@ -38,7 +38,7 @@ class ConflictPillSearchBottomSheetFragment(
     private var _binding: FragmentSearchPillBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var pillSearchPresenter: PillSearchPresenter
+    private lateinit var pillSearchPresenter: SearchPresenter
     private lateinit var pillResultPresenter: PillSearchResultPresenter
     private lateinit var adapter: PillIdntfcAdapter
 
@@ -50,7 +50,7 @@ class ConflictPillSearchBottomSheetFragment(
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
-        pillSearchPresenter = PillSearchPresenterImpl(this)
+        pillSearchPresenter = SearchPresenterImpl(this)
         pillResultPresenter = PillSearchResultPresenterImpl(resultView)
         return binding.root
     }

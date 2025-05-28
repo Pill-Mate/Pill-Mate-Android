@@ -2,7 +2,7 @@ package com.pill_mate.pill_mate_android.search.presenter
 
 import com.pill_mate.pill_mate_android.search.model.SearchType
 
-interface PillSearchPresenter {
+interface SearchPresenter {
     fun searchPills(query: String)
     fun search(query: String, type: SearchType)
 }

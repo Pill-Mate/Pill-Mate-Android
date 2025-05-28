@@ -12,10 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PillSearchPresenterImpl(
+class SearchPresenterImpl(
     private val view: PillSearchView,
     private val repository: PillRepository = PillRepository()
-) : PillSearchPresenter {
+) : SearchPresenter {
 
     override fun searchPills(query: String) {
         CoroutineScope(Dispatchers.IO).launch {

@@ -39,7 +39,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="26dp"
         style="@style/ButtonStyle1"
-        android:text="@string/loading_conflict_btn"
+        android:text="@string/done_button"
         android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
