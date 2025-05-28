@@ -6,6 +6,7 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.MedicineRegis
 import com.pill_mate.pill_mate_android.medicine_registration.model.OnboardingTimeResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -19,6 +20,9 @@ interface MedicineRegistrationService {
 
     @GET("/api/v1/medicine/onboarding") // 시간 데이터 가져오기
     fun getMedicineOnboardingTimes(): Call<OnboardingTimeResponse>
+
+    @GET("/api/v1/check-duplicate-drug") // 동일 약물 여부 가져오기
+    fun checkDuplicateDrug(@Query("itemSeq") itemSeq: String): Call<DuplicateDrugResponse>
 
     @GET("/api/v1/dur/usjnt-taboo") // 병용금기 데이터 가져오기
     fun getUsjntTaboo(@Query("itemSeq") itemSeq: String): Call<List<UsjntTabooResponse>>

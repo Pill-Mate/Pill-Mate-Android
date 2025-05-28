@@ -15,6 +15,7 @@ import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetail
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,13 +60,48 @@ class ConflictPillDetailBottomSheet(
             if (!isProcessing) {
                 isProcessing = true
                 binding.btnYes.isEnabled = false
-                checkMedicineConflicts(pillItem.ITEM_SEQ)
+                checkDuplicateDrug(pillItem.ITEM_SEQ)
             }
         }
 
         binding.btnNo.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun checkDuplicateDrug(itemSeq: String) {
+        Log.d("DuplicateCheck", "checkDuplicateDrug() 호출됨 - itemSeq: $itemSeq")
+
+        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq)
+            .enqueue(object : Callback<DuplicateDrugResponse> {
+                override fun onResponse(
+                    call: Call<DuplicateDrugResponse>,
+                    response: Response<DuplicateDrugResponse>
+                ) {
+                    Log.d("DuplicateCheck", "응답 코드: ${response.code()}")
+                    Log.d("DuplicateCheck", "응답 바디: ${response.body()}")
+                    Log.d("DuplicateCheck", "에러 바디: ${response.errorBody()?.string()}")
+
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null) {
+                            Log.d("DuplicateCheck", "중복 성분 존재: ${body.effect_NAME}")
+                            // 바로 충돌 화면으로 이동 (예: navigateToDuplicateConflictScreen(body))
+                        } else {
+                            Log.d("DuplicateCheck", "응답은 성공했지만 바디가 null임 → 중복 없음 처리")
+                            checkMedicineConflicts(itemSeq)
+                        }
+                    } else {
+                        Log.w("DuplicateCheck", "응답 실패 - statusCode=${response.code()}")
+                        checkMedicineConflicts(itemSeq)
+                    }
+                }
+
+                override fun onFailure(call: Call<DuplicateDrugResponse>, t: Throwable) {
+                    Log.e("DuplicateCheck", "API 호출 실패: ${t.message}", t)
+                    checkMedicineConflicts(itemSeq)
+                }
+            })
     }
 
     private fun checkMedicineConflicts(itemSeq: String) {

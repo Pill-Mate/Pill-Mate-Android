@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:minWidth="320dp"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:paddingVertical="20dp"
+    android:paddingHorizontal="16dp"
     android:background="@drawable/bg_dialog"
     android:gravity="center_horizontal">
 
@@ -23,15 +24,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="전문가 상담을 권장드려요"
-        android:textColor="@color/gray_4"
+        android:textColor="@color/black"
         android:gravity="center"
-        style="@style/H3_RG16" />
+        style="@style/B2_RG14" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="20dp">
 
         <Button
             android:id="@+id/btn_cancel"
@@ -42,11 +43,11 @@
             android:text="취소"
             style="@style/H2_SB16"
             android:stateListAnimator="@null"
-            android:textColor="@color/main_blue_1"
-            android:background="@drawable/bg_btn_main_blue_2" />
+            android:textColor="@color/black"
+            android:background="@drawable/bg_btn_gray_2_stoke" />
 
         <Button
-            android:id="@+id/btn_confirm"
+            android:id="@+id/btn_continue"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
