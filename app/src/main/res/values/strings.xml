@@ -302,6 +302,7 @@
 
     <!-- fragment_loading_conflict -->
     <string name="loading_conflict_title">복용하는 약물과\n충돌하는 성분을 발견했어요</string>
+    <string name="loading_no_conflict_title">복용하는 약물과\n충돌하는 성분이 없어요</string>
     <string name="loading_conflict_btn">확인하기</string>
 
     <!-- fragment_medicine_conflict -->
@@ -329,6 +330,10 @@
     <string name="medicine_edit_warning_minutes">복용 시간대를 입력해주세요</string>
     <string name="medicine_edit_warning_eat_count">1회 투약량을 입력해주세요</string>
     <string name="medicine_edit_warning_period">복약 일수를 입력해주세요</string>
+
+    <!--PillSearchFragment-->
+    <string name="search_conflict_pill">충돌 검색</string>
+    <string name="search_conflict_pill_detail_title">검색하려는 약물이 맞나요?</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

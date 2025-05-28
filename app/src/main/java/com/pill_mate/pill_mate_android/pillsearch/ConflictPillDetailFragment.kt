@@ -1,6 +1,5 @@
-package com.pill_mate.pill_mate_android.medicine_conflict
+package com.pill_mate.pill_mate_android.pillsearch
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -18,25 +18,24 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
-import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBinding
-import com.pill_mate.pill_mate_android.main.view.MainActivity
-import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
-import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
+import com.pill_mate.pill_mate_android.databinding.FragmentConflictPillDetailBinding
+import com.pill_mate.pill_mate_android.medicine_conflict.ConflictAdapter
+import com.pill_mate.pill_mate_android.medicine_conflict.InquiryBottomSheetFragment
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PharmacyAndHospital
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
+import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
-import com.pill_mate.pill_mate_android.util.CustomSnackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MedicineConflictFragment : Fragment() {
+class ConflictPillDetailFragment : Fragment() {
 
-    private var _binding: FragmentMedicineConflictBinding? = null
+    private var _binding: FragmentConflictPillDetailBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var contraindicationAdapter: ConflictAdapter
@@ -47,12 +46,12 @@ class MedicineConflictFragment : Fragment() {
     private var usjntTabooData: List<UsjntTabooResponse>? = null
     private var efcyDplctData: List<EfcyDplctResponse>? = null
 
+    private var pillItem: PillIdntfcItem? = null // 클래스 안에서 선언
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMedicineConflictBinding.inflate(inflater, container, false)
+        _binding = FragmentConflictPillDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,14 +75,16 @@ class MedicineConflictFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigateUp()
+            }
+        })
+
         setupAdapters()
 
-        binding.btnSkip.setOnClickListener {
-            findNavController().navigate(R.id.action_medicineConflictFragment_to_stepThreeFragment)
-        }
-
         binding.btnFinish.setOnClickListener {
-            clearRegistrationData()
+            findNavController().navigate(R.id.action_medicineConflictFragment_to_ConflictPillSearchFragment)
         }
 
         setupTooltip(binding.layoutContraindicationClickArea, binding.ivContraindicationTooltip)
@@ -94,11 +95,11 @@ class MedicineConflictFragment : Fragment() {
         contraindicationAdapter = ConflictAdapter(
             onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
             onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) },
-            showDeleteButton = true)
+            showDeleteButton = false)
         efficiencyOverlapAdapter = ConflictAdapter(
             onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
             onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) },
-            showDeleteButton = true)
+            showDeleteButton = false)
 
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.gray_3) // 회색
         val dividerHeight = 1f // 1dp
@@ -121,9 +122,16 @@ class MedicineConflictFragment : Fragment() {
     private fun retrieveArguments() {
         usjntTabooData = arguments?.getParcelableArrayList("usjntTabooData")
         efcyDplctData = arguments?.getParcelableArrayList("efcyDplctData")
+        pillItem = arguments?.getParcelable("pillItem")
 
         if (usjntTabooData == null || efcyDplctData == null) {
-            Log.e("MedicineConflictFragment", "Received null data")
+            Log.e("ConflictPillDetailFragment", "Received null data for conflict lists")
+        }
+
+        if (pillItem == null) {
+            Log.w("ConflictPillDetailFragment", "pillItem is missing from arguments")
+        } else {
+            Log.d("ConflictPillDetailFragment", "pillItem received: ${pillItem?.ITEM_NAME}")
         }
     }
 
@@ -135,30 +143,35 @@ class MedicineConflictFragment : Fragment() {
         val endIndex = startIndex + "${totalConflicts}개".length
         val pinkColor = ContextCompat.getColor(requireContext(), R.color.main_pink_1)
         spannable.setSpan(
-            ForegroundColorSpan(pinkColor),
-            startIndex,
-            endIndex,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            ForegroundColorSpan(pinkColor), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
         binding.tvTitle.text = spannable
     }
 
     private fun loadMedicineData() {
-        val medicine = DataRepository.getMedicine()
 
-        if (medicine != null) {
-            binding.tvPillName.text = medicine.medicine_name
-            binding.tvPillEntp.text = medicine.entp_name
-            binding.tvPillClass.text = medicine.classname
+        if (pillItem != null) {
+            // 전달된 pillItem이 있는 경우
+            Log.d("ConflictPillDetailFragment", "전달받은 pillItem 정보 로드: ${pillItem?.ITEM_NAME}")
+
+            binding.tvPillName.text = pillItem?.ITEM_NAME
+            binding.tvPillEntp.text = pillItem?.ENTP_NAME
+            binding.tvPillClass.text = pillItem?.CLASS_NAME
+
             Glide.with(binding.ivMedicineImage.context)
-                .load(medicine.image)
+                .load(pillItem?.ITEM_IMAGE)
                 .transform(RoundedCorners(8))
                 .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
 
         } else {
+            // 없는 경우
+            Log.w("ConflictPillDetailFragment", "약물 정보가 존재하지 않음")
+
             binding.tvPillName.text = getString(R.string.medicine_conflict_no_medicine)
+            binding.tvPillEntp.text = ""
+            binding.tvPillClass.text = ""
             binding.ivMedicineImage.setImageResource(R.drawable.img_default)
         }
     }
@@ -209,6 +222,7 @@ class MedicineConflictFragment : Fragment() {
             SectionType.CONTRAINDICATION -> {
                 binding.layoutContraindication.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
+
             SectionType.EFFICIENCY_OVERLAP -> {
                 binding.layoutEfficiencyOverlap.visibility = if (isVisible) View.VISIBLE else View.GONE
             }
@@ -218,10 +232,10 @@ class MedicineConflictFragment : Fragment() {
     private fun fetchPhoneAndAddress(itemSeq: String) {
         Log.d("MedicineConflictFragment", "Fetching phone and address for itemSeq: $itemSeq")
 
-        medicineRegistrationService.getPhoneAndAddress(itemSeq).enqueue(object : Callback<PhoneAndAddressResponse> {
+        medicineRegistrationService.getPhoneAndAddress(itemSeq).enqueue(object :
+            Callback<PhoneAndAddressResponse> {
             override fun onResponse(
-                call: Call<PhoneAndAddressResponse>,
-                response: Response<PhoneAndAddressResponse>
+                call: Call<PhoneAndAddressResponse>, response: Response<PhoneAndAddressResponse>
             ) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()?.result
@@ -235,7 +249,12 @@ class MedicineConflictFragment : Fragment() {
                         Log.e("MedicineConflictFragment", "Empty result from API")
                     }
                 } else {
-                    Log.e("MedicineConflictFragment", "Failed to fetch phone and address - Response Code: ${response.code()}, Error: ${response.errorBody()?.string()}")
+                    Log.e(
+                        "MedicineConflictFragment",
+                        "Failed to fetch phone and address - Response Code: ${response.code()}, Error: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
                 }
             }
 
@@ -245,8 +264,7 @@ class MedicineConflictFragment : Fragment() {
         })
     }
 
-    private fun showInquiryBottomSheet(result: PharmacyAndHospital) {
-        // 데이터 로깅 (병원 & 약국 데이터 확인)
+    private fun showInquiryBottomSheet(result: PharmacyAndHospital) { // 데이터 로깅 (병원 & 약국 데이터 확인)
         Log.d("InquiryBottomSheet", "Received PharmacyAndHospital Data: $result")
 
         val pharmacy = Pharmacy(
@@ -272,84 +290,11 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun showDeleteDialog(itemSeq: String) {
-        PillDeleteDialogFragment.newInstance(itemSeq) { deletedItemSeq ->
-            removeConflict(deletedItemSeq)
-        }.show(childFragmentManager, "deleteDialog")
-    }
-
-    private fun removeConflict(itemSeq: String) {
-        Log.d("MedicineConflictFragment", "Removing conflict for itemSeq: $itemSeq") // 🛠 디버깅용 로그 추가
-
-        medicineRegistrationService.removeConflict(itemSeq).enqueue(object : Callback<ConflictRemoveResponse> {
-            override fun onResponse(call: Call<ConflictRemoveResponse>, response: Response<ConflictRemoveResponse>) {
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    Log.d("MedicineConflictFragment", "Successfully removed conflict for itemSeq: $itemSeq") // 성공 로그 추가
-
-                    disableDeleteButton(itemSeq) // 삭제 버튼 비활성화
-                    updateButtonText()    // "다음"으로 변경
-                    showDeleteSuccessSnackbar() // 성공 메시지 표시
-                } else {
-                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
-                    Log.e("MedicineConflictFragment", "Failed to remove conflict: $errorBody") // 🛠 오류 로그 추가
-
-                    showDeleteErrorSnackbar()
-                }
-            }
-
-            override fun onFailure(call: Call<ConflictRemoveResponse>, t: Throwable) {
-                Log.e("MedicineConflictFragment", "Network error while removing conflict: ${t.message}") // 🛠 네트워크 오류 로그 추가
-                showDeleteErrorSnackbar()
-            }
-        })
-    }
-
-    private fun disableDeleteButton(itemSeq: String) {
-        val contraindicationPosition = usjntTabooData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
-        val efficiencyOverlapPosition = efcyDplctData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
-
-        contraindicationPosition?.let {
-            val viewHolder = binding.rvContraindication.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
-            viewHolder?.disableDeleteButton()
-        }
-
-        efficiencyOverlapPosition?.let {
-            val viewHolder = binding.rvEfficiencyOverlap.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
-            viewHolder?.disableDeleteButton()
-        }
-    }
-
-    private fun updateButtonText() {
-        binding.btnSkip.text = getString(R.string.medicine_registration_next)
-    }
-
-    private fun showDeleteSuccessSnackbar() {
-        CustomSnackbar.showCustomSnackbar(
-            requireContext(),
-            binding.root,
-            getString(R.string.medicine_conflict_delete_success)
-        )
-    }
-
-    private fun showDeleteErrorSnackbar() {
-        CustomSnackbar.showCustomSnackbar(
-            requireContext(),
-            binding.root,
-            getString(R.string.medicine_conflict_delete_error)
-        )
-    }
-
-    private fun clearRegistrationData() {
-        DataRepository.clearAll()
-
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        requireActivity().finish()
+        // 해당 없음
     }
 
     private fun setupTooltip(
-        clickArea: View,
-        tooltip: View
+        clickArea: View, tooltip: View
     ) {
         clickArea.setOnClickListener {
             tooltip.visibility = View.VISIBLE
@@ -377,7 +322,6 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private enum class SectionType {
-        CONTRAINDICATION,
-        EFFICIENCY_OVERLAP
+        CONTRAINDICATION, EFFICIENCY_OVERLAP
     }
 }

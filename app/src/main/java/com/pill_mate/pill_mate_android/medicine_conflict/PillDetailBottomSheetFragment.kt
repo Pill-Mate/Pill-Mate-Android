@@ -144,6 +144,7 @@ class PillDetailBottomSheetFragment(
         val bundle = Bundle().apply {
             putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
+            putString("source", "medicineRegistration") // 추가
         }
 
         val navController = medicineRegistrationFragment.childFragmentManager

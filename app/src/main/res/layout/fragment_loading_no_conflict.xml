@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="27dp"
             android:gravity="center"
-            android:text="@string/loading_conflict_title"
+            android:text="@string/loading_no_conflict_title"
             android:textColor="@color/black" />
 
     </LinearLayout>
@@ -39,7 +39,6 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="26dp"
         style="@style/ButtonStyle1"
-        android:backgroundTint="@color/main_pink_1"
         android:text="@string/loading_conflict_btn"
         android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
