@@ -56,8 +56,6 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
             return
         }
 
-        android.util.Log.d("PolyCheck", "약물 개수 검사 API 호출 시작")
-
         ServiceCreator.medicineRegistrationService.checkPillCount()
             .enqueue(object : Callback<PillCountCheckResponse> {
                 override fun onResponse(
@@ -69,11 +67,10 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
                     if (response.isSuccessful) {
                         val isSafe = response.body()?.result == true
-                        android.util.Log.d("PolyCheck", "서버 판단 result = $isSafe")
+                        android.util.Log.d("PolyCheck", "result = $isSafe")
 
                         if (!isSafe) {
                             setPolypharmacyChecked()
-                            android.util.Log.d("PolyCheck", "약물이 5개 이상 → 경고 다이얼로그 표시")
                             showPolypharmacyWarningDialog()
                         } else {
                             android.util.Log.d("PolyCheck", "약물이 4개 이하 → 경고 없음")
@@ -110,7 +107,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hospitalText = binding.etHospital.text.toString()
-                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 🚀 병원 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 병원 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearPharmacy, s)
             }
 
@@ -122,7 +119,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val pharmacyText = binding.etPharmacy.text.toString()
-                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 🚀 약국 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 약국 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearHospital, s)
             }
 

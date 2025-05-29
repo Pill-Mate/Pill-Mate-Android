@@ -44,8 +44,8 @@ class LoadingConflictFragment : Fragment() {
         pillItem = arguments?.getParcelable("pillItem")
         source = arguments?.getString("source")
 
-        Log.d("LoadingConflictFragment", "📦 전달받은 source: $source")
-        Log.d("LoadingConflictFragment", "📦 전달할 pillItem: ${pillItem?.ITEM_NAME}")
+        Log.d("LoadingConflictFragment", "전달받은 source: $source")
+        Log.d("LoadingConflictFragment", "전달할 pillItem: ${pillItem?.ITEM_NAME}")
 
         setupButton()
 
