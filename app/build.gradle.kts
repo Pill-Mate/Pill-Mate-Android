@@ -19,8 +19,8 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.1.0"
+        versionCode = 5
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
