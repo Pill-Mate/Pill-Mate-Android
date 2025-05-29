@@ -2,13 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_stats"
+        android:icon="@drawable/selector_menu_stats"
+        android:title="@string/pill_stats"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_edit"
         android:icon="@drawable/selector_menu_edit"
-        app:showAsAction="always"
-        android:title="@string/pill_edit" />
+        android:title="@string/pill_edit"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_blank"
+        android:checkable="false"
+        android:enabled="false"
+        android:title="" />
     <item
         android:id="@+id/menu_home"
         android:icon="@drawable/selector_menu_home"
-        app:showAsAction="always"
-        android:title="@string/pill_check" />
+        android:title="@string/pill_check"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/selector_menu_search"
+        android:title="@string/pill_search"
+        app:showAsAction="always" />
 </menu>

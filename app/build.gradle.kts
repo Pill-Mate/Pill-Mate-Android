@@ -3,7 +3,8 @@ import java.util.*
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-parcelize") //id("com.google.gms.google-services") // firebase
+    id("kotlin-parcelize")
+    id("com.google.gms.google-services") // firebase
     id("kotlin-kapt")
 }
 
@@ -42,17 +43,24 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(properties["storeFile"] as String)
-            storePassword = properties["storePassword"] as String
-            keyAlias = properties["keyAlias"] as String
-            keyPassword = properties["keyPassword"] as String
+            val storeFilePath = properties["storeFile"] as? String
+            val storePasswordProp = properties["storePassword"] as? String
+            val keyAliasProp = properties["keyAlias"] as? String
+            val keyPasswordProp = properties["keyPassword"] as? String
+
+            if (storeFilePath != null && storePasswordProp != null && keyAliasProp != null && keyPasswordProp != null) {
+                storeFile = file(storeFilePath)
+                storePassword = storePasswordProp
+                keyAlias = keyAliasProp
+                keyPassword = keyPasswordProp
+            }
         }
     }
 
     buildTypes {
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
+        getByName("debug") { //applicationIdSuffix = ".debug" //debug와 release를 구분해야할 경우
             versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("release")
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
@@ -103,6 +111,7 @@ dependencies {
     implementation("com.tickaroo.tikxml:annotation:0.8.13")
     implementation("com.tickaroo.tikxml:core:0.8.13")
     implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    implementation(libs.firebase.messaging.ktx)
     kapt("com.tickaroo.tikxml:processor:0.8.13")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
@@ -115,10 +124,12 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest) // Firebase BoM
+    debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.github.bumptech.glide:glide:4.15.1") // Glide
     kapt("com.github.bumptech.glide:compiler:4.15.1")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
+    implementation("com.google.firebase:firebase-analytics")
 }

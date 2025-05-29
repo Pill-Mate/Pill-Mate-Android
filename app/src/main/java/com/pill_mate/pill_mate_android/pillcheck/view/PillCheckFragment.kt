@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.pillcheck.view
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
@@ -10,12 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.math.MathUtils.clamp
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity
+import com.pill_mate.pill_mate_android.notice.NotificationActivity
 import com.pill_mate.pill_mate_android.pillcheck.model.GroupedMedicine
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeData
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
@@ -46,6 +48,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private val binding get() = _binding!!
     private var isFirstLoad = true
     private val expandedStates = mutableSetOf<Int>()
+    private var isStatusBarLight = false // 현재 상태바 상태 추적
 
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
@@ -69,10 +72,10 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         setOneWeekViewPager()
         setCalendarButtonClickListener()
         setMainButtonClickListener()
+        handleStatusBarByScroll()
 
         // 오늘 날짜에 대한 데이터 호출
         fetchHomeData(today)
-
     }
 
     @RequiresApi(VERSION_CODES.O)
@@ -84,6 +87,40 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         } // 현재 날짜에 해당하는 요일 파란색으로 설정
         setSelectedDay(selectedDate)
         binding.tvYearMonth.text = dateFormat(selectedDate)
+    }
+
+    private fun handleStatusBarByScroll() {
+        binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val threshold = 320 // 스크롤 기준 값(px)
+
+            if (scrollY > threshold && !isStatusBarLight) {
+                animateStatusBarChange(
+                    toColor = ContextCompat.getColor(requireContext(), android.R.color.white), lightIcons = true
+                )
+                isStatusBarLight = true
+            } else if (scrollY <= threshold && isStatusBarLight) {
+                animateStatusBarChange(
+                    toColor = ContextCompat.getColor(requireContext(), R.color.main_blue_1), lightIcons = false
+                )
+                isStatusBarLight = false
+            }
+        }
+    }
+
+    // 상태바 색상 변경 애니메이션
+    private fun animateStatusBarChange(toColor: Int, lightIcons: Boolean) {
+        val activity = activity as? MainActivity ?: return
+        val window = activity.window
+        val fromColor = window.statusBarColor
+
+        val animator = ValueAnimator.ofArgb(fromColor, toColor)
+        animator.duration = 300
+        animator.addUpdateListener {
+            window.statusBarColor = it.animatedValue as Int
+        }
+        animator.start()
+
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = lightIcons
     }
 
     @RequiresApi(VERSION_CODES.O)
@@ -144,14 +181,22 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         }
     }
 
+    // 공지, 마이페이지로 이동
     private fun setMainButtonClickListener() {
-        binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
+        binding.btnSetting.setOnClickListener {
             val intent = Intent(requireContext(), SettingActivity::class.java)
             startActivity(intent)
         }
 
         binding.btnAlarm.setOnClickListener {
-            Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 안읽은 공지가 있을 경우
+        binding.btnAlarmActive.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -255,6 +300,14 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 intakeCountRecyclerView.visibility = View.VISIBLE
                 tvNum.text = responseData.countAll.toString()
                 tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
+
+                if (responseData.notificationRead) {
+                    btnAlarmActive.visibility = View.INVISIBLE
+                    btnAlarm.visibility = View.VISIBLE
+                } else {
+                    btnAlarmActive.visibility = View.VISIBLE
+                    btnAlarm.visibility = View.INVISIBLE
+                }
 
                 setupProgressBar(responseData.countAll, responseData.countLeft)
                 setupIntakeCountRecyclerView(responseData)
@@ -376,6 +429,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     override fun onResume() {
         super.onResume() // 상태바를 메인블루 색상으로 변경
         (activity as? MainActivity)?.setStatusBarColor(R.color.main_blue_1, false)
+        fetchHomeData(selectedDate)
     }
 
     override fun onDestroyView() {

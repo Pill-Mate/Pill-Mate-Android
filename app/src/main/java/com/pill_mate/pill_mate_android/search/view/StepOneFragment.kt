@@ -1,9 +1,9 @@
 package com.pill_mate.pill_mate_android.search.view
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,20 +11,27 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.R
+import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentStepOneBinding
+import com.pill_mate.pill_mate_android.medicine_registration.PolyPharmacyWarningDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
+import com.pill_mate.pill_mate_android.medicine_registration.model.PillCountCheckResponse
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.presenter.StepOnePresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepOnePresenterImpl
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     private var _binding: FragmentStepOneBinding? = null
     private val binding get() = _binding!!
     private lateinit var presenter: StepOnePresenter.Presenter
-
     private var activeSearchType: SearchType? = null
+    private val PREF_NAME = "pill_mate_prefs"
+    private val KEY_POLYPHARMACY_CHECKED = "isPolypharmacyChecked"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,10 +44,61 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        checkPolypharmacyCount()
         setupInputFields()
         setupSearchListeners()
         setupEndIconListeners()
+    }
+
+    private fun checkPolypharmacyCount() {
+        if (isPolypharmacyAlreadyChecked()) {
+            android.util.Log.d("PolyCheck", "이미 검사함 → 검사 생략")
+            return
+        }
+
+        ServiceCreator.medicineRegistrationService.checkPillCount()
+            .enqueue(object : Callback<PillCountCheckResponse> {
+                override fun onResponse(
+                    call: Call<PillCountCheckResponse>,
+                    response: Response<PillCountCheckResponse>
+                ) {
+                    android.util.Log.d("PolyCheck", "응답 코드: ${response.code()}")
+                    android.util.Log.d("PolyCheck", "응답 바디: ${response.body()}")
+
+                    if (response.isSuccessful) {
+                        val isSafe = response.body()?.result == true
+                        android.util.Log.d("PolyCheck", "result = $isSafe")
+
+                        if (!isSafe) {
+                            setPolypharmacyChecked()
+                            showPolypharmacyWarningDialog()
+                        } else {
+                            android.util.Log.d("PolyCheck", "약물이 4개 이하 → 경고 없음")
+                        }
+                    } else {
+                        android.util.Log.w("PolyCheck", "서버 응답 실패 - code=${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<PillCountCheckResponse>, t: Throwable) {
+                    android.util.Log.e("PolyCheck", "API 호출 실패: ${t.message}", t)
+                }
+            })
+    }
+
+    private fun setPolypharmacyChecked() {
+        val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_POLYPHARMACY_CHECKED, true).apply()
+    }
+
+    private fun isPolypharmacyAlreadyChecked(): Boolean {
+        val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_POLYPHARMACY_CHECKED, false)
+    }
+
+    private fun showPolypharmacyWarningDialog() {
+        val dialog = PolyPharmacyWarningDialogFragment()
+        dialog.show(parentFragmentManager, "PolyPharmacyWarningDialog")
     }
 
     private fun setupInputFields() {
@@ -49,7 +107,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hospitalText = binding.etHospital.text.toString()
-                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 🚀 병원 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 병원 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearPharmacy, s)
             }
 
@@ -61,7 +119,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val pharmacyText = binding.etPharmacy.text.toString()
-                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 🚀 약국 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 약국 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearHospital, s)
             }
 
@@ -167,7 +225,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
 
-        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_2
         binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
     }
 

@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.pillcheck.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -54,6 +55,7 @@ class MedicineAdapter(
                 R.drawable.shape_normal_item
             }
             binding.itemMedicine.setBackgroundResource(backgroudResId)
+            binding.itemLine.visibility = if (medicines.size >= 2 && !isLastItem) View.VISIBLE else View.INVISIBLE
 
             // 체크박스 상태 및 클릭 이벤트 설정
             binding.cbCheck.setOnClickListener {

@@ -1,0 +1,46 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_pill_search"
+    app:startDestination="@id/ConflictPillSearchFragment">
+
+    <fragment
+        android:id="@+id/ConflictPillSearchFragment"
+        android:name="com.pill_mate.pill_mate_android.pillsearch.ConflictPillSearchFragment"
+        tools:layout="@layout/fragment_conflict_pill_search"
+        android:label="약 검색 Tab">
+
+        <action
+            android:id="@+id/action_conflictPillSearchFragment_to_noConflictFragment"
+            app:destination="@id/LoadingNoConflictFragment" />
+
+        <action
+            android:id="@+id/action_conflictPillSearchFragment_to_conflictCheckFragment"
+            app:destination="@id/LoadingConflictFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/LoadingNoConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.LoadingNoConflictFragment"
+        tools:layout="@layout/fragment_loading_no_conflict"
+        android:label="충돌 없음" />
+
+    <fragment
+        android:id="@+id/LoadingConflictFragment"
+        android:name="com.pill_mate.pill_mate_android.medicine_conflict.LoadingConflictFragment"
+        tools:layout="@layout/fragment_loading_conflict"
+        android:label="충돌 있음">
+        <action
+            android:id="@+id/action_loadingConflictFragment_to_ConflictPillDetailFragment"
+            app:destination="@id/ConflictPillDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ConflictPillDetailFragment"
+        android:name="com.pill_mate.pill_mate_android.pillsearch.ConflictPillDetailFragment"
+        tools:layout="@layout/fragment_conflict_pill_detail">
+        <action
+            android:id="@+id/action_medicineConflictFragment_to_ConflictPillSearchFragment"
+            app:destination="@id/ConflictPillSearchFragment" />
+    </fragment>
+</navigation>
