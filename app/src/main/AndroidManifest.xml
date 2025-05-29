@@ -9,7 +9,7 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
-        android:name="com.pill_mate.pill_mate_android.GlobalApplication"
+        android:name=".GlobalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,23 +21,29 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.pill_mate.pill_mate_android.setting.view.SettingActivity"
+            android:name=".notice.NotificationDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notice.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".setting.view.SettingActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.onboarding.view.SuccessActivity"
+            android:name=".onboarding.view.SuccessActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker2Activity"
+            android:name=".onboarding.view.TimePicker2Activity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.onboarding.view.TimePicker1Activity"
+            android:name=".onboarding.view.TimePicker1Activity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.login.view.SplashActivity"
+            android:name=".login.view.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -47,11 +53,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pill_mate.pill_mate_android.login.view.AgreementActivity"
+            android:name=".login.view.AgreementActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity"
+            android:name=".login.view.KakaoLoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
@@ -60,7 +66,7 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name="com.pill_mate.pill_mate_android.main.view.MainActivity"
+            android:name=".main.view.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" /> <!-- 카카오 로그인, 인가코드를 받기 위한 액티비티 -->
         <activity
@@ -78,14 +84,13 @@
                     android:scheme="@string/scheme_kakao_app_key" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.pill_mate.pill_mate_android.pilledit.view.MedicineEditActivity"
+            android:name=".pilledit.view.MedicineEditActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.PillMateAndroid" />
         <activity
-            android:name="com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity"
+            android:name=".medicine_registration.MedicineRegistrationActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.PillMateAndroid" />

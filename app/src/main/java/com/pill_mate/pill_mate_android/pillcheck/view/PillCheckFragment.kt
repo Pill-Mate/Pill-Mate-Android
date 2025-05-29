@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,6 +26,7 @@ import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity
+import com.pill_mate.pill_mate_android.notice.NotificationActivity
 import com.pill_mate.pill_mate_android.pillcheck.model.GroupedMedicine
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeData
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
@@ -181,14 +181,16 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         }
     }
 
+    // 공지, 마이페이지로 이동
     private fun setMainButtonClickListener() {
-        binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
+        binding.btnSetting.setOnClickListener {
             val intent = Intent(requireContext(), SettingActivity::class.java)
             startActivity(intent)
         }
 
-        binding.btnAlarm.setOnClickListener {
-            Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
+        binding.btnAlarm.setOnClickListener { //Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
         }
     }
 
