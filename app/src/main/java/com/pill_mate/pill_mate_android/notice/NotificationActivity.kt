@@ -73,4 +73,9 @@ class NotificationActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        fetchNotificationItemData()
+    }
 }

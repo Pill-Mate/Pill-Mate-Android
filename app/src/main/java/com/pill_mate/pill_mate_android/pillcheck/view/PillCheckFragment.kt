@@ -188,7 +188,13 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             startActivity(intent)
         }
 
-        binding.btnAlarm.setOnClickListener { //Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
+        binding.btnAlarm.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 안읽은 공지가 있을 경우
+        binding.btnAlarmActive.setOnClickListener {
             val intent = Intent(requireContext(), NotificationActivity::class.java)
             startActivity(intent)
         }
@@ -294,6 +300,14 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 intakeCountRecyclerView.visibility = View.VISIBLE
                 tvNum.text = responseData.countAll.toString()
                 tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
+
+                if (responseData.notificationRead) {
+                    btnAlarmActive.visibility = View.INVISIBLE
+                    btnAlarm.visibility = View.VISIBLE
+                } else {
+                    btnAlarmActive.visibility = View.VISIBLE
+                    btnAlarm.visibility = View.INVISIBLE
+                }
 
                 setupProgressBar(responseData.countAll, responseData.countLeft)
                 setupIntakeCountRecyclerView(responseData)
@@ -415,6 +429,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     override fun onResume() {
         super.onResume() // 상태바를 메인블루 색상으로 변경
         (activity as? MainActivity)?.setStatusBarColor(R.color.main_blue_1, false)
+        fetchHomeData(selectedDate)
     }
 
     override fun onDestroyView() {

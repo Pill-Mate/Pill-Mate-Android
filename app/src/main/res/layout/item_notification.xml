@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="20dp"
     android:paddingTop="12dp"
-    android:paddingBottom="6dp"
-    android:paddingEnd="20dp">
+    android:paddingEnd="20dp"
+    android:paddingBottom="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
@@ -39,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:maxLength="25"
                 android:maxLines="2"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,6 +68,19 @@
                 tools:text="00:00" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/ic_state"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="9dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/ic_state"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_detail"
+            app:layout_constraintTop_toTopOf="@id/btn_detail" />
 
         <ImageView
             android:id="@+id/btn_detail"

@@ -41,6 +41,7 @@ class NotificationAdapter(
                 tvTime.text = data.notifyTime
                 tvTitle.text = data.title
                 itemLine.visibility = if (isLastItem) View.INVISIBLE else View.VISIBLE
+                icState.visibility = if (data.notificationRead) View.INVISIBLE else View.VISIBLE
             }
 
             // 아이템 전체 영역 클릭 시 상세 페이지 이동

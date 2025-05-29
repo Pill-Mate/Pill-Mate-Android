@@ -5,4 +5,5 @@ data class ResponseNotificationItem(
     val notifyDate: String,
     val notifyTime: String,
     val title: String,
+    val notificationRead: Boolean,
 )
