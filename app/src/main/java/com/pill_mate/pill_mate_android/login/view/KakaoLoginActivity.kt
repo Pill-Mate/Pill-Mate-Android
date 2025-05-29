@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -17,7 +18,7 @@ import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityKakaoLoginBinding
-import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
+import com.pill_mate.pill_mate_android.login.model.LoginTokenData
 import com.pill_mate.pill_mate_android.login.model.ResponseToken
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import retrofit2.Call
@@ -94,40 +95,54 @@ class KakaoLoginActivity : AppCompatActivity() {
 
     private fun loginNetwork(accessToken: String) {
 
-        val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
-        val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
+        // FCM 토큰 비동기로 받아오기
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken ->
+            if (fcmToken.isNullOrEmpty()) {
+                Log.e("FCM", "FCM 토큰이 비어있습니다. 로그인 요청 생략")
+                return@addOnSuccessListener
+            }
 
-        call.enqueue(object : Callback<ResponseToken> {
-            override fun onResponse(
-                call: Call<ResponseToken>, response: Response<ResponseToken>
-            ) {
+            // FCM 토큰 함께 전송
+            val loginData = LoginTokenData(
+                kakaoAccessToken = accessToken, fcmToken = fcmToken
+            )
 
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    if (responseData?.jwtToken != null) {
-                        GlobalApplication.saveToken(responseData.jwtToken)
-                        GlobalApplication.saveRefreshToken(responseData.refreshToken)
+            val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
-                        Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
+            call.enqueue(object : Callback<ResponseToken> {
+                override fun onResponse(
+                    call: Call<ResponseToken>, response: Response<ResponseToken>
+                ) {
 
-                        val nextActivity = if (responseData.login == true) {
-                            MainActivity::class.java
-                        } else {
-                            AgreementActivity::class.java
+                    if (response.isSuccessful) {
+                        val responseData = response.body()
+                        if (responseData?.jwtToken != null) {
+                            GlobalApplication.saveToken(responseData.jwtToken)
+                            GlobalApplication.saveRefreshToken(responseData.refreshToken)
+
+                            Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
+
+                            val nextActivity = if (responseData.login == true) {
+                                MainActivity::class.java
+                            } else {
+                                AgreementActivity::class.java
+                            }
+
+                            // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
+                            navigateToNext(nextActivity)
                         }
-
-                        // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
-                        navigateToNext(nextActivity)
+                    } else {
+                        Log.e("가입 실패", "가입 실패 : ${response.message()}")
                     }
-                } else {
-                    Log.e("가입 실패", "가입 실패 : ${response.message()}")
                 }
-            }
 
-            override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
+                override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
+                    Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+                }
+            })
+        }.addOnFailureListener {
+            Log.e("FCM", "FCM 토큰 가져오기 실패: ${it.message}")
+        }
     }
 
     // 카카오 로그인 버튼 클릭 시

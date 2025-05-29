@@ -111,6 +111,7 @@ class StepFiveFragment : Fragment() {
                 val intValue = inputText.toIntOrNull()
                 if (intValue != null) {
                     updateMealTime(intValue)
+                    updateNextButtonState()
                 }
             }
         })

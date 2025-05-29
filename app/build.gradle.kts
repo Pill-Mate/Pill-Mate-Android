@@ -19,7 +19,7 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10002
+        versionCode = 10003
         versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -111,6 +111,7 @@ dependencies {
     implementation("com.tickaroo.tikxml:annotation:0.8.13")
     implementation("com.tickaroo.tikxml:core:0.8.13")
     implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    implementation(libs.firebase.messaging.ktx)
     kapt("com.tickaroo.tikxml:processor:0.8.13")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")

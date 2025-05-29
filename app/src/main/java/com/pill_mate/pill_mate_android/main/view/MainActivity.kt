@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android.main.view
 import android.content.Intent
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -81,5 +82,15 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun navigateToMedicineRegistration() {
         val intent = Intent(this, MedicineRegistrationActivity::class.java)
         startActivity(intent)
+    }
+
+    fun hideBottomNav() {
+        binding.bottomNavMain.visibility = View.GONE
+        binding.floatingBtnAdd.visibility = View.GONE
+    }
+
+    fun showBottomNav() {
+        binding.bottomNavMain.visibility = View.VISIBLE
+        binding.floatingBtnAdd.visibility = View.VISIBLE
     }
 }
