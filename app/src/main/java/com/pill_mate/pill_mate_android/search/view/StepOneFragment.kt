@@ -42,13 +42,63 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
         setupEndIconListeners()
     }
 
+    private fun checkPolypharmacyCount() {
+        if (isPolypharmacyAlreadyChecked()) {
+            android.util.Log.d("PolyCheck", "이미 검사함 → 검사 생략")
+            return
+        }
+
+        ServiceCreator.medicineRegistrationService.checkPillCount()
+            .enqueue(object : Callback<PillCountCheckResponse> {
+                override fun onResponse(
+                    call: Call<PillCountCheckResponse>,
+                    response: Response<PillCountCheckResponse>
+                ) {
+                    android.util.Log.d("PolyCheck", "응답 코드: ${response.code()}")
+                    android.util.Log.d("PolyCheck", "응답 바디: ${response.body()}")
+
+                    if (response.isSuccessful) {
+                        val isSafe = response.body()?.result == true
+                        android.util.Log.d("PolyCheck", "result = $isSafe")
+
+                        if (!isSafe) {
+                            setPolypharmacyChecked()
+                            showPolypharmacyWarningDialog()
+                        } else {
+                        }
+                    } else {
+                        android.util.Log.w("PolyCheck", "서버 응답 실패 - code=${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<PillCountCheckResponse>, t: Throwable) {
+                    android.util.Log.e("PolyCheck", "API 호출 실패: ${t.message}", t)
+                }
+            })
+    }
+
+    private fun setPolypharmacyChecked() {
+        val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_POLYPHARMACY_CHECKED, true).apply()
+    }
+
+    private fun isPolypharmacyAlreadyChecked(): Boolean {
+        val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_POLYPHARMACY_CHECKED, false)
+    }
+
+    private fun showPolypharmacyWarningDialog() {
+        val dialog = PolyPharmacyWarningDialogFragment()
+        dialog.show(parentFragmentManager, "PolyPharmacyWarningDialog")
+    }
+
     private fun setupInputFields() {
         binding.etPharmacy.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hospitalText = binding.etHospital.text.toString()
-                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 🚀 병원 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(s.toString(), hospitalText)  // 병원 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearPharmacy, s)
             }
 
@@ -60,7 +110,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val pharmacyText = binding.etPharmacy.text.toString()
-                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 🚀 약국 입력까지 함께 전달
+                presenter.onPharmacyNameChanged(pharmacyText, s.toString())  // 약국 입력까지 함께 전달
                 updateClearButtonVisibility(binding.ivClearHospital, s)
             }
 

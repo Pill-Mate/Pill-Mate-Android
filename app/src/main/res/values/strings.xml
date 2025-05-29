@@ -147,6 +147,11 @@
     <string name="pill_delete_btn_cancel">취소</string>
     <string name="pill_delete_btn_delete">삭제하기</string>
 
+    <!-- fragment_duplicate_dialog -->
+    <string name="duplicate_title">이미 복용 중인 약물입니다</string>
+    <string name="duplicate_description">현재 복용 중인 약물은 다시 등록할 수 없어요.</string>
+    <string name="duplicate_btn_confirm">돌아가기</string>
+
     <!--fragment_alarm_switch_dialog-->
     <string name="alarm_switch_title">복약 알림을 권장드려요!</string>
     <string name="alarm_switch_message">약물을 제시간에 섭취할 수 있도록 도울게요.</string>

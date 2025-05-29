@@ -15,6 +15,7 @@ import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetail
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -86,7 +87,11 @@ class ConflictPillDetailBottomSheet(
                         val body = response.body()
                         if (body != null) {
                             Log.d("DuplicateCheck", "중복 성분 존재: ${body.effect_NAME}")
-                            // 바로 충돌 화면으로 이동 (예: navigateToDuplicateConflictScreen(body))
+                            val dialog = DuplicateDialogFragment {
+                                dismiss()             // 현재 BottomSheet 닫기
+                                bottomSheet.dismiss() // 부모 BottomSheet 닫기
+                            }
+                            dialog.show(parentFragmentManager, "DuplicateDialog")
                         } else {
                             Log.d("DuplicateCheck", "응답은 성공했지만 바디가 null임 → 중복 없음 처리")
                             checkMedicineConflicts(itemSeq)
