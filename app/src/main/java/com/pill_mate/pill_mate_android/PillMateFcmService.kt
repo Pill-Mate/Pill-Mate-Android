@@ -27,6 +27,7 @@ class PillMateFcmService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d(TAG, "onNewToken(): $token")
+        FcmTokenManager.sendFcmTokenToServer(token)
     }
 
     // 푸시 메시지를 수신할 때 호출

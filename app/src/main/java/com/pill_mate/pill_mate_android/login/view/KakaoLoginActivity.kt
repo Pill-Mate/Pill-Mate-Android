@@ -14,11 +14,12 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.FcmTokenManager
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityKakaoLoginBinding
-import com.pill_mate.pill_mate_android.login.model.LoginTokenData
+import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import com.pill_mate.pill_mate_android.login.model.ResponseToken
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import retrofit2.Call
@@ -102,11 +103,7 @@ class KakaoLoginActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            // FCM 토큰 함께 전송
-            val loginData = LoginTokenData(
-                kakaoAccessToken = accessToken, fcmToken = fcmToken
-            )
-
+            val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
             val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
             call.enqueue(object : Callback<ResponseToken> {
@@ -119,6 +116,9 @@ class KakaoLoginActivity : AppCompatActivity() {
                         if (responseData?.jwtToken != null) {
                             GlobalApplication.saveToken(responseData.jwtToken)
                             GlobalApplication.saveRefreshToken(responseData.refreshToken)
+
+                            // FCM 토큰 함께 전송
+                            FcmTokenManager.sendFcmTokenToServer(fcmToken)
 
                             Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
 

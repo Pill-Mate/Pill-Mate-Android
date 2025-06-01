@@ -271,5 +271,4 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
         }
     }
-
 }
