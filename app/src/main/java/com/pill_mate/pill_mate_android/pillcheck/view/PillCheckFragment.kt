@@ -301,18 +301,11 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 tvNum.text = responseData.countAll.toString()
                 tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
 
-                if (responseData.notificationRead) {
-                    btnAlarmActive.visibility = View.INVISIBLE
-                    btnAlarm.visibility = View.VISIBLE
-                } else {
-                    btnAlarmActive.visibility = View.VISIBLE
-                    btnAlarm.visibility = View.INVISIBLE
-                }
-
                 setupProgressBar(responseData.countAll, responseData.countLeft)
                 setupIntakeCountRecyclerView(responseData)
             }
         }
+        updateNotificationIcon(responseData.notificationRead)
     }
 
     //주간 달력 스크롤 시 데이터 받아오기
@@ -418,6 +411,11 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 ).toFloat()
             }
         }
+    }
+
+    private fun updateNotificationIcon(isRead: Boolean) {
+        binding.btnAlarmActive.visibility = if (isRead) View.INVISIBLE else View.VISIBLE
+        binding.btnAlarm.visibility = if (isRead) View.VISIBLE else View.INVISIBLE
     }
 
     @RequiresApi(VERSION_CODES.O)

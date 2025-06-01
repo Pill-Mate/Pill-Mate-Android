@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface LoginService {
     @POST("/api/v1/auth/signup")
-    fun login(@Body login: LoginTokenData): Call<ResponseToken>
+    fun login(@Body login: KaKaoTokenData): Call<ResponseToken>
 }
 
 interface OnBoardingService {
@@ -18,4 +18,9 @@ interface OnBoardingService {
 interface RefreshTokenService {
     @POST("/api/v1/auth/reissue")
     fun reissue(@Body refreshTokenData: RefreshTokenData): Call<ResponseRefreshToken>
+}
+
+interface FcmService {
+    @POST("/api/v1/alarm/registerFcmToken")
+    fun sendFcmTokenData(@Body fcmToken: FcmTokenData): Call<Void>
 }
