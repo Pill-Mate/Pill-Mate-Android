@@ -106,6 +106,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx) // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.15.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // retrofit2
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") //json
     implementation("com.tickaroo.tikxml:annotation:0.8.13")
