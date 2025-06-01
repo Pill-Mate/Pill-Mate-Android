@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.setting.view
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -167,23 +166,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun getAccessToken(): String? {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("kakao_access_token", null)
-    }
-
-    private fun searchKakaoToken() {/*
-        val accessToken = getAccessToken()
-
-        if (accessToken != null) {
-            Log.i(TAG, "AccessToken 조회 성공: $accessToken") // 서버로 accessToken 전달
-            sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = accessToken))
-        } else {
-            Log.e(TAG, "AccessToken 조회 실패")
-            Toast.makeText(applicationContext, "AccessToken 조회 실패", Toast.LENGTH_SHORT).show()
-        }
-         */
-
+    private fun searchKakaoToken() {
         UserApiClient.instance.accessTokenInfo { _, error ->
             if (error != null) {
                 Log.w("Kakao", "accessToken 만료 + refreshToken도 유효하지 않음 → 재로그인 유도")

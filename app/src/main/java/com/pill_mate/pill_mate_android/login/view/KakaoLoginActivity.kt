@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.login.view
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -59,7 +58,6 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                saveAccessToken(token.accessToken) // 카카오 accessToken 저장(회원탈퇴 시 사용)
                 loginNetwork(token.accessToken)
             }
         }
@@ -87,11 +85,6 @@ class KakaoLoginActivity : AppCompatActivity() {
         } else {
             UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
         }
-    }
-
-    private fun saveAccessToken(accessToken: String) {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString("kakao_access_token", accessToken).apply()
     }
 
     private fun loginNetwork(accessToken: String) {
