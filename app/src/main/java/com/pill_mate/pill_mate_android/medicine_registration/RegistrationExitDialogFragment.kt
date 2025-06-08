@@ -25,13 +25,15 @@ class RegistrationExitDialogFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentExitRegistrationDialogBinding.inflate(inflater, container, false)
 
-        // 부분 색상 변경된 메시지 설정
+        // 다이얼로그 닫힘 방지
+        isCancelable = false
+
         setColoredMessage()
 
-        binding.btnCancel.setOnClickListener { // 메인 액티비티로 이동
+        binding.btnCancel.setOnClickListener {
             clearRegistrationData()
         }
 
@@ -44,11 +46,16 @@ class RegistrationExitDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        // 바깥 터치로 닫히는 것 방지
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {
@@ -56,7 +63,6 @@ class RegistrationExitDialogFragment : DialogFragment() {
         _binding = null
     }
 
-    // 텍스트의 특정 부분만 빨간색으로 만드는 메서드
     @SuppressLint("ResourceAsColor")
     private fun setColoredMessage() {
         val fullText = getString(R.string.exit_registration_message)
@@ -68,8 +74,9 @@ class RegistrationExitDialogFragment : DialogFragment() {
         if (startIndex >= 0) {
             val redColor = ContextCompat.getColor(requireContext(), R.color.status_red)
             spannable.setSpan(
-                ForegroundColorSpan(redColor), // 빨간색 적용
-                startIndex, startIndex + redText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                ForegroundColorSpan(redColor),
+                startIndex, startIndex + redText.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
 
@@ -77,10 +84,11 @@ class RegistrationExitDialogFragment : DialogFragment() {
     }
 
     private fun clearRegistrationData() {
-        DataRepository.clearAll() // 모든 데이터를 초기화
+        DataRepository.clearAll()
 
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK) // 기존 스택 제거 및 새로운 태스크로 시작
+        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(intent)
         requireActivity().finish()
         dismiss()

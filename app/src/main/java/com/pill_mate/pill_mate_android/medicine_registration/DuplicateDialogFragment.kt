@@ -18,7 +18,7 @@ class DuplicateDialogFragment(
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDuplicateDialogBinding.inflate(inflater, container, false)
 
         binding.btnConfirm.setOnClickListener {
@@ -26,16 +26,24 @@ class DuplicateDialogFragment(
             dismiss()
         }
 
+        // 뒤로가기 방지
+        isCancelable = false
+
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        // 바깥 터치로 닫히지 않도록 설정
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {
