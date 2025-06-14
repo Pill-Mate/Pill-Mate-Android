@@ -87,10 +87,12 @@ class ConflictPillDetailBottomSheet(
                         val body = response.body()
                         if (body != null) {
                             Log.d("DuplicateCheck", "중복 성분 존재: ${body.effect_NAME}")
-                            val dialog = DuplicateDialogFragment {
-                                dismiss()             // 현재 BottomSheet 닫기
-                                bottomSheet.dismiss() // 부모 BottomSheet 닫기
-                            }
+                            val dialog = DuplicateDialogFragment(
+                                onConfirm = {
+                                    dismiss()             // 현재 BottomSheet 닫기
+                                },
+                                showMessage = false // 메시지 숨김
+                            )
                             dialog.show(parentFragmentManager, "DuplicateDialog")
                         } else {
                             Log.d("DuplicateCheck", "응답은 성공했지만 바디가 null임 → 중복 없음 처리")

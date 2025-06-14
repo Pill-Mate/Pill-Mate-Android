@@ -94,10 +94,13 @@ class PillDetailBottomSheetFragment(
                         val body = response.body()
                         if (body != null) {
                             // 중복이면 입력 없이 닫기
-                            val dialog = DuplicateDialogFragment {
-                                dismiss()
-                                bottomSheet.dismiss()
-                            }
+                            val dialog = DuplicateDialogFragment(
+                                onConfirm = {
+                                    dismiss()
+                                    bottomSheet.dismiss()
+                                },
+                                showMessage = true // 메세지 표시
+                            )
                             dialog.show(parentFragmentManager, "DuplicateDialog")
                         } else {
                             // 중복 아님 → 바로 입력 (EditText 업데이트용)

@@ -10,7 +10,8 @@ import androidx.fragment.app.DialogFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentDuplicateDialogBinding
 
 class DuplicateDialogFragment(
-    private val onConfirm: () -> Unit
+    private val onConfirm: () -> Unit,
+    private val showMessage: Boolean = true
 ) : DialogFragment() {
 
     private var _binding: FragmentDuplicateDialogBinding? = null
@@ -20,6 +21,9 @@ class DuplicateDialogFragment(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDuplicateDialogBinding.inflate(inflater, container, false)
+
+        // 메시지 표시 여부에 따라 visibility 조정
+        binding.tvMessage.visibility = if (showMessage) View.VISIBLE else View.GONE
 
         binding.btnConfirm.setOnClickListener {
             onConfirm()
