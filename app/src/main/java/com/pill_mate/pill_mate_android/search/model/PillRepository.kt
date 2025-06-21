@@ -1,12 +1,9 @@
 package com.pill_mate.pill_mate_android.search.model
 
 import android.util.Log
-import com.pill_mate.pill_mate_android.medicine_registration.model.HospitalResponse
-import com.pill_mate.pill_mate_android.medicine_registration.model.PharmacyResponse
+import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.search.api.JsonApiClient
-import com.pill_mate.pill_mate_android.search.api.XmlApiClient
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 
 class PillRepository : PillDataSource {
@@ -40,31 +37,47 @@ class PillRepository : PillDataSource {
     }
 
     override suspend fun getSearchResults(
-        serviceKey: String,
-        pageNo: Int,
-        numOfRows: Int,
-        name: String?,
-        order: String,
+        name: String,
         type: SearchType
-    ): List<Searchable>? {
+    ): List<Searchable> {
         return try {
             when (type) {
                 SearchType.PHARMACY -> {
-                    val response: Response<PharmacyResponse> = XmlApiClient.xmlApiService.getPharmacyList(
-                        serviceKey, pageNo, numOfRows, name, order
-                    )
-                    response.body()?.body?.items?.itemList
+                    val response = ServiceCreator.searchService.searchPharmacy(name)
+                    Log.d("PillRepository", "요청 보냄: /api/v1/medicine/pharmacy?name=$name")
+                    Log.d("PillRepository", "SearchPharmacy response: $response")
+
+                    if (response.isSuccess) {
+                        response.result.map { item ->
+                            object : Searchable {
+                                override fun getName(): String = item.name
+                                override fun getAddress(): String = item.address
+                                override fun getNumber(): String = item.phone
+                            }
+                        }
+                    } else {
+                        emptyList()
+                    }
                 }
+
                 SearchType.HOSPITAL -> {
-                    val response: Response<HospitalResponse> = XmlApiClient.xmlApiService.getHospitalList(
-                        serviceKey, pageNo, numOfRows, name, order
-                    )
-                    response.body()?.body?.items?.itemList
+                    val response = ServiceCreator.searchService.searchHospital(name)
+                    if (response.isSuccess) {
+                        response.result.map { item ->
+                            object : Searchable {
+                                override fun getName(): String = item.name
+                                override fun getAddress(): String = item.address
+                                override fun getNumber(): String = item.phone
+                            }
+                        }
+                    } else {
+                        emptyList()
+                    }
                 }
             }
         } catch (e: Exception) {
             Log.e("PillRepository", "Error fetching results for $type", e)
-            null
+            emptyList()
         }
     }
 }
