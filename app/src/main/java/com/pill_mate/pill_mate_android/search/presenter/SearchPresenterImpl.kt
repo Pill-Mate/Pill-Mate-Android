@@ -46,11 +46,7 @@ class SearchPresenterImpl(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val results = repository.getSearchResults(
-                    serviceKey = BuildConfig.SERVICE_API_KEY,
-                    pageNo = 1,
-                    numOfRows = 10,
                     name = query,
-                    order = "name",
                     type = type
                 )
 

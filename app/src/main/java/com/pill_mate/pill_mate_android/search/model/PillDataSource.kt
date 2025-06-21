@@ -9,11 +9,7 @@ interface PillDataSource {
     ): List<PillIdntfcItem>?
 
     suspend fun getSearchResults(
-        serviceKey: String,
-        pageNo: Int,
-        numOfRows: Int,
-        name: String?,
-        order: String,
+        name: String,
         type: SearchType
-    ): List<Searchable>?
+    ): List<Searchable>
 }
