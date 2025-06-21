@@ -275,7 +275,7 @@
 
     <!--StepSevenFragment-->
     <string name="seven_title">복약 기간을 알려주세요</string>
-    <string name="seven_start_date_label">시작일</string>
+    <string name="seven_start_date_label">복약 시작일</string>
     <string name="seven_period_label">복약일수</string>
     <string name="seven_enter_hint">숫자입력</string>
     <string name="seven_end_date_chip">종료일: %s</string>
@@ -341,7 +341,7 @@
     <string name="medicine_edit_label_meal">복용 시간대</string>
     <string name="medicine_edit_label_eat">1회 투약량</string>
     <string name="medicine_edit_label_intake_period">복약기간</string>
-    <string name="medicine_edit_label_medicine_volume">1회 투여용량</string>
+    <string name="medicine_edit_label_medicine_volume">1회 투여용량(선택)</string>
     <string name="medicine_edit_warning_minutes">복용 시간대를 입력해주세요</string>
     <string name="medicine_edit_warning_eat_count">1회 투약량을 입력해주세요</string>
     <string name="medicine_edit_warning_period">복약 일수를 입력해주세요</string>

@@ -191,8 +191,8 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // 선택 해제된 값 `updateAlarmTimeUI()`에서 제거
             hasAlarm = listOf(
-                updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, "공복", intakeCounts, intakeTimes),
-                updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, "취침전", intakeCounts, intakeTimes)
+                updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, spaceBetweenAlarmItems, "공복", intakeCounts, intakeTimes),
+                updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, null, "취침전", intakeCounts, intakeTimes)
             ).any { it }
 
             layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
@@ -220,6 +220,7 @@ class MedicineEditActivity : AppCompatActivity() {
     private fun updateAlarmTimeUI(
         labelView: TextView,
         timeView: TextView,
+        spaceView: View?,  // nullable 로 변경
         intakeType: String,
         intakeCounts: List<String>,
         intakeTimes: List<String>
@@ -237,11 +238,16 @@ class MedicineEditActivity : AppCompatActivity() {
             timeView.text = DateConversionUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             labelView.visibility = View.VISIBLE
             timeView.visibility = View.VISIBLE
+            if (intakeType == "공복") {
+                spaceView?.visibility = View.VISIBLE
+            }
             true
-        } else { // 선택 해제된 경우 UI 숨김 처리
-            Log.d("updateAlarmTimeUI", "$intakeType is removed from UI")
+        } else {
             labelView.visibility = View.GONE
             timeView.visibility = View.GONE
+            if (intakeType == "공복") {
+                spaceView?.visibility = View.GONE
+            }
             false
         }
     }
