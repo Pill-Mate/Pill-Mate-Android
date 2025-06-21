@@ -80,4 +80,20 @@ class PillRepository : PillDataSource {
             emptyList()
         }
     }
+
+    override suspend fun getSearchMedicineResults(itemName: String): List<SearchMedicineItem> {
+        return try {
+            val response = ServiceCreator.searchService.searchPill(itemName)
+            Log.d("PillRepository", "SearchPill response: $response")
+
+            if (response.isSuccess) {
+                response.result
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("PillRepository", "Error fetching pill search results", e)
+            emptyList()
+        }
+    }
 }

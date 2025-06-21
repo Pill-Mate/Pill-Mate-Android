@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.*
@@ -138,6 +139,10 @@ class ConflictPillSearchBottomSheetFragment(
 
     override fun showResults(results: List<Searchable>, type: SearchType) {
         // not used in this context
+    }
+
+    override fun showMedicines(pills: List<SearchMedicineItem>) {
+        // 일단 여기에 먼저 해보고 전체 수정하면 될듯 + SearchMedicineAdapter
     }
 
     private fun hideKeyboard() {

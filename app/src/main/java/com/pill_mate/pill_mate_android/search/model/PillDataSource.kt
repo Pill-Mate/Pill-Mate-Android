@@ -12,4 +12,6 @@ interface PillDataSource {
         name: String,
         type: SearchType
     ): List<Searchable>
+
+    suspend fun getSearchMedicineResults(itemName: String): List<SearchMedicineItem>
 }
