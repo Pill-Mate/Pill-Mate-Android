@@ -3,10 +3,12 @@ package com.pill_mate.pill_mate_android
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.pill_mate.pill_mate_android.login.model.FcmService
 import com.pill_mate.pill_mate_android.login.model.LoginService
 import com.pill_mate.pill_mate_android.login.model.OnBoardingService
 import com.pill_mate.pill_mate_android.login.model.RefreshTokenService
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
+import com.pill_mate.pill_mate_android.notice.NotificationService
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeService
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckService
 import com.pill_mate.pill_mate_android.pillcheck.model.WeeklyCalendarService
@@ -67,4 +69,6 @@ object ServiceCreator { // 서버 URL
     val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(InActiveMedicineService::class.java)
     val stopMedicineService: StopMedicineService = userRetrofit.create(StopMedicineService::class.java)
     val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
+    val notificationService: NotificationService = userRetrofit.create(NotificationService::class.java)
+    val fcmService: FcmService = userRetrofit.create(FcmService::class.java)
 }

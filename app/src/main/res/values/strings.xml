@@ -106,6 +106,10 @@
     <string name="no_registered_medicine_sub">편리하게 복약관리를\n시작 해볼까요?</string>
     <string name="register_medicine_button">약물 등록하기</string>
 
+    <!--NotificationActivity-->
+    <string name="notice">공지</string>
+    <string name="notification">알림</string>
+
     <!--fragment_setting_routine_bottom_dialog-->
     <string name="setting_routine_title">개인루틴 설정</string>
     <string name="done_button">완료</string>
@@ -146,6 +150,17 @@
     <string name="pill_delete_title">스케줄에 등록된 약물을\n삭제하시겠어요?</string>
     <string name="pill_delete_btn_cancel">취소</string>
     <string name="pill_delete_btn_delete">삭제하기</string>
+
+    <!-- fragment_duplicate_dialog -->
+    <string name="duplicate_title">이미 복용 중인 약물이에요</string>
+    <string name="duplicate_description">현재 복용 중인 약물은\n중복으로 등록할 수 없어요</string>
+    <string name="duplicate_btn_confirm">돌아가기</string>
+
+    <!-- fragment_poly_pharmacy_warning_dialog -->
+    <string name="poly_pharmacy_warning_title">지금 등록하시면\n총 5개의 약을 함께 복용하게 됩니다</string>
+    <string name="poly_pharmacy_warning_description">전문가 상담을 권장드려요</string>
+    <string name="poly_pharmacy_warning_confirm">계속하기</string>
+    <string name="poly_pharmacy_warning_cancel">취소</string>
 
     <!--fragment_alarm_switch_dialog-->
     <string name="alarm_switch_title">복약 알림을 권장드려요!</string>
@@ -302,6 +317,7 @@
 
     <!-- fragment_loading_conflict -->
     <string name="loading_conflict_title">복용하는 약물과\n충돌하는 성분을 발견했어요</string>
+    <string name="loading_no_conflict_title">복용하는 약물과\n충돌하는 성분이 없어요</string>
     <string name="loading_conflict_btn">확인하기</string>
 
     <!-- fragment_medicine_conflict -->
@@ -329,6 +345,10 @@
     <string name="medicine_edit_warning_minutes">복용 시간대를 입력해주세요</string>
     <string name="medicine_edit_warning_eat_count">1회 투약량을 입력해주세요</string>
     <string name="medicine_edit_warning_period">복약 일수를 입력해주세요</string>
+
+    <!--PillSearchFragment-->
+    <string name="search_conflict_pill">충돌 검색</string>
+    <string name="search_conflict_pill_detail_title">검색하려는 약물이 맞나요?</string>
 
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

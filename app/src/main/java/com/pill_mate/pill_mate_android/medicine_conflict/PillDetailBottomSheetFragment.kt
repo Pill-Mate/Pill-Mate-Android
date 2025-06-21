@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_conflict
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,13 +9,15 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
+import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
+import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
+import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,9 +31,9 @@ class PillDetailBottomSheetFragment(
     private var _binding: FragmentBottomSheetPillDetailBinding? = null
     private val binding get() = _binding!!
 
-    override fun getTheme(): Int {
-        return R.style.RoundedBottomSheetDialogTheme
-    }
+    override fun getTheme(): Int = R.style.RoundedBottomSheetDialogTheme
+
+    private var isProcessing = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +42,6 @@ class PillDetailBottomSheetFragment(
         _binding = FragmentBottomSheetPillDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    private var isProcessing = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,7 +56,7 @@ class PillDetailBottomSheetFragment(
                     .error(R.drawable.img_default)
                     .into(binding.ivPillImage)
             } else {
-                binding.ivPillImage.setImageResource(R.drawable.img_default) // 이미지 URL 없을 경우 기본 이미지
+                binding.ivPillImage.setImageResource(R.drawable.img_default)
             }
 
             binding.tvPillClass.text = it.CLASS_NAME
@@ -67,14 +68,10 @@ class PillDetailBottomSheetFragment(
             if (!isProcessing) {
                 isProcessing = true
                 binding.btnYes.isEnabled = false
-                pillItem?.let { item ->
-                    checkMedicineConflicts(item.ITEM_SEQ)
 
-                    // StepTwoFragment에 선택한 약물 정보 전달
-                    val result = Bundle().apply {
-                        putParcelable("confirmedPillItem", item)
-                    }
-                    parentFragmentManager.setFragmentResult("pillConfirmResultKey", result)
+                pillItem?.let { item ->
+                    // 중복 확인 먼저 → 중복 아니면 결과 전달
+                    checkDuplicateDrug(item)
                 }
             }
         }
@@ -82,6 +79,55 @@ class PillDetailBottomSheetFragment(
         binding.btnNo.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun checkDuplicateDrug(pillItem: PillIdntfcItem) {
+        val itemSeq = pillItem.ITEM_SEQ
+
+        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq)
+            .enqueue(object : Callback<DuplicateDrugResponse> {
+                override fun onResponse(
+                    call: Call<DuplicateDrugResponse>,
+                    response: Response<DuplicateDrugResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null) {
+                            // 중복이면 입력 없이 닫기
+                            val dialog = DuplicateDialogFragment(
+                                onConfirm = {
+                                    dismiss()
+                                    bottomSheet.dismiss()
+                                },
+                                showMessage = true // 메세지 표시
+                            )
+                            dialog.show(parentFragmentManager, "DuplicateDialog")
+                        } else {
+                            // 중복 아님 → 바로 입력 (EditText 업데이트용)
+                            sendResultToStepTwo(pillItem)
+                            checkMedicineConflicts(itemSeq)
+                        }
+                    } else {
+                        // 응답 실패 → 그래도 입력은 수행 (fail-safe)
+                        sendResultToStepTwo(pillItem)
+                        checkMedicineConflicts(itemSeq)
+                    }
+                }
+
+                override fun onFailure(call: Call<DuplicateDrugResponse>, t: Throwable) {
+                    Log.e("DuplicateCheck", "API 호출 실패: ${t.message}", t)
+                    // 네트워크 오류 등 → 그래도 입력은 수행
+                    sendResultToStepTwo(pillItem)
+                    checkMedicineConflicts(itemSeq)
+                }
+            })
+    }
+
+    private fun sendResultToStepTwo(pillItem: PillIdntfcItem) {
+        val result = Bundle().apply {
+            putParcelable("confirmedPillItem", pillItem)
+        }
+        parentFragmentManager.setFragmentResult("pillConfirmResultKey", result)
     }
 
     private fun checkMedicineConflicts(itemSeq: String) {
@@ -115,7 +161,6 @@ class PillDetailBottomSheetFragment(
                         navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
                     } else {
                         dismiss()
-                        // PillSearchBottomSheetFragment도 닫기
                         bottomSheet.dismiss()
                     }
 
@@ -144,6 +189,7 @@ class PillDetailBottomSheetFragment(
         val bundle = Bundle().apply {
             putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
+            putString("source", "medicineRegistration")
         }
 
         val navController = medicineRegistrationFragment.childFragmentManager
@@ -162,11 +208,12 @@ class PillDetailBottomSheetFragment(
             medicineRegistrationFragment: MedicineRegistrationFragment,
             pillItem: PillIdntfcItem
         ): PillDetailBottomSheetFragment {
-            val args = Bundle()
-            args.putParcelable("pillItem", pillItem)
-            val fragment = PillDetailBottomSheetFragment(bottomSheet, medicineRegistrationFragment)
-            fragment.arguments = args
-            return fragment
+            val args = Bundle().apply {
+                putParcelable("pillItem", pillItem)
+            }
+            return PillDetailBottomSheetFragment(bottomSheet, medicineRegistrationFragment).apply {
+                arguments = args
+            }
         }
     }
 }

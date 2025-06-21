@@ -1,0 +1,59 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:minHeight="254dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="20dp"
+    android:background="@drawable/bg_dialog"
+    android:gravity="center_horizontal"
+    tools:context=".medicine_registration.RegistrationExitDialogFragment">
+
+    <ImageView
+        android:id="@+id/iv_warning"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_warning_pink" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/duplicate_title"
+        android:textColor="@color/black"
+        style="@style/T2_B20"
+        android:layout_marginBottom="8dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/duplicate_description"
+        android:textColor="@color/black"
+        style="@style/H3_RG16"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/duplicate_btn_confirm"
+            style="@style/H2_SB16"
+            android:stateListAnimator="@null"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_pink_1" />
+    </LinearLayout>
+
+</LinearLayout>

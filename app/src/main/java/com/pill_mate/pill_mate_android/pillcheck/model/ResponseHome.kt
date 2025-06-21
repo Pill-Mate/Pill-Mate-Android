@@ -12,6 +12,7 @@ data class ResponseHome(
     override val saturday: Boolean,
     val countAll: Int,
     val countLeft: Int,
+    val notificationRead: Boolean,
     val medicineList: List<Data>
 ) : WeeklyIconsData {
     data class Data(

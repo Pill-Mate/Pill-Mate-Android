@@ -20,8 +20,8 @@ import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailBottomSheetFr
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenterImpl
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenterImpl
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
@@ -41,7 +41,7 @@ class PillSearchBottomSheetFragment(
 
     private var _binding: FragmentSearchPillBinding? = null
     private val binding get() = _binding!!
-    private lateinit var pillSearchPresenter: PillSearchPresenter
+    private lateinit var pillSearchPresenter: SearchPresenter
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
     private lateinit var adapter: PillIdntfcAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
@@ -52,7 +52,7 @@ class PillSearchBottomSheetFragment(
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
-        pillSearchPresenter = PillSearchPresenterImpl(this) // PillSearchPresenter 초기화
+        pillSearchPresenter = SearchPresenterImpl(this) // PillSearchPresenter 초기화
         stepTwoPresenter = StepTwoPresenterImpl(stepTwoView) // StepTwoPresenter 초기화
 
         return binding.root

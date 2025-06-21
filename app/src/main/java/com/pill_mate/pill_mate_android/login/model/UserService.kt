@@ -19,3 +19,8 @@ interface RefreshTokenService {
     @POST("/api/v1/auth/reissue")
     fun reissue(@Body refreshTokenData: RefreshTokenData): Call<ResponseRefreshToken>
 }
+
+interface FcmService {
+    @POST("/api/v1/alarm/registerFcmToken")
+    fun sendFcmTokenData(@Body fcmToken: FcmTokenData): Call<Void>
+}

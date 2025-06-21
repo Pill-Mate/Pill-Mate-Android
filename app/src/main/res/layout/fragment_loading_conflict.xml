@@ -16,19 +16,19 @@
 
         <ImageView
             android:id="@+id/iv_conflict"
-            android:layout_width="230dp"
-            android:layout_height="193dp"
+            android:layout_width="167dp"
+            android:layout_height="169dp"
             android:src="@drawable/ic_loading_conflict" />
 
         <TextView
             android:id="@+id/tv_title"
+            style="@style/T2_B20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="27dp"
             android:gravity="center"
             android:text="@string/loading_conflict_title"
-            android:textColor="@color/black"
-            style="@style/T2_B20" />
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

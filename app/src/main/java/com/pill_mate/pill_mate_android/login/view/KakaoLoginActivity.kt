@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.login.view
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,10 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.FcmTokenManager
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -57,7 +58,6 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                saveAccessToken(token.accessToken) // 카카오 accessToken 저장(회원탈퇴 시 사용)
                 loginNetwork(token.accessToken)
             }
         }
@@ -87,47 +87,55 @@ class KakaoLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveAccessToken(accessToken: String) {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString("kakao_access_token", accessToken).apply()
-    }
-
     private fun loginNetwork(accessToken: String) {
 
-        val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
-        val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
+        // FCM 토큰 비동기로 받아오기
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken ->
+            if (fcmToken.isNullOrEmpty()) {
+                Log.e("FCM", "FCM 토큰이 비어있습니다. 로그인 요청 생략")
+                return@addOnSuccessListener
+            }
 
-        call.enqueue(object : Callback<ResponseToken> {
-            override fun onResponse(
-                call: Call<ResponseToken>, response: Response<ResponseToken>
-            ) {
+            val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
+            val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    if (responseData?.jwtToken != null) {
-                        GlobalApplication.saveToken(responseData.jwtToken)
-                        GlobalApplication.saveRefreshToken(responseData.refreshToken)
+            call.enqueue(object : Callback<ResponseToken> {
+                override fun onResponse(
+                    call: Call<ResponseToken>, response: Response<ResponseToken>
+                ) {
 
-                        Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
+                    if (response.isSuccessful) {
+                        val responseData = response.body()
+                        if (responseData?.jwtToken != null) {
+                            GlobalApplication.saveToken(responseData.jwtToken)
+                            GlobalApplication.saveRefreshToken(responseData.refreshToken)
 
-                        val nextActivity = if (responseData.login == true) {
-                            MainActivity::class.java
-                        } else {
-                            AgreementActivity::class.java
+                            // FCM 토큰 함께 전송
+                            FcmTokenManager.sendFcmTokenToServer(fcmToken)
+
+                            Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
+
+                            val nextActivity = if (responseData.login == true) {
+                                MainActivity::class.java
+                            } else {
+                                AgreementActivity::class.java
+                            }
+
+                            // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
+                            navigateToNext(nextActivity)
                         }
-
-                        // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
-                        navigateToNext(nextActivity)
+                    } else {
+                        Log.e("가입 실패", "가입 실패 : ${response.message()}")
                     }
-                } else {
-                    Log.e("가입 실패", "가입 실패 : ${response.message()}")
                 }
-            }
 
-            override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
-                Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
-            }
-        })
+                override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
+                    Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+                }
+            })
+        }.addOnFailureListener {
+            Log.e("FCM", "FCM 토큰 가져오기 실패: ${it.message}")
+        }
     }
 
     // 카카오 로그인 버튼 클릭 시

@@ -77,6 +77,9 @@ class IntakeCountAdapter(
             }
             binding.icIntakeCount.setImageResource(iconResId)
 
+            // 전체 약물 체크 완료 시 "완료" 표시 노출
+            binding.tvDone.visibility = if (group.isAllChecked) View.VISIBLE else View.INVISIBLE
+
             // 확장 상태에 따라 드롭다운 아이콘 설정
             binding.btnDropdown.setImageResource(
                 if (isExpanded) R.drawable.btn_dropdown_down else R.drawable.btn_dropdown_up
