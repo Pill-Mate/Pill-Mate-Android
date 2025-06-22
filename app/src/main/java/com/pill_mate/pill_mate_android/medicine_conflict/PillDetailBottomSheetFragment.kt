@@ -18,6 +18,7 @@ import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFrag
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,12 +47,12 @@ class PillDetailBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pillItem = arguments?.getParcelable<PillIdntfcItem>("pillItem")
+        val pillItem = arguments?.getParcelable<SearchMedicineItem>("pillItem")
 
         pillItem?.let {
-            if (!it.ITEM_IMAGE.isNullOrEmpty()) {
+            if (!it.itemImage.isNullOrEmpty()) {
                 Glide.with(binding.ivPillImage.context)
-                    .load(it.ITEM_IMAGE)
+                    .load(it.itemImage)
                     .transform(RoundedCorners(20))
                     .error(R.drawable.img_default)
                     .into(binding.ivPillImage)
@@ -59,9 +60,9 @@ class PillDetailBottomSheetFragment(
                 binding.ivPillImage.setImageResource(R.drawable.img_default)
             }
 
-            binding.tvPillClass.text = it.CLASS_NAME
-            binding.tvPillName.text = it.ITEM_NAME
-            binding.tvPillEntp.text = it.ENTP_NAME
+            binding.tvPillClass.text = it.className
+            binding.tvPillName.text = it.itemName
+            binding.tvPillEntp.text = it.entpName
         }
 
         binding.btnYes.setOnClickListener {
@@ -81,10 +82,10 @@ class PillDetailBottomSheetFragment(
         }
     }
 
-    private fun checkDuplicateDrug(pillItem: PillIdntfcItem) {
-        val itemSeq = pillItem.ITEM_SEQ
+    private fun checkDuplicateDrug(pillItem: SearchMedicineItem) {
+        val itemSeq = pillItem.itemSeq
 
-        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq)
+        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq.toString())
             .enqueue(object : Callback<DuplicateDrugResponse> {
                 override fun onResponse(
                     call: Call<DuplicateDrugResponse>,
@@ -105,12 +106,12 @@ class PillDetailBottomSheetFragment(
                         } else {
                             // 중복 아님 → 바로 입력 (EditText 업데이트용)
                             sendResultToStepTwo(pillItem)
-                            checkMedicineConflicts(itemSeq)
+                            checkMedicineConflicts(itemSeq.toString())
                         }
                     } else {
                         // 응답 실패 → 그래도 입력은 수행 (fail-safe)
                         sendResultToStepTwo(pillItem)
-                        checkMedicineConflicts(itemSeq)
+                        checkMedicineConflicts(itemSeq.toString())
                     }
                 }
 
@@ -118,12 +119,12 @@ class PillDetailBottomSheetFragment(
                     Log.e("DuplicateCheck", "API 호출 실패: ${t.message}", t)
                     // 네트워크 오류 등 → 그래도 입력은 수행
                     sendResultToStepTwo(pillItem)
-                    checkMedicineConflicts(itemSeq)
+                    checkMedicineConflicts(itemSeq.toString())
                 }
             })
     }
 
-    private fun sendResultToStepTwo(pillItem: PillIdntfcItem) {
+    private fun sendResultToStepTwo(pillItem: SearchMedicineItem) {
         val result = Bundle().apply {
             putParcelable("confirmedPillItem", pillItem)
         }
@@ -206,7 +207,7 @@ class PillDetailBottomSheetFragment(
         fun newInstance(
             bottomSheet: PillSearchBottomSheetFragment,
             medicineRegistrationFragment: MedicineRegistrationFragment,
-            pillItem: PillIdntfcItem
+            pillItem: SearchMedicineItem
         ): PillDetailBottomSheetFragment {
             val args = Bundle().apply {
                 putParcelable("pillItem", pillItem)

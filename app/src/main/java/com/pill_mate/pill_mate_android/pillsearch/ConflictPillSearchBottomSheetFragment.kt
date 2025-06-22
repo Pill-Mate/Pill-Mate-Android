@@ -22,7 +22,6 @@ import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.*
-import com.pill_mate.pill_mate_android.search.view.PillIdntfcAdapter
 import com.pill_mate.pill_mate_android.search.view.PillSearchView
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +40,7 @@ class ConflictPillSearchBottomSheetFragment(
 
     private lateinit var pillSearchPresenter: SearchPresenter
     private lateinit var pillResultPresenter: PillSearchResultPresenter
-    private lateinit var adapter: PillIdntfcAdapter
+    private lateinit var adapter: SearchMedicineAdapter
 
     private var currentQuery: String = ""
     private val searchQueryFlow = MutableStateFlow("")
@@ -81,8 +80,8 @@ class ConflictPillSearchBottomSheetFragment(
     }
 
     private fun initView() {
-        adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
-            val dialog = ConflictPillDetailBottomSheet.newInstance(this, pillItem)
+        adapter = SearchMedicineAdapter(onItemClick = { medicineItem ->
+            val dialog = ConflictPillDetailBottomSheet.newInstance(this, medicineItem)
             dialog.show(parentFragmentManager, "PillDetailDialog")
         })
 
@@ -118,7 +117,7 @@ class ConflictPillSearchBottomSheetFragment(
                 .distinctUntilChanged()
                 .filter { it.isNotEmpty() }
                 .collectLatest { query ->
-                    pillSearchPresenter.searchPills(query)
+                    pillSearchPresenter.searchMedicines(query)
                 }
         }
     }
@@ -128,21 +127,17 @@ class ConflictPillSearchBottomSheetFragment(
         binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
-    override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        if (pills.isNotEmpty()) {
+    override fun showResults(results: List<Searchable>, type: SearchType) {
+        // 사용 안 함
+    }
+
+    override fun showMedicines(medicines: List<SearchMedicineItem>) {
+        if (medicines.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
-            adapter.updateItems(pills, currentQuery)
+            adapter.updateItems(medicines, currentQuery)
         } else {
             binding.rvSuggestion.visibility = View.GONE
         }
-    }
-
-    override fun showResults(results: List<Searchable>, type: SearchType) {
-        // not used in this context
-    }
-
-    override fun showMedicines(pills: List<SearchMedicineItem>) {
-        // 일단 여기에 먼저 해보고 전체 수정하면 될듯 + SearchMedicineAdapter
     }
 
     private fun hideKeyboard() {

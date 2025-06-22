@@ -70,7 +70,7 @@ class SearchMedicineAdapter(
             }
 
             tvClassName.text = item.className
-            tvCompanyName.text = item.companyName ?: ""
+            tvCompanyName.text = item.entpName ?: ""
 
             // 약물명 길이 제한
             val pillName = if (item.itemName.length > 17) {

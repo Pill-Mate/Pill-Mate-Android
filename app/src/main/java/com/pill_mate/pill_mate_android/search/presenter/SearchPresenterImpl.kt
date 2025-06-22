@@ -18,31 +18,6 @@ class SearchPresenterImpl(
     private val repository: PillRepository = PillRepository()
 ) : SearchPresenter {
 
-    override fun searchPills(query: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-
-                val pillIdntfc = repository.getPillIdntfc(
-                    serviceKey = BuildConfig.SERVICE_API_KEY,
-                    pageNo = 1,
-                    numOfRows = 10,
-                    item_name = query
-                )
-
-                Log.d("PillSearchPresenterImpl", "API response: $pillIdntfc")
-                withContext(Dispatchers.Main) {
-                    if (pillIdntfc != null) {
-                        val filteredPills = filterPillIdntfc(pillIdntfc, query)
-                        Log.d("PillSearchPresenterImpl", "Filtered pills: $filteredPills")
-                        view.showPillIdntfc(filteredPills)
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("PillSearchPresenterImpl", "Error fetching pills", e)
-            }
-        }
-    }
-
     override fun search(query: String, type: SearchType) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -77,17 +52,6 @@ class SearchPresenterImpl(
                 Log.e("PillSearchPresenterImpl", "Error fetching pills", e)
             }
         }
-    }
-
-    private fun filterPillIdntfc(pills: List<PillIdntfcItem>, query: String): List<PillIdntfcItem> {
-        val queryLower = query.lowercase()
-        val (startsWith, remaining) = pills.partition {
-            it.ITEM_NAME?.lowercase()?.startsWith(queryLower) == true
-        }
-        val contains = remaining.filter {
-            it.ITEM_NAME?.lowercase()?.contains(queryLower) == true
-        }
-        return (startsWith + contains).take(20)
     }
 
     private fun <T : Searchable> filterResults(items: List<T>?, query: String): List<T> {
