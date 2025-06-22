@@ -1,15 +1,10 @@
 package com.pill_mate.pill_mate_android.search.model
 
 interface PillDataSource {
-    suspend fun getPillIdntfc(
-        serviceKey: String,
-        pageNo: Int,
-        numOfRows: Int,
-        item_name: String
-    ): List<PillIdntfcItem>?
-
     suspend fun getSearchResults(
         name: String,
         type: SearchType
     ): List<Searchable>
+
+    suspend fun getSearchMedicineResults(itemName: String): List<SearchMedicineItem>
 }
