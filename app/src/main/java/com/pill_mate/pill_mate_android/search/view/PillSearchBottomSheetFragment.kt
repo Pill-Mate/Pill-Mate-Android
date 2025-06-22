@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistratio
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailBottomSheetFragment
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
@@ -28,6 +26,8 @@ import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.pillsearch.SearchMedicineAdapter
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -43,7 +43,7 @@ class PillSearchBottomSheetFragment(
     private val binding get() = _binding!!
     private lateinit var pillSearchPresenter: SearchPresenter
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
-    private lateinit var adapter: PillIdntfcAdapter
+    private lateinit var adapter: SearchMedicineAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
     private val searchQueryFlow = MutableStateFlow("")
 
@@ -96,12 +96,11 @@ class PillSearchBottomSheetFragment(
     }
 
     private fun initView() {
-        adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
-            // 아이템 클릭 시 다이얼로그 생성 및 표시
+        adapter = SearchMedicineAdapter(onItemClick = { medicineItem ->
             val dialog = PillDetailBottomSheetFragment.newInstance(
                 this,
-                medicineRegistrationFragment, // MedicineRegistrationFragment 전달
-                pillItem
+                medicineRegistrationFragment,
+                medicineItem
             )
             dialog.show(parentFragmentManager, "PillDetailDialog")
         })
@@ -159,7 +158,7 @@ class PillSearchBottomSheetFragment(
                 .collect { query ->
                     val underlineColor = if (query.isNotEmpty()) R.color.main_blue_1 else R.color.black
                     updateUnderline(underlineColor)
-                    pillSearchPresenter.searchPills(query) // 최적화된 검색 실행
+                    pillSearchPresenter.searchMedicines(query) // 최적화된 검색 실행
                 }
         }
     }
@@ -169,19 +168,17 @@ class PillSearchBottomSheetFragment(
         binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
-    override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
+    override fun showResults(results: List<Searchable>, type: SearchType) {
+        // 사용 안 함
+    }
 
-        if (pills.isNotEmpty()) {
+    override fun showMedicines(medicines: List<SearchMedicineItem>) {
+        if (medicines.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
-            adapter.updateItems(pills, currentQuery)
+            adapter.updateItems(medicines, currentQuery)
         } else {
             binding.rvSuggestion.visibility = View.GONE
         }
-    }
-
-    override fun showResults(results: List<Searchable>, type: SearchType) {
-        Log.d("PillSearchFragment", "showPharmacy called with items")
     }
 
     private fun hideKeyboard() {
