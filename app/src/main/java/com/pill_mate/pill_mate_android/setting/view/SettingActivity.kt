@@ -8,9 +8,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.GlobalApplication
@@ -53,6 +56,11 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         setButtonClickListener()
         switchAlarmToggle()
 
+        // 광고 초기화 및 광고 요청
+        MobileAds.initialize(this) {}
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun initView() {

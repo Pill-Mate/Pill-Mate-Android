@@ -133,4 +133,5 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.android.gms:play-services-ads:23.0.0") // AdMob
 }
