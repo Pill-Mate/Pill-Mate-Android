@@ -10,7 +10,8 @@ import androidx.fragment.app.DialogFragment
 import com.pill_mate.pill_mate_android.databinding.FragmentDuplicateDialogBinding
 
 class DuplicateDialogFragment(
-    private val onConfirm: () -> Unit
+    private val onConfirm: () -> Unit,
+    private val showMessage: Boolean = true
 ) : DialogFragment() {
 
     private var _binding: FragmentDuplicateDialogBinding? = null
@@ -18,24 +19,35 @@ class DuplicateDialogFragment(
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDuplicateDialogBinding.inflate(inflater, container, false)
+
+        // 메시지 표시 여부에 따라 visibility 조정
+        binding.tvMessage.visibility = if (showMessage) View.VISIBLE else View.GONE
 
         binding.btnConfirm.setOnClickListener {
             onConfirm()
             dismiss()
         }
 
+        // 뒤로가기 방지
+        isCancelable = false
+
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        // 바깥 터치로 닫히지 않도록 설정
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {

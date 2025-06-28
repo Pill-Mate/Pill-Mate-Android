@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.pill_mate.pill_mate_android.login.model.FcmService
 import com.pill_mate.pill_mate_android.login.model.LoginService
 import com.pill_mate.pill_mate_android.login.model.OnBoardingService
 import com.pill_mate.pill_mate_android.login.model.RefreshTokenService
@@ -15,6 +16,7 @@ import com.pill_mate.pill_mate_android.pilledit.api.MedicineEditService
 import com.pill_mate.pill_mate_android.pilledit.model.ActiveMedicineService
 import com.pill_mate.pill_mate_android.pilledit.model.InActiveMedicineService
 import com.pill_mate.pill_mate_android.pilledit.model.StopMedicineService
+import com.pill_mate.pill_mate_android.search.api.SearchService
 import com.pill_mate.pill_mate_android.setting.model.GetRoutineService
 import com.pill_mate.pill_mate_android.setting.model.PatchAlarmInfoService
 import com.pill_mate.pill_mate_android.setting.model.PatchAlarmMarketingService
@@ -54,6 +56,7 @@ object ServiceCreator { // 서버 URL
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
     val weeklyCalendarService: WeeklyCalendarService = userRetrofit.create(WeeklyCalendarService::class.java)
+    val searchService: SearchService = userRetrofit.create(SearchService::class.java)
     val medicineRegistrationService: MedicineRegistrationService =
         userRetrofit.create(MedicineRegistrationService::class.java)
     val medicineCheckService: MedicineCheckService = userRetrofit.create(MedicineCheckService::class.java)
@@ -69,4 +72,5 @@ object ServiceCreator { // 서버 URL
     val stopMedicineService: StopMedicineService = userRetrofit.create(StopMedicineService::class.java)
     val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
     val notificationService: NotificationService = userRetrofit.create(NotificationService::class.java)
+    val fcmService: FcmService = userRetrofit.create(FcmService::class.java)
 }

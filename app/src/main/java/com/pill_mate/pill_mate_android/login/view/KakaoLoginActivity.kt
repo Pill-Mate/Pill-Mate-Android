@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.login.view
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,11 +13,12 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.FcmTokenManager
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityKakaoLoginBinding
-import com.pill_mate.pill_mate_android.login.model.LoginTokenData
+import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import com.pill_mate.pill_mate_android.login.model.ResponseToken
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import retrofit2.Call
@@ -58,7 +58,6 @@ class KakaoLoginActivity : AppCompatActivity() {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                saveAccessToken(token.accessToken) // 카카오 accessToken 저장(회원탈퇴 시 사용)
                 loginNetwork(token.accessToken)
             }
         }
@@ -88,11 +87,6 @@ class KakaoLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveAccessToken(accessToken: String) {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString("kakao_access_token", accessToken).apply()
-    }
-
     private fun loginNetwork(accessToken: String) {
 
         // FCM 토큰 비동기로 받아오기
@@ -102,11 +96,7 @@ class KakaoLoginActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            // FCM 토큰 함께 전송
-            val loginData = LoginTokenData(
-                kakaoAccessToken = accessToken, fcmToken = fcmToken
-            )
-
+            val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
             val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
 
             call.enqueue(object : Callback<ResponseToken> {
@@ -119,6 +109,10 @@ class KakaoLoginActivity : AppCompatActivity() {
                         if (responseData?.jwtToken != null) {
                             GlobalApplication.saveToken(responseData.jwtToken)
                             GlobalApplication.saveRefreshToken(responseData.refreshToken)
+
+                            // FCM 토큰 함께 전송
+                            FcmTokenManager.sendFcmTokenToServer(fcmToken)
+                            Log.d("FCM_TOKEN", "토큰: $fcmToken")
 
                             Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
 

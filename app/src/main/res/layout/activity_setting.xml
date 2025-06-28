@@ -342,6 +342,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-4392518639765691/8758790366"
+        app:layout_constraintTop_toBottomOf="@id/layout_send_comment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

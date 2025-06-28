@@ -103,7 +103,9 @@ class InActiveMedicineFragment : Fragment() {
     @RequiresApi(VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        fetchInActiveMedicineData()
+        if (_binding != null) {
+            fetchInActiveMedicineData()
+        }
     }
 
     override fun onDestroyView() {

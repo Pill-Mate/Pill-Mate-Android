@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.setting.view
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,14 +8,20 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.kakao.sdk.auth.TokenManagerProvider
+import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
+import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 import com.pill_mate.pill_mate_android.setting.model.AlarmInfoData
 import com.pill_mate.pill_mate_android.setting.model.AlarmMarketingData
 import com.pill_mate.pill_mate_android.setting.model.ResponseRoutine
@@ -51,6 +56,11 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         setButtonClickListener()
         switchAlarmToggle()
 
+        // 광고 초기화 및 광고 요청
+        MobileAds.initialize(this) {}
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun initView() {
@@ -164,20 +174,35 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun getAccessToken(): String? {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("kakao_access_token", null)
-    }
-
     private fun searchKakaoToken() {
-        val accessToken = getAccessToken()
+        UserApiClient.instance.accessTokenInfo { _, error ->
+            if (error != null) {
+                Log.w("Kakao", "accessToken 만료 + refreshToken도 유효하지 않음 → 재로그인 유도")
 
-        if (accessToken != null) {
-            Log.i(TAG, "AccessToken 조회 성공: $accessToken") // 서버로 accessToken 전달
-            sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = accessToken))
-        } else {
-            Log.e(TAG, "AccessToken 조회 실패")
-            Toast.makeText(applicationContext, "AccessToken 조회 실패", Toast.LENGTH_SHORT).show()
+                // 재로그인 유도
+                UserApiClient.instance.loginWithKakaoAccount(this) { token, loginError ->
+                    if (loginError != null) {
+                        Toast.makeText(this, "카카오 재로그인에 실패했습니다", Toast.LENGTH_SHORT).show()
+                        Log.e("Kakao", "재로그인 실패: $loginError")
+                        val intent = Intent(this, KakaoLoginActivity::class.java)
+                        startActivity(intent)
+                    } else if (token != null) {
+                        Log.i("Kakao", "재로그인 성공! ${token.accessToken}")
+                        sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = token.accessToken))
+                    }
+                }
+
+            } else { // accessToken 유효 or refresh를 통해 갱신 완료
+                val accessToken = TokenManagerProvider.instance.manager.getToken()?.accessToken
+                if (accessToken != null) {
+                    Log.i("Kakao", "최신 accessToken 사용")
+                    sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = accessToken))
+                } else {
+                    Log.e("Kakao", "토큰이 null입니다. 재로그인 필요")
+                    val intent = Intent(this, KakaoLoginActivity::class.java)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
@@ -271,5 +296,4 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
         }
     }
-
 }

@@ -9,6 +9,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentLoadingConflictBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
@@ -54,6 +56,12 @@ class LoadingConflictFragment : Fragment() {
                 findNavController().navigateUp()
             }
         })
+
+        // 광고 초기화 및 광고 요청
+        MobileAds.initialize(requireContext()) {}
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun setupButton() {

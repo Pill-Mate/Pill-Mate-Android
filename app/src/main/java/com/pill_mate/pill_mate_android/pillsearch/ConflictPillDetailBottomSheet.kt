@@ -13,17 +13,17 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ConflictPillDetailBottomSheet(
     private val bottomSheet: ConflictPillSearchBottomSheetFragment,
-    private val pillItem: PillIdntfcItem
+    private val medicineItem: SearchMedicineItem
 ) : BottomSheetDialogFragment() {
 
     private var _binding: FragmentBottomSheetPillDetailBinding? = null
@@ -44,13 +44,13 @@ class ConflictPillDetailBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvTitle.text = getString(R.string.search_conflict_pill_detail_title)
-        binding.tvPillClass.text = pillItem.CLASS_NAME
-        binding.tvPillName.text = pillItem.ITEM_NAME
-        binding.tvPillEntp.text = pillItem.ENTP_NAME
+        binding.tvPillClass.text = medicineItem.className
+        binding.tvPillName.text = medicineItem.itemName
+        binding.tvPillEntp.text = medicineItem.entpName
 
-        if (!pillItem.ITEM_IMAGE.isNullOrEmpty()) {
+        if (!medicineItem.itemImage.isNullOrEmpty()) {
             Glide.with(requireContext())
-                .load(pillItem.ITEM_IMAGE)
+                .load(medicineItem.itemImage)
                 .transform(RoundedCorners(20))
                 .into(binding.ivPillImage)
         } else {
@@ -61,7 +61,7 @@ class ConflictPillDetailBottomSheet(
             if (!isProcessing) {
                 isProcessing = true
                 binding.btnYes.isEnabled = false
-                checkDuplicateDrug(pillItem.ITEM_SEQ)
+                checkDuplicateDrug(medicineItem.itemSeq.toString())
             }
         }
 
@@ -87,10 +87,12 @@ class ConflictPillDetailBottomSheet(
                         val body = response.body()
                         if (body != null) {
                             Log.d("DuplicateCheck", "중복 성분 존재: ${body.effect_NAME}")
-                            val dialog = DuplicateDialogFragment {
-                                dismiss()             // 현재 BottomSheet 닫기
-                                bottomSheet.dismiss() // 부모 BottomSheet 닫기
-                            }
+                            val dialog = DuplicateDialogFragment(
+                                onConfirm = {
+                                    dismiss()             // 현재 BottomSheet 닫기
+                                },
+                                showMessage = false // 메시지 숨김
+                            )
                             dialog.show(parentFragmentManager, "DuplicateDialog")
                         } else {
                             Log.d("DuplicateCheck", "응답은 성공했지만 바디가 null임 → 중복 없음 처리")
@@ -167,7 +169,7 @@ class ConflictPillDetailBottomSheet(
         val bundle = Bundle().apply {
             putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
-            putParcelable("pillItem", pillItem)
+            putParcelable("pillItem", medicineItem)
             if (hasConflict) {
                 putString("source", "pillSearch")  // source 추가
             }
@@ -192,7 +194,7 @@ class ConflictPillDetailBottomSheet(
     companion object {
         fun newInstance(
             bottomSheet: ConflictPillSearchBottomSheetFragment,
-            pillItem: PillIdntfcItem
+            pillItem: SearchMedicineItem
         ): ConflictPillDetailBottomSheet {
             return ConflictPillDetailBottomSheet(bottomSheet, pillItem)
         }
