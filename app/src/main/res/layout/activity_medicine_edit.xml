@@ -112,6 +112,48 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                android:id="@+id/tv_intake_count"
+                style="@style/B1_SB14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="@string/medicine_edit_label_intake_count"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_medicine" /> <!-- 기존 layout_intake_frequency 대신 layout_medicine 으로! -->
+
+            <LinearLayout
+                android:id="@+id/layout_intake_count"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_edittext_gray_2"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_intake_count">
+
+                <TextView
+                    android:id="@+id/tv_time_count"
+                    style="@style/H2_MD16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/four_et_count"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_dropdown" />
+            </LinearLayout>
+
+            <TextView
                 android:id="@+id/tv_meal"
                 style="@style/B1_SB14"
                 android:layout_width="wrap_content"
@@ -120,7 +162,7 @@
                 android:text="@string/medicine_edit_label_meal"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_medicine" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_intake_count" />
 
             <FrameLayout
                 android:id="@+id/layout_meal_info_click_area"
@@ -299,7 +341,9 @@
                     android:textColor="@color/gray_1"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_time_fasting"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_label_bedtime"/>
 
                 <TextView
                     android:id="@+id/tv_time_fasting"
@@ -313,16 +357,24 @@
                     app:layout_constraintStart_toEndOf="@+id/tv_label_fasting"
                     app:layout_constraintTop_toTopOf="@+id/tv_label_fasting" />
 
+                <View
+                    android:id="@+id/space_between_alarm_items"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_label_fasting"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
                 <TextView
                     android:id="@+id/tv_label_bedtime"
                     style="@style/H2_MD16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:text="취침전"
                     android:textColor="@color/gray_1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_label_fasting" />
+                    app:layout_constraintTop_toBottomOf="@+id/space_between_alarm_items"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <TextView
                     android:id="@+id/tv_time_bedtime"
@@ -345,7 +397,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <TextView
                 android:id="@+id/tv_intake_frequency"
@@ -391,48 +442,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_intake_count"
-                style="@style/B1_SB14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="@string/medicine_edit_label_intake_count"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_intake_frequency" />
-
-            <LinearLayout
-                android:id="@+id/layout_intake_count"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_edittext_gray_2"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_intake_count">
-
-                <TextView
-                    android:id="@+id/tv_time_count"
-                    style="@style/H2_MD16"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/four_et_count"
-                    android:textColor="@color/black" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_dropdown" />
-            </LinearLayout>
-
-            <TextView
                 android:id="@+id/tv_eat"
                 style="@style/B1_SB14"
                 android:layout_width="wrap_content"
@@ -441,7 +450,7 @@
                 android:text="@string/medicine_edit_label_eat"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_intake_count" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_intake_frequency" />
 
             <EditText
                 android:id="@+id/et_eat_count"

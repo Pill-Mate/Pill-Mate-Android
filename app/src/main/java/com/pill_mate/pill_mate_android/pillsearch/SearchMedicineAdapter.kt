@@ -1,4 +1,4 @@
-package com.pill_mate.pill_mate_android.search.view
+package com.pill_mate.pill_mate_android.pillsearch
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
@@ -19,31 +19,31 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.SearchPillItemBinding
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 
-class PillIdntfcAdapter(
-    private val onItemClick: (PillIdntfcItem) -> Unit = {}, // 클릭 리스너
-    private var query: String = "" // 검색어 저장
-) : RecyclerView.Adapter<PillIdntfcAdapter.PillViewHolder>() {
+class SearchMedicineAdapter(
+    private val onItemClick: (SearchMedicineItem) -> Unit = {},
+    private var query: String = ""
+) : RecyclerView.Adapter<SearchMedicineAdapter.MedicineViewHolder>() {
 
-    private val pillList = mutableListOf<PillIdntfcItem>()
+    private val medicineList = mutableListOf<SearchMedicineItem>()
 
-    class PillViewHolder(
+    class MedicineViewHolder(
         var binding: SearchPillItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pill: PillIdntfcItem, query: String) = with(binding) {
-            if (ivImage.tag != pill.ITEM_IMAGE) { // 중복 로딩 방지
-                ivImage.tag = pill.ITEM_IMAGE
-
-                Glide.with(ivImage.context).clear(ivImage) // 기존 이미지 제거 후 로드
+        fun bind(item: SearchMedicineItem, query: String) = with(binding) {
+            // Glide 이미지 로딩
+            if (ivImage.tag != item.itemImage) {
+                ivImage.tag = item.itemImage
+                Glide.with(ivImage.context).clear(ivImage)
                 Glide.with(ivImage.context)
-                    .load(pill.ITEM_IMAGE)
+                    .load(item.itemImage)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .skipMemoryCache(false)
                     .dontAnimate()
                     .transform(RoundedCorners(8))
-                    .error(R.drawable.img_default) // Glide 로딩 실패 시 기본 이미지
+                    .error(R.drawable.img_default)
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(
                             e: GlideException?,
@@ -51,7 +51,7 @@ class PillIdntfcAdapter(
                             target: Target<Drawable>,
                             isFirstResource: Boolean
                         ): Boolean {
-                            Log.e("GlideError", "Image Load Failed for URL: ${pill.ITEM_IMAGE}", e)
+                            Log.e("GlideError", "Image Load Failed: ${item.itemImage}", e)
                             return false
                         }
 
@@ -62,24 +62,24 @@ class PillIdntfcAdapter(
                             dataSource: DataSource?,
                             isFirstResource: Boolean
                         ): Boolean {
-                            Log.d("GlideSuccess", "Image Loaded Successfully: ${pill.ITEM_IMAGE}")
+                            Log.d("GlideSuccess", "Image Loaded: ${item.itemImage}")
                             return false
                         }
                     })
                     .into(ivImage)
             }
 
-            tvClassName.text = pill.CLASS_NAME
-            tvCompanyName.text = pill.ENTP_NAME
+            tvClassName.text = item.className
+            tvCompanyName.text = item.entpName ?: ""
 
-            // 약물명 길이 제한 (17자 초과 시 ...)
-            val pillName = if (pill.ITEM_NAME.length > 17) {
-                "${pill.ITEM_NAME.substring(0, 17)}.."
+            // 약물명 길이 제한
+            val pillName = if (item.itemName.length > 17) {
+                "${item.itemName.substring(0, 17)}.."
             } else {
-                pill.ITEM_NAME
+                item.itemName
             }
 
-            // 검색어 하이라이트 (색상 강조)
+            // 검색어 하이라이트
             val spannableString = SpannableString(pillName)
             val queryIndex = pillName.indexOf(query, ignoreCase = true)
 
@@ -99,25 +99,25 @@ class PillIdntfcAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PillViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicineViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = SearchPillItemBinding.inflate(layoutInflater, parent, false)
-        return PillViewHolder(binding)
+        return MedicineViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PillViewHolder, position: Int) {
-        val pill = pillList[position]
-        holder.bind(pill, query)
-        holder.itemView.setOnClickListener { onItemClick(pill) }
+    override fun onBindViewHolder(holder: MedicineViewHolder, position: Int) {
+        val item = medicineList[position]
+        holder.bind(item, query)
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 
-    override fun getItemCount(): Int = pillList.size
+    override fun getItemCount(): Int = medicineList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateItems(newPillList: List<PillIdntfcItem>, newQuery: String) {
-        Log.d("PillAdapter", "updateItems called with ${newPillList.size} items")
-        pillList.clear()
-        pillList.addAll(newPillList)
+    fun updateItems(newList: List<SearchMedicineItem>, newQuery: String) {
+        Log.d("SearchMedicineAdapter", "updateItems: ${newList.size} items")
+        medicineList.clear()
+        medicineList.addAll(newList)
         query = newQuery
         notifyDataSetChanged()
     }
