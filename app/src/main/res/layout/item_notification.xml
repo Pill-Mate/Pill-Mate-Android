@@ -16,7 +16,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_notification"
-            android:layout_width="wrap_content"
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:maxLength="25"
+                android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +87,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="@drawable/btn_right"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
