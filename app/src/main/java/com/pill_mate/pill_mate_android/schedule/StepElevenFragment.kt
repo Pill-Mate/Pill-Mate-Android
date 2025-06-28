@@ -6,8 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 
@@ -15,6 +20,9 @@ class StepElevenFragment : Fragment() {
 
     private var _binding: FragmentStepElevenBinding? = null
     private val binding get() = _binding!!
+
+    private var interstitialAd: InterstitialAd? = null
+    private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -24,20 +32,52 @@ class StepElevenFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupButton()
-
-        // 광고 초기화 및 광고 요청
+        super.onViewCreated(view, savedInstanceState) // 광고 초기화 및 광고 요청
         MobileAds.initialize(requireContext()) {}
 
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
+
+        // 전면 광고 로드
+        loadInterstitialAd()
+        setupButton()
     }
 
     private fun setupButton() {
         binding.btnHome.setOnClickListener {
-            navigateToMainActivity()
+            if (interstitialAd != null) {
+                interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        navigateToMainActivity()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        navigateToMainActivity()
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        interstitialAd = null // 광고를 보여준 뒤 null 처리 → 재로딩
+                    }
+                }
+                interstitialAd?.show(requireActivity())
+            } else { // 광고가 없으면 바로 이동
+                navigateToMainActivity()
+            }
         }
+    }
+
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(requireContext(), adUnitId, adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdLoaded(ad: InterstitialAd) {
+                interstitialAd = ad
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                interstitialAd = null
+            }
+        })
     }
 
     private fun navigateToMainActivity() { // home으로 이동
