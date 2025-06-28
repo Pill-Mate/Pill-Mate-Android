@@ -22,10 +22,10 @@ import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBindi
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse0
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PharmacyAndHospital
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse0
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
@@ -39,13 +39,13 @@ class MedicineConflictFragment : Fragment() {
     private var _binding: FragmentMedicineConflictBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var contraindicationAdapter: ConflictAdapter
-    private lateinit var efficiencyOverlapAdapter: ConflictAdapter
+    private lateinit var contraindicationAdapter: ConflictAdapter0
+    private lateinit var efficiencyOverlapAdapter: ConflictAdapter0
     private var contraindicationCount = 0
     private var efficiencyOverlapCount = 0
 
-    private var usjntTabooData: List<UsjntTabooResponse>? = null
-    private var efcyDplctData: List<EfcyDplctResponse>? = null
+    private var usjntTabooData: List<UsjntTabooResponse0>? = null
+    private var efcyDplctData: List<EfcyDplctResponse0>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,11 +91,11 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        contraindicationAdapter = ConflictAdapter(
+        contraindicationAdapter = ConflictAdapter0(
             onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
             onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) },
             showDeleteButton = true)
-        efficiencyOverlapAdapter = ConflictAdapter(
+        efficiencyOverlapAdapter = ConflictAdapter0(
             onInquiryClicked = { itemSeq -> fetchPhoneAndAddress(itemSeq) },
             onDeleteClicked = { itemSeq -> showDeleteDialog(itemSeq) },
             showDeleteButton = true)
@@ -308,12 +308,12 @@ class MedicineConflictFragment : Fragment() {
         val efficiencyOverlapPosition = efcyDplctData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
 
         contraindicationPosition?.let {
-            val viewHolder = binding.rvContraindication.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
+            val viewHolder = binding.rvContraindication.findViewHolderForAdapterPosition(it) as? ConflictAdapter0.ViewHolder
             viewHolder?.disableDeleteButton()
         }
 
         efficiencyOverlapPosition?.let {
-            val viewHolder = binding.rvEfficiencyOverlap.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder
+            val viewHolder = binding.rvEfficiencyOverlap.findViewHolderForAdapterPosition(it) as? ConflictAdapter0.ViewHolder
             viewHolder?.disableDeleteButton()
         }
     }

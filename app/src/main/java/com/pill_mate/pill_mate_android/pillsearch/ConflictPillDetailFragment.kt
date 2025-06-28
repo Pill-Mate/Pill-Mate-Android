@@ -20,6 +20,7 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentConflictPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.ConflictAdapter
+import com.pill_mate.pill_mate_android.medicine_conflict.ConflictAdapter0
 import com.pill_mate.pill_mate_android.medicine_conflict.InquiryBottomSheetFragment
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PharmacyAndHospital

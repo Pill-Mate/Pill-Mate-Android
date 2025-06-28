@@ -8,14 +8,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemConflictBinding
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse0
+import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse0
 
-class ConflictAdapter(
+class ConflictAdapter0(
     private val onInquiryClicked: (itemSeq: String) -> Unit,
     private val onDeleteClicked: (itemSeq: String) -> Unit,
-    private val showDeleteButton: Boolean = true
-) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
+    private val showDeleteButton: Boolean = true // 추가됨
+) : RecyclerView.Adapter<ConflictAdapter0.ViewHolder>() {
 
     private var items: List<Any> = emptyList()
 
@@ -29,39 +29,38 @@ class ConflictAdapter(
 
         fun bind(item: Any) {
             val itemSeq = when (item) {
-                is UsjntTabooResponse -> item.mixtureItemSeq
-                is EfcyDplctResponse -> item.itemSeq
+                is UsjntTabooResponse0 -> item.ITEM_SEQ
+                is EfcyDplctResponse0 -> item.ITEM_SEQ
                 else -> null
             }
 
-            // [이미지 필드 반영]
             val imageUrl = when (item) {
-                is UsjntTabooResponse -> item.item_image
-                is EfcyDplctResponse -> item.item_image
+                is UsjntTabooResponse0 -> item.ITEM_IMAGE
+                is EfcyDplctResponse0 -> item.ITEM_IMAGE
                 else -> null
             }
 
             val className = when (item) {
-                is UsjntTabooResponse -> item.className
-                is EfcyDplctResponse -> item.className
+                is UsjntTabooResponse0 -> item.CLASS_NAME
+                is EfcyDplctResponse0 -> item.CLASS_NAME
                 else -> ""
             }
 
             val pillName = when (item) {
-                is UsjntTabooResponse -> item.mixItemName
-                is EfcyDplctResponse -> item.itemName
+                is UsjntTabooResponse0 -> item.MIXTURE_ITEM_NAME
+                is EfcyDplctResponse0 -> item.ITEM_NAME
                 else -> ""
             }
 
             val entpName = when (item) {
-                is UsjntTabooResponse -> item.entpName
-                is EfcyDplctResponse -> item.entpName
+                is UsjntTabooResponse0 -> item.ENTP_NAME
+                is EfcyDplctResponse0 -> item.ENTP_NAME
                 else -> ""
             }
 
             val warning = when (item) {
-                is UsjntTabooResponse -> item.prohbtContent
-                is EfcyDplctResponse -> item.effectName
+                is UsjntTabooResponse0 -> item.PROHBT_CONTENT
+                is EfcyDplctResponse0 -> item.EFFECT_NAME
                 else -> ""
             }
 
@@ -80,6 +79,7 @@ class ConflictAdapter(
                 binding.ivImage.setImageResource(R.drawable.img_default)
             }
 
+            // 버튼 설정
             binding.btnInquiry.setOnClickListener {
                 itemSeq?.let { onInquiryClicked(it) }
             }

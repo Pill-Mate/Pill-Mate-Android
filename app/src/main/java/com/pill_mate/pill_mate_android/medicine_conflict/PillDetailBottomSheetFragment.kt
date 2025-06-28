@@ -12,12 +12,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse0
+import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse0
 import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
@@ -133,28 +132,28 @@ class PillDetailBottomSheetFragment(
 
     private fun checkMedicineConflicts(itemSeq: String) {
         ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
-            .enqueue(object : Callback<List<UsjntTabooResponse>> {
+            .enqueue(object : Callback<List<UsjntTabooResponse0>> {
                 override fun onResponse(
-                    call: Call<List<UsjntTabooResponse>>,
-                    response: Response<List<UsjntTabooResponse>>
+                    call: Call<List<UsjntTabooResponse0>>,
+                    response: Response<List<UsjntTabooResponse0>>
                 ) {
                     val usjntTabooData = response.body().orEmpty()
                     checkEfcyDplct(itemSeq, usjntTabooData)
                 }
 
-                override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
+                override fun onFailure(call: Call<List<UsjntTabooResponse0>>, t: Throwable) {
                     resetProcessingState()
                     dismiss()
                 }
             })
     }
 
-    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
+    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse0>) {
         ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
-            .enqueue(object : Callback<List<EfcyDplctResponse>> {
+            .enqueue(object : Callback<List<EfcyDplctResponse0>> {
                 override fun onResponse(
-                    call: Call<List<EfcyDplctResponse>>,
-                    response: Response<List<EfcyDplctResponse>>
+                    call: Call<List<EfcyDplctResponse0>>,
+                    response: Response<List<EfcyDplctResponse0>>
                 ) {
                     val efcyDplctData = response.body().orEmpty()
 
@@ -168,7 +167,7 @@ class PillDetailBottomSheetFragment(
                     resetProcessingState()
                 }
 
-                override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
+                override fun onFailure(call: Call<List<EfcyDplctResponse0>>, t: Throwable) {
                     resetProcessingState()
                     dismiss()
                 }
@@ -181,8 +180,8 @@ class PillDetailBottomSheetFragment(
     }
 
     private fun navigateToLoadingConflictFragment(
-        usjntTabooData: List<UsjntTabooResponse>,
-        efcyDplctData: List<EfcyDplctResponse>
+        usjntTabooData: List<UsjntTabooResponse0>,
+        efcyDplctData: List<EfcyDplctResponse0>
     ) {
         dismiss()
         bottomSheet.dismiss()

@@ -1,7 +1,6 @@
 package com.pill_mate.pill_mate_android.pillsearch
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +11,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
+import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResult
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
-import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,7 +61,7 @@ class ConflictPillDetailBottomSheet(
             if (!isProcessing) {
                 isProcessing = true
                 binding.btnYes.isEnabled = false
-                checkDuplicateDrug(medicineItem.itemSeq.toString())
+                checkAllConflicts(medicineItem.itemSeq.toString())
             }
         }
 
@@ -70,83 +70,49 @@ class ConflictPillDetailBottomSheet(
         }
     }
 
-    private fun checkDuplicateDrug(itemSeq: String) {
-        Log.d("DuplicateCheck", "checkDuplicateDrug() 호출됨 - itemSeq: $itemSeq")
-
-        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq)
-            .enqueue(object : Callback<DuplicateDrugResponse> {
+    private fun checkAllConflicts(itemSeq: String) {
+        ServiceCreator.medicineRegistrationService.checkConflict(itemSeq)
+            .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(
-                    call: Call<DuplicateDrugResponse>,
-                    response: Response<DuplicateDrugResponse>
+                    call: Call<ConflictCheckResponse>,
+                    response: Response<ConflictCheckResponse>
                 ) {
-                    Log.d("DuplicateCheck", "응답 코드: ${response.code()}")
-                    Log.d("DuplicateCheck", "응답 바디: ${response.body()}")
-                    Log.d("DuplicateCheck", "에러 바디: ${response.errorBody()?.string()}")
-
-                    if (response.isSuccessful) {
-                        val body = response.body()
-                        if (body != null) {
-                            Log.d("DuplicateCheck", "중복 성분 존재: ${body.effect_NAME}")
-                            val dialog = DuplicateDialogFragment(
-                                onConfirm = {
-                                    dismiss()             // 현재 BottomSheet 닫기
-                                },
-                                showMessage = false // 메시지 숨김
-                            )
-                            dialog.show(parentFragmentManager, "DuplicateDialog")
-                        } else {
-                            Log.d("DuplicateCheck", "응답은 성공했지만 바디가 null임 → 중복 없음 처리")
-                            checkMedicineConflicts(itemSeq)
-                        }
+                    val result = response.body()?.result
+                    if (result != null) {
+                        handleConflictResult(result) // 통합 응답 처리 함수로 분기
                     } else {
-                        Log.w("DuplicateCheck", "응답 실패 - statusCode=${response.code()}")
-                        checkMedicineConflicts(itemSeq)
+                        resetProcessing()
+                        dismiss()
                     }
                 }
 
-                override fun onFailure(call: Call<DuplicateDrugResponse>, t: Throwable) {
-                    Log.e("DuplicateCheck", "API 호출 실패: ${t.message}", t)
-                    checkMedicineConflicts(itemSeq)
-                }
-            })
-    }
-
-    private fun checkMedicineConflicts(itemSeq: String) {
-        ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
-            .enqueue(object : Callback<List<UsjntTabooResponse>> {
-                override fun onResponse(
-                    call: Call<List<UsjntTabooResponse>>,
-                    response: Response<List<UsjntTabooResponse>>
-                ) {
-                    val usjntTabooData = response.body().orEmpty()
-                    checkEfcyDplct(itemSeq, usjntTabooData)
-                }
-
-                override fun onFailure(call: Call<List<UsjntTabooResponse>>, t: Throwable) {
+                override fun onFailure(call: Call<ConflictCheckResponse>, t: Throwable) {
                     resetProcessing()
                     dismiss()
                 }
             })
     }
 
-    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse>) {
-        ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
-            .enqueue(object : Callback<List<EfcyDplctResponse>> {
-                override fun onResponse(
-                    call: Call<List<EfcyDplctResponse>>,
-                    response: Response<List<EfcyDplctResponse>>
-                ) {
-                    val efcyDplctData = response.body().orEmpty()
-                    val hasConflict = usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()
-                    navigateToResultScreen(hasConflict, usjntTabooData, efcyDplctData)
-                    resetProcessing()
-                }
+    private fun handleConflictResult(result: ConflictCheckResult) {
+        // [수정] 중복 성분이 있으면 다이얼로그 표시
+        if (result.conflictWithUserMeds != null) {
+            val dialog = DuplicateDialogFragment(
+                onConfirm = { dismiss() },
+                showMessage = false
+            )
+            dialog.show(parentFragmentManager, "DuplicateDialog")
+            resetProcessing()
+            return
+        }
 
-                override fun onFailure(call: Call<List<EfcyDplctResponse>>, t: Throwable) {
-                    resetProcessing()
-                    dismiss()
-                }
-            })
+        // [수정] 병용금기/효능군중복 결과 화면 이동
+        val hasConflict = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
+        navigateToResultScreen(
+            hasConflict,
+            result.usjntTabooList,
+            result.efcyDplctList
+        )
+        resetProcessing()
     }
 
     private fun resetProcessing() {
@@ -159,8 +125,8 @@ class ConflictPillDetailBottomSheet(
         usjntTabooData: List<UsjntTabooResponse>,
         efcyDplctData: List<EfcyDplctResponse>
     ) {
-        dismiss()              // 이 바텀시트 닫기
-        bottomSheet.dismiss()  // 부모 바텀시트도 함께 닫기
+        dismiss()
+        bottomSheet.dismiss()
 
         val navController = parentFragment?.findNavController()
             ?: parentFragmentManager.primaryNavigationFragment?.findNavController()
@@ -171,7 +137,7 @@ class ConflictPillDetailBottomSheet(
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
             putParcelable("pillItem", medicineItem)
             if (hasConflict) {
-                putString("source", "pillSearch")  // source 추가
+                putString("source", "pillSearch")
             }
         }
 
@@ -180,8 +146,6 @@ class ConflictPillDetailBottomSheet(
         } else {
             R.id.action_conflictPillSearchFragment_to_noConflictFragment
         }
-
-        Log.d("NavigateResult", "충돌 여부: $hasConflict")
 
         navController.navigate(actionId, bundle)
     }
