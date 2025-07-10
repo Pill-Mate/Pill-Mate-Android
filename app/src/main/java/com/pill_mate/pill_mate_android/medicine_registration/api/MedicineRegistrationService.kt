@@ -2,12 +2,9 @@ package com.pill_mate.pill_mate_android.medicine_registration.api
 
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse0
 import com.pill_mate.pill_mate_android.medicine_registration.model.MedicineRegisterRequest
 import com.pill_mate.pill_mate_android.medicine_registration.model.OnboardingTimeResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse0
-import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.PillCountCheckResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -28,15 +25,6 @@ interface MedicineRegistrationService {
 
     @GET("/api/v1/dur/check-conflict") // 약물 충돌 총합
     fun checkConflict(@Query("itemSeq") itemSeq: String): Call<ConflictCheckResponse>
-
-    @GET("/api/v1/check-duplicate-drug") // 동일 약물 여부 가져오기
-    fun checkDuplicateDrug(@Query("itemSeq") itemSeq: String): Call<DuplicateDrugResponse>
-
-    @GET("/api/v1/dur/usjnt-taboo") // 병용금기 데이터 가져오기
-    fun getUsjntTaboo(@Query("itemSeq") itemSeq: String): Call<List<UsjntTabooResponse0>>
-
-    @GET("/api/v1/dur/efcy-dplct") // 효능군 중복 데이터 가져오기
-    fun getEfcyDplct(@Query("itemSeq") itemSeq: String): Call<List<EfcyDplctResponse0>>
 
     @GET("/api/v1/dur/get-phone-address") // 약국 병원 전화번호 및 주소 정보 가져오기
     fun getPhoneAndAddress(@Query("itemSeq") itemSeq: String): Call<PhoneAndAddressResponse>
