@@ -12,11 +12,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse0
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse0
+import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResult
+import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
-import com.pill_mate.pill_mate_android.medicine_registration.model.DuplicateDrugResponse
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
@@ -70,8 +71,8 @@ class PillDetailBottomSheetFragment(
                 binding.btnYes.isEnabled = false
 
                 pillItem?.let { item ->
-                    // 중복 확인 먼저 → 중복 아니면 결과 전달
-                    checkDuplicateDrug(item)
+                    // 통합 API로 약물 충돌 검사
+                    checkAllConflicts(item)
                 }
             }
         }
@@ -81,97 +82,68 @@ class PillDetailBottomSheetFragment(
         }
     }
 
-    private fun checkDuplicateDrug(pillItem: SearchMedicineItem) {
+    private fun checkAllConflicts(pillItem: SearchMedicineItem) {
         val itemSeq = pillItem.itemSeq
-
-        ServiceCreator.medicineRegistrationService.checkDuplicateDrug(itemSeq.toString())
-            .enqueue(object : Callback<DuplicateDrugResponse> {
+        ServiceCreator.medicineRegistrationService.checkConflict(itemSeq.toString())
+            .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(
-                    call: Call<DuplicateDrugResponse>,
-                    response: Response<DuplicateDrugResponse>
+                    call: Call<ConflictCheckResponse>,
+                    response: Response<ConflictCheckResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        val body = response.body()
-                        if (body != null) {
-                            // 중복이면 입력 없이 닫기
-                            val dialog = DuplicateDialogFragment(
-                                onConfirm = {
-                                    dismiss()
-                                    bottomSheet.dismiss()
-                                },
-                                showMessage = true // 메세지 표시
-                            )
-                            dialog.show(parentFragmentManager, "DuplicateDialog")
-                        } else {
-                            // 중복 아님 → 바로 입력 (EditText 업데이트용)
-                            sendResultToStepTwo(pillItem)
-                            checkMedicineConflicts(itemSeq.toString())
-                        }
+                    val result = response.body()?.result
+                    if (result != null) {
+                        handleConflictResult(result, pillItem)
                     } else {
-                        // 응답 실패 → 그래도 입력은 수행 (fail-safe)
-                        sendResultToStepTwo(pillItem)
-                        checkMedicineConflicts(itemSeq.toString())
+                        resetProcessingState()
+                        dismiss()
                     }
                 }
 
-                override fun onFailure(call: Call<DuplicateDrugResponse>, t: Throwable) {
-                    Log.e("DuplicateCheck", "API 호출 실패: ${t.message}", t)
-                    // 네트워크 오류 등 → 그래도 입력은 수행
-                    sendResultToStepTwo(pillItem)
-                    checkMedicineConflicts(itemSeq.toString())
+                override fun onFailure(call: Call<ConflictCheckResponse>, t: Throwable) {
+                    Log.e("ConflictCheck", "API 호출 실패: ${t.message}", t)
+                    resetProcessingState()
+                    dismiss()
                 }
             })
     }
 
+    private fun handleConflictResult(result: ConflictCheckResult, pillItem: SearchMedicineItem) {
+        // 중복약이 있으면 다이얼로그 표시
+        if (result.conflictWithUserMeds != null) {
+            val dialog = DuplicateDialogFragment(
+                onConfirm = {
+                    dismiss()
+                    bottomSheet.dismiss()
+                },
+                showMessage = true
+            )
+            dialog.show(parentFragmentManager, "DuplicateDialog")
+            resetProcessingState()
+            return
+        }
+
+        // 병용금기 또는 효능군 중복이 있으면 결과 화면으로 이동
+        val hasConflict = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
+        if (hasConflict) {
+            navigateToLoadingConflictFragment(result.usjntTabooList, result.efcyDplctList, pillItem)
+            resetProcessingState()
+            return
+        }
+
+        // 아무 충돌도 없으면 StepTwo로 결과 전달
+        sendResultToStepTwo(pillItem)
+        resetProcessingState()
+        dismiss()
+        bottomSheet.dismiss()
+    }
+
     private fun sendResultToStepTwo(pillItem: SearchMedicineItem) {
+        Log.d("TwoResult", "전달할 약물: ${pillItem.itemName}, itemSeq: ${pillItem.itemSeq}")
+
         val result = Bundle().apply {
             putParcelable("confirmedPillItem", pillItem)
         }
         parentFragmentManager.setFragmentResult("pillConfirmResultKey", result)
-    }
-
-    private fun checkMedicineConflicts(itemSeq: String) {
-        ServiceCreator.medicineRegistrationService.getUsjntTaboo(itemSeq)
-            .enqueue(object : Callback<List<UsjntTabooResponse0>> {
-                override fun onResponse(
-                    call: Call<List<UsjntTabooResponse0>>,
-                    response: Response<List<UsjntTabooResponse0>>
-                ) {
-                    val usjntTabooData = response.body().orEmpty()
-                    checkEfcyDplct(itemSeq, usjntTabooData)
-                }
-
-                override fun onFailure(call: Call<List<UsjntTabooResponse0>>, t: Throwable) {
-                    resetProcessingState()
-                    dismiss()
-                }
-            })
-    }
-
-    private fun checkEfcyDplct(itemSeq: String, usjntTabooData: List<UsjntTabooResponse0>) {
-        ServiceCreator.medicineRegistrationService.getEfcyDplct(itemSeq)
-            .enqueue(object : Callback<List<EfcyDplctResponse0>> {
-                override fun onResponse(
-                    call: Call<List<EfcyDplctResponse0>>,
-                    response: Response<List<EfcyDplctResponse0>>
-                ) {
-                    val efcyDplctData = response.body().orEmpty()
-
-                    if (usjntTabooData.isNotEmpty() || efcyDplctData.isNotEmpty()) {
-                        navigateToLoadingConflictFragment(usjntTabooData, efcyDplctData)
-                    } else {
-                        dismiss()
-                        bottomSheet.dismiss()
-                    }
-
-                    resetProcessingState()
-                }
-
-                override fun onFailure(call: Call<List<EfcyDplctResponse0>>, t: Throwable) {
-                    resetProcessingState()
-                    dismiss()
-                }
-            })
     }
 
     private fun resetProcessingState() {
@@ -179,18 +151,22 @@ class PillDetailBottomSheetFragment(
         binding.btnYes.isEnabled = true
     }
 
+    // 결과 화면 이동
     private fun navigateToLoadingConflictFragment(
-        usjntTabooData: List<UsjntTabooResponse0>,
-        efcyDplctData: List<EfcyDplctResponse0>
+        usjntTabooData: List<UsjntTabooResponse>,
+        efcyDplctData: List<EfcyDplctResponse>,
+        pillItem: SearchMedicineItem // 추가
     ) {
-        dismiss()
-        bottomSheet.dismiss()
 
         val bundle = Bundle().apply {
             putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
             putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
+            putParcelable("pillItem", pillItem)
             putString("source", "medicineRegistration")
         }
+
+        dismiss()
+        bottomSheet.dismiss()
 
         val navController = medicineRegistrationFragment.childFragmentManager
             .findFragmentById(R.id.nav_host_fragment_steps)?.findNavController()

@@ -34,7 +34,7 @@ class ConflictAdapter(
                 else -> null
             }
 
-            // [이미지 필드 반영]
+            // 이미지 필드 반영
             val imageUrl = when (item) {
                 is UsjntTabooResponse -> item.item_image
                 is EfcyDplctResponse -> item.item_image

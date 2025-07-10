@@ -290,8 +290,13 @@ class MedicineRegistrationFragment : Fragment(), MedicineRegistrationView {
     }
 
     private fun showConfirmationBottomSheet(onConfirmed: (Boolean) -> Unit) {
-        val bottomSheetFragment = ConfirmationBottomSheet.newInstance(onConfirmed)
-        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+        val tag = "ConfirmationBottomSheet"
+        val existing = childFragmentManager.findFragmentByTag(tag)
+
+        if (existing?.isAdded == true) return  // 이미 표시 중이면 무시
+
+        val bottomSheet = ConfirmationBottomSheet.newInstance(onConfirmed)
+        bottomSheet.show(childFragmentManager, tag)
     }
 
     fun updateNextButtonState(isEnabled: Boolean) {

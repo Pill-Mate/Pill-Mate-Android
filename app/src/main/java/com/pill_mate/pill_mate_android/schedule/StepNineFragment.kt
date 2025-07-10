@@ -31,6 +31,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
 
     private lateinit var scheduleAdapter: ScheduleAdapter
     private val timeMap = mutableMapOf<String, String>() // 서버에서 받은 시간 저장
+    private var isProcessing = false // 중복 클릭 방지용 플래그
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,9 +107,12 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     }
 
     private fun handleRegister() {
+        if (isProcessing) return // 이미 처리 중이면 무시
+
         val request = DataRepository.createMedicineRegisterRequest()
         if (request != null) {
-            Log.d("MedicineRegisterRequest", Gson().toJson(request)) // JSON 데이터 확인
+            isProcessing = true // 처리 시작
+            Log.d("MedicineRegisterRequest", Gson().toJson(request))
             sendRegisterRequest(request)
         } else {
             showErrorMessage(getString(R.string.nine_registration_data_insufficient))
@@ -118,6 +122,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
     private fun sendRegisterRequest(request: MedicineRegisterRequest) {
         medicineRegistrationService.registerMedicine(request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                isProcessing = false
                 if (response.isSuccessful) {
                     navigateToNextStep()
                 } else {
@@ -128,6 +133,7 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                isProcessing = false
                 showErrorMessage(getString(R.string.nine_network_error))
             }
         })

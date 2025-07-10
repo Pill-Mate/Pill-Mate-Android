@@ -1,8 +1,6 @@
 package com.pill_mate.pill_mate_android.search.presenter
 
 import android.util.Log
-import com.pill_mate.pill_mate_android.BuildConfig
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.PillRepository
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.model.Searchable

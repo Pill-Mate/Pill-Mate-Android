@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_conflict.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 data class ConflictCheckResponse(
@@ -23,7 +24,7 @@ data class UsjntTabooResponse(
     val mixItemName: String,
     val entpName: String,
     val prohbtContent: String,
-    val item_image: String?
+    @SerializedName("image") val item_image: String?
 ) : Parcelable
 
 @Parcelize
@@ -33,7 +34,7 @@ data class EfcyDplctResponse(
     val itemName: String,
     val entpName: String,
     val effectName: String,
-    val item_image: String?
+    @SerializedName("image") val item_image: String?
 ) : Parcelable
 
 @Parcelize

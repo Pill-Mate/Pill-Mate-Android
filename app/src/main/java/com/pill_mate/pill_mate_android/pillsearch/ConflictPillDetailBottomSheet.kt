@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.pillsearch
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,7 +95,16 @@ class ConflictPillDetailBottomSheet(
     }
 
     private fun handleConflictResult(result: ConflictCheckResult) {
-        // [수정] 중복 성분이 있으면 다이얼로그 표시
+        result.usjntTabooList.forEachIndexed { index, item ->
+            Log.d("UsjntTabooList", "[$index] mixtureItemSeq: ${item.mixtureItemSeq}")
+            Log.d("UsjntTabooList", "[$index] className: ${item.className}")
+            Log.d("UsjntTabooList", "[$index] mixItemName: ${item.mixItemName}")
+            Log.d("UsjntTabooList", "[$index] entpName: ${item.entpName}")
+            Log.d("UsjntTabooList", "[$index] prohbtContent: ${item.prohbtContent}")
+            Log.d("UsjntTabooList", "[$index] item_image: ${item.item_image}")
+        }
+
+        // 중복 성분이 있으면 다이얼로그 표시
         if (result.conflictWithUserMeds != null) {
             val dialog = DuplicateDialogFragment(
                 onConfirm = { dismiss() },
@@ -105,7 +115,7 @@ class ConflictPillDetailBottomSheet(
             return
         }
 
-        // [수정] 병용금기/효능군중복 결과 화면 이동
+        // 병용금기/효능군중복 결과 화면 이동
         val hasConflict = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
         navigateToResultScreen(
             hasConflict,
