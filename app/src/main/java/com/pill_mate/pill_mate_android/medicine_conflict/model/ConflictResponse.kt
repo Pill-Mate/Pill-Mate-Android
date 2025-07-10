@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UsjntTabooResponse( //병용금기
+data class UsjntTabooResponse0( //병용금기
     val ITEM_SEQ: String,
     val CLASS_NAME: String,
     val MIXTURE_ITEM_NAME: String,
@@ -14,7 +14,7 @@ data class UsjntTabooResponse( //병용금기
 ) : Parcelable
 
 @Parcelize
-data class EfcyDplctResponse( //효능군중복
+data class EfcyDplctResponse0( //효능군중복
     val ITEM_SEQ: String,
     val CLASS_NAME: String,
     val ITEM_NAME: String,

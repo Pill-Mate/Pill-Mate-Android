@@ -2,7 +2,6 @@ package com.pill_mate.pill_mate_android.search.presenter
 
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Medicine
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.StepTwoView
 
