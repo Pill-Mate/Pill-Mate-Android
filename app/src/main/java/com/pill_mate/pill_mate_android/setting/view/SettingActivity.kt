@@ -8,12 +8,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.user.UserApiClient
 import com.pill_mate.pill_mate_android.GlobalApplication
@@ -31,6 +28,7 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
 import com.pill_mate.pill_mate_android.util.expandTouchArea
+import com.pill_mate.pill_mate_android.util.loadNativeAd
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,11 +54,8 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         setButtonClickListener()
         switchAlarmToggle()
 
-        // 광고 초기화 및 광고 요청
-        MobileAds.initialize(this) {}
-
-        val adRequest = AdRequest.Builder().build()
-        binding.adView.loadAd(adRequest)
+        // 광고 요청
+        loadNativeAd(this, binding.nativeAdContainer)
     }
 
     private fun initView() {

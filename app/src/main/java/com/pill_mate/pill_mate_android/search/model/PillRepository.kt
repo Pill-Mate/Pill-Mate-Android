@@ -31,6 +31,9 @@ class PillRepository : PillDataSource {
 
                 SearchType.HOSPITAL -> {
                     val response = ServiceCreator.searchService.searchHospital(name)
+                    Log.d("PillRepository", "HOSPITAL 요청: /api/v1/medicine/hospital?name=$name")
+                    Log.d("PillRepository", "HOSPITAL 응답 isSuccess: ${response.isSuccess}, result size: ${response.result?.size}")
+                    Log.d("PillRepository", "HOSPITAL 응답 전체: $response")
                     if (response.isSuccess) {
                         response.result.map { item ->
                             object : Searchable {
