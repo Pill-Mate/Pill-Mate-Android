@@ -12,7 +12,6 @@ import androidx.fragment.app.setFragmentResultListener
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepTwoBinding
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenterImpl
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter

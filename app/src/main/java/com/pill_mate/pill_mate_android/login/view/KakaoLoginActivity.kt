@@ -112,6 +112,7 @@ class KakaoLoginActivity : AppCompatActivity() {
 
                             // FCM 토큰 함께 전송
                             FcmTokenManager.sendFcmTokenToServer(fcmToken)
+                            Log.d("FCM_TOKEN", "토큰: $fcmToken")
 
                             Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
 

@@ -16,7 +16,7 @@ import com.pill_mate.pill_mate_android.databinding.FragmentLoadingConflictBindin
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 
 class LoadingConflictFragment : Fragment() {
     private var _binding: FragmentLoadingConflictBinding? = null
@@ -24,7 +24,7 @@ class LoadingConflictFragment : Fragment() {
 
     private var usjntTabooData: ArrayList<UsjntTabooResponse>? = null
     private var efcyDplctData: ArrayList<EfcyDplctResponse>? = null
-    private var pillItem: PillIdntfcItem? = null
+    private var pillItem: SearchMedicineItem? = null
     private var source: String? = null
 
     override fun onCreateView(
@@ -47,7 +47,7 @@ class LoadingConflictFragment : Fragment() {
         source = arguments?.getString("source")
 
         Log.d("LoadingConflictFragment", "전달받은 source: $source")
-        Log.d("LoadingConflictFragment", "전달할 pillItem: ${pillItem?.ITEM_NAME}")
+        Log.d("LoadingConflictFragment", "전달할 pillItem: ${pillItem?.itemName}")
 
         setupButton()
 
