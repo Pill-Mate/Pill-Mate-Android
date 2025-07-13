@@ -8,7 +8,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -16,6 +15,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -31,6 +31,8 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
 import com.pill_mate.pill_mate_android.util.expandTouchArea
+import com.pill_mate.pill_mate_android.util.onFailure
+import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -82,50 +84,46 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
-        val call: Call<ResponseRoutine> = ServiceCreator.getRoutineService.getRoutineData()
+        val call = ServiceCreator.getRoutineService.getRoutineData()
 
-        call.enqueue(object : Callback<ResponseRoutine> {
-            override fun onResponse(call: Call<ResponseRoutine>, response: Response<ResponseRoutine>) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
-                        onSuccess(it) // 성공 시 콜백 호출
-                    } ?: Log.e("데이터 오류", "개인루틴 데이터가 없습니다.")
-                } else {
-                    Log.e("서버 응답 에러", "에러: ${response.errorBody()?.string()}")
+        call.enqueue(object : Callback<BaseResponse<ResponseRoutine>> {
+            override fun onResponse(
+                call: Call<BaseResponse<ResponseRoutine>>, response: Response<BaseResponse<ResponseRoutine>>
+            ) {
+                response.body()?.onSuccess { onSuccess(it) }?.onFailure { code, message ->
+                    Log.e("Routine API 실패", "code: $code, message: $message")
                 }
             }
 
-            override fun onFailure(call: Call<ResponseRoutine>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<ResponseRoutine>>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
     }
 
     private fun fetchUserInfoData() {
-        val call: Call<ResponseUserInfo> = ServiceCreator.settingService.getUserInfoData()
+        val call = ServiceCreator.settingService.getUserInfoData()
 
-        call.enqueue(object : Callback<ResponseUserInfo> {
+        call.enqueue(object : Callback<BaseResponse<ResponseUserInfo>> {
             override fun onResponse(
-                call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>
+                call: Call<BaseResponse<ResponseUserInfo>>, response: Response<BaseResponse<ResponseUserInfo>>
             ) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let { userInfo ->
-                        with(binding) {
-                            tvNickname.text = userInfo.userName + " 님"
-                            tvKakaoEmail.text = userInfo.email
-                            tgPillmateAlarm.isChecked = userInfo.alarmInfo
-                            tgMarketingAlarm.isChecked = userInfo.alarmMarketing
+                response.body()?.onSuccess { userInfo ->
+                    with(binding) {
+                        tvNickname.text = "${userInfo.userName} 님"
+                        tvKakaoEmail.text = userInfo.email
+                        tgPillmateAlarm.isChecked = userInfo.alarmInfo
+                        tgMarketingAlarm.isChecked = userInfo.alarmMarketing
 
-                            Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
-                                .into(ivProfile)
-                        }
-                    } ?: Log.e("데이터 받아오기 실패", "데이터 받아오기 실패")
+                        Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
+                            .into(ivProfile)
+                    }
+                }?.onFailure { code, message ->
+                    Log.e("UserInfo API 실패", "code: $code, message: $message")
                 }
             }
 
-            override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<ResponseUserInfo>>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })

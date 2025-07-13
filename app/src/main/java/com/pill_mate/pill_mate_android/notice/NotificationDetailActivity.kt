@@ -6,9 +6,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityNotificationDetailBinding
+import com.pill_mate.pill_mate_android.util.onFailure
+import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,26 +44,24 @@ class NotificationDetailActivity : AppCompatActivity() {
 
     private fun fetchNotificationDetailData(notificationId: Long) {
         val requestBody = NotificationData(notificationId)
-        val call: Call<ResponseNotificationDetail> =
-            ServiceCreator.notificationService.getNotificationDetail(requestBody)
+        val call = ServiceCreator.notificationService.getNotificationDetail(requestBody)
 
-        call.enqueue(object : Callback<ResponseNotificationDetail> {
+        call.enqueue(object : Callback<BaseResponse<ResponseNotificationDetail>> {
             override fun onResponse(
-                call: Call<ResponseNotificationDetail>, response: Response<ResponseNotificationDetail>
+                call: Call<BaseResponse<ResponseNotificationDetail>>,
+                response: Response<BaseResponse<ResponseNotificationDetail>>
             ) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
+                response.body()?.onSuccess {
                         binding.tvTitle.text = it.title
                         binding.tvDate.text = it.notifyDate
                         binding.tvTime.text = it.notifyTime
                         binding.tvContent.text = it.content
-
-                    } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
-                }
+                    }?.onFailure { code, message ->
+                        Log.e("API 실패", "code: $code, message: $message")
+                    }
             }
 
-            override fun onFailure(call: Call<ResponseNotificationDetail>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<ResponseNotificationDetail>>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
