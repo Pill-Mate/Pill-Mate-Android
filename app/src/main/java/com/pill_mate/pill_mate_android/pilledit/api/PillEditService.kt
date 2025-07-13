@@ -1,5 +1,7 @@
-package com.pill_mate.pill_mate_android.pilledit.model
+package com.pill_mate.pill_mate_android.pilledit.api
 
+import com.pill_mate.pill_mate_android.pilledit.model.ResponseActiveMedicine
+import com.pill_mate.pill_mate_android.pilledit.model.ResponseInActiveMedicine
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.PATCH

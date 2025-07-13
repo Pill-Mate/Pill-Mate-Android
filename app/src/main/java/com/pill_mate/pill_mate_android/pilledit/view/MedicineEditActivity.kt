@@ -15,6 +15,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.gson.Gson
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
@@ -75,6 +81,9 @@ class MedicineEditActivity : AppCompatActivity() {
         timeOrder.withIndex().associate { getString(it.value) to it.index }
     }
 
+    private var interstitialAd: InterstitialAd? = null
+    private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMedicineEditBinding.inflate(layoutInflater)
@@ -85,6 +94,9 @@ class MedicineEditActivity : AppCompatActivity() {
 
         fetchInitialData()
         setupClickListeners()
+
+        // 전면 광고 로드
+        loadInterstitialAd()
         setupSaveButton()
     }
 
@@ -191,8 +203,9 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // 선택 해제된 값 `updateAlarmTimeUI()`에서 제거
             hasAlarm = listOf(
-                updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, spaceBetweenAlarmItems, "공복", intakeCounts, intakeTimes),
-                updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, null, "취침전", intakeCounts, intakeTimes)
+                updateAlarmTimeUI(
+                    tvLabelFasting, tvTimeFasting, spaceBetweenAlarmItems, "공복", intakeCounts, intakeTimes
+                ), updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, null, "취침전", intakeCounts, intakeTimes)
             ).any { it }
 
             layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
@@ -218,12 +231,8 @@ class MedicineEditActivity : AppCompatActivity() {
     }
 
     private fun updateAlarmTimeUI(
-        labelView: TextView,
-        timeView: TextView,
-        spaceView: View?,  // nullable 로 변경
-        intakeType: String,
-        intakeCounts: List<String>,
-        intakeTimes: List<String>
+        labelView: TextView, timeView: TextView, spaceView: View?,  // nullable 로 변경
+        intakeType: String, intakeCounts: List<String>, intakeTimes: List<String>
     ): Boolean {
         val intakeCountsList = intakeCounts.toList()
         val intakeTimesList = intakeTimes.toList()
@@ -605,7 +614,28 @@ class MedicineEditActivity : AppCompatActivity() {
             val updatedData = createEditMedicineInfo() // 입력된 데이터 기반으로 객체 생성
 
             if (updatedData != null) {
-                sendUpdateRequest(updatedData)
+                if (interstitialAd != null) {
+                    interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                        override fun onAdDismissedFullScreenContent() {
+                            sendUpdateRequest(updatedData)
+                            loadInterstitialAd() // 광고 다시 로드
+                        }
+
+                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                            sendUpdateRequest(updatedData)
+                            loadInterstitialAd() // 광고 다시 로드
+                        }
+
+                        override fun onAdShowedFullScreenContent() {
+                            interstitialAd = null // 재사용 방지
+                        }
+                    }
+
+                    interstitialAd?.show(this)
+                } else {
+                    sendUpdateRequest(updatedData)
+                    loadInterstitialAd() // 광고 미리 로드해두기
+                }
             } else {
                 Toast.makeText(this, "입력 데이터를 확인해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -679,5 +709,19 @@ class MedicineEditActivity : AppCompatActivity() {
                     Toast.makeText(this@MedicineEditActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(this, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdLoaded(ad: InterstitialAd) {
+                interstitialAd = ad
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                interstitialAd = null
+            }
+        })
     }
 }

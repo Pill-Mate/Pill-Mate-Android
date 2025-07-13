@@ -19,8 +19,8 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10003
-        versionName = "1.2.0"
+        versionCode = 10004
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -133,5 +133,5 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.android.gms:play-services-ads:23.0.0") // AdMob
+    implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
 }

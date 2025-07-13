@@ -27,7 +27,7 @@ import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressRe
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,7 +46,7 @@ class ConflictPillDetailFragment : Fragment() {
     private var usjntTabooData: List<UsjntTabooResponse>? = null
     private var efcyDplctData: List<EfcyDplctResponse>? = null
 
-    private var pillItem: PillIdntfcItem? = null // 클래스 안에서 선언
+    private var pillItem: SearchMedicineItem? = null // 클래스 안에서 선언
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -131,7 +131,7 @@ class ConflictPillDetailFragment : Fragment() {
         if (pillItem == null) {
             Log.w("ConflictPillDetailFragment", "pillItem is missing from arguments")
         } else {
-            Log.d("ConflictPillDetailFragment", "pillItem received: ${pillItem?.ITEM_NAME}")
+            Log.d("ConflictPillDetailFragment", "pillItem received: ${pillItem?.itemName}")
         }
     }
 
@@ -153,14 +153,14 @@ class ConflictPillDetailFragment : Fragment() {
 
         if (pillItem != null) {
             // 전달된 pillItem이 있는 경우
-            Log.d("ConflictPillDetailFragment", "전달받은 pillItem 정보 로드: ${pillItem?.ITEM_NAME}")
+            Log.d("ConflictPillDetailFragment", "전달받은 pillItem 정보 로드: ${pillItem?.itemName}")
 
-            binding.tvPillName.text = pillItem?.ITEM_NAME
-            binding.tvPillEntp.text = pillItem?.ENTP_NAME
-            binding.tvPillClass.text = pillItem?.CLASS_NAME
+            binding.tvPillName.text = pillItem?.itemName
+            binding.tvPillEntp.text = pillItem?.entpName
+            binding.tvPillClass.text = pillItem?.className
 
             Glide.with(binding.ivMedicineImage.context)
-                .load(pillItem?.ITEM_IMAGE)
+                .load(pillItem?.itemImage)
                 .transform(RoundedCorners(8))
                 .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
