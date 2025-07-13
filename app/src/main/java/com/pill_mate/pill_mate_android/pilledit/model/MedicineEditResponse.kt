@@ -1,7 +1,10 @@
 package com.pill_mate.pill_mate_android.pilledit.model
 
 data class MedicineEditResponse(
-    val isSuccess: Boolean, val code: String, val message: String, val result: MedicineEditInfo
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: MedicineEditInfo
 )
 
 data class MedicineEditInfo(

@@ -17,7 +17,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
