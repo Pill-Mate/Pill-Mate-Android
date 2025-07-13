@@ -104,11 +104,13 @@ class TokenInterceptor(private val context: Context) : Interceptor {
             val call = ServiceCreator.refreshTokenService.reissue(refreshTokenData)
             val response = call.execute()
 
-            if (response.isSuccessful) {
-                val body = response.body()
-                body?.refreshToken?.let { GlobalApplication.saveRefreshToken(it) }
-                return body?.accessToken
+            val body = response.body()
+
+            return if (response.isSuccessful && body?.isSuccess == true) {
+                body.result.refreshToken.let { GlobalApplication.saveRefreshToken(it) }
+                body.result.accessToken
             } else {
+                Log.e("토큰", "Refresh 실패: code=${body?.code}, message=${body?.message}")
                 null
             }
         } catch (e: Exception) {

@@ -13,6 +13,7 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.FcmTokenManager
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
@@ -21,6 +22,8 @@ import com.pill_mate.pill_mate_android.databinding.ActivityKakaoLoginBinding
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import com.pill_mate.pill_mate_android.login.model.ResponseToken
 import com.pill_mate.pill_mate_android.main.view.MainActivity
+import com.pill_mate.pill_mate_android.util.onFailure
+import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,24 +100,19 @@ class KakaoLoginActivity : AppCompatActivity() {
             }
 
             val loginData = KaKaoTokenData(kakaoAccessToken = accessToken)
-            val call: Call<ResponseToken> = ServiceCreator.loginService.login(loginData)
+            val call = ServiceCreator.loginService.login(loginData)
 
-            call.enqueue(object : Callback<ResponseToken> {
+            call.enqueue(object : Callback<BaseResponse<ResponseToken>> {
                 override fun onResponse(
-                    call: Call<ResponseToken>, response: Response<ResponseToken>
+                    call: Call<BaseResponse<ResponseToken>>, response: Response<BaseResponse<ResponseToken>>
                 ) {
-
-                    if (response.isSuccessful) {
-                        val responseData = response.body()
-                        if (responseData?.jwtToken != null) {
-                            GlobalApplication.saveToken(responseData.jwtToken)
+                    response.body()?.onSuccess { responseData ->
+                            GlobalApplication.saveToken(responseData.jwtToken ?: "")
                             GlobalApplication.saveRefreshToken(responseData.refreshToken)
 
-                            // FCM 토큰 함께 전송
+                            // FCM 토큰 전송
                             FcmTokenManager.sendFcmTokenToServer(fcmToken)
                             Log.d("FCM_TOKEN", "토큰: $fcmToken")
-
-                            Log.i("가입 성공", "가입 성공 ${responseData.jwtToken}")
 
                             val nextActivity = if (responseData.login == true) {
                                 MainActivity::class.java
@@ -122,16 +120,14 @@ class KakaoLoginActivity : AppCompatActivity() {
                                 AgreementActivity::class.java
                             }
 
-                            // 기존 사용자, 신규 사용자 여부에 따라 다음 페이지로 이동
                             navigateToNext(nextActivity)
+                        }?.onFailure { code, message ->
+                            Log.e("로그인 실패", "code: $code, message: $message")
                         }
-                    } else {
-                        Log.e("가입 실패", "가입 실패 : ${response.message()}")
-                    }
                 }
 
-                override fun onFailure(call: Call<ResponseToken>, t: Throwable) {
-                    Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
+                override fun onFailure(call: Call<BaseResponse<ResponseToken>>, t: Throwable) {
+                    Log.e("네트워크 오류", "${t.message}")
                 }
             })
         }.addOnFailureListener {

@@ -13,9 +13,9 @@ import com.pill_mate.pill_mate_android.pillcheck.model.HomeService
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckService
 import com.pill_mate.pill_mate_android.pillcheck.model.WeeklyCalendarService
 import com.pill_mate.pill_mate_android.pilledit.api.MedicineEditService
-import com.pill_mate.pill_mate_android.pilledit.model.ActiveMedicineService
-import com.pill_mate.pill_mate_android.pilledit.model.InActiveMedicineService
-import com.pill_mate.pill_mate_android.pilledit.model.StopMedicineService
+import com.pill_mate.pill_mate_android.pilledit.api.ActiveMedicineService
+import com.pill_mate.pill_mate_android.pilledit.api.InActiveMedicineService
+import com.pill_mate.pill_mate_android.pilledit.api.StopMedicineService
 import com.pill_mate.pill_mate_android.search.api.SearchService
 import com.pill_mate.pill_mate_android.setting.model.GetRoutineService
 import com.pill_mate.pill_mate_android.setting.model.PatchAlarmInfoService
@@ -68,7 +68,8 @@ object ServiceCreator { // 서버 URL
         userRetrofit.create(PatchAlarmMarketingService::class.java)
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
     val activeMedicineService: ActiveMedicineService = userRetrofit.create(ActiveMedicineService::class.java)
-    val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(InActiveMedicineService::class.java)
+    val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(
+        InActiveMedicineService::class.java)
     val stopMedicineService: StopMedicineService = userRetrofit.create(StopMedicineService::class.java)
     val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
     val notificationService: NotificationService = userRetrofit.create(NotificationService::class.java)

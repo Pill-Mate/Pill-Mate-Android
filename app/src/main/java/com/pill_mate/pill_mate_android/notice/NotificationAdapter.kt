@@ -46,7 +46,7 @@ class NotificationAdapter(
                 tvTitle.text = data.title
                 itemLine.visibility = if (isLastItem) View.INVISIBLE else View.VISIBLE
                 icState.visibility = if (data.notificationRead) View.INVISIBLE else View.VISIBLE
-                if (data.notificationId == -1L) {
+                if (data.isFcm) {
                     btnDetail.visibility = View.INVISIBLE
                     tvNotificationType.text = "내 활동"
                     tvNotificationType.setTextColor(ContextCompat.getColor(root.context, R.color.main_pink_1))
@@ -58,7 +58,7 @@ class NotificationAdapter(
             }
 
             // 아이템 전체 영역 클릭 시 상세 페이지 이동
-            if (data.notificationId != -1L) {
+            if (!data.isFcm) {
                 binding.root.setOnClickListener {
                     onDetailClickListener.invoke(data)
                 }

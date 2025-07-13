@@ -17,7 +17,6 @@ import com.pill_mate.pill_mate_android.databinding.FragmentSearchBottomSheetBind
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
 import com.pill_mate.pill_mate_android.search.presenter.SearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.model.SearchType
