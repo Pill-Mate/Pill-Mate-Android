@@ -6,6 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.util.loadNativeAd
@@ -27,10 +33,13 @@ class StepElevenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupButton()
 
         // 광고 요청
         loadNativeAd(requireContext(), binding.nativeAdContainer)
+
+        // 전면 광고 로드
+        loadInterstitialAd()
+        setupButton()
     }
 
     private fun setupButton() {
