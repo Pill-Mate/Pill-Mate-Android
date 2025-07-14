@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.databinding.FragmentConflictPillSearchBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
+import com.pill_mate.pill_mate_android.util.loadNativeAd
 
 class ConflictPillSearchFragment : Fragment(), PillSearchResultView {
 
@@ -31,6 +32,9 @@ class ConflictPillSearchFragment : Fragment(), PillSearchResultView {
         binding.etPillName.setOnClickListener {
             showPillSearchBottomSheet()
         }
+
+        // 광고 요청
+        loadNativeAd(requireContext(), binding.nativeAdContainer)
     }
 
     private fun showPillSearchBottomSheet() {

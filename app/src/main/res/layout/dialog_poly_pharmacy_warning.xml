@@ -13,7 +13,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="지금 등록하시면\n총 5개의 약을 함께 복용하게 됩니다"
+        android:text="@string/poly_pharmacy_warning_title"
         android:textColor="@color/black"
         android:gravity="center"
         android:layout_marginBottom="8dp"
@@ -23,10 +23,10 @@
         android:id="@+id/tv_sub_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="전문가 상담을 권장드려요"
+        android:text="@string/poly_pharmacy_warning_description"
         android:textColor="@color/black"
         android:gravity="center"
-        style="@style/B2_RG14" />
+        style="@style/H3_RG16" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="취소"
+            android:text="@string/poly_pharmacy_warning_cancel"
             style="@style/H2_SB16"
             android:stateListAnimator="@null"
             android:textColor="@color/black"
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="계속하기"
+            android:text="@string/poly_pharmacy_warning_confirm"
             style="@style/H2_SB16"
             android:stateListAnimator="@null"
             android:textColor="@color/white"

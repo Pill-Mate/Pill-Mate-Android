@@ -129,6 +129,8 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
+        const val TAG = "ConfirmationBottomSheet"
+
         fun newInstance(onConfirmed: (Boolean) -> Unit): ConfirmationBottomSheet {
             return ConfirmationBottomSheet().apply {
                 this.onConfirmed = onConfirmed

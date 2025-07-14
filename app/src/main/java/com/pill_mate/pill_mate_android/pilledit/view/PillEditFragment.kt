@@ -6,11 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentPillEditBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.pilledit.view.adapter.PillEditViewPagerAdapter
+import com.pill_mate.pill_mate_android.util.loadNativeAd
 
 class PillEditFragment : Fragment() {
     private var _binding: FragmentPillEditBinding? = null
@@ -32,6 +37,9 @@ class PillEditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViewPager()
+
+        // 광고 초기화 및 광고 요청
+        loadNativeAd(requireContext(), binding.nativeAdContainer)
     }
 
     private fun setupViewPager() {

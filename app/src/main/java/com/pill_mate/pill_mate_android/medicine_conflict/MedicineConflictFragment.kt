@@ -21,13 +21,14 @@ import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationServic
 import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictRemoveResponse
-import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
+import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PharmacyAndHospital
 import com.pill_mate.pill_mate_android.medicine_conflict.model.PhoneAndAddressResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.CustomSnackbar
 import retrofit2.Call
@@ -145,21 +146,24 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun loadMedicineData() {
-        val medicine = DataRepository.getMedicine()
+        val pillItem = arguments?.getParcelable<SearchMedicineItem>("pillItem")
 
-        if (medicine != null) {
-            binding.tvPillName.text = medicine.medicine_name
-            binding.tvPillEntp.text = medicine.entp_name
-            binding.tvPillClass.text = medicine.classname
+        if (pillItem != null) {
+            binding.tvPillName.text = pillItem.itemName
+            binding.tvPillEntp.text = pillItem.entpName
+            binding.tvPillClass.text = pillItem.className
+
             Glide.with(binding.ivMedicineImage.context)
-                .load(medicine.image)
+                .load(pillItem.itemImage)
                 .transform(RoundedCorners(8))
                 .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
 
+            Log.d("loadMedicineData", "불러온 약 이름: ${pillItem.itemName}")
         } else {
             binding.tvPillName.text = getString(R.string.medicine_conflict_no_medicine)
             binding.ivMedicineImage.setImageResource(R.drawable.img_default)
+            Log.d("loadMedicineData", "약 정보 없음")
         }
     }
 
@@ -304,8 +308,8 @@ class MedicineConflictFragment : Fragment() {
     }
 
     private fun disableDeleteButton(itemSeq: String) {
-        val contraindicationPosition = usjntTabooData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
-        val efficiencyOverlapPosition = efcyDplctData?.indexOfFirst { it.ITEM_SEQ == itemSeq }
+        val contraindicationPosition = usjntTabooData?.indexOfFirst { it.mixtureItemSeq == itemSeq }
+        val efficiencyOverlapPosition = efcyDplctData?.indexOfFirst { it.itemSeq == itemSeq }
 
         contraindicationPosition?.let {
             val viewHolder = binding.rvContraindication.findViewHolderForAdapterPosition(it) as? ConflictAdapter.ViewHolder

@@ -7,9 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityNotificationBinding
+import com.pill_mate.pill_mate_android.util.onFailure
+import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,6 +21,7 @@ class NotificationActivity : AppCompatActivity() {
 
     private lateinit var notificationAdapter: NotificationAdapter
     private lateinit var binding: ActivityNotificationBinding
+    private var isFirstResume = true
 
     private val notificationItemDataList = mutableListOf<ResponseNotificationItem>()
 
@@ -48,21 +52,21 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun fetchNotificationItemData() {
-        val call: Call<List<ResponseNotificationItem>> = ServiceCreator.notificationService.getNotificationData()
+        val call = ServiceCreator.notificationService.getNotificationData()
 
-        call.enqueue(object : Callback<List<ResponseNotificationItem>> {
+        call.enqueue(object : Callback<BaseResponse<List<ResponseNotificationItem>>> {
             override fun onResponse(
-                call: Call<List<ResponseNotificationItem>>, response: Response<List<ResponseNotificationItem>>
+                call: Call<BaseResponse<List<ResponseNotificationItem>>>,
+                response: Response<BaseResponse<List<ResponseNotificationItem>>>
             ) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
-                        notificationAdapter.updateList(it)
-                    } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
+                response.body()?.onSuccess {
+                    notificationAdapter.updateList(it)
+                }?.onFailure { code, message ->
+                    Log.e("API 실패", "code: $code, message: $message")
                 }
             }
 
-            override fun onFailure(call: Call<List<ResponseNotificationItem>>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<List<ResponseNotificationItem>>>, t: Throwable) {
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
@@ -76,6 +80,10 @@ class NotificationActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        fetchNotificationItemData()
+        if (isFirstResume) {
+            isFirstResume = false
+        } else {
+            fetchNotificationItemData() // 상세 페이지 갔다가 돌아온 경우만 새로고침
+        }
     }
 }

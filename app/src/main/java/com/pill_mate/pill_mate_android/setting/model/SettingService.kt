@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.setting.model
 
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import retrofit2.Call
 import retrofit2.http.Body
@@ -9,7 +10,7 @@ import retrofit2.http.POST
 
 interface SettingService {
     @GET("/api/v1/mypage/mypagereturn")
-    fun getUserInfoData(): Call<ResponseUserInfo>
+    fun getUserInfoData(): Call<BaseResponse<ResponseUserInfo>>
 }
 
 interface SignOutService {
@@ -19,7 +20,7 @@ interface SignOutService {
 
 interface GetRoutineService {
     @GET("/api/v1/mypage/routinedata")
-    fun getRoutineData(): Call<ResponseRoutine>
+    fun getRoutineData(): Call<BaseResponse<ResponseRoutine>>
 }
 
 interface PatchRoutineService {

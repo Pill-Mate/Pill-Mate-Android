@@ -17,7 +17,6 @@ import com.pill_mate.pill_mate_android.databinding.FragmentSearchBottomSheetBind
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
 import com.pill_mate.pill_mate_android.search.presenter.SearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.model.SearchType
@@ -27,6 +26,7 @@ import com.pill_mate.pill_mate_android.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -223,10 +223,6 @@ class SearchBottomSheetFragment(
         Log.d("SearchBottomSheet", "Saved $name with phone $phone and address $address to DataRepository")
     }
 
-    override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        Log.d("SearchFragment", "showPillIdntfc called with items")
-    }
-
     override fun showResults(results: List<Searchable>, type: SearchType) {
         if (_binding == null) return
 
@@ -239,6 +235,10 @@ class SearchBottomSheetFragment(
             adapter.updateResults(emptyList(), "") // 빈 리스트와 빈 검색어 전달
             binding.rvSuggestion.visibility = View.GONE
         }
+    }
+
+    override fun showMedicines(pills: List<SearchMedicineItem>) {
+        // 사용 안 함
     }
 
     private fun hideKeyboard() {

@@ -14,7 +14,7 @@ import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooRespons
 class ConflictAdapter(
     private val onInquiryClicked: (itemSeq: String) -> Unit,
     private val onDeleteClicked: (itemSeq: String) -> Unit,
-    private val showDeleteButton: Boolean = true // 추가됨
+    private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
 
     private var items: List<Any> = emptyList()
@@ -29,38 +29,39 @@ class ConflictAdapter(
 
         fun bind(item: Any) {
             val itemSeq = when (item) {
-                is UsjntTabooResponse -> item.ITEM_SEQ
-                is EfcyDplctResponse -> item.ITEM_SEQ
+                is UsjntTabooResponse -> item.mixtureItemSeq
+                is EfcyDplctResponse -> item.itemSeq
                 else -> null
             }
 
+            // 이미지 필드 반영
             val imageUrl = when (item) {
-                is UsjntTabooResponse -> item.ITEM_IMAGE
-                is EfcyDplctResponse -> item.ITEM_IMAGE
+                is UsjntTabooResponse -> item.item_image
+                is EfcyDplctResponse -> item.item_image
                 else -> null
             }
 
             val className = when (item) {
-                is UsjntTabooResponse -> item.CLASS_NAME
-                is EfcyDplctResponse -> item.CLASS_NAME
+                is UsjntTabooResponse -> item.className
+                is EfcyDplctResponse -> item.className
                 else -> ""
             }
 
             val pillName = when (item) {
-                is UsjntTabooResponse -> item.MIXTURE_ITEM_NAME
-                is EfcyDplctResponse -> item.ITEM_NAME
+                is UsjntTabooResponse -> item.mixItemName
+                is EfcyDplctResponse -> item.itemName
                 else -> ""
             }
 
             val entpName = when (item) {
-                is UsjntTabooResponse -> item.ENTP_NAME
-                is EfcyDplctResponse -> item.ENTP_NAME
+                is UsjntTabooResponse -> item.entpName
+                is EfcyDplctResponse -> item.entpName
                 else -> ""
             }
 
             val warning = when (item) {
-                is UsjntTabooResponse -> item.PROHBT_CONTENT
-                is EfcyDplctResponse -> item.EFFECT_NAME
+                is UsjntTabooResponse -> item.prohbtContent
+                is EfcyDplctResponse -> item.effectName
                 else -> ""
             }
 
@@ -79,7 +80,6 @@ class ConflictAdapter(
                 binding.ivImage.setImageResource(R.drawable.img_default)
             }
 
-            // 버튼 설정
             binding.btnInquiry.setOnClickListener {
                 itemSeq?.let { onInquiryClicked(it) }
             }

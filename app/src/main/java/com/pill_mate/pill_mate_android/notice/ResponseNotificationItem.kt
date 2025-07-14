@@ -6,4 +6,5 @@ data class ResponseNotificationItem(
     val notifyTime: String,
     val title: String,
     val notificationRead: Boolean,
+    val isFcm: Boolean,
 )
