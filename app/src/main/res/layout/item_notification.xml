@@ -16,7 +16,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_notification"
-            android:layout_width="330dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
+                android:ems="17"
                 android:maxLines="2"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,14 +74,13 @@
             android:id="@+id/ic_state"
             android:layout_width="6dp"
             android:layout_height="6dp"
-            android:layout_marginStart="9dp"
-            android:layout_marginEnd="9dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="-2dp"
             android:src="@drawable/ic_state"
             android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/btn_detail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_detail"
-            app:layout_constraintTop_toTopOf="@id/btn_detail" />
+            app:layout_constraintEnd_toStartOf="@id/btn_detail" />
 
         <ImageView
             android:id="@+id/btn_detail"
