@@ -2,6 +2,7 @@ package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -47,6 +48,9 @@ class StepFiveFragment : Fragment() {
         setSelectedTimes(selectedTimes)
 
         binding.layoutMealUnit.setOnClickListener {
+            // EditText 상태 초기화
+            binding.etMinutes.clearFocus()
+
             openBottomSheet()
         }
 
@@ -72,6 +76,8 @@ class StepFiveFragment : Fragment() {
         }
 
         var isEditing = false
+
+        binding.etMinutes.filters = arrayOf(InputFilter.LengthFilter(4)) // "분" 텍스트 포함 최대 4자리로 제한 (임시)
 
         binding.etMinutes.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {

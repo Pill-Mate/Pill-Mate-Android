@@ -46,7 +46,7 @@
             android:focusable="false"
             android:cursorVisible="false"
             android:inputType="none"
-            android:background="@drawable/bg_edittext_gray_2"
+            android:background="@drawable/bg_edittext_black"
             android:paddingStart="44dp"
             android:paddingEnd="44dp" />
     </com.google.android.material.textfield.TextInputLayout>

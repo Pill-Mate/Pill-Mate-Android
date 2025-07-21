@@ -178,7 +178,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
-        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_2
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
         binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
     }
 
