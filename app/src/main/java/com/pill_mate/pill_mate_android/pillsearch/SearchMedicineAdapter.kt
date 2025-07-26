@@ -69,8 +69,9 @@ class SearchMedicineAdapter(
                     .into(ivImage)
             }
 
-            tvClassName.text = item.className
-            tvCompanyName.text = item.entpName ?: ""
+            val noInfo = binding.root.context.getString(R.string.no_info)
+            tvClassName.text = if (item.className.isNullOrBlank()) noInfo else item.className
+            tvCompanyName.text = if (item.entpName.isNullOrBlank()) noInfo else item.entpName
 
             // 약물명 길이 제한
             val pillName = if (item.itemName.length > 17) {

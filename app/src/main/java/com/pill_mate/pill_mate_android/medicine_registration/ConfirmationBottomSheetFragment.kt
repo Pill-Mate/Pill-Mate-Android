@@ -84,9 +84,9 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
     private fun loadMedicineData() {
         val medicine = DataRepository.getMedicine()
-        binding.tvPillName.text = medicine?.medicine_name ?: "약물 이름 없음"
-        binding.tvPillClass.text = medicine?.classname ?: "약물 분류 없음"
-        binding.tvPillEntp.text = medicine?.entp_name ?: "제약회사 정보 없음"
+        binding.tvPillName.text = if (medicine?.medicine_name.isNullOrBlank()) getString(R.string.no_info) else medicine?.medicine_name
+        binding.tvPillClass.text = if (medicine?.classname.isNullOrBlank()) getString(R.string.no_info) else medicine?.classname
+        binding.tvPillEntp.text = if (medicine?.entp_name.isNullOrBlank()) getString(R.string.no_info) else medicine?.entp_name
 
         medicine?.image?.let { imageUrl ->
             Glide.with(binding.ivPillImage.context)
