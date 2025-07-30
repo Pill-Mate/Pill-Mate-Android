@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.pill_mate.pill_mate_android.databinding.DialogPolyPharmacyWarningBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
+import com.pill_mate.pill_mate_android.util.AppPreferences
 
 class PolyPharmacyWarningDialogFragment : DialogFragment() {
 
@@ -23,8 +24,13 @@ class PolyPharmacyWarningDialogFragment : DialogFragment() {
         _binding = DialogPolyPharmacyWarningBinding.inflate(inflater, container, false)
 
         // 버튼 리스너 설정
+        binding.ivDelete.setOnClickListener {
+            dismiss()
+        }
+
         binding.btnCancel.setOnClickListener {
-            clearRegistrationData()
+            AppPreferences.setSkipWarningDialog(requireContext(), true)  // 다시 보지 않기 저장
+            dismiss()
         }
 
         binding.btnContinue.setOnClickListener {
