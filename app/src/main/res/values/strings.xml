@@ -267,6 +267,7 @@
     <string name="five_meal_unit_after">식후</string>
     <string name="five_enter_minutes">분</string>
     <string name="five_default_minutes">30</string>
+    <string name="five_immediately">즉시</string>
     <string name="five_when_taking">복용시</string>
 
     <!--StepSixFragment-->
