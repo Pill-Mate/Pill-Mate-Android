@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -92,9 +93,15 @@ class SearchBottomSheetFragment(
             dismiss()
         }
 
+        // 키보드 숨김
+        binding.searchPharmacyFragment.setOnTouchListener { v, _ ->
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            v.clearFocus()
+            false // 터치 이벤트는 계속 전달
+        }
         binding.rvSuggestion.setOnTouchListener { _, _ ->
-            hideKeyboard()
-            false // RecyclerView의 기본 스크롤 동작 유지
+            KeyboardUtil.hideKeyboard(requireContext(), requireView())
+            false
         }
 
         adapter = SearchAdapter(
@@ -239,12 +246,6 @@ class SearchBottomSheetFragment(
 
     override fun showMedicines(pills: List<SearchMedicineItem>) {
         // 사용 안 함
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
-                as android.view.inputmethod.InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {

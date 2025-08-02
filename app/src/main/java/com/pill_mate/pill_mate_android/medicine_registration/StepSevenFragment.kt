@@ -48,6 +48,12 @@ class StepSevenFragment : Fragment() {
         selectedStartDate = currentSchedule.start_date.takeIf { it.isNotEmpty() } ?: DateConversionUtil.getCurrentDate()
         binding.tvStartDate.text = selectedStartDate
 
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etPeriod.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
+        }
+
         setupDosageDaysEditText()
         setupStartDateSelection()
 

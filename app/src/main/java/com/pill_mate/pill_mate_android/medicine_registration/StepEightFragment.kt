@@ -56,6 +56,12 @@ class StepEightFragment : Fragment() {
             openBottomSheet()
         }
 
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etMedicineVolume.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
+        }
+
         parentFragmentManager.setFragmentResultListener("selectedOptionKey", viewLifecycleOwner) { _, bundle ->
             val selectedOption = bundle.getString("selectedOption")
             selectedOption?.let {

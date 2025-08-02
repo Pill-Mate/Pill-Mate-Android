@@ -23,6 +23,7 @@ import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.*
 import com.pill_mate.pill_mate_android.search.view.PillSearchView
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -92,7 +93,17 @@ class ConflictPillSearchBottomSheetFragment(
             val marginStart = 24f
             val marginEnd = 24f
             addItemDecoration(CustomDividerItemDecoration(dividerHeight, dividerColor, marginStart, marginEnd))
-            setOnTouchListener { _, _ -> hideKeyboard(); false }
+            setOnTouchListener { v, _ ->
+                KeyboardUtil.hideKeyboard(requireContext(), v)
+                false
+            }
+        }
+
+        // 키보드 숨김
+        binding.mainBg.setOnTouchListener { v, _ ->
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            v.clearFocus()
+            false // 터치 이벤트는 계속 전달
         }
 
         binding.ivExit.setOnClickListener { dismiss() }
