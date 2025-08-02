@@ -55,6 +55,12 @@ class StepSixFragment : Fragment() {
             openBottomSheet()
         }
 
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etEatCount.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
+        }
+
         // 바텀시트에서 선택한 값을 수신
         parentFragmentManager.setFragmentResultListener("selectedOptionKey", viewLifecycleOwner) { _, bundle ->
             val selectedOption = bundle.getString("selectedOption")
