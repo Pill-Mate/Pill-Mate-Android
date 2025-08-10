@@ -25,8 +25,12 @@ class RadioButtonOptionsAdapter(
         val radioButton: RadioButton = view.findViewById(R.id.rb_option)
 
         init {
-            // 전체 아이템 클릭 선택 처리
+            // 전체 아이템 클릭 시
             view.setOnClickListener {
+                handleSelection(adapterPosition)
+            }
+            // 라디오 버튼 클릭 시
+            radioButton.setOnClickListener {
                 handleSelection(adapterPosition)
             }
         }

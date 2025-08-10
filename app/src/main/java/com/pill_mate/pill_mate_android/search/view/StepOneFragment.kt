@@ -52,7 +52,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun onResume() {
         super.onResume()
-
+        //AppPreferences.setSkipWarningDialog(requireContext(), false) // 다이얼로그 다시 보도록 초기화
         checkPolypharmacyCount()
         updateEditTextFromDataRepository()
     }

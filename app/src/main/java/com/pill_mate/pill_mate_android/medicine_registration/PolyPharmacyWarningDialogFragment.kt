@@ -24,16 +24,13 @@ class PolyPharmacyWarningDialogFragment : DialogFragment() {
         _binding = DialogPolyPharmacyWarningBinding.inflate(inflater, container, false)
 
         // 버튼 리스너 설정
-        binding.ivDelete.setOnClickListener {
-            dismiss()
-        }
-
         binding.btnCancel.setOnClickListener {
-            AppPreferences.setSkipWarningDialog(requireContext(), true)  // 다시 보지 않기 저장
+            AppPreferences.setSkipWarningDialog(requireContext(), binding.checkboxNever.isChecked)
             dismiss()
         }
 
         binding.btnContinue.setOnClickListener {
+            AppPreferences.setSkipWarningDialog(requireContext(), binding.checkboxNever.isChecked)
             dismiss()
         }
 
