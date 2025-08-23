@@ -23,14 +23,13 @@ class PolyPharmacyWarningDialogFragment : DialogFragment() {
     ): View {
         _binding = DialogPolyPharmacyWarningBinding.inflate(inflater, container, false)
 
-        // 버튼 리스너 설정
         binding.btnCancel.setOnClickListener {
-            AppPreferences.setSkipWarningDialog(requireContext(), binding.checkboxNever.isChecked)
+            AppPreferences.setSkipWarningDialogForDays(requireContext(), binding.checkboxNever.isChecked)
             dismiss()
         }
 
         binding.btnContinue.setOnClickListener {
-            AppPreferences.setSkipWarningDialog(requireContext(), binding.checkboxNever.isChecked)
+            AppPreferences.setSkipWarningDialogForDays(requireContext(), binding.checkboxNever.isChecked)
             dismiss()
         }
 

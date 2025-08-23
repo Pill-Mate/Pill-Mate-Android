@@ -77,7 +77,7 @@
         android:paddingStart="9dp"
         android:background="@android:color/transparent"
         style="@style/H2_SB16"
-        android:text="@string/poly_pharmacy_warning_never"
+        android:text="@string/poly_pharmacy_warning_3day"
         android:textColor="@color/gray_3"
         android:layout_gravity="left"
         android:button="@drawable/btn_checkbox_selector" />
