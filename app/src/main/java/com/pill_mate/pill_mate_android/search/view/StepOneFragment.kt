@@ -19,6 +19,7 @@ import com.pill_mate.pill_mate_android.medicine_registration.model.PillCountChec
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.presenter.StepOnePresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepOnePresenterImpl
+import com.pill_mate.pill_mate_android.util.AppPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,6 +44,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupInputFields()
         setupSearchListeners()
         setupEndIconListeners()
@@ -50,13 +52,14 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun onResume() {
         super.onResume()
+        //AppPreferences.setSkipWarningDialog(requireContext(), false) // 다이얼로그 다시 보도록 초기화
         checkPolypharmacyCount()
         updateEditTextFromDataRepository()
     }
 
     private fun checkPolypharmacyCount() {
-        if (isDialogVisible) {
-            return // 이미 띄워져 있으면 중복 방지
+        if (isDialogVisible || !AppPreferences.shouldShowWarningDialog(requireContext())) {
+            return
         }
 
         ServiceCreator.medicineRegistrationService.checkPillCount()
@@ -65,11 +68,9 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
                     call: Call<PillCountCheckResponse>,
                     response: Response<PillCountCheckResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        val isSafe = response.body()?.result == true
-                        if (!isSafe) {
-                            showPolypharmacyWarningDialog()
-                        }
+                    val isSafe = response.body()?.result == true
+                    if (!isSafe) {
+                        showPolypharmacyWarningDialog()
                     }
                 }
 
@@ -178,7 +179,7 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
 
     override fun showWarning(isVisible: Boolean) {
         binding.tvWarning.isVisible = isVisible
-        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_gray_2
+        val backgroundRes = if (isVisible) R.drawable.bg_edittext_red else R.drawable.bg_edittext_black
         binding.etPharmacy.background = ContextCompat.getDrawable(requireContext(), backgroundRes)
     }
 

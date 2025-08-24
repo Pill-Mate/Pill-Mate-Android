@@ -14,6 +14,7 @@ import com.pill_mate.pill_mate_android.databinding.FragmentStepSixBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import com.pill_mate.pill_mate_android.util.setMinMaxIntegerValue
 
 class StepSixFragment : Fragment() {
 
@@ -48,7 +49,16 @@ class StepSixFragment : Fragment() {
         setupDosageCountEditText()
 
         binding.layoutEatUnit.setOnClickListener {
+            // EditText 상태 초기화
+            binding.etEatCount.clearFocus()
+
             openBottomSheet()
+        }
+
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etEatCount.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
         }
 
         // 바텀시트에서 선택한 값을 수신
@@ -63,18 +73,23 @@ class StepSixFragment : Fragment() {
         updateNextButtonState()
     }
 
-    // EditText 설정 및 동작 구현
     private fun setupDosageCountEditText() {
         // 초기값 설정
-        binding.etEatCount.setText(getString(R.string.six_default_count))
-        // 초기값을 Presenter에 업데이트
+        val defaultCount = getString(R.string.six_default_count)
+        binding.etEatCount.setText(defaultCount)
+
+        // 숫자 범위 제한 (1 ~ 999)
+        binding.etEatCount.setMinMaxIntegerValue(1, 999)
+
+        // Presenter에 초기값 전달
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
                 eat_unit = selectedDosageUnit,
-                eat_count = getString(R.string.six_default_count).toInt()
+                eat_count = defaultCount.toInt()
             )
         }
 
+        // 텍스트 변경 리스너 연결
         binding.etEatCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -84,23 +99,24 @@ class StepSixFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 val inputText = s.toString().trim()
-                val intValue = inputText.toIntOrNull()?.takeIf { it > 0 } // 0 초과하는 값만 허용
+                val intValue = inputText.toIntOrNull()
                 if (intValue != null) {
-                    updateDosageCount(intValue) // Presenter에 전달
+                    updateDosageCount(intValue)
                 }
             }
         })
 
-        // 엔터 키 입력 처리 (포커스 해제)
+        // 엔터 또는 IME 완료 시 키보드 내리고 포커스 해제
         binding.etEatCount.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
+                actionId == EditorInfo.IME_ACTION_NEXT ||
                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 binding.etEatCount.clearFocus()
                 KeyboardUtil.hideKeyboard(requireContext(), binding.etEatCount)
-                return@setOnEditorActionListener true
+                true
+            } else {
+                false
             }
-            false
         }
     }
 
@@ -136,10 +152,10 @@ class StepSixFragment : Fragment() {
 
     fun isValidInput(): Boolean {
         val eatCountText = binding.etEatCount.text.toString().trim()
-        val eatUnitText = binding.tvEatUnit.text.toString().trim()
         val eatCount = eatCountText.toIntOrNull()
+        val eatUnitText = binding.tvEatUnit.text.toString().trim()
 
-        return eatCount != null && eatCount > 0 && eatUnitText.isNotEmpty()
+        return eatCount != null && eatUnitText.isNotEmpty()
     }
 
     override fun onDestroyView() {

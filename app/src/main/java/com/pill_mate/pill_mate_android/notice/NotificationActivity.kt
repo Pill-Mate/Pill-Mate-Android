@@ -21,6 +21,7 @@ class NotificationActivity : AppCompatActivity() {
 
     private lateinit var notificationAdapter: NotificationAdapter
     private lateinit var binding: ActivityNotificationBinding
+    private var isFirstResume = true
 
     private val notificationItemDataList = mutableListOf<ResponseNotificationItem>()
 
@@ -59,10 +60,10 @@ class NotificationActivity : AppCompatActivity() {
                 response: Response<BaseResponse<List<ResponseNotificationItem>>>
             ) {
                 response.body()?.onSuccess {
-                        notificationAdapter.updateList(it)
-                    }?.onFailure { code, message ->
-                        Log.e("API 실패", "code: $code, message: $message")
-                    }
+                    notificationAdapter.updateList(it)
+                }?.onFailure { code, message ->
+                    Log.e("API 실패", "code: $code, message: $message")
+                }
             }
 
             override fun onFailure(call: Call<BaseResponse<List<ResponseNotificationItem>>>, t: Throwable) {
@@ -79,6 +80,10 @@ class NotificationActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        fetchNotificationItemData()
+        if (isFirstResume) {
+            isFirstResume = false
+        } else {
+            fetchNotificationItemData() // 상세 페이지 갔다가 돌아온 경우만 새로고침
+        }
     }
 }

@@ -301,7 +301,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 tvNum.text = responseData.countAll.toString()
                 tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
 
-                setupProgressBar(responseData.countAll, responseData.countLeft)
+                setupProgressBar(responseData.countAll, responseData.countLeft, animate = false)
                 setupIntakeCountRecyclerView(responseData)
             }
         }
@@ -343,7 +343,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         tvRemain.text = "${it.countLeft}회 남음"
                     }
                 }
-                setupProgressBar(it.countAll, it.countLeft)
+                setupProgressBar(it.countAll, it.countLeft, animate = true)
             }
         }
 
@@ -393,23 +393,39 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     // 프로그래스바 값 설정
-    private fun setupProgressBar(countAll: Int, countLeft: Int) {
-        val progress = (countAll - countLeft).toDouble() / max(countAll, 1)
+    private fun setupProgressBar(countAll: Int, countLeft: Int, animate: Boolean = true) {
+        val targetProgress = countAll - countLeft
+        val progress = targetProgress.toDouble() / max(countAll, 1)
 
         binding.root.doOnLayout {
-            binding.pbNumberOfMedications.let {
-                val progressBarWidth = it.width
-                val bubbleWidth = binding.layoutBubble.width
+            val progressBarWidth = binding.pbNumberOfMedications.width
+            val bubbleWidth = binding.layoutBubble.width
 
-                it.max = countAll
-                it.progress = countAll - countLeft
+            binding.pbNumberOfMedications.max = countAll
 
-                binding.layoutBubble.x = clamp(
-                    progressBarWidth * progress - bubbleWidth / 2,
-                    0.0,
-                    progressBarWidth.toDouble() - bubbleWidth.toDouble()
-                ).toFloat()
+            // animate:false => 기존 상태 반영 시(날짜 변경 등)
+            // animate:true => 복약 체크/해제 시
+            if (animate) {
+                val currentProgress = binding.pbNumberOfMedications.progress
+
+                ValueAnimator.ofInt(currentProgress, targetProgress).apply {
+                    duration = 600
+                    interpolator = android.view.animation.DecelerateInterpolator()
+                    addUpdateListener { animator ->
+                        _binding?.pbNumberOfMedications?.progress = animator.animatedValue as Int
+                    }
+                    start()
+                }
+            } else {
+                binding.pbNumberOfMedications.progress = targetProgress
             }
+
+            val targetX = clamp(
+                progressBarWidth * progress - bubbleWidth / 2, 0.0, progressBarWidth.toDouble() - bubbleWidth.toDouble()
+            ).toFloat()
+
+            binding.layoutBubble.animate().x(targetX).setDuration(if (animate) 600 else 0)
+                .setInterpolator(android.view.animation.DecelerateInterpolator()).start()
         }
     }
 

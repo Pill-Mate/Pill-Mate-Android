@@ -105,7 +105,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4392518639765691~6183592321" /> <!-- AdMob 필메이트 앱 ID -->
+            android:value="ca-app-pub-4392518639765691~6183592321" />
     </application>
 
 </manifest>

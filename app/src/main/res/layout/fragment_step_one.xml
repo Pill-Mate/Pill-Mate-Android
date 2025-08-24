@@ -80,7 +80,7 @@
             android:cursorVisible="false"
             android:inputType="text"
             android:maxLines="1"
-            android:background="@drawable/bg_edittext_gray_2"
+            android:background="@drawable/bg_edittext_black"
             android:paddingStart="44dp"
             android:paddingEnd="16dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -102,9 +102,10 @@
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_search"
+        app:tint="@color/black"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutPharmacy"
         app:layout_constraintTop_toTopOf="@id/textInputLayoutPharmacy"
-        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPharmacy"/>
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPharmacy" />
 
     <TextView
         android:id="@+id/tv_warning"
@@ -158,7 +159,7 @@
             android:cursorVisible="false"
             android:inputType="text"
             android:maxLines="1"
-            android:background="@drawable/bg_edittext_gray_2"
+            android:background="@drawable/bg_edittext_black"
             android:paddingStart="44dp"
             android:paddingEnd="16dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -180,6 +181,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_search"
+        app:tint="@color/black"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutHospital"
         app:layout_constraintTop_toTopOf="@id/textInputLayoutHospital"
         app:layout_constraintBottom_toBottomOf="@id/textInputLayoutHospital" />
