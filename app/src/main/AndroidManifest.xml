@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".login.dialog.AlarmPermissionActivity"
+            android:exported="false" />
+        <activity
             android:name=".notice.NotificationDetailActivity"
             android:exported="false" />
         <activity
@@ -105,7 +108,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4392518639765691~6183592321" /> <!-- AdMob 필메이트 앱 ID -->
+            android:value="ca-app-pub-4392518639765691~6183592321" />
     </application>
 
 </manifest>

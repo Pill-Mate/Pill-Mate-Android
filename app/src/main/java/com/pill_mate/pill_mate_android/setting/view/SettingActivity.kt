@@ -1,12 +1,16 @@
 package com.pill_mate.pill_mate_android.setting.view
 
+import android.Manifest.permission
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -18,6 +22,7 @@ import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
+import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 import com.pill_mate.pill_mate_android.setting.model.AlarmInfoData
@@ -29,9 +34,9 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
 import com.pill_mate.pill_mate_android.util.expandTouchArea
+import com.pill_mate.pill_mate_android.util.loadNativeAd
 import com.pill_mate.pill_mate_android.util.onFailure
 import com.pill_mate.pill_mate_android.util.onSuccess
-import com.pill_mate.pill_mate_android.util.loadNativeAd
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +44,9 @@ import retrofit2.Response
 class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private lateinit var binding: ActivitySettingBinding
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,10 +236,16 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         val infoToggle = binding.tgPillmateAlarm
 
         marketingToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && !GlobalApplication.isAlarmGuideShown()) {
+                showAlarmPermissionDialog()
+            }
             updateMarketingAlarm(isChecked)
         }
 
         infoToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && !GlobalApplication.isAlarmGuideShown()) {
+                showAlarmPermissionDialog()
+            }
             updateInfoAlarm(isChecked)
         }
     }
@@ -274,6 +288,15 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
                 Log.e(TAG, "네트워크 오류: ${t.message}")
             }
         })
+    }
+
+    private fun showAlarmPermissionDialog() {
+        val dialog = AlarmPermissionDialog {
+            if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+                requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
+            }
+        }
+        dialog.show(supportFragmentManager, "AlarmPermissionDialog")
     }
 
     override fun onSignOutButtonClick() {
