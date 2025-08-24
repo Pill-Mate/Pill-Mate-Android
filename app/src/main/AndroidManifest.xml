@@ -21,9 +21,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".login.dialog.AlarmPermissionActivity"
-            android:exported="false" />
-        <activity
             android:name=".notice.NotificationDetailActivity"
             android:exported="false" />
         <activity
