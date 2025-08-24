@@ -1,60 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="320dp"
     android:orientation="vertical"
-    android:paddingVertical="20dp"
-    android:paddingHorizontal="16dp"
-    android:background="@drawable/bg_dialog"
+    android:background="@android:color/transparent"
     android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/poly_pharmacy_warning_title"
-        android:textColor="@color/black"
-        android:gravity="center"
-        android:layout_marginBottom="8dp"
-        style="@style/T2_B20" />
-
-    <TextView
-        android:id="@+id/tv_sub_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/poly_pharmacy_warning_description"
-        android:textColor="@color/black"
-        android:gravity="center"
-        style="@style/H3_RG16" />
-
+    <!-- 다이얼로그 박스 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        android:minWidth="320dp"
+        android:orientation="vertical"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/bg_dialog"
+        android:gravity="center_horizontal">
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="@string/poly_pharmacy_warning_cancel"
-            style="@style/H2_SB16"
-            android:stateListAnimator="@null"
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/poly_pharmacy_warning_title"
             android:textColor="@color/black"
-            android:background="@drawable/bg_btn_gray_2_stoke" />
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            style="@style/T2_B20" />
 
-        <Button
-            android:id="@+id/btn_continue"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="@string/poly_pharmacy_warning_confirm"
-            style="@style/H2_SB16"
-            android:stateListAnimator="@null"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_main_blue_1" />
+        <TextView
+            android:id="@+id/tv_sub_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/poly_pharmacy_warning_description"
+            android:textColor="@color/black"
+            android:gravity="center"
+            style="@style/H3_RG16" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="@string/poly_pharmacy_warning_cancel"
+                style="@style/H2_SB16"
+                android:stateListAnimator="@null"
+                android:textColor="@color/black"
+                android:background="@drawable/bg_btn_gray_2_stoke" />
+
+            <Button
+                android:id="@+id/btn_continue"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/poly_pharmacy_warning_confirm"
+                style="@style/H2_SB16"
+                android:stateListAnimator="@null"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_main_blue_1" />
+        </LinearLayout>
     </LinearLayout>
+
+    <!-- 투명 배경의 체크박스 -->
+    <CheckBox
+        android:id="@+id/checkbox_never"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:paddingStart="9dp"
+        android:background="@android:color/transparent"
+        style="@style/H2_SB16"
+        android:text="@string/poly_pharmacy_warning_3day"
+        android:textColor="@color/gray_3"
+        android:layout_gravity="left"
+        android:button="@drawable/btn_checkbox_selector" />
 </LinearLayout>

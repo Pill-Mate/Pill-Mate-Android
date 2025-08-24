@@ -163,10 +163,12 @@
     <string name="duplicate_btn_confirm">돌아가기</string>
 
     <!-- fragment_poly_pharmacy_warning_dialog -->
-    <string name="poly_pharmacy_warning_title">지금 등록하시면\n총 5개의 약을 함께 복용하게 됩니다</string>
-    <string name="poly_pharmacy_warning_description">전문가 상담을 권장드려요</string>
+    <string name="poly_pharmacy_warning_title">5개 이상 약물을 복용 중이신가요?</string>
+    <string name="poly_pharmacy_warning_description"> 5개 이상 약물을 복용하면,\n성분 간 충돌 가능성이 높아질 수 있어요.\n필요 시 전문가 상담을 권장드려요.</string>
     <string name="poly_pharmacy_warning_confirm">계속하기</string>
-    <string name="poly_pharmacy_warning_cancel">취소</string>
+    <string name="poly_pharmacy_warning_cancel">닫기</string>
+    <string name="poly_pharmacy_warning_never">다시 보지 않기</string>
+    <string name="poly_pharmacy_warning_3day">3일 동안 보지 않기</string>
 
     <!--fragment_alarm_switch_dialog-->
     <string name="alarm_switch_title">복약 알림을 권장드려요!</string>
@@ -273,6 +275,7 @@
     <string name="five_meal_unit_after">식후</string>
     <string name="five_enter_minutes">분</string>
     <string name="five_default_minutes">30</string>
+    <string name="five_immediately">즉시</string>
     <string name="five_when_taking">복용시</string>
 
     <!--StepSixFragment-->
@@ -356,7 +359,12 @@
     <string name="search_conflict_pill">충돌 검색</string>
     <string name="search_conflict_pill_detail_title">검색하려는 약물이 맞나요?</string>
 
+    <!-- ConflictPillSearchFragment -->
+    <string name="conflict_pill_none_title">이 약, 먹어도 괜찮을까요?</string>
+    <string name="conflict_pill_none_description">안전한 복약을 위해 제공되는 참고 정보이며,\n정확한 판단은 전문가와 상의해주세요.</string>
+
+
+    <string name="no_info">정보 없음</string>
     <string name="test">test</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

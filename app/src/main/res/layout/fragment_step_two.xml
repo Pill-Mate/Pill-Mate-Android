@@ -46,7 +46,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:cursorVisible="false"
-            android:background="@drawable/bg_edittext_gray_2"
+            android:background="@drawable/bg_edittext_black"
             android:paddingStart="44dp"
             android:paddingEnd="44dp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -57,6 +57,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_search"
+        app:tint="@color/black"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutPill"
         app:layout_constraintTop_toTopOf="@id/textInputLayoutPill"
         app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPill" />

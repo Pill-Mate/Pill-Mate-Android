@@ -14,6 +14,7 @@ import com.pill_mate.pill_mate_android.databinding.FragmentStepEightBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import com.pill_mate.pill_mate_android.util.setMinMaxDecimalValue
 
 class StepEightFragment : Fragment() {
 
@@ -49,7 +50,16 @@ class StepEightFragment : Fragment() {
         setupVolumeCountEditText()
 
         binding.layoutMedicineUnit.setOnClickListener {
+            // EditText 상태 초기화
+            binding.etMedicineVolume.clearFocus()
+
             openBottomSheet()
+        }
+
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etMedicineVolume.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
         }
 
         parentFragmentManager.setFragmentResultListener("selectedOptionKey", viewLifecycleOwner) { _, bundle ->
@@ -63,6 +73,9 @@ class StepEightFragment : Fragment() {
     }
 
     private fun setupVolumeCountEditText() {
+        // 소수점 입력 허용: 0.1 ~ 999.9, 소수점 이하 최대 1자리 허용
+        binding.etMedicineVolume.setMinMaxDecimalValue(min = 0.1f, max = 999.9f, decimalLimit = 1)
+
         binding.etMedicineVolume.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -124,9 +137,8 @@ class StepEightFragment : Fragment() {
     fun isValidInput(): Boolean {
         val volumeCountText = binding.etMedicineVolume.text.toString().trim()
         val volumeUnitText = binding.tvMedicineUnit.text.toString().trim()
+
         return volumeCountText.isNotEmpty() &&
-                volumeCountText.toFloatOrNull() != null &&
-                volumeCountText.toFloat() > 0.0 &&
                 volumeUnitText.isNotEmpty() &&
                 volumeUnitText != "SKIP"
     }

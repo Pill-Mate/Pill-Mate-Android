@@ -60,9 +60,9 @@ class PillDetailBottomSheetFragment(
                 binding.ivPillImage.setImageResource(R.drawable.img_default)
             }
 
-            binding.tvPillClass.text = it.className
-            binding.tvPillName.text = it.itemName
-            binding.tvPillEntp.text = it.entpName
+            binding.tvPillClass.text = if (it.className.isNullOrBlank()) getString(R.string.no_info) else it.className
+            binding.tvPillName.text = if (it.itemName.isNullOrBlank()) getString(R.string.no_info) else it.itemName
+            binding.tvPillEntp.text = if (it.entpName.isNullOrBlank()) getString(R.string.no_info) else it.entpName
         }
 
         binding.btnYes.setOnClickListener {
@@ -108,30 +108,31 @@ class PillDetailBottomSheetFragment(
     }
 
     private fun handleConflictResult(result: ConflictCheckResult, pillItem: SearchMedicineItem) {
-        // 중복약이 있으면 다이얼로그 표시
+        // 1. 이미 복용 중인 약과 중복이면 알림 다이얼로그 표시 후 함수 종료
         if (result.conflictWithUserMeds != null) {
-            val dialog = DuplicateDialogFragment(
+            DuplicateDialogFragment(
                 onConfirm = {
                     dismiss()
                     bottomSheet.dismiss()
                 },
                 showMessage = true
-            )
-            dialog.show(parentFragmentManager, "DuplicateDialog")
+            ).show(parentFragmentManager, "DuplicateDialog")
             resetProcessingState()
             return
         }
 
-        // 병용금기 또는 효능군 중복이 있으면 결과 화면으로 이동
-        val hasConflict = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
-        if (hasConflict) {
+        // 2. 중복이 없으면 StepTwo로 결과 전달
+        sendResultToStepTwo(pillItem)
+
+        // 3. 병용금기나 효능군 중복이 있으면 결과 화면으로 이동
+        val hasTabooOrDuplication = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
+        if (hasTabooOrDuplication) {
             navigateToLoadingConflictFragment(result.usjntTabooList, result.efcyDplctList, pillItem)
             resetProcessingState()
             return
         }
 
-        // 아무 충돌도 없으면 StepTwo로 결과 전달
-        sendResultToStepTwo(pillItem)
+        // 4. 상태 초기화 및 화면 종료
         resetProcessingState()
         dismiss()
         bottomSheet.dismiss()

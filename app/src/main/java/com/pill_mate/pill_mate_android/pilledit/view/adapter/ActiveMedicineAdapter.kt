@@ -45,9 +45,12 @@ class ActiveMedicineAdapter(
             with(binding) {
                 tvMedicationPeriod.text =
                     DateUtil.formatPeriod(medicine.startDate, medicine.endDate, medicine.intakePeriod)
-                tvMedicineName.text = medicine.medicineName
-                tvMedicineEntp.text = medicine.entpName
-                tvMedicineType.text = medicine.className
+
+                val noInfo = binding.root.context.getString(R.string.no_info)
+                tvMedicineName.text = if (medicine.medicineName.isNullOrBlank()) noInfo else medicine.medicineName
+                tvMedicineEntp.text = if (medicine.entpName.isNullOrBlank()) noInfo else medicine.entpName
+                tvMedicineType.text = if (medicine.className.isNullOrBlank()) noInfo else medicine.className
+
                 divider.visibility = if (isLastItem) View.INVISIBLE else View.VISIBLE // 복용중지 태그 안보이게 설정
                 tvMedicineStatus.visibility = View.INVISIBLE
             }
