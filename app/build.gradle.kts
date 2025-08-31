@@ -13,12 +13,12 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.pill_mate.pill_mate_android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 10006
         versionName = "1.2.4"
 
