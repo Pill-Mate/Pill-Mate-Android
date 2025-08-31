@@ -371,12 +371,18 @@ class MedicineEditActivity : AppCompatActivity() {
                 binding.ivMealTooltip.visibility = View.VISIBLE
             }
 
-            // tooltip 숨김
-            layoutRoot.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_DOWN && binding.ivMealTooltip.visibility == View.VISIBLE) {
-                    binding.ivMealTooltip.visibility = View.GONE
+            binding.layoutRoot.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    // 키보드 숨기기
+                    currentFocus?.clearFocus()
+                    KeyboardUtil.hideKeyboard(this@MedicineEditActivity, v)
+
+                    // 툴팁 숨기기
+                    if (binding.ivMealTooltip.visibility == View.VISIBLE) {
+                        binding.ivMealTooltip.visibility = View.GONE
+                    }
                 }
-                false
+                false // 이벤트 계속 전달
             }
 
             layoutRoot.viewTreeObserver.addOnScrollChangedListener {

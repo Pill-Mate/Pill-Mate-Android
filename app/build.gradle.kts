@@ -13,14 +13,14 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.pill_mate.pill_mate_android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 7
-        versionName = "1.2.2"
+        targetSdk = 35
+        versionCode = 8
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
