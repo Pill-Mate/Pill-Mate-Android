@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.databinding.DialogAlarmPermissionBinding
 
 class AlarmPermissionDialog(
@@ -28,12 +27,10 @@ class AlarmPermissionDialog(
 
     private fun dialogButtonClickEvent() {
         binding.btnClose.setOnClickListener {
-            GlobalApplication.setAlarmGuideShown(true) // 안내 완료 여부 저장
             dismiss()
         }
 
         binding.btnSetting.setOnClickListener {
-            GlobalApplication.setAlarmGuideShown(true)
             dismiss()
             onRequestPermission?.invoke()  // 다이얼로그 닫고 호출자에게 권한 요청 콜백
         }
