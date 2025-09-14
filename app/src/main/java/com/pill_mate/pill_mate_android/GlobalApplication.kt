@@ -7,12 +7,20 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.kakao.sdk.common.KakaoSdk
 import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
+import com.amplitude.android.Amplitude
+import com.amplitude.android.Configuration
+import com.amplitude.android.plugins.SessionReplayPlugin
+import com.amplitude.common.Logger
 
 class GlobalApplication : Application() {
 
     companion object {
         private lateinit var instance: GlobalApplication
         private var isLoggingOut = false
+
+        // Amplitude 인스턴스
+        lateinit var amplitude: Amplitude
+            private set
 
         fun getInstance(): GlobalApplication = instance
 
@@ -75,8 +83,16 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-
         // Kakao Sdk 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+        // Amplitude 초기화
+        amplitude = Amplitude(
+            Configuration(
+                apiKey = BuildConfig.AMPLITUDE_API_KEY,
+                context = applicationContext
+            )
+        )
+        amplitude.add(SessionReplayPlugin()) // 세션 리플레이 플러그인 추가
+        amplitude.logger.logMode = Logger.LogMode.DEBUG // Debug 로그 활성화
     }
 }

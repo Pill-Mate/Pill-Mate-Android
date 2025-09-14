@@ -3,12 +3,15 @@ package com.pill_mate.pill_mate_android.search.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.pill_mate.pill_mate_android.GlobalApplication
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentStepOneBinding
@@ -45,6 +48,12 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 화면 진입(스크린뷰) 이벤트 트래킹 추가
+        Log.d("AmplitudeDebug", "Tracking screen_view event")
+        amplitude.track(
+            "screen_view",
+            mapOf("screen_name" to "StepOneFragment")
+        )
         setupInputFields()
         setupSearchListeners()
         setupEndIconListeners()

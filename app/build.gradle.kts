@@ -39,6 +39,9 @@ android {
         buildConfigField(
             "String", "SERVICE_API_KEY", "\"${properties.getProperty("SERVICE_API_KEY")}\""
         )
+        buildConfigField(
+            "String", "AMPLITUDE_API_KEY", properties.getProperty("AMPLITUDE_API_KEY")
+        )
     }
 
     signingConfigs {
@@ -134,4 +137,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
+    implementation("com.amplitude:analytics-android:1.+") //amplitude
+    implementation("com.amplitude:plugin-session-replay-android:0.20.14")
 }
