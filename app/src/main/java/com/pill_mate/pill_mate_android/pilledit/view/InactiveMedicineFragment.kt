@@ -60,12 +60,12 @@ class InActiveMedicineFragment : Fragment() {
                     responseData?.let {
                         if (it.result.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 약물이 없습니다.")
-                            showEmptyState()
+                            _binding?.let { showEmptyState() }
                         } else {
-                            showDataState()
-
-                            inActiveMedicineAdapter.updateList(it.result)
-
+                            _binding?.let { binding ->
+                                showDataState()
+                                inActiveMedicineAdapter.updateList(it.result)
+                            }
                         }
                     } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
                 }
@@ -79,16 +79,20 @@ class InActiveMedicineFragment : Fragment() {
     }
 
     private fun showEmptyState() {
-        with(binding) {
-            layoutNone.visibility = View.VISIBLE
-            rvInactiveMedicine.visibility = View.INVISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.VISIBLE
+                rvInactiveMedicine.visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun showDataState() {
-        with(binding) {
-            layoutNone.visibility = View.INVISIBLE
-            rvInactiveMedicine.visibility = View.VISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.INVISIBLE
+                rvInactiveMedicine.visibility = View.VISIBLE
+            }
         }
     }
 

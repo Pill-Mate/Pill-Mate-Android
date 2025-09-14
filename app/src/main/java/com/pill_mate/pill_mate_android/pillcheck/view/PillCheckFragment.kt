@@ -49,6 +49,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private var isFirstLoad = true
     private val expandedStates = mutableSetOf<Int>()
     private var isStatusBarLight = false // 현재 상태바 상태 추적
+    private var progressBarAnimator: ValueAnimator? = null
 
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
@@ -408,7 +409,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
             if (animate) {
                 val currentProgress = binding.pbNumberOfMedications.progress
 
-                ValueAnimator.ofInt(currentProgress, targetProgress).apply {
+                progressBarAnimator = ValueAnimator.ofInt(currentProgress, targetProgress).apply {
                     duration = 600
                     interpolator = android.view.animation.DecelerateInterpolator()
                     addUpdateListener { animator ->
@@ -447,8 +448,10 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        progressBarAnimator?.cancel() // 애니메이션 중지
+        progressBarAnimator = null
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {

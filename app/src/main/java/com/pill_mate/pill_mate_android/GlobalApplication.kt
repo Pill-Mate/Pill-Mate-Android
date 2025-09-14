@@ -6,7 +6,6 @@ import android.content.Intent
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.kakao.sdk.common.KakaoSdk
-import com.pill_mate.pill_mate_android.BuildConfig
 import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 
 class GlobalApplication : Application() {
@@ -20,7 +19,6 @@ class GlobalApplication : Application() {
         private const val PREF_NAME = "secure_prefs"
         private const val KEY_JWT_TOKEN = "jwt_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
-        private const val KEY_IS_ALARM_GUIDE_SHOWN = "is_alarm_guide_shown"
 
         private fun getSecurePrefs(context: Context) = EncryptedSharedPreferences.create(
             PREF_NAME,
@@ -72,17 +70,6 @@ class GlobalApplication : Application() {
             }
             context.startActivity(intent)
         }
-
-        fun isAlarmGuideShown(): Boolean {
-            val prefs = getSecurePrefs(instance)
-            return prefs.getBoolean(KEY_IS_ALARM_GUIDE_SHOWN, false)
-        }
-
-        fun setAlarmGuideShown(shown: Boolean) {
-            val prefs = getSecurePrefs(instance)
-            prefs.edit().putBoolean(KEY_IS_ALARM_GUIDE_SHOWN, shown).apply()
-        }
-
     }
 
     override fun onCreate() {

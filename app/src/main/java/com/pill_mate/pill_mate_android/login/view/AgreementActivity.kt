@@ -12,11 +12,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ActivityAgreementBinding
 import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
 import com.pill_mate.pill_mate_android.onboarding.view.TimePicker1Activity
+import com.pill_mate.pill_mate_android.util.PermissionUtil.isSystemNotificationPermissionGranted
 
 class AgreementActivity : AppCompatActivity() {
 
@@ -113,8 +113,8 @@ class AgreementActivity : AppCompatActivity() {
 
     // 가입완료 버튼 클릭 시
     private fun onDoneButtonClick() {
-        binding.btnDone.setOnClickListener {
-            if ((binding.cb5.isChecked || binding.cb6.isChecked) && !GlobalApplication.isAlarmGuideShown()) {
+        binding.btnDone.setOnClickListener { // 시스템 알림 권한이 꺼져 있을 때만 다이얼로그 노출
+            if ((binding.cb5.isChecked || binding.cb6.isChecked) && !isSystemNotificationPermissionGranted(this)) {
                 val dialog = AlarmPermissionDialog { // 다이얼로그 닫힌 뒤 → 알림 권한 요청
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)

@@ -33,6 +33,7 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.ConfirmDialogInterfac
 import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
+import com.pill_mate.pill_mate_android.util.PermissionUtil.isSystemNotificationPermissionGranted
 import com.pill_mate.pill_mate_android.util.expandTouchArea
 import com.pill_mate.pill_mate_android.util.loadNativeAd
 import com.pill_mate.pill_mate_android.util.onFailure
@@ -236,14 +237,14 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         val infoToggle = binding.tgPillmateAlarm
 
         marketingToggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !GlobalApplication.isAlarmGuideShown()) {
+            if (isChecked && !isSystemNotificationPermissionGranted(this)) {
                 showAlarmPermissionDialog()
             }
             updateMarketingAlarm(isChecked)
         }
 
         infoToggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !GlobalApplication.isAlarmGuideShown()) {
+            if (isChecked && !isSystemNotificationPermissionGranted(this)) {
                 showAlarmPermissionDialog()
             }
             updateInfoAlarm(isChecked)
