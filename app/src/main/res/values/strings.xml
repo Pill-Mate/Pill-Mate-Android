@@ -166,7 +166,7 @@
     <string name="poly_pharmacy_warning_title">5개 이상 약물을 복용 중이신가요?</string>
     <string name="poly_pharmacy_warning_description"> 5개 이상 약물을 복용하면,\n성분 간 충돌 가능성이 높아질 수 있어요.\n필요 시 전문가 상담을 권장드려요.</string>
     <string name="poly_pharmacy_warning_confirm">계속하기</string>
-    <string name="poly_pharmacy_warning_cancel">닫기</string>
+    <string name="poly_pharmacy_warning_home">홈으로</string>
     <string name="poly_pharmacy_warning_never">다시 보지 않기</string>
     <string name="poly_pharmacy_warning_3day">3일 동안 보지 않기</string>
 

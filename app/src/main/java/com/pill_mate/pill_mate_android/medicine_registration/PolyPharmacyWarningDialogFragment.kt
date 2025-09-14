@@ -23,9 +23,10 @@ class PolyPharmacyWarningDialogFragment : DialogFragment() {
     ): View {
         _binding = DialogPolyPharmacyWarningBinding.inflate(inflater, container, false)
 
-        binding.btnCancel.setOnClickListener {
+        binding.btnHome.setOnClickListener {
             AppPreferences.setSkipWarningDialogForDays(requireContext(), binding.checkboxNever.isChecked)
             dismiss()
+            clearRegistrationData()
         }
 
         binding.btnContinue.setOnClickListener {
