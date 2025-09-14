@@ -64,15 +64,15 @@ class ActiveMedicineFragment : Fragment() {
                     responseData?.let {
                         if (it.result.currentPillResponseList.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 약물이 없습니다.")
-                            showEmptyState()
+                            _binding?.let { showEmptyState() }
                         } else {
-                            showDataState()
+                            _binding?.let { binding ->
+                                showDataState()
+                                activeMedicineAdapter.updateList(it.result.currentPillResponseList)
 
-                            activeMedicineAdapter.updateList(it.result.currentPillResponseList)
-
-                            pillCount = it.result.pillCount
-                            binding.tvPillCnt.text = "${pillCount}개"
-
+                                pillCount = it.result.pillCount
+                                binding.tvPillCnt.text = "${pillCount}개"
+                            }
                         }
                     } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
                 }
@@ -86,18 +86,22 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     private fun showEmptyState() {
-        with(binding) {
-            layoutNone.visibility = View.VISIBLE
-            layoutPillCntBox.visibility = View.INVISIBLE
-            rvActiveMedicine.visibility = View.INVISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.VISIBLE
+                layoutPillCntBox.visibility = View.INVISIBLE
+                rvActiveMedicine.visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun showDataState() {
-        with(binding) {
-            layoutNone.visibility = View.INVISIBLE
-            layoutPillCntBox.visibility = View.VISIBLE
-            rvActiveMedicine.visibility = View.VISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.INVISIBLE
+                layoutPillCntBox.visibility = View.VISIBLE
+                rvActiveMedicine.visibility = View.VISIBLE
+            }
         }
     }
 

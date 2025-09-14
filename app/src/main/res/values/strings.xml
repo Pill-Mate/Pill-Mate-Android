@@ -5,7 +5,7 @@
     <string name="pill_check">복약체크</string>
     <string name="pill_stats">통계</string>
     <string name="pill_edit">약물관리</string>
-    <string name="pill_search">검색</string>
+    <string name="pill_search">충돌검색</string>ㅜ
     <string name="fab_add_medicine">약물 등록</string>
 
     <!--OnBoarding-->
@@ -91,8 +91,14 @@
 
     <!--setting_routine_dialog-->
     <string name="routine_change_title">모든 약물의 복약 시간이\n다음날부터 변경됩니다</string>
-    <string name="routine_change_description">개인 루틴을 변경하면, 등록된 모든 약물의\n복용 시간이 다음날부터 변경됩니다</string>
+    <string name="routine_change_description">개인 루틴을 변경하면, 등록된 모든 약물의\n복용 시간이 즉시 반영됩니다.</string>
     <string name="confirm_change_button">변경하기</string>
+
+    <!--alarm_permission_dialog-->
+    <string name="alarm_permission_dialog_title">알림을 받으려면 권한이 필요해요</string>
+    <string name="alarm_permission_dialog_description">‘설정 앱>앱 알림>알림 허용’을 켜주셔야\n알림을 받을 수 있어요.</string>
+    <string name="alarm_permission_dialog_close">닫기</string>
+    <string name="alarm_permission_dialog_setting">설정하기</string>
 
     <!--ActiveMedicineFragment-->
     <string name="no_active_medicine">복용중인 약물이 없어요</string>
