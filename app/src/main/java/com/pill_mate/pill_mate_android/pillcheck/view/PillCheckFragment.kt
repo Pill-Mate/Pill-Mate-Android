@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity
 import com.pill_mate.pill_mate_android.notice.NotificationActivity
@@ -36,6 +37,7 @@ import com.pill_mate.pill_mate_android.pillcheck.util.fetch
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.CalendarVPAdapter
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeCountAdapter
 import com.pill_mate.pill_mate_android.setting.view.SettingActivity
+import com.pill_mate.pill_mate_android.showLoading
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
@@ -275,8 +277,11 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
     // 홈 데이터 받아오기
     private fun fetchHomeData(selectedDate: LocalDate) {
-        ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString()))
-            .fetch { handleHomeResponse(it) }
+        binding.showLoading()
+        ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString())).fetch {
+            handleHomeResponse(it)
+            _binding?.hideLoading()
+        }
     }
 
     private fun handleHomeResponse(data: ResponseHome) {
@@ -450,6 +455,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     override fun onDestroyView() {
         progressBarAnimator?.cancel() // 애니메이션 중지
         progressBarAnimator = null
+        _binding?.hideLoading()
         _binding = null
         super.onDestroyView()
     }

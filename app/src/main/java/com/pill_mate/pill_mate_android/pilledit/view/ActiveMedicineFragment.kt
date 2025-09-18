@@ -11,9 +11,11 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentActiveMedicineBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.pilledit.model.MedicineItemData
 import com.pill_mate.pill_mate_android.pilledit.model.ResponseActiveMedicine
 import com.pill_mate.pill_mate_android.pilledit.view.adapter.ActiveMedicineAdapter
+import com.pill_mate.pill_mate_android.showLoading
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,12 +55,14 @@ class ActiveMedicineFragment : Fragment() {
 
     @RequiresApi(VERSION_CODES.O)
     private fun fetchActiveMedicineData() {
+        _binding?.apply { showLoading() }
         val call: Call<ResponseActiveMedicine> = ServiceCreator.activeMedicineService.getActiveMedicineList()
 
         call.enqueue(object : Callback<ResponseActiveMedicine> {
             override fun onResponse(
                 call: Call<ResponseActiveMedicine>, response: Response<ResponseActiveMedicine>
             ) {
+                _binding?.apply { hideLoading() }
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     responseData?.let {
@@ -79,6 +83,7 @@ class ActiveMedicineFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseActiveMedicine>, t: Throwable) {
+                _binding?.apply { hideLoading() }
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
                 showEmptyState()
             }
@@ -146,7 +151,8 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.apply { hideLoading() }
         _binding = null
+        super.onDestroyView()
     }
 }

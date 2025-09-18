@@ -11,6 +11,8 @@ import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivityNotificationBinding
+import com.pill_mate.pill_mate_android.hideLoading
+import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.onFailure
 import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
@@ -52,6 +54,7 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun fetchNotificationItemData() {
+        binding.showLoading()
         val call = ServiceCreator.notificationService.getNotificationData()
 
         call.enqueue(object : Callback<BaseResponse<List<ResponseNotificationItem>>> {
@@ -59,6 +62,7 @@ class NotificationActivity : AppCompatActivity() {
                 call: Call<BaseResponse<List<ResponseNotificationItem>>>,
                 response: Response<BaseResponse<List<ResponseNotificationItem>>>
             ) {
+                binding.hideLoading()
                 response.body()?.onSuccess {
                     notificationAdapter.updateList(it)
                 }?.onFailure { code, message ->
@@ -67,6 +71,7 @@ class NotificationActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<BaseResponse<List<ResponseNotificationItem>>>, t: Throwable) {
+                binding.hideLoading()
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
