@@ -12,6 +12,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.util.loadNativeAd
@@ -34,6 +35,12 @@ class StepElevenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 약물 등록 퍼널 11단계 진입
+        amplitude.track(
+            "funnel_registration_step_viewed",
+            mapOf("step_number" to 11)
+        )
+
         // 광고 요청
         loadNativeAd(requireContext(), binding.nativeAdContainer)
 
@@ -44,6 +51,9 @@ class StepElevenFragment : Fragment() {
 
     private fun setupButton() {
         binding.btnHome.setOnClickListener {
+            // 약물 등록 퍼널 최종 이벤트
+            amplitude.track("funnel_registration_complete")
+
             if (interstitialAd != null) {
                 interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {

@@ -48,11 +48,10 @@ class StepOneFragment : Fragment(), StepOnePresenter.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 화면 진입(스크린뷰) 이벤트 트래킹 추가
-        Log.d("AmplitudeDebug", "Tracking screen_view event")
+        // 약물 등록 퍼널 1단계 진입
         amplitude.track(
-            "screen_view",
-            mapOf("screen_name" to "StepOneFragment")
+            "funnel_registration_step_viewed",
+            mapOf("step_number" to 1)
         )
         setupInputFields()
         setupSearchListeners()
