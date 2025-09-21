@@ -26,9 +26,12 @@ import com.pill_mate.pill_mate_android.util.SharedPreferencesHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
+import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -47,6 +50,9 @@ class SearchBottomSheetFragment(
     private var currentQuery: String = ""
     private val searchQueryFlow = MutableStateFlow("")
     private var searchJob: Job? = null // 중복 요청 방지용
+    private var loaderJob: Job? = null
+    private var searchStartTime = 0L
+    private val loadingDelayMs = 300L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -159,11 +165,13 @@ class SearchBottomSheetFragment(
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 currentQuery = s.toString()
-
                 val underlineColor = if (currentQuery.isNotEmpty()) R.color.main_blue_1 else R.color.black
                 updateUnderline(underlineColor)
 
                 if (currentQuery.isEmpty()) {
+                    searchJob?.cancel()
+                    loaderJob?.cancel()
+                    binding.hideLoading()
                     updateRecentSearches()
                 } else {
                     searchQueryFlow.value = currentQuery
@@ -175,20 +183,26 @@ class SearchBottomSheetFragment(
 
         lifecycleScope.launch {
             searchQueryFlow
-                .debounce(300) // 짧은 입력 무시
-                .distinctUntilChanged() // 중복 제거
+                .debounce(300)
+                .distinctUntilChanged()
                 .collect { query ->
-                    if (query.isEmpty()) return@collect // 검색어가 비어 있으면 요청하지 않음
+                    if (query.isEmpty()) return@collect
 
-                    searchJob?.cancel() // 중복 요청 중단
+                    // 이전 작업들 취소
+                    searchJob?.cancel()
+                    loaderJob?.cancel()
+
+                    // 검색 요청은 새 코루틴에서 관리
                     searchJob = launch {
-                        Log.d("SearchFragment", "검색 요청 시작: $query")
-                        val startTime = System.currentTimeMillis()
+                        // 딜레이 후 로딩바를 보여주는 작업 예약
+                        loaderJob = launch {
+                            delay(loadingDelayMs)
+                            binding.showLoading()
+                        }
 
+                        // 실제 검색 시작 시간 기록 및 API 호출
+                        searchStartTime = System.currentTimeMillis()
                         presenter.search(query, searchType)
-
-                        val elapsed = System.currentTimeMillis() - startTime
-                        Log.d("SearchFragment", "검색 완료: ${elapsed}ms")
                     }
                 }
         }
@@ -233,13 +247,23 @@ class SearchBottomSheetFragment(
     override fun showResults(results: List<Searchable>, type: SearchType) {
         if (_binding == null) return
 
-        Log.d("SearchFragment", "showResults called with ${results.size} results for query: $currentQuery") // ✅ 로그 추가
+        // 로딩바 예약 작업을 즉시 취소
+        loaderJob?.cancel()
+        binding.hideLoading()
 
+        // 실제 걸린 시간 측정 및 로그 출력
+        if (searchStartTime > 0) {
+            val elapsed = System.currentTimeMillis() - searchStartTime
+            Log.d("SearchFragment", "결과 받기까지 실제 걸린 시간: ${elapsed}ms (검색어: $currentQuery)")
+            searchStartTime = 0L // 다음 측정을 위해 초기화
+        }
+
+        // 결과 처리
         if (results.isNotEmpty()) {
-            adapter.updateResults(results, currentQuery) // currentQuery를 전달
+            adapter.updateResults(results, currentQuery)
             binding.rvSuggestion.visibility = View.VISIBLE
         } else {
-            adapter.updateResults(emptyList(), "") // 빈 리스트와 빈 검색어 전달
+            adapter.updateResults(emptyList(), "")
             binding.rvSuggestion.visibility = View.GONE
         }
     }
