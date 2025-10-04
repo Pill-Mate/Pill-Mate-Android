@@ -46,6 +46,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include layout="@layout/view_progress_indicator" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_inactive_medicine"
             android:layout_width="match_parent"

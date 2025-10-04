@@ -23,6 +23,10 @@ class PillDeleteDialogFragment(
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPillDeleteDialogBinding.inflate(inflater, container, false)
+
+        // 뒤로가기 방지
+        isCancelable = false
+
         return binding.root
     }
 
@@ -41,11 +45,16 @@ class PillDeleteDialogFragment(
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.8).toInt(), // 화면 너비의 80%
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        // 바깥 터치로 닫히지 않게 설정
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {

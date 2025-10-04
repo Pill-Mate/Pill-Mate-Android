@@ -1,22 +1,31 @@
 package com.pill_mate.pill_mate_android.setting.view
 
+import android.Manifest.permission
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.kakao.sdk.auth.TokenManagerProvider
+import com.kakao.sdk.user.UserApiClient
+import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
+import com.pill_mate.pill_mate_android.hideLoading
+import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
+import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 import com.pill_mate.pill_mate_android.setting.model.AlarmInfoData
 import com.pill_mate.pill_mate_android.setting.model.AlarmMarketingData
 import com.pill_mate.pill_mate_android.setting.model.ResponseRoutine
@@ -25,7 +34,12 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.ConfirmDialogInterfac
 import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
+import com.pill_mate.pill_mate_android.showLoading
+import com.pill_mate.pill_mate_android.util.PermissionUtil.isSystemNotificationPermissionGranted
 import com.pill_mate.pill_mate_android.util.expandTouchArea
+import com.pill_mate.pill_mate_android.util.loadNativeAd
+import com.pill_mate.pill_mate_android.util.onFailure
+import com.pill_mate.pill_mate_android.util.onSuccess
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,6 +47,9 @@ import retrofit2.Response
 class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private lateinit var binding: ActivitySettingBinding
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +68,8 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         setButtonClickListener()
         switchAlarmToggle()
 
+        // 광고 요청
+        loadNativeAd(this, binding.nativeAdContainer)
     }
 
     private fun initView() {
@@ -72,50 +91,52 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
-        val call: Call<ResponseRoutine> = ServiceCreator.getRoutineService.getRoutineData()
+        binding.showLoading()
+        val call = ServiceCreator.getRoutineService.getRoutineData()
 
-        call.enqueue(object : Callback<ResponseRoutine> {
-            override fun onResponse(call: Call<ResponseRoutine>, response: Response<ResponseRoutine>) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let {
-                        onSuccess(it) // 성공 시 콜백 호출
-                    } ?: Log.e("데이터 오류", "개인루틴 데이터가 없습니다.")
-                } else {
-                    Log.e("서버 응답 에러", "에러: ${response.errorBody()?.string()}")
+        call.enqueue(object : Callback<BaseResponse<ResponseRoutine>> {
+            override fun onResponse(
+                call: Call<BaseResponse<ResponseRoutine>>, response: Response<BaseResponse<ResponseRoutine>>
+            ) {
+                binding.hideLoading()
+                response.body()?.onSuccess { onSuccess(it) }?.onFailure { code, message ->
+                    Log.e("Routine API 실패", "code: $code, message: $message")
                 }
             }
 
-            override fun onFailure(call: Call<ResponseRoutine>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<ResponseRoutine>>, t: Throwable) {
+                binding.hideLoading()
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
     }
 
     private fun fetchUserInfoData() {
-        val call: Call<ResponseUserInfo> = ServiceCreator.settingService.getUserInfoData()
+        binding.showLoading()
+        val call = ServiceCreator.settingService.getUserInfoData()
 
-        call.enqueue(object : Callback<ResponseUserInfo> {
+        call.enqueue(object : Callback<BaseResponse<ResponseUserInfo>> {
             override fun onResponse(
-                call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>
+                call: Call<BaseResponse<ResponseUserInfo>>, response: Response<BaseResponse<ResponseUserInfo>>
             ) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    responseData?.let { userInfo ->
-                        with(binding) {
-                            tvNickname.text = userInfo.userName + " 님"
-                            tvKakaoEmail.text = userInfo.email
-                            tgPillmateAlarm.isChecked = userInfo.alarmInfo
-                            tgMarketingAlarm.isChecked = userInfo.alarmMarketing
+                binding.hideLoading()
+                response.body()?.onSuccess { userInfo ->
+                    with(binding) {
+                        tvNickname.text = "${userInfo.userName} 님"
+                        tvKakaoEmail.text = userInfo.email
+                        tgPillmateAlarm.isChecked = userInfo.alarmInfo
+                        tgMarketingAlarm.isChecked = userInfo.alarmMarketing
 
-                            Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
-                                .into(ivProfile)
-                        }
-                    } ?: Log.e("데이터 받아오기 실패", "데이터 받아오기 실패")
+                        Glide.with(root.context).load(userInfo.profileImage).error(R.drawable.img_profile)
+                            .into(ivProfile)
+                    }
+                }?.onFailure { code, message ->
+                    Log.e("UserInfo API 실패", "code: $code, message: $message")
                 }
             }
 
-            override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            override fun onFailure(call: Call<BaseResponse<ResponseUserInfo>>, t: Throwable) {
+                binding.hideLoading()
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
@@ -164,29 +185,46 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun getAccessToken(): String? {
-        val sharedPreferences = getSharedPreferences("kakao_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("kakao_access_token", null)
-    }
-
     private fun searchKakaoToken() {
-        val accessToken = getAccessToken()
+        UserApiClient.instance.accessTokenInfo { _, error ->
+            if (error != null) {
+                Log.w("Kakao", "accessToken 만료 + refreshToken도 유효하지 않음 → 재로그인 유도")
 
-        if (accessToken != null) {
-            Log.i(TAG, "AccessToken 조회 성공: $accessToken") // 서버로 accessToken 전달
-            sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = accessToken))
-        } else {
-            Log.e(TAG, "AccessToken 조회 실패")
-            Toast.makeText(applicationContext, "AccessToken 조회 실패", Toast.LENGTH_SHORT).show()
+                // 재로그인 유도
+                UserApiClient.instance.loginWithKakaoAccount(this) { token, loginError ->
+                    if (loginError != null) {
+                        Toast.makeText(this, "카카오 재로그인에 실패했습니다", Toast.LENGTH_SHORT).show()
+                        Log.e("Kakao", "재로그인 실패: $loginError")
+                        val intent = Intent(this, KakaoLoginActivity::class.java)
+                        startActivity(intent)
+                    } else if (token != null) {
+                        Log.i("Kakao", "재로그인 성공! ${token.accessToken}")
+                        sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = token.accessToken))
+                    }
+                }
+
+            } else { // accessToken 유효 or refresh를 통해 갱신 완료
+                val accessToken = TokenManagerProvider.instance.manager.getToken()?.accessToken
+                if (accessToken != null) {
+                    Log.i("Kakao", "최신 accessToken 사용")
+                    sendKakaoTokenData(KaKaoTokenData(kakaoAccessToken = accessToken))
+                } else {
+                    Log.e("Kakao", "토큰이 null입니다. 재로그인 필요")
+                    val intent = Intent(this, KakaoLoginActivity::class.java)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
     // 회원 탈퇴 api 호출
     private fun sendKakaoTokenData(token: KaKaoTokenData) {
+        binding.showLoading()
         val call: Call<Void> = ServiceCreator.signOutService.sendTokenData(token)
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                binding.hideLoading()
                 if (response.isSuccessful) {
                     GlobalApplication.logout(this@SettingActivity)
                     Log.i(TAG, "서버에서 카카오 연결 끊기 성공")
@@ -198,6 +236,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                binding.hideLoading()
                 Log.e(TAG, "서버 연결 실패", t)
             }
         })
@@ -209,10 +248,16 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         val infoToggle = binding.tgPillmateAlarm
 
         marketingToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && !isSystemNotificationPermissionGranted(this)) {
+                showAlarmPermissionDialog()
+            }
             updateMarketingAlarm(isChecked)
         }
 
         infoToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && !isSystemNotificationPermissionGranted(this)) {
+                showAlarmPermissionDialog()
+            }
             updateInfoAlarm(isChecked)
         }
     }
@@ -257,6 +302,15 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
         })
     }
 
+    private fun showAlarmPermissionDialog() {
+        val dialog = AlarmPermissionDialog {
+            if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+                requestPermissionLauncher.launch(permission.POST_NOTIFICATIONS)
+            }
+        }
+        dialog.show(supportFragmentManager, "AlarmPermissionDialog")
+    }
+
     override fun onSignOutButtonClick() {
         searchKakaoToken()
     }
@@ -271,5 +325,4 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             settingRoutineBottomDialogFragment.show(supportFragmentManager, settingRoutineBottomDialogFragment.tag)
         }
     }
-
 }

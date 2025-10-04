@@ -1,22 +1,31 @@
 package com.pill_mate.pill_mate_android.login.view
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.Paint
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.CheckBox
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ActivityAgreementBinding
+import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
 import com.pill_mate.pill_mate_android.onboarding.view.TimePicker1Activity
+import com.pill_mate.pill_mate_android.util.PermissionUtil.isSystemNotificationPermissionGranted
 
 class AgreementActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAgreementBinding
     private lateinit var individualCheckBoxes: List<CheckBox>
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            goToTimePicker() // 요청 결과와 상관없이 다음 화면으로 이동
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,12 +113,19 @@ class AgreementActivity : AppCompatActivity() {
 
     // 가입완료 버튼 클릭 시
     private fun onDoneButtonClick() {
-        binding.btnDone.setOnClickListener {
-            val intent = Intent(this, TimePicker1Activity::class.java).apply {
-                putExtra("ALARM_MARKETING", binding.cb6.isChecked)
-                putExtra("ALARM_INFO", binding.cb5.isChecked)
+        binding.btnDone.setOnClickListener { // 시스템 알림 권한이 꺼져 있을 때만 다이얼로그 노출
+            if ((binding.cb5.isChecked || binding.cb6.isChecked) && !isSystemNotificationPermissionGranted(this)) {
+                val dialog = AlarmPermissionDialog { // 다이얼로그 닫힌 뒤 → 알림 권한 요청
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        goToTimePicker() // 안드로이드 13 미만은 그냥 넘어감
+                    }
+                }
+                dialog.show(supportFragmentManager, "AlarmPermissionDialog")
+            } else {
+                goToTimePicker()
             }
-            startActivity(intent)
         }
     }
 
@@ -120,6 +136,14 @@ class AgreementActivity : AppCompatActivity() {
             var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://slashpage.com/pillmate/4z7pvx2kzgqe7mek8653"))
             startActivity(intent)
         }
+    }
+
+    private fun goToTimePicker() {
+        val intent = Intent(this, TimePicker1Activity::class.java).apply {
+            putExtra("ALARM_MARKETING", binding.cb6.isChecked)
+            putExtra("ALARM_INFO", binding.cb5.isChecked)
+        }
+        startActivity(intent)
     }
 
 }

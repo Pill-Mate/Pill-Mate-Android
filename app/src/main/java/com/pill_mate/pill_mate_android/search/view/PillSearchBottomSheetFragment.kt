@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,18 +16,25 @@ import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistratio
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.PillDetailBottomSheetFragment
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenter
-import com.pill_mate.pill_mate_android.search.presenter.PillSearchPresenterImpl
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenter
+import com.pill_mate.pill_mate_android.search.presenter.SearchPresenterImpl
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenterImpl
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.hideLoading
+import com.pill_mate.pill_mate_android.pillsearch.SearchMedicineAdapter
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
+import com.pill_mate.pill_mate_android.showLoading
+import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -41,18 +47,22 @@ class PillSearchBottomSheetFragment(
 
     private var _binding: FragmentSearchPillBinding? = null
     private val binding get() = _binding!!
-    private lateinit var pillSearchPresenter: PillSearchPresenter
+    private lateinit var pillSearchPresenter: SearchPresenter
     private lateinit var stepTwoPresenter: StepTwoPresenter // StepTwoPresenter 추가
-    private lateinit var adapter: PillIdntfcAdapter
+    private lateinit var adapter: SearchMedicineAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
     private val searchQueryFlow = MutableStateFlow("")
+
+    private var loaderJob: Job? = null
+    private var searchStartTime = 0L
+    private val loadingDelayMs = 300L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchPillBinding.inflate(inflater, container, false)
-        pillSearchPresenter = PillSearchPresenterImpl(this) // PillSearchPresenter 초기화
+        pillSearchPresenter = SearchPresenterImpl(this) // PillSearchPresenter 초기화
         stepTwoPresenter = StepTwoPresenterImpl(stepTwoView) // StepTwoPresenter 초기화
 
         return binding.root
@@ -96,12 +106,11 @@ class PillSearchBottomSheetFragment(
     }
 
     private fun initView() {
-        adapter = PillIdntfcAdapter(onItemClick = { pillItem ->
-            // 아이템 클릭 시 다이얼로그 생성 및 표시
+        adapter = SearchMedicineAdapter(onItemClick = { medicineItem ->
             val dialog = PillDetailBottomSheetFragment.newInstance(
                 this,
-                medicineRegistrationFragment, // MedicineRegistrationFragment 전달
-                pillItem
+                medicineRegistrationFragment,
+                medicineItem
             )
             dialog.show(parentFragmentManager, "PillDetailDialog")
         })
@@ -110,9 +119,15 @@ class PillSearchBottomSheetFragment(
             dismiss()
         }
 
+        // 키보드 숨김
+        binding.mainBg.setOnTouchListener { v, _ ->
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            v.clearFocus()
+            false // 터치 이벤트는 계속 전달
+        }
         binding.rvSuggestion.setOnTouchListener { _, _ ->
-            hideKeyboard()
-            false // RecyclerView의 기본 스크롤 동작 유지
+            KeyboardUtil.hideKeyboard(requireContext(), requireView())
+            false
         }
 
         // 포커스 설정
@@ -153,13 +168,18 @@ class PillSearchBottomSheetFragment(
 
         lifecycleScope.launch {
             searchQueryFlow
-                .debounce(300) // 300ms 동안 추가 입력이 없을 때만 실행
-                .distinctUntilChanged() // 같은 검색어 연속 입력 방지
-                .filter { it.isNotEmpty() } // 빈 검색어는 처리 안 함
-                .collect { query ->
-                    val underlineColor = if (query.isNotEmpty()) R.color.main_blue_1 else R.color.black
-                    updateUnderline(underlineColor)
-                    pillSearchPresenter.searchPills(query) // 최적화된 검색 실행
+                .debounce(300)
+                .distinctUntilChanged()
+                .filter { it.isNotEmpty() }
+                .collectLatest { query ->
+                    loaderJob?.cancel()
+                    loaderJob = launch {
+                        delay(loadingDelayMs)
+                        binding.showLoading()
+                    }
+
+                    searchStartTime = System.currentTimeMillis()
+                    pillSearchPresenter.searchMedicines(query)
                 }
         }
     }
@@ -169,25 +189,20 @@ class PillSearchBottomSheetFragment(
         binding.vUnderline.setBackgroundColor(underlineColor)
     }
 
-    override fun showPillIdntfc(pills: List<PillIdntfcItem>) {
-        pills.forEach { Log.d("PillSearchFragment", "Pill: ${it.ITEM_NAME}") }
+    override fun showResults(results: List<Searchable>, type: SearchType) {
+        // 사용 안 함
+    }
 
-        if (pills.isNotEmpty()) {
+    override fun showMedicines(medicines: List<SearchMedicineItem>) {
+        loaderJob?.cancel()
+        binding.hideLoading()
+        
+        if (medicines.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
-            adapter.updateItems(pills, currentQuery)
+            adapter.updateItems(medicines, currentQuery)
         } else {
             binding.rvSuggestion.visibility = View.GONE
         }
-    }
-
-    override fun showResults(results: List<Searchable>, type: SearchType) {
-        Log.d("PillSearchFragment", "showPharmacy called with items")
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
-                as android.view.inputmethod.InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {

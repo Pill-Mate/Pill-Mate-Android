@@ -4,23 +4,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
+import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetSelectTimesBinding
 
 class SelectTimeBottomSheetFragment(
     private val initiallySelectedTimes: List<String>, // 기존 선택된 시간대
     private val onTimesSelected: (List<String>) -> Unit
 ) : BottomSheetDialogFragment() {
 
+    private var _binding: FragmentBottomSheetSelectTimesBinding? = null
+    private val binding get() = _binding!!
+
     private val selectedTimes = mutableSetOf<String>() // 선택된 시간대 저장
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_bottom_sheet_select_times, container, false)
+        _binding = FragmentBottomSheetSelectTimesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun getTheme(): Int {
@@ -30,48 +39,49 @@ class SelectTimeBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val context = view.context
-        val timeCheckboxes = mapOf(
-            Pair(view.findViewById<CheckBox>(R.id.cb_empty_check), context.getString(R.string.time_empty)),
-            Pair(view.findViewById<CheckBox>(R.id.cb_morning_check), context.getString(R.string.time_morning)),
-            Pair(view.findViewById<CheckBox>(R.id.cb_lunch_check), context.getString(R.string.time_lunch)),
-            Pair(view.findViewById<CheckBox>(R.id.cb_dinner_check), context.getString(R.string.time_dinner)),
-            Pair(view.findViewById<CheckBox>(R.id.cb_before_sleep_check), context.getString(R.string.time_before_sleep))
-        )
+        val context = requireContext()
 
-        val confirmButton = view.findViewById<Button>(R.id.btn_confirm)
-
-        // 기존 선택 상태 초기화
         selectedTimes.clear()
         selectedTimes.addAll(initiallySelectedTimes)
 
-        // 초기 체크 상태 반영 & 체크박스 리스너 설정
-        timeCheckboxes.forEach { (checkBox, timeSlot) ->
+        val timeSlotViews = listOf(
+            Triple(binding.layoutEmpty, binding.cbEmptyCheck, context.getString(R.string.time_empty)),
+            Triple(binding.layoutMorning, binding.cbMorningCheck, context.getString(R.string.time_morning)),
+            Triple(binding.layoutLunch, binding.cbLunchCheck, context.getString(R.string.time_lunch)),
+            Triple(binding.layoutDinner, binding.cbDinnerCheck, context.getString(R.string.time_dinner)),
+            Triple(binding.layoutBeforeSleep, binding.cbBeforeSleepCheck, context.getString(R.string.time_before_sleep))
+        )
+
+        timeSlotViews.forEach { (layout, checkBox, timeSlot) ->
             checkBox.isChecked = selectedTimes.contains(timeSlot)
 
-            checkBox.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    selectedTimes.add(timeSlot)
-                } else {
-                    selectedTimes.remove(timeSlot)
-                }
+            val toggleCheck: (Boolean) -> Unit = { isChecked ->
+                checkBox.isChecked = isChecked
+                if (isChecked) selectedTimes.add(timeSlot)
+                else selectedTimes.remove(timeSlot)
+                updateConfirmButton()
+            }
 
-                updateConfirmButton(confirmButton)
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                toggleCheck(isChecked)
+            }
+
+            layout.setOnClickListener {
+                toggleCheck(!checkBox.isChecked)
             }
         }
 
-        // 확인 버튼 초기 상태 설정
-        updateConfirmButton(confirmButton)
+        updateConfirmButton()
 
-        confirmButton.setOnClickListener {
+        binding.btnConfirm.setOnClickListener {
             onTimesSelected(selectedTimes.toList())
             dismiss()
         }
     }
 
-    private fun updateConfirmButton(button: Button) {
+    private fun updateConfirmButton() {
         val count = selectedTimes.size
-        button.text = getString(R.string.select_times_confirm, count)
-        button.isEnabled = count > 0
+        binding.btnConfirm.text = getString(R.string.select_times_confirm, count)
+        binding.btnConfirm.isEnabled = count > 0
     }
 }

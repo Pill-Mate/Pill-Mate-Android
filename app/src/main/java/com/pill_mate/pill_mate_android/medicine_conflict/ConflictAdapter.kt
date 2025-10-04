@@ -1,6 +1,7 @@
 package com.pill_mate.pill_mate_android.medicine_conflict
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,7 +13,8 @@ import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooRespons
 
 class ConflictAdapter(
     private val onInquiryClicked: (itemSeq: String) -> Unit,
-    private val onDeleteClicked: (itemSeq: String) -> Unit
+    private val onDeleteClicked: (itemSeq: String) -> Unit,
+    private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
 
     private var items: List<Any> = emptyList()
@@ -26,60 +28,69 @@ class ConflictAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Any) {
-            when (item) {
-                is UsjntTabooResponse -> {
-                    binding.tvClassName.text = item.CLASS_NAME
-                    binding.tvPillName.text = item.MIXTURE_ITEM_NAME
-                    binding.tvCompanyName.text = item.ENTP_NAME
-                    binding.tvWarningDetail.text = item.PROHBT_CONTENT
-                    if (!item.ITEM_IMAGE.isNullOrEmpty()) {
-                        Glide.with(binding.ivImage.context)
-                            .load(item.ITEM_IMAGE)
-                            .transform(RoundedCorners(8))
-                            .error(R.drawable.img_default) // 에러 시 기본 이미지
-                            .into(binding.ivImage)
-                    } else {
-                        // 이미지가 비어있을 경우 기본 이미지 수동 설정
-                        binding.ivImage.setImageResource(R.drawable.img_default)
-                    }
+            val itemSeq = when (item) {
+                is UsjntTabooResponse -> item.mixtureItemSeq
+                is EfcyDplctResponse -> item.itemSeq
+                else -> null
+            }
 
-                    binding.btnDelete.setOnClickListener {
-                        item.ITEM_SEQ?.let { seq ->
-                            onDeleteClicked(seq)
-                        }
-                    }
+            // 이미지 필드 반영
+            val imageUrl = when (item) {
+                is UsjntTabooResponse -> item.item_image
+                is EfcyDplctResponse -> item.item_image
+                else -> null
+            }
 
-                    binding.btnInquiry.setOnClickListener {
-                        item.ITEM_SEQ?.let { it1 -> onInquiryClicked(it1) }
-                    }
+            val className = when (item) {
+                is UsjntTabooResponse -> item.className
+                is EfcyDplctResponse -> item.className
+                else -> ""
+            }
+
+            val pillName = when (item) {
+                is UsjntTabooResponse -> item.mixItemName
+                is EfcyDplctResponse -> item.itemName
+                else -> ""
+            }
+
+            val entpName = when (item) {
+                is UsjntTabooResponse -> item.entpName
+                is EfcyDplctResponse -> item.entpName
+                else -> ""
+            }
+
+            val warning = when (item) {
+                is UsjntTabooResponse -> item.prohbtContent
+                is EfcyDplctResponse -> item.effectName
+                else -> ""
+            }
+
+            binding.tvClassName.text = className
+            binding.tvPillName.text = pillName
+            binding.tvCompanyName.text = entpName
+            binding.tvWarningDetail.text = warning
+
+            if (!imageUrl.isNullOrEmpty()) {
+                Glide.with(binding.ivImage.context)
+                    .load(imageUrl)
+                    .transform(RoundedCorners(8))
+                    .error(R.drawable.img_default)
+                    .into(binding.ivImage)
+            } else {
+                binding.ivImage.setImageResource(R.drawable.img_default)
+            }
+
+            binding.btnInquiry.setOnClickListener {
+                itemSeq?.let { onInquiryClicked(it) }
+            }
+
+            if (showDeleteButton) {
+                binding.btnDelete.visibility = View.VISIBLE
+                binding.btnDelete.setOnClickListener {
+                    itemSeq?.let { onDeleteClicked(it) }
                 }
-                is EfcyDplctResponse -> {
-                    binding.tvClassName.text = item.CLASS_NAME
-                    binding.tvPillName.text = item.ITEM_NAME
-                    binding.tvCompanyName.text = item.ENTP_NAME
-                    binding.tvWarningDetail.text = item.EFFECT_NAME
-                    if (!item.ITEM_IMAGE.isNullOrEmpty()) {
-                        Glide.with(binding.ivImage.context)
-                            .load(item.ITEM_IMAGE)
-                            .transform(RoundedCorners(8))
-                            .error(R.drawable.img_default) // 에러 시 기본 이미지
-                            .into(binding.ivImage)
-                    } else {
-                        // 이미지가 비어있을 경우 기본 이미지 수동 설정
-                        binding.ivImage.setImageResource(R.drawable.img_default)
-                    }
-
-                    binding.btnDelete.setOnClickListener {
-                        item.ITEM_SEQ?.let { seq ->
-                            onDeleteClicked(seq)
-                        }
-                    }
-
-                    binding.btnInquiry.setOnClickListener {
-                        item.ITEM_SEQ?.let { it1 -> onInquiryClicked(it1) }
-                    }
-                }
-                else -> throw IllegalArgumentException("Unsupported item type")
+            } else {
+                binding.btnDelete.visibility = View.GONE
             }
         }
 
@@ -91,9 +102,7 @@ class ConflictAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemConflictBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return ViewHolder(binding)
     }

@@ -9,13 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepTwoBinding
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenterImpl
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 
 class StepTwoFragment : Fragment(), StepTwoView {
 
@@ -42,12 +43,17 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 약물 등록 퍼널 2단계 진입
+        amplitude.track(
+            "funnel_registration_step_viewed",
+            mapOf("step_number" to 2)
+        )
 
         setupInputField()
 
         // YES 클릭했을 때만 약물 정보를 업데이트하도록 설정
         setFragmentResultListener("pillConfirmResultKey") { _, bundle ->
-            val confirmedPillItem = bundle.getParcelable<PillIdntfcItem>("confirmedPillItem")
+            val confirmedPillItem = bundle.getParcelable<SearchMedicineItem>("confirmedPillItem")
             confirmedPillItem?.let {
                 handleSearchResult(it) // YES 클릭한 경우에만 업데이트
             }
@@ -110,21 +116,21 @@ class StepTwoFragment : Fragment(), StepTwoView {
         }
     }
 
-    private fun handleSearchResult(selectedPillItem: PillIdntfcItem) {
-        Log.d("SearchResult", "Selected pill: ${selectedPillItem.ITEM_NAME}")
+    private fun handleSearchResult(selectedPillItem: SearchMedicineItem) {
+        Log.d("SearchResult", "Selected pill: ${selectedPillItem.itemName}")
 
         // StepTwoPresenter에 선택된 약물 객체 전달
         presenter.onPillSelected(selectedPillItem)
 
         // EditText에 약물 이름 업데이트
-        binding.etPillName.setText(selectedPillItem.ITEM_NAME)
+        binding.etPillName.setText(selectedPillItem.itemName)
         binding.etPillName.clearFocus()
 
         // Presenter에 Schedule 데이터 업데이트 요청
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
-                medicine_name = selectedPillItem.ITEM_NAME,
-                medicine_id = selectedPillItem.ITEM_SEQ.toIntOrNull() ?: 0
+                medicine_name = selectedPillItem.itemName,
+                medicine_id = selectedPillItem.itemSeq.takeIf { it <= Int.MAX_VALUE }?.toInt() ?: 0
             )
         }
     }

@@ -57,6 +57,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_search"
+        app:tint="@color/black"
         app:layout_constraintStart_toStartOf="@id/textInputLayoutPill"
         app:layout_constraintTop_toTopOf="@id/textInputLayoutPill"
         app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPill" />

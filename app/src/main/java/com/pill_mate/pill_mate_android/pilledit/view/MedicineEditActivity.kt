@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.pilledit.view
 
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -12,10 +13,18 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.gson.Gson
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
@@ -75,6 +84,10 @@ class MedicineEditActivity : AppCompatActivity() {
         timeOrder.withIndex().associate { getString(it.value) to it.index }
     }
 
+    private var interstitialAd: InterstitialAd? = null
+    private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
+
+    @RequiresApi(VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMedicineEditBinding.inflate(layoutInflater)
@@ -83,8 +96,21 @@ class MedicineEditActivity : AppCompatActivity() {
         scheduleId = intent.getLongExtra("scheduleId", -1)
         Log.d("scheduleId", "$scheduleId")
 
+        // 약물 수정 화면 진입 이벤트 로깅
+        if (scheduleId != null && scheduleId != -1L) {
+            val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
+            GlobalApplication.amplitude.track(
+                "screen_medicine_edit", mapOf(
+                    "date" to dateKey
+                )
+            )
+        }
+
         fetchInitialData()
         setupClickListeners()
+
+        // 전면 광고 로드
+        loadInterstitialAd()
         setupSaveButton()
     }
 
@@ -191,8 +217,9 @@ class MedicineEditActivity : AppCompatActivity() {
 
             // 선택 해제된 값 `updateAlarmTimeUI()`에서 제거
             hasAlarm = listOf(
-                updateAlarmTimeUI(tvLabelFasting, tvTimeFasting, "공복", intakeCounts, intakeTimes),
-                updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, "취침전", intakeCounts, intakeTimes)
+                updateAlarmTimeUI(
+                    tvLabelFasting, tvTimeFasting, spaceBetweenAlarmItems, "공복", intakeCounts, intakeTimes
+                ), updateAlarmTimeUI(tvLabelBedtime, tvTimeBedtime, null, "취침전", intakeCounts, intakeTimes)
             ).any { it }
 
             layoutAlarmTime.visibility = if (hasAlarm) View.VISIBLE else View.GONE
@@ -201,15 +228,25 @@ class MedicineEditActivity : AppCompatActivity() {
                 if (visibleLayouts.contains("아침") && visibleLayouts.contains("점심")) View.VISIBLE else View.GONE
             lineDinner.visibility =
                 if (visibleLayouts.contains("점심") && visibleLayouts.contains("저녁")) View.VISIBLE else View.GONE
+
+            // 아침/점심/저녁 전부 안 보이면 부모 레이아웃, 시간 바텀시트, 툴팁 숨김
+            if (visibleLayouts.isEmpty()) {
+                layoutIntakeSchedule.visibility = View.GONE
+                layoutMealUnit.visibility = View.GONE
+                binding.ivMealTooltip.visibility = View.GONE
+                binding.layoutMealInfoClickArea.visibility = View.GONE
+            } else {
+                layoutIntakeSchedule.visibility = View.VISIBLE
+                layoutMealUnit.visibility = View.VISIBLE
+                binding.ivMealTooltip.visibility = View.VISIBLE
+                binding.layoutMealInfoClickArea.visibility = View.VISIBLE
+            }
         }
     }
 
     private fun updateAlarmTimeUI(
-        labelView: TextView,
-        timeView: TextView,
-        intakeType: String,
-        intakeCounts: List<String>,
-        intakeTimes: List<String>
+        labelView: TextView, timeView: TextView, spaceView: View?,  // nullable 로 변경
+        intakeType: String, intakeCounts: List<String>, intakeTimes: List<String>
     ): Boolean {
         val intakeCountsList = intakeCounts.toList()
         val intakeTimesList = intakeTimes.toList()
@@ -224,11 +261,16 @@ class MedicineEditActivity : AppCompatActivity() {
             timeView.text = DateConversionUtil.parseTimeToDisplayFormat(intakeTimesList[index])
             labelView.visibility = View.VISIBLE
             timeView.visibility = View.VISIBLE
+            if (intakeType == "공복") {
+                spaceView?.visibility = View.VISIBLE
+            }
             true
-        } else { // 선택 해제된 경우 UI 숨김 처리
-            Log.d("updateAlarmTimeUI", "$intakeType is removed from UI")
+        } else {
             labelView.visibility = View.GONE
             timeView.visibility = View.GONE
+            if (intakeType == "공복") {
+                spaceView?.visibility = View.GONE
+            }
             false
         }
     }
@@ -343,12 +385,17 @@ class MedicineEditActivity : AppCompatActivity() {
                 binding.ivMealTooltip.visibility = View.VISIBLE
             }
 
-            // tooltip 숨김
-            layoutRoot.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_DOWN && binding.ivMealTooltip.visibility == View.VISIBLE) {
-                    binding.ivMealTooltip.visibility = View.GONE
+            binding.layoutRoot.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) { // 키보드 숨기기
+                    currentFocus?.clearFocus()
+                    KeyboardUtil.hideKeyboard(this@MedicineEditActivity, v)
+
+                    // 툴팁 숨기기
+                    if (binding.ivMealTooltip.visibility == View.VISIBLE) {
+                        binding.ivMealTooltip.visibility = View.GONE
+                    }
                 }
-                false
+                false // 이벤트 계속 전달
             }
 
             layoutRoot.viewTreeObserver.addOnScrollChangedListener {
@@ -400,7 +447,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 }
 
                 warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
-                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext)
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext_gray_2)
 
                 if (!isInvalid) {
                     onValidInput?.invoke(inputText)
@@ -586,7 +633,28 @@ class MedicineEditActivity : AppCompatActivity() {
             val updatedData = createEditMedicineInfo() // 입력된 데이터 기반으로 객체 생성
 
             if (updatedData != null) {
-                sendUpdateRequest(updatedData)
+                if (interstitialAd != null) {
+                    interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                        override fun onAdDismissedFullScreenContent() {
+                            sendUpdateRequest(updatedData)
+                            loadInterstitialAd() // 광고 다시 로드
+                        }
+
+                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                            sendUpdateRequest(updatedData)
+                            loadInterstitialAd() // 광고 다시 로드
+                        }
+
+                        override fun onAdShowedFullScreenContent() {
+                            interstitialAd = null // 재사용 방지
+                        }
+                    }
+
+                    interstitialAd?.show(this)
+                } else {
+                    sendUpdateRequest(updatedData)
+                    loadInterstitialAd() // 광고 미리 로드해두기
+                }
             } else {
                 Toast.makeText(this, "입력 데이터를 확인해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -660,5 +728,19 @@ class MedicineEditActivity : AppCompatActivity() {
                     Toast.makeText(this@MedicineEditActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(this, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdLoaded(ad: InterstitialAd) {
+                interstitialAd = ad
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                interstitialAd = null
+            }
+        })
     }
 }

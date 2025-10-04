@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -22,11 +21,14 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity
+import com.pill_mate.pill_mate_android.notice.NotificationActivity
 import com.pill_mate.pill_mate_android.pillcheck.model.GroupedMedicine
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeData
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
@@ -36,7 +38,9 @@ import com.pill_mate.pill_mate_android.pillcheck.util.fetch
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.CalendarVPAdapter
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeCountAdapter
 import com.pill_mate.pill_mate_android.setting.view.SettingActivity
+import com.pill_mate.pill_mate_android.showLoading
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
@@ -49,6 +53,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     private var isFirstLoad = true
     private val expandedStates = mutableSetOf<Int>()
     private var isStatusBarLight = false // 현재 상태바 상태 추적
+    private var progressBarAnimator: ValueAnimator? = null
 
     @RequiresApi(VERSION_CODES.O)
     var today: LocalDate = LocalDate.now()
@@ -181,14 +186,22 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         }
     }
 
+    // 공지, 마이페이지로 이동
     private fun setMainButtonClickListener() {
-        binding.btnSetting.setOnClickListener { // 공지, 마이페이지로 이동
+        binding.btnSetting.setOnClickListener {
             val intent = Intent(requireContext(), SettingActivity::class.java)
             startActivity(intent)
         }
 
         binding.btnAlarm.setOnClickListener {
-            Toast.makeText(context, "준비 중인 기능입니다.", Toast.LENGTH_LONG).show()
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 안읽은 공지가 있을 경우
+        binding.btnAlarmActive.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -265,20 +278,35 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     // 홈 데이터 받아오기
+    @RequiresApi(VERSION_CODES.O)
     private fun fetchHomeData(selectedDate: LocalDate) {
-        ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString()))
-            .fetch { handleHomeResponse(it) }
+        binding.showLoading()
+        ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString())).fetch {
+            handleHomeResponse(it)
+            _binding?.hideLoading()
+        }
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun handleHomeResponse(data: ResponseHome) {
         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+        val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+
         currentFragment?.updateWeeklyIcons(data) // 데이터 전달
         // 데이터를 그룹화하여 RecyclerView에 설정
         setupIntakeCountRecyclerView(data)
         updateHomeUI(data)
+
+        // 복용 완료 체크 이벤트 로깅: 하루 약물 복용 개수 저장
+        GlobalApplication.amplitude.track(
+            "daily_intake_status", mapOf(
+                "date" to dateKey, "total_count" to data.countAll
+            )
+        )
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun updateHomeUI(responseData: ResponseHome) {
         with(binding) {
             if (responseData.medicineList.isNullOrEmpty()) {
@@ -293,10 +321,11 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 tvNum.text = responseData.countAll.toString()
                 tvRemain.text = if (responseData.countLeft == 0) "복약 완료" else "${responseData.countLeft}회 남음"
 
-                setupProgressBar(responseData.countAll, responseData.countLeft)
+                setupProgressBar(responseData.countAll, responseData.countLeft, animate = false)
                 setupIntakeCountRecyclerView(responseData)
             }
         }
+        updateNotificationIcon(responseData.notificationRead)
     }
 
     //주간 달력 스크롤 시 데이터 받아오기
@@ -313,6 +342,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     //체크박스 체크여부 데이터 보내기
+    @RequiresApi(VERSION_CODES.O)
     private fun patchMedicineCheckData(checkDataList: List<MedicineCheckData>) {
         ServiceCreator.medicineCheckService.patchCheckData(checkDataList).fetch {
             val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
@@ -334,12 +364,25 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                         tvRemain.text = "${it.countLeft}회 남음"
                     }
                 }
-                setupProgressBar(it.countAll, it.countLeft)
+                setupProgressBar(it.countAll, it.countLeft, animate = true)
+            }
+
+            // 복약 퍼널 3단계: 복용 완료 체크
+            val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+            val byId = it.medicineList.associateBy { m -> m.medicineScheduleId }
+
+            checkDataList.forEach { cd ->
+                val final = byId[cd.medicineScheduleId]?.eatCheck ?: cd.eatCheck
+                if (final) {
+                    GlobalApplication.amplitude.track(
+                        "funnel_intake_complete", mapOf("date" to dateKey)
+                    )
+                }
             }
         }
-
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터 그룹화
         val groupedMedicines = groupMedicines(responseHome)
 
@@ -353,9 +396,18 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {
-            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList ->
-                patchMedicineCheckData(checkDataList)
-            }
+            val intakeCountAdapter =
+                IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList -> // 복용 완료 체크 이벤트 로깅
+                    val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+                    checkDataList.forEach { cd ->
+                        GlobalApplication.amplitude.track(
+                            "btn_intake_check_click", mapOf(
+                                "date" to dateKey, "medicine_id" to cd.medicineScheduleId, "checked" to cd.eatCheck
+                            )
+                        )
+                    }
+                    patchMedicineCheckData(checkDataList)
+                }
             binding.intakeCountRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
@@ -384,24 +436,45 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     // 프로그래스바 값 설정
-    private fun setupProgressBar(countAll: Int, countLeft: Int) {
-        val progress = (countAll - countLeft).toDouble() / max(countAll, 1)
+    private fun setupProgressBar(countAll: Int, countLeft: Int, animate: Boolean = true) {
+        val targetProgress = countAll - countLeft
+        val progress = targetProgress.toDouble() / max(countAll, 1)
 
         binding.root.doOnLayout {
-            binding.pbNumberOfMedications.let {
-                val progressBarWidth = it.width
-                val bubbleWidth = binding.layoutBubble.width
+            val progressBarWidth = binding.pbNumberOfMedications.width
+            val bubbleWidth = binding.layoutBubble.width
 
-                it.max = countAll
-                it.progress = countAll - countLeft
+            binding.pbNumberOfMedications.max = countAll
 
-                binding.layoutBubble.x = clamp(
-                    progressBarWidth * progress - bubbleWidth / 2,
-                    0.0,
-                    progressBarWidth.toDouble() - bubbleWidth.toDouble()
-                ).toFloat()
+            // animate:false => 기존 상태 반영 시(날짜 변경 등)
+            // animate:true => 복약 체크/해제 시
+            if (animate) {
+                val currentProgress = binding.pbNumberOfMedications.progress
+
+                progressBarAnimator = ValueAnimator.ofInt(currentProgress, targetProgress).apply {
+                    duration = 600
+                    interpolator = android.view.animation.DecelerateInterpolator()
+                    addUpdateListener { animator ->
+                        _binding?.pbNumberOfMedications?.progress = animator.animatedValue as Int
+                    }
+                    start()
+                }
+            } else {
+                binding.pbNumberOfMedications.progress = targetProgress
             }
+
+            val targetX = clamp(
+                progressBarWidth * progress - bubbleWidth / 2, 0.0, progressBarWidth.toDouble() - bubbleWidth.toDouble()
+            ).toFloat()
+
+            binding.layoutBubble.animate().x(targetX).setDuration(if (animate) 600 else 0)
+                .setInterpolator(android.view.animation.DecelerateInterpolator()).start()
         }
+    }
+
+    private fun updateNotificationIcon(isRead: Boolean) {
+        binding.btnAlarmActive.visibility = if (isRead) View.INVISIBLE else View.VISIBLE
+        binding.btnAlarm.visibility = if (isRead) View.VISIBLE else View.INVISIBLE
     }
 
     @RequiresApi(VERSION_CODES.O)
@@ -410,14 +483,19 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         return date.format(formatter)
     }
 
+    @RequiresApi(VERSION_CODES.O)
     override fun onResume() {
         super.onResume() // 상태바를 메인블루 색상으로 변경
         (activity as? MainActivity)?.setStatusBarColor(R.color.main_blue_1, false)
+        fetchHomeData(selectedDate)
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        progressBarAnimator?.cancel() // 애니메이션 중지
+        progressBarAnimator = null
+        _binding?.hideLoading()
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {

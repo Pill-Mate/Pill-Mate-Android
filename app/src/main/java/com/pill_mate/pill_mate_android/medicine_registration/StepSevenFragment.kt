@@ -2,22 +2,21 @@ package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSevenBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
 import com.pill_mate.pill_mate_android.util.CustomChip
 import com.pill_mate.pill_mate_android.util.DateConversionUtil
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import com.pill_mate.pill_mate_android.util.setMinMaxIntegerValue
 
 class StepSevenFragment : Fragment() {
 
@@ -46,9 +45,21 @@ class StepSevenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 약물 등록 퍼널 7단계 진입
+        amplitude.track(
+            "funnel_registration_step_viewed",
+            mapOf("step_number" to 7)
+        )
+
         val currentSchedule = registrationPresenter.getCurrentSchedule()
         selectedStartDate = currentSchedule.start_date.takeIf { it.isNotEmpty() } ?: DateConversionUtil.getCurrentDate()
         binding.tvStartDate.text = selectedStartDate
+
+        binding.rootLayout.setOnTouchListener { v, _ ->
+            binding.etPeriod.clearFocus()
+            KeyboardUtil.hideKeyboard(requireContext(), v)
+            false  // 터치 이벤트를 계속 전달하기 위해 false 리턴
+        }
 
         setupDosageDaysEditText()
         setupStartDateSelection()
@@ -58,6 +69,9 @@ class StepSevenFragment : Fragment() {
 
     private fun setupStartDateSelection() {
         binding.layoutStartDate.setOnClickListener {
+            // EditText 상태 초기화
+            binding.etPeriod.clearFocus()
+
             val calendarBottomSheet = CalendarBottomSheetFragment.newInstance(selectedStartDate) { selectedDate ->
                 selectedStartDate = selectedDate
                 binding.tvStartDate.text = selectedDate
@@ -73,8 +87,8 @@ class StepSevenFragment : Fragment() {
     }
 
     private fun setupDosageDaysEditText() {
-        // 최대 3자리까지만 허용하는 InputFilter 적용
-        binding.etPeriod.filters = arrayOf(InputFilter.LengthFilter(3))
+        // 숫자 범위 제한 (1 ~ 999)
+        binding.etPeriod.setMinMaxIntegerValue(1, 999)
 
         binding.etPeriod.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -137,9 +151,7 @@ class StepSevenFragment : Fragment() {
         val periodText = binding.etPeriod.text.toString().trim()
         val startDateText = binding.tvStartDate.text.toString().trim()
 
-        return periodText.isNotEmpty() &&
-                periodText.toIntOrNull()?.let { it > 0 } == true &&
-                startDateText.isNotEmpty()
+        return periodText.isNotEmpty() && startDateText.isNotEmpty()
     }
 
     override fun onDestroyView() {

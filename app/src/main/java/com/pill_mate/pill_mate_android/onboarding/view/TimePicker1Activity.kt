@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ActivityTimePicker1Binding
 import com.pill_mate.pill_mate_android.util.expandTouchArea
+import com.pill_mate.pill_mate_android.util.SleepBeforeWakeToastUtil as TimeUtil
 
 class TimePicker1Activity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class TimePicker1Activity : AppCompatActivity() {
         onInitButtonClick()
         onNextButtonClick()
         onBackButtonClick()
+        validateTimes(false)
 
     }
 
@@ -58,7 +60,7 @@ class TimePicker1Activity : AppCompatActivity() {
             initNumberPicker(minPicker1, 0, minValues.size - 1, 0, minValues) { updateWakeupTime() }
             initNumberPicker(amPmPicker1, 0, amPmValues.size - 1, 0, amPmValues) { updateWakeupTime() }
 
-            initNumberPicker(hrsPicker2, 1, 12, 9) { updateSleepTime() }
+            initNumberPicker(hrsPicker2, 1, 12, 8) { updateSleepTime() }
             initNumberPicker(minPicker2, 0, minValues.size - 1, 0, minValues) { updateSleepTime() }
             initNumberPicker(amPmPicker2, 0, amPmValues.size - 1, 1, amPmValues) { updateSleepTime() }
 
@@ -133,6 +135,7 @@ class TimePicker1Activity : AppCompatActivity() {
         val hour = binding.hrsPicker1.value
         val min = minValues[binding.minPicker1.value]
         binding.tvWakeupTime.text = "$amPm $hour:$min"
+        validateTimes(true)
     }
 
     private fun updateSleepTime() {
@@ -140,10 +143,13 @@ class TimePicker1Activity : AppCompatActivity() {
         val hour = binding.hrsPicker2.value
         val min = minValues[binding.minPicker2.value]
         binding.tvSleepTime.text = "$amPm $hour:$min"
+        validateTimes(true)
     }
 
     private fun onNextButtonClick() {
         binding.btnNext.setOnClickListener {
+            if (!validateTimes(true)) return@setOnClickListener
+
             val wakeupTime = getFormattedTime(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1)
             val bedTime = getFormattedTime(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2)
 
@@ -217,4 +223,16 @@ class TimePicker1Activity : AppCompatActivity() {
         return String.format("%02d:%02d:%02d", hour, minute, 0)
     }
 
+    private fun validateTimes(showToast: Boolean): Boolean {
+        val wake = TimeUtil.toMinutesFromPickers(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1, minValues)
+        val sleep =
+            TimeUtil.toMinutesFromPickers(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2, minValues)
+        val isValid = sleep >= wake
+
+        TimeUtil.setEnabledStyle(
+            binding.btnNext, isValid, R.color.main_blue_1, R.color.gray_3, R.color.white, R.color.black
+        )
+        if (!isValid && showToast) TimeUtil.showBottomToast(this)
+        return isValid
+    }
 }

@@ -2,16 +2,16 @@ package com.pill_mate.pill_mate_android.search.presenter
 
 import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.medicine_registration.model.Medicine
-import com.pill_mate.pill_mate_android.search.model.PillIdntfcItem
+import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.StepTwoView
 
 class StepTwoPresenterImpl(
     private val stepTwoView: StepTwoView
 ) : StepTwoPresenter {
 
-    override fun onPillSelected(pillItem: PillIdntfcItem) {
+    override fun onPillSelected(pillItem: SearchMedicineItem) {
         // StepTwoView에 선택된 약물 이름 업데이트
-        stepTwoView.updatePillName(pillItem.ITEM_NAME)
+        stepTwoView.updatePillName(pillItem.itemName)
 
         // PillIdntfcItem -> Medicine 변환
         val medicine = convertToMedicine(pillItem)
@@ -25,18 +25,18 @@ class StepTwoPresenterImpl(
         stepTwoView.updateButtonState(isEnabled)
     }
 
-    private fun convertToMedicine(pillItem: PillIdntfcItem): Medicine {
+    private fun convertToMedicine(pillItem: SearchMedicineItem): Medicine {
         return Medicine(
-            identify_number = pillItem.ITEM_SEQ,
-            medicine_name = pillItem.ITEM_NAME,
-            ingredient = pillItem.CHART,
-            image = pillItem.ITEM_IMAGE,
-            classname = pillItem.CLASS_NAME ?: "",
+            identify_number = pillItem.itemSeq.toString(),
+            medicine_name = pillItem.itemName,
+            ingredient = "",
+            image = pillItem.itemImage,
+            classname = pillItem.className,
             efficacy = "",
             side_effect = "",
             caution = "",
             storage = "",
-            entp_name = pillItem.ENTP_NAME
+            entp_name = pillItem.entpName
         )
     }
 }

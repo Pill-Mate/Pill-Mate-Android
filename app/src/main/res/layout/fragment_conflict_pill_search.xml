@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".pillsearch.PillSearchFragment">
+
+    <TextView
+        android:id="@+id/tv_head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/search_conflict_pill"
+        style="@style/H2_SB16"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutPill"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/bg_search_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_head"
+        app:hintTextAppearance="@style/HintTextStyle"
+        app:hintEnabled="false"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_pillName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/two_et_pill"
+            android:textColorHint="@color/gray_2"
+            android:textColor="@color/black"
+            style="@style/H2_MD16"
+            android:maxLines="1"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:inputType="none"
+            android:background="@drawable/bg_edittext_black"
+            android:paddingStart="44dp"
+            android:paddingEnd="44dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/iv_searchPill"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintStart_toStartOf="@id/textInputLayoutPill"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutPill"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPill" />
+
+    <ImageView
+        android:id="@+id/iv_clear"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_edit_text_delete"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/textInputLayoutPill"
+        app:layout_constraintBottom_toBottomOf="@id/textInputLayoutPill"
+        app:layout_constraintEnd_toEndOf="@id/textInputLayoutPill"
+        android:layout_marginEnd="12dp"/>
+
+    <!-- PNG or WEBP 광고 이미지 -->
+    <ImageView
+        android:id="@+id/iv_ad_banner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="20dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/img_ad_banner_sample"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutPill"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_none1"
+        style="@style/H3_RG16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:text="@string/conflict_pill_none_title"
+        android:textColor="@color/gray_2"
+        app:layout_constraintBottom_toTopOf="@+id/iv_none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_none"
+        android:layout_width="96dp"
+        android:layout_height="72dp"
+        android:src="@drawable/img_logo_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_none2"
+        style="@style/B2_RG14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/conflict_pill_none_description"
+        android:textColor="@color/gray_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_none" />
+
+    <FrameLayout
+        android:id="@+id/native_ad_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

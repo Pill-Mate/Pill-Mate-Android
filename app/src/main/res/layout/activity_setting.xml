@@ -7,383 +7,410 @@
     android:layout_height="match_parent"
     tools:context=".setting.view.SettingActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_backward"
-        android:layout_width="match_parent"
+    <include layout="@layout/view_progress_indicator" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintHeight_percent="0.07"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/native_ad_container"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="20dp"
-            android:src="@drawable/btn_back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_setting"
-            style="@style/H2_SB16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_title"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingTop="18dp"
-        android:paddingEnd="20dp"
-        app:layout_constraintTop_toBottomOf="@id/layout_backward">
-
-        <TextView
-            android:id="@+id/tv_nickname"
-            style="@style/H1_SB18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:ems="10"
-            android:maxLines="1"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="저는언제쯤건강해지나요옹오오옹" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_kakao_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:id="@+id/layout_scroll_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/iv_kakao"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/img_kakao"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_backward"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintHeight_percent="0.07"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="24dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/btn_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_setting"
+                    style="@style/H2_SB16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_title"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="20dp"
+                app:layout_constraintTop_toBottomOf="@id/layout_backward">
+
+                <TextView
+                    android:id="@+id/tv_nickname"
+                    style="@style/H1_SB18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="저는언제쯤건강해지나요옹오오옹" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_kakao_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <ImageView
+                        android:id="@+id/iv_kakao"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/img_kakao"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_kakao_email"
+                        style="@style/B2_RG14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/iv_kakao"
+                        app:layout_constraintTop_toTopOf="@id/iv_kakao"
+                        tools:text="Pillmate@kko.com" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_profile"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/img_profile"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/tv_kakao_email"
-                style="@style/B2_RG14"
+                android:id="@+id/tv_personal_setting"
+                style="@style/B4_RG12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:paddingStart="20dp"
+                android:text="@string/section_personal"
+                android:textColor="@color/gray_2"
+                app:layout_constraintTop_toBottomOf="@id/layout_profile" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_personal_routine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_personal_setting">
+
+                <TextView
+                    android:id="@+id/tv_personal_routine"
+                    style="@style/H3_RG16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/personal_routine_edit"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/btn_personal_routine"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/btn_move"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/blank1"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/gray_3"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/layout_personal_routine" />
+
+            <TextView
+                android:id="@+id/tv_alarm"
+                style="@style/B4_RG12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:paddingStart="20dp"
+                android:text="@string/section_alarm"
+                android:textColor="@color/gray_2"
+                app:layout_constraintTop_toBottomOf="@id/blank1" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingTop="17dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_alarm">
+
+                <TextView
+                    android:id="@+id/tv_pillmate_alarm"
+                    style="@style/H3_RG16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pillmate_alarm"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/tg_pillmate_alarm"
+                    style="@style/category_toggle"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_pillmate_alarm_description"
+                    style="@style/B4_RG12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/pillmate_alarm_description"
+                    android:textColor="@color/gray_1"
+                    app:layout_constraintTop_toBottomOf="@id/tg_pillmate_alarm" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@color/gray_3"
+                app:layout_constraintTop_toBottomOf="@id/layout_alarm" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_marketing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingTop="17dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/line1">
+
+                <TextView
+                    android:id="@+id/tv_marketing_alarm"
+                    style="@style/H3_RG16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/marketing_alarm"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/tg_marketing_alarm"
+                    style="@style/category_toggle"
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_marketing_alarm_description"
+                    style="@style/B4_RG12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/marketing_alarm_description"
+                    android:textColor="@color/gray_1"
+                    app:layout_constraintTop_toBottomOf="@id/tg_marketing_alarm" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/blank2"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/gray_3"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/layout_marketing" />
+
+            <TextView
+                android:id="@+id/tv_service"
+                style="@style/B4_RG12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:paddingStart="20dp"
+                android:text="@string/section_service"
+                android:textColor="@color/gray_2"
+                app:layout_constraintTop_toBottomOf="@id/blank2" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_about_pillmate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_service">
+
+                <TextView
+                    android:id="@+id/tv_about_pillmate"
+                    style="@style/H3_RG16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_pillmate"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/btn_about_pillmate"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/btn_move"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@color/gray_3"
+                app:layout_constraintTop_toBottomOf="@id/layout_about_pillmate" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_send_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/line2">
+
+                <TextView
+                    android:id="@+id/tv_send_comment"
+                    style="@style/H3_RG16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_comment"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/btn_send_comment"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/btn_move"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textColor="@color/black"
+                android:layout_marginBottom="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_kakao"
-                app:layout_constraintTop_toTopOf="@id/iv_kakao"
-                tools:text="Pillmate@kko.com" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_send_comment">
 
+                <TextView
+                    android:id="@+id/tv_signout"
+                    style="@style/B2_RG14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_out"
+                    android:textColor="@color/gray_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/divide"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/divide"
+                    android:layout_width="2dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="30dp"
+                    android:background="@color/gray_3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_signout"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_logout"
+                    style="@style/B2_RG14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:text="@string/logout"
+                    android:textColor="@color/gray_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/divide"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/img_profile"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/tv_personal_setting"
-        style="@style/B4_RG12"
+    <FrameLayout
+        android:id="@+id/native_ad_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:paddingStart="20dp"
-        android:text="@string/section_personal"
-        android:textColor="@color/gray_2"
-        app:layout_constraintTop_toBottomOf="@id/layout_profile" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_personal_routine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_personal_setting">
-
-        <TextView
-            android:id="@+id/tv_personal_routine"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/personal_routine_edit"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/btn_personal_routine"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/btn_move"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/blank1"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/gray_3"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layout_personal_routine" />
-
-    <TextView
-        android:id="@+id/tv_alarm"
-        style="@style/B4_RG12"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:paddingStart="20dp"
-        android:text="@string/section_alarm"
-        android:textColor="@color/gray_2"
-        app:layout_constraintTop_toBottomOf="@id/blank1" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingTop="17dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_alarm">
-
-        <TextView
-            android:id="@+id/tv_pillmate_alarm"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pillmate_alarm"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tg_pillmate_alarm"
-            style="@style/category_toggle"
-            android:layout_width="52dp"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_pillmate_alarm_description"
-            style="@style/B4_RG12"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/pillmate_alarm_description"
-            android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tg_pillmate_alarm" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/line1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/gray_3"
-        app:layout_constraintTop_toBottomOf="@id/layout_alarm" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_marketing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingTop="17dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/line1">
-
-        <TextView
-            android:id="@+id/tv_marketing_alarm"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/marketing_alarm"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/tg_marketing_alarm"
-            style="@style/category_toggle"
-            android:layout_width="52dp"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_marketing_alarm_description"
-            style="@style/B4_RG12"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/marketing_alarm_description"
-            android:textColor="@color/gray_1"
-            app:layout_constraintTop_toBottomOf="@id/tg_marketing_alarm" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/blank2"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/gray_3"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layout_marketing" />
-
-    <TextView
-        android:id="@+id/tv_service"
-        style="@style/B4_RG12"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:paddingStart="20dp"
-        android:text="@string/section_service"
-        android:textColor="@color/gray_2"
-        app:layout_constraintTop_toBottomOf="@id/blank2" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_about_pillmate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_service">
-
-        <TextView
-            android:id="@+id/tv_about_pillmate"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/about_pillmate"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/btn_about_pillmate"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/btn_move"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/line2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/gray_3"
-        app:layout_constraintTop_toBottomOf="@id/layout_about_pillmate" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_send_comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/line2">
-
-        <TextView
-            android:id="@+id/tv_send_comment"
-            style="@style/H3_RG16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send_comment"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/btn_send_comment"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/btn_move"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="43dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/tv_signout"
-            style="@style/B2_RG14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_out"
-            android:textColor="@color/gray_2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/divide"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/divide"
-            android:layout_width="2dp"
-            android:layout_height="14dp"
-            android:layout_marginStart="30dp"
-            android:background="@color/gray_3"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_signout"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_logout"
-            style="@style/B2_RG14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:text="@string/logout"
-            android:textColor="@color/gray_2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/divide"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

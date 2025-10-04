@@ -29,6 +29,7 @@
 
         <!-- 공복 -->
         <LinearLayout
+            android:id="@+id/layout_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -55,6 +56,7 @@
 
         <!-- 아침 -->
         <LinearLayout
+            android:id="@+id/layout_morning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -81,6 +83,7 @@
 
         <!-- 점심 -->
         <LinearLayout
+            android:id="@+id/layout_lunch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -107,6 +110,7 @@
 
         <!-- 저녁 -->
         <LinearLayout
+            android:id="@+id/layout_dinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -133,6 +137,7 @@
 
         <!-- 취침 전 -->
         <LinearLayout
+            android:id="@+id/layout_before_sleep"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
