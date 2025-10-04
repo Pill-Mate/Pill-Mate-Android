@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".notice.NotificationActivity">
 
+    <include layout="@layout/view_progress_indicator" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_backward"
         android:layout_width="match_parent"

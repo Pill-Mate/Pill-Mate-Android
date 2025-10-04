@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepFiveBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
@@ -37,15 +38,35 @@ class StepFiveFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 약물 등록 퍼널 5단계 진입
+        amplitude.track(
+            "funnel_registration_step_viewed",
+            mapOf("step_number" to 5)
+        )
 
         // 현재 등록 진행중 데이터 적용
         val currentSchedule = registrationPresenter.getCurrentSchedule()
+        var needsUpdate = false // 기본값이 필요한지 확인하기 위한 플래그
 
-        selectedMealUnit = currentSchedule.meal_unit.ifEmpty { getString(R.string.five_meal_unit_after) }
+        val initialMealUnit = currentSchedule.meal_unit.ifEmpty { // meal_unit 기본값 설정
+            needsUpdate = true
+            getString(R.string.five_meal_unit_after)
+        }
+        selectedMealUnit = initialMealUnit
 
-        // 기본값 30분으로: meal_time 이 null 이거나 0 이면 30분으로 설정
-        selectedMealTime = currentSchedule.meal_time.takeIf { it != null && it > 0 }
-            ?: getString(R.string.five_default_minutes).toInt()
+        val initialMealTime = currentSchedule.meal_time.takeIf { it != null && it > 0 } // meal_time 기본값 설정
+            ?: run {
+                needsUpdate = true
+                getString(R.string.five_default_minutes).toInt()
+            }
+        selectedMealTime = initialMealTime
+
+        // 기본값 프레젠터를 바로 업데이트
+        if (needsUpdate) {
+            registrationPresenter.updateSchedule { s ->
+                s.copy(meal_unit = initialMealUnit, meal_time = initialMealTime)
+            }
+        }
 
         showSelectedIntake() // "식후 30분" 등 표시
 

@@ -10,9 +10,11 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentInactiveMedicineBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.pilledit.model.MedicineItemData
 import com.pill_mate.pill_mate_android.pilledit.model.ResponseInActiveMedicine
 import com.pill_mate.pill_mate_android.pilledit.view.adapter.InActiveMedicineAdapter
+import com.pill_mate.pill_mate_android.showLoading
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,29 +51,32 @@ class InActiveMedicineFragment : Fragment() {
 
     @RequiresApi(VERSION_CODES.O)
     private fun fetchInActiveMedicineData() {
+        _binding?.apply { showLoading() }
         val call: Call<ResponseInActiveMedicine> = ServiceCreator.inActiveMedicineService.getInActiveMedicineList()
 
         call.enqueue(object : Callback<ResponseInActiveMedicine> {
             override fun onResponse(
                 call: Call<ResponseInActiveMedicine>, response: Response<ResponseInActiveMedicine>
             ) {
+                _binding?.apply { hideLoading() }
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     responseData?.let {
                         if (it.result.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 약물이 없습니다.")
-                            showEmptyState()
+                            _binding?.let { showEmptyState() }
                         } else {
-                            showDataState()
-
-                            inActiveMedicineAdapter.updateList(it.result)
-
+                            _binding?.let { binding ->
+                                showDataState()
+                                inActiveMedicineAdapter.updateList(it.result)
+                            }
                         }
                     } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
                 }
             }
 
             override fun onFailure(call: Call<ResponseInActiveMedicine>, t: Throwable) {
+                _binding?.apply { hideLoading() }
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
                 showEmptyState()
             }
@@ -79,16 +84,20 @@ class InActiveMedicineFragment : Fragment() {
     }
 
     private fun showEmptyState() {
-        with(binding) {
-            layoutNone.visibility = View.VISIBLE
-            rvInactiveMedicine.visibility = View.INVISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.VISIBLE
+                rvInactiveMedicine.visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun showDataState() {
-        with(binding) {
-            layoutNone.visibility = View.INVISIBLE
-            rvInactiveMedicine.visibility = View.VISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.INVISIBLE
+                rvInactiveMedicine.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -109,7 +118,8 @@ class InActiveMedicineFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.apply { hideLoading() }
         _binding = null
+        super.onDestroyView()
     }
 }

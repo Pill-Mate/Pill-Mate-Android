@@ -17,13 +17,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentSearchPillBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.model.SearchType
 import com.pill_mate.pill_mate_android.search.model.Searchable
 import com.pill_mate.pill_mate_android.search.presenter.*
 import com.pill_mate.pill_mate_android.search.view.PillSearchView
+import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -44,6 +48,10 @@ class ConflictPillSearchBottomSheetFragment(
 
     private var currentQuery: String = ""
     private val searchQueryFlow = MutableStateFlow("")
+
+    private var loaderJob: Job? = null
+    private var searchStartTime = 0L
+    private val loadingDelayMs = 300L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -127,6 +135,13 @@ class ConflictPillSearchBottomSheetFragment(
                 .distinctUntilChanged()
                 .filter { it.isNotEmpty() }
                 .collectLatest { query ->
+                    loaderJob?.cancel()
+                    loaderJob = launch {
+                        delay(loadingDelayMs)
+                        binding.showLoading()
+                    }
+
+                    searchStartTime = System.currentTimeMillis()
                     pillSearchPresenter.searchMedicines(query)
                 }
         }
@@ -142,6 +157,9 @@ class ConflictPillSearchBottomSheetFragment(
     }
 
     override fun showMedicines(medicines: List<SearchMedicineItem>) {
+        loaderJob?.cancel()
+        binding.hideLoading()
+
         if (medicines.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
             adapter.updateItems(medicines, currentQuery)

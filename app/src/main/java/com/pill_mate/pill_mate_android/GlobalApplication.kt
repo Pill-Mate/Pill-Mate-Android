@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.amplitude.android.Amplitude
+import com.amplitude.android.Configuration
+import com.amplitude.android.plugins.SessionReplayPlugin
+import com.amplitude.common.Logger
 import com.kakao.sdk.common.KakaoSdk
-import com.pill_mate.pill_mate_android.BuildConfig
 import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
 
 class GlobalApplication : Application() {
@@ -15,12 +18,15 @@ class GlobalApplication : Application() {
         private lateinit var instance: GlobalApplication
         private var isLoggingOut = false
 
+        // Amplitude 인스턴스
+        lateinit var amplitude: Amplitude
+            private set
+
         fun getInstance(): GlobalApplication = instance
 
         private const val PREF_NAME = "secure_prefs"
         private const val KEY_JWT_TOKEN = "jwt_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
-        private const val KEY_IS_ALARM_GUIDE_SHOWN = "is_alarm_guide_shown"
 
         private fun getSecurePrefs(context: Context) = EncryptedSharedPreferences.create(
             PREF_NAME,
@@ -72,24 +78,20 @@ class GlobalApplication : Application() {
             }
             context.startActivity(intent)
         }
-
-        fun isAlarmGuideShown(): Boolean {
-            val prefs = getSecurePrefs(instance)
-            return prefs.getBoolean(KEY_IS_ALARM_GUIDE_SHOWN, false)
-        }
-
-        fun setAlarmGuideShown(shown: Boolean) {
-            val prefs = getSecurePrefs(instance)
-            prefs.edit().putBoolean(KEY_IS_ALARM_GUIDE_SHOWN, shown).apply()
-        }
-
     }
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
+        instance = this // Kakao Sdk 초기화
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY) // Amplitude 초기화
+        amplitude = Amplitude(
+            Configuration(
+                apiKey = BuildConfig.AMPLITUDE_API_KEY, context = applicationContext
+            )
+        )
 
-        // Kakao Sdk 초기화
-        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+        amplitude.logger.logMode = Logger.LogMode.OFF  // 콘솔 로그 비활성화
+        amplitude.add(SessionReplayPlugin()) // 세션 리플레이 플러그인 추가
+        //amplitude.logger.logMode = Logger.LogMode.DEBUG // Debug 로그 활성화
     }
 }

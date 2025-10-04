@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
@@ -59,6 +60,11 @@ class ConflictPillDetailBottomSheet(
         }
 
         binding.btnYes.setOnClickListener {
+            //충돌 검사할 약물선택 확인 버튼 클릭 이벤트
+            amplitude.track(
+                "click_confirm_conflict_check_pill_button",
+                mapOf("screen_name" to "screen_conflict_pill_detail_bottom_sheet")
+            )
             if (!isProcessing) {
                 isProcessing = true
                 binding.btnYes.isEnabled = false

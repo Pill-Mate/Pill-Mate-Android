@@ -11,9 +11,11 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentActiveMedicineBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.pilledit.model.MedicineItemData
 import com.pill_mate.pill_mate_android.pilledit.model.ResponseActiveMedicine
 import com.pill_mate.pill_mate_android.pilledit.view.adapter.ActiveMedicineAdapter
+import com.pill_mate.pill_mate_android.showLoading
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,32 +55,35 @@ class ActiveMedicineFragment : Fragment() {
 
     @RequiresApi(VERSION_CODES.O)
     private fun fetchActiveMedicineData() {
+        _binding?.apply { showLoading() }
         val call: Call<ResponseActiveMedicine> = ServiceCreator.activeMedicineService.getActiveMedicineList()
 
         call.enqueue(object : Callback<ResponseActiveMedicine> {
             override fun onResponse(
                 call: Call<ResponseActiveMedicine>, response: Response<ResponseActiveMedicine>
             ) {
+                _binding?.apply { hideLoading() }
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     responseData?.let {
                         if (it.result.currentPillResponseList.isNullOrEmpty()) {
                             Log.i("데이터 전송 성공", "불러올 약물이 없습니다.")
-                            showEmptyState()
+                            _binding?.let { showEmptyState() }
                         } else {
-                            showDataState()
+                            _binding?.let { binding ->
+                                showDataState()
+                                activeMedicineAdapter.updateList(it.result.currentPillResponseList)
 
-                            activeMedicineAdapter.updateList(it.result.currentPillResponseList)
-
-                            pillCount = it.result.pillCount
-                            binding.tvPillCnt.text = "${pillCount}개"
-
+                                pillCount = it.result.pillCount
+                                binding.tvPillCnt.text = "${pillCount}개"
+                            }
                         }
                     } ?: Log.e("데이터 전송 실패", "서버 응답은 성공했지만 데이터가 없습니다.")
                 }
             }
 
             override fun onFailure(call: Call<ResponseActiveMedicine>, t: Throwable) {
+                _binding?.apply { hideLoading() }
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
                 showEmptyState()
             }
@@ -86,18 +91,22 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     private fun showEmptyState() {
-        with(binding) {
-            layoutNone.visibility = View.VISIBLE
-            layoutPillCntBox.visibility = View.INVISIBLE
-            rvActiveMedicine.visibility = View.INVISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.VISIBLE
+                layoutPillCntBox.visibility = View.INVISIBLE
+                rvActiveMedicine.visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun showDataState() {
-        with(binding) {
-            layoutNone.visibility = View.INVISIBLE
-            layoutPillCntBox.visibility = View.VISIBLE
-            rvActiveMedicine.visibility = View.VISIBLE
+        _binding?.let {
+            with(binding) {
+                layoutNone.visibility = View.INVISIBLE
+                layoutPillCntBox.visibility = View.VISIBLE
+                rvActiveMedicine.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -142,7 +151,8 @@ class ActiveMedicineFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        _binding?.apply { hideLoading() }
         _binding = null
+        super.onDestroyView()
     }
 }

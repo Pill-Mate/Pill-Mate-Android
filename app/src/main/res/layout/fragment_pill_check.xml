@@ -365,6 +365,8 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.25" />
 
+        <include layout="@layout/view_progress_indicator" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_bottom"
             android:layout_width="match_parent"
