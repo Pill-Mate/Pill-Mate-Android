@@ -21,6 +21,7 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
@@ -39,6 +40,7 @@ import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeCountAdapter
 import com.pill_mate.pill_mate_android.setting.view.SettingActivity
 import com.pill_mate.pill_mate_android.showLoading
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
@@ -276,6 +278,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     // 홈 데이터 받아오기
+    @RequiresApi(VERSION_CODES.O)
     private fun fetchHomeData(selectedDate: LocalDate) {
         binding.showLoading()
         ServiceCreator.homeService.getHomeData(HomeData(date = selectedDate.toString())).fetch {
@@ -284,15 +287,26 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         }
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun handleHomeResponse(data: ResponseHome) {
         val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
         val currentFragment = adapter?.fragments?.get(binding.vpCalendar.currentItem)
+        val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+
         currentFragment?.updateWeeklyIcons(data) // 데이터 전달
         // 데이터를 그룹화하여 RecyclerView에 설정
         setupIntakeCountRecyclerView(data)
         updateHomeUI(data)
+
+        // 복용 완료 체크 이벤트 로깅: 하루 약물 복용 개수 저장
+        GlobalApplication.amplitude.track(
+            "daily_intake_status", mapOf(
+                "date" to dateKey, "total_count" to data.countAll
+            )
+        )
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun updateHomeUI(responseData: ResponseHome) {
         with(binding) {
             if (responseData.medicineList.isNullOrEmpty()) {
@@ -328,6 +342,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     }
 
     //체크박스 체크여부 데이터 보내기
+    @RequiresApi(VERSION_CODES.O)
     private fun patchMedicineCheckData(checkDataList: List<MedicineCheckData>) {
         ServiceCreator.medicineCheckService.patchCheckData(checkDataList).fetch {
             val adapter = binding.vpCalendar.adapter as? CalendarVPAdapter
@@ -351,10 +366,23 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 }
                 setupProgressBar(it.countAll, it.countLeft, animate = true)
             }
-        }
 
+            // 복약 퍼널 3단계: 복용 완료 체크
+            val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+            val byId = it.medicineList.associateBy { m -> m.medicineScheduleId }
+
+            checkDataList.forEach { cd ->
+                val final = byId[cd.medicineScheduleId]?.eatCheck ?: cd.eatCheck
+                if (final) {
+                    GlobalApplication.amplitude.track(
+                        "funnel_intake_complete", mapOf("date" to dateKey)
+                    )
+                }
+            }
+        }
     }
 
+    @RequiresApi(VERSION_CODES.O)
     private fun setupIntakeCountRecyclerView(responseHome: ResponseHome) { // 데이터 그룹화
         val groupedMedicines = groupMedicines(responseHome)
 
@@ -368,9 +396,18 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {
-            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList ->
-                patchMedicineCheckData(checkDataList)
-            }
+            val intakeCountAdapter =
+                IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList -> // 복용 완료 체크 이벤트 로깅
+                    val dateKey = LocalDate.now(ZoneId.of("Asia/Seoul")).toString()
+                    checkDataList.forEach { cd ->
+                        GlobalApplication.amplitude.track(
+                            "btn_intake_check_click", mapOf(
+                                "date" to dateKey, "medicine_id" to cd.medicineScheduleId, "checked" to cd.eatCheck
+                            )
+                        )
+                    }
+                    patchMedicineCheckData(checkDataList)
+                }
             binding.intakeCountRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
@@ -446,6 +483,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
         return date.format(formatter)
     }
 
+    @RequiresApi(VERSION_CODES.O)
     override fun onResume() {
         super.onResume() // 상태바를 메인블루 색상으로 변경
         (activity as? MainActivity)?.setStatusBarColor(R.color.main_blue_1, false)
