@@ -59,13 +59,13 @@ class ConflictPillDetailBottomSheet(
             binding.ivPillImage.setImageResource(R.drawable.img_default)
         }
 
-        binding.btnYes.setOnClickListener {
-            //충돌 검사할 약물선택 확인 버튼 클릭 이벤트
+        binding.btnYes.setOnClickListener { // 맞아요 버튼 클릭이벤트
+            //충돌 검사할 약물선택 확인 버튼 클릭이벤트
             amplitude.track(
                 "click_confirm_conflict_check_pill_button",
                 mapOf("screen_name" to "screen_conflict_pill_detail_bottom_sheet")
             )
-            if (!isProcessing) {
+            if (!isProcessing) { // 버튼 클릭 딱 한번만 되게 하는 if문
                 isProcessing = true
                 binding.btnYes.isEnabled = false
                 checkAllConflicts(medicineItem.itemSeq.toString())
@@ -77,7 +77,7 @@ class ConflictPillDetailBottomSheet(
         }
     }
 
-    private fun checkAllConflicts(itemSeq: String) {
+    private fun checkAllConflicts(itemSeq: String) { // 약물 중복과 효능군 중복 병용 금기 한번에 확인하는 API 사용
         ServiceCreator.medicineRegistrationService.checkConflict(itemSeq)
             .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(
@@ -100,7 +100,7 @@ class ConflictPillDetailBottomSheet(
             })
     }
 
-    private fun handleConflictResult(result: ConflictCheckResult) {
+    private fun handleConflictResult(result: ConflictCheckResult) { // 약물 중복 다이얼로그랑 나머지 충돌이랑 분기
         result.usjntTabooList.forEachIndexed { index, item ->
             Log.d("UsjntTabooList", "[$index] mixtureItemSeq: ${item.mixtureItemSeq}")
             Log.d("UsjntTabooList", "[$index] className: ${item.className}")
@@ -121,49 +121,14 @@ class ConflictPillDetailBottomSheet(
             return
         }
 
-        // 병용금기/효능군중복 결과 화면 이동
-        val hasConflict = result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
-        navigateToResultScreen(
-            hasConflict,
-            result.usjntTabooList,
-            result.efcyDplctList
-        )
+        // 병용금기/효능군중복 결과 화면 이동 <- 여기서 상세화면으로 넘어가면 될것 같습니다요
+
         resetProcessing()
     }
 
     private fun resetProcessing() {
         isProcessing = false
         binding.btnYes.isEnabled = true
-    }
-
-    private fun navigateToResultScreen(
-        hasConflict: Boolean,
-        usjntTabooData: List<UsjntTabooResponse>,
-        efcyDplctData: List<EfcyDplctResponse>
-    ) {
-        dismiss()
-        bottomSheet.dismiss()
-
-        val navController = parentFragment?.findNavController()
-            ?: parentFragmentManager.primaryNavigationFragment?.findNavController()
-            ?: return
-
-        val bundle = Bundle().apply {
-            putParcelableArrayList("usjntTabooData", ArrayList(usjntTabooData))
-            putParcelableArrayList("efcyDplctData", ArrayList(efcyDplctData))
-            putParcelable("pillItem", medicineItem)
-            if (hasConflict) {
-                putString("source", "pillSearch")
-            }
-        }
-
-        val actionId = if (hasConflict) {
-            R.id.action_conflictPillSearchFragment_to_conflictCheckFragment
-        } else {
-            R.id.action_conflictPillSearchFragment_to_noConflictFragment
-        }
-
-        navController.navigate(actionId, bundle)
     }
 
     override fun onDestroyView() {
