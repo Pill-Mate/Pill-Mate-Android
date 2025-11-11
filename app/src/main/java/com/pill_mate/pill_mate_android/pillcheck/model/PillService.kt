@@ -20,3 +20,8 @@ interface MedicineCheckService {
     @PATCH("/api/v1/home/medicinecheck")
     fun patchCheckData(@Body checkData: List<MedicineCheckData>): Call<BaseResponse<ResponseHome>>
 }
+
+interface MedicineDetailService {
+    @POST("/api/v1/home/medicinedetail")
+    fun postMedicineDetailData(@Body medicineId: MedicineIdData): Call<BaseResponse<ResponseMedicineDetail>>
+}
