@@ -9,12 +9,14 @@ import com.pill_mate.pill_mate_android.login.model.OnBoardingService
 import com.pill_mate.pill_mate_android.login.model.RefreshTokenService
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
 import com.pill_mate.pill_mate_android.notice.NotificationService
+import com.pill_mate.pill_mate_android.pillcheck.model.ConflictMedicineDetailService
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeService
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckService
+import com.pill_mate.pill_mate_android.pillcheck.model.MedicineDetailService
 import com.pill_mate.pill_mate_android.pillcheck.model.WeeklyCalendarService
-import com.pill_mate.pill_mate_android.pilledit.api.MedicineEditService
 import com.pill_mate.pill_mate_android.pilledit.api.ActiveMedicineService
 import com.pill_mate.pill_mate_android.pilledit.api.InActiveMedicineService
+import com.pill_mate.pill_mate_android.pilledit.api.MedicineEditService
 import com.pill_mate.pill_mate_android.pilledit.api.StopMedicineService
 import com.pill_mate.pill_mate_android.search.api.SearchService
 import com.pill_mate.pill_mate_android.setting.model.GetRoutineService
@@ -69,9 +71,13 @@ object ServiceCreator { // 서버 URL
     val patchAlarmInfoService: PatchAlarmInfoService = userRetrofit.create(PatchAlarmInfoService::class.java)
     val activeMedicineService: ActiveMedicineService = userRetrofit.create(ActiveMedicineService::class.java)
     val inActiveMedicineService: InActiveMedicineService = userRetrofit.create(
-        InActiveMedicineService::class.java)
+        InActiveMedicineService::class.java
+    )
     val stopMedicineService: StopMedicineService = userRetrofit.create(StopMedicineService::class.java)
     val medicineEditService: MedicineEditService = userRetrofit.create(MedicineEditService::class.java)
     val notificationService: NotificationService = userRetrofit.create(NotificationService::class.java)
     val fcmService: FcmService = userRetrofit.create(FcmService::class.java)
+    val medicineDetailService: MedicineDetailService = userRetrofit.create(MedicineDetailService::class.java)
+    val conflictMedicineDetailService: ConflictMedicineDetailService =
+        userRetrofit.create(ConflictMedicineDetailService::class.java)
 }

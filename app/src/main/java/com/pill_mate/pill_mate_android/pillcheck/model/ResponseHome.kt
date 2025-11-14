@@ -24,6 +24,7 @@ data class ResponseHome(
         val mealTime: Int,
         val mealUnit: String,
         val eatCheck: Boolean,
+        val itemSeq: Long,
         val medicineName: String,
         val medicineImage: String
     )
