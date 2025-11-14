@@ -244,6 +244,15 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <ImageView
+                    android:id="@+id/iv_medicine_conflict_tooltip"
+                    android:layout_width="220dp"
+                    android:layout_height="78dp"
+                    android:src="@drawable/img_medicinedetail_tooltip"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toEndOf="@+id/btn_faq1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <!-- 효능군 중복 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_efficiency_overlap"
@@ -443,7 +452,6 @@
                         app:layout_constraintTop_toBottomOf="@id/tag_3" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
