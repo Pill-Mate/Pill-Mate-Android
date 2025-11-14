@@ -9,6 +9,7 @@ import com.pill_mate.pill_mate_android.login.model.OnBoardingService
 import com.pill_mate.pill_mate_android.login.model.RefreshTokenService
 import com.pill_mate.pill_mate_android.medicine_registration.api.MedicineRegistrationService
 import com.pill_mate.pill_mate_android.notice.NotificationService
+import com.pill_mate.pill_mate_android.pillcheck.model.ConflictMedicineDetailService
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeService
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckService
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineDetailService
@@ -77,4 +78,6 @@ object ServiceCreator { // 서버 URL
     val notificationService: NotificationService = userRetrofit.create(NotificationService::class.java)
     val fcmService: FcmService = userRetrofit.create(FcmService::class.java)
     val medicineDetailService: MedicineDetailService = userRetrofit.create(MedicineDetailService::class.java)
+    val conflictMedicineDetailService: ConflictMedicineDetailService =
+        userRetrofit.create(ConflictMedicineDetailService::class.java)
 }

@@ -1,22 +1,21 @@
 package com.pill_mate.pill_mate_android.pillsearch
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
+import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResult
-import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
-import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
 import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import retrofit2.Call
@@ -24,8 +23,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ConflictPillDetailBottomSheet(
-    private val bottomSheet: ConflictPillSearchBottomSheetFragment,
-    private val medicineItem: SearchMedicineItem
+    private val bottomSheet: ConflictPillSearchBottomSheetFragment, private val medicineItem: SearchMedicineItem
 ) : BottomSheetDialogFragment() {
 
     private var _binding: FragmentBottomSheetPillDetailBinding? = null
@@ -36,8 +34,7 @@ class ConflictPillDetailBottomSheet(
     override fun getTheme(): Int = R.style.RoundedBottomSheetDialogTheme
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBottomSheetPillDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -51,15 +48,13 @@ class ConflictPillDetailBottomSheet(
         binding.tvPillEntp.text = medicineItem.entpName
 
         if (!medicineItem.itemImage.isNullOrEmpty()) {
-            Glide.with(requireContext())
-                .load(medicineItem.itemImage)
-                .transform(RoundedCorners(20))
+            Glide.with(requireContext()).load(medicineItem.itemImage).transform(RoundedCorners(20))
                 .into(binding.ivPillImage)
         } else {
             binding.ivPillImage.setImageResource(R.drawable.img_default)
         }
 
-        binding.btnYes.setOnClickListener { // 맞아요 버튼 클릭이벤트
+        binding.btnYes.setOnClickListener { // 약물 상세 페이지로 이동 (충돌X)
             //충돌 검사할 약물선택 확인 버튼 클릭이벤트
             amplitude.track(
                 "click_confirm_conflict_check_pill_button",
@@ -81,13 +76,13 @@ class ConflictPillDetailBottomSheet(
         ServiceCreator.medicineRegistrationService.checkConflict(itemSeq)
             .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(
-                    call: Call<ConflictCheckResponse>,
-                    response: Response<ConflictCheckResponse>
+                    call: Call<ConflictCheckResponse>, response: Response<ConflictCheckResponse>
                 ) {
                     val result = response.body()?.result
                     if (result != null) {
                         handleConflictResult(result) // 통합 응답 처리 함수로 분기
                     } else {
+                        moveToMedicineDetailActivity()
                         resetProcessing()
                         dismiss()
                     }
@@ -113,17 +108,35 @@ class ConflictPillDetailBottomSheet(
         // 중복 성분이 있으면 다이얼로그 표시
         if (result.conflictWithUserMeds != null) {
             val dialog = DuplicateDialogFragment(
-                onConfirm = { dismiss() },
-                showMessage = false
+                onConfirm = {
+                    moveToConflictMedicineDetailActivity()
+                    resetProcessing()
+                }, showMessage = false
             )
             dialog.show(parentFragmentManager, "DuplicateDialog")
-            resetProcessing()
             return
         }
 
-        // 병용금기/효능군중복 결과 화면 이동 <- 여기서 상세화면으로 넘어가면 될것 같습니다요
-
+        moveToMedicineDetailActivity()
         resetProcessing()
+    }
+
+    private fun moveToConflictMedicineDetailActivity() { // 약물 상세 페이지로 이동(충돌O)
+        val context = binding.root.context
+        val intent = Intent(context, MedicineDetailActivity::class.java)
+        intent.putExtra("medicineId", medicineItem.itemSeq)
+        intent.putExtra("isConflictMode", true)
+        context.startActivity(intent)
+        dismiss()
+    }
+
+    private fun moveToMedicineDetailActivity() { // 약물 상세 페이지로 이동(충돌X)
+        val context = binding.root.context
+        val intent = Intent(context, MedicineDetailActivity::class.java)
+        intent.putExtra("medicineId", medicineItem.itemSeq)
+        intent.putExtra("isConflictMode", false)
+        context.startActivity(intent)
+        dismiss()
     }
 
     private fun resetProcessing() {
@@ -138,8 +151,7 @@ class ConflictPillDetailBottomSheet(
 
     companion object {
         fun newInstance(
-            bottomSheet: ConflictPillSearchBottomSheetFragment,
-            pillItem: SearchMedicineItem
+            bottomSheet: ConflictPillSearchBottomSheetFragment, pillItem: SearchMedicineItem
         ): ConflictPillDetailBottomSheet {
             return ConflictPillDetailBottomSheet(bottomSheet, pillItem)
         }
