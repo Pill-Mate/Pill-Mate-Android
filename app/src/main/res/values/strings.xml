@@ -160,7 +160,7 @@
     <!-- fragment_duplicate_dialog -->
     <string name="duplicate_title">이미 복용 중인 약물이에요</string>
     <string name="duplicate_description">현재 복용 중인 약물은\n중복으로 등록할 수 없어요</string>
-    <string name="duplicate_btn_confirm">돌아가기</string>
+    <string name="duplicate_btn_confirm">확인</string>
 
     <!-- fragment_poly_pharmacy_warning_dialog -->
     <string name="poly_pharmacy_warning_title">5개 이상 약물을 복용 중이신가요?</string>
