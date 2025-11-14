@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.pillcheck.view.adapter
 
+import android.content.Intent
 import android.os.Build.VERSION_CODES
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.GlobalApplication
+import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemMedicineBinding
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
@@ -61,6 +63,14 @@ class MedicineAdapter(
             }
             binding.itemMedicine.setBackgroundResource(backgroudResId)
             binding.itemLine.visibility = if (medicines.size >= 2 && !isLastItem) View.VISIBLE else View.INVISIBLE
+
+            // 아이템 클릭 시 상세 페이지로 이동
+            binding.root.setOnClickListener {
+                val context = binding.root.context
+                val intent = Intent(context, MedicineDetailActivity::class.java)
+                intent.putExtra("medicineId", medicine.itemSeq)
+                context.startActivity(intent)
+            }
 
             // 체크박스 상태 및 클릭 이벤트 설정
             binding.cbCheck.setOnClickListener {

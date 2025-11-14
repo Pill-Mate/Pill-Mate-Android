@@ -12,8 +12,8 @@ inline fun <T> Call<BaseResponse<T>>.fetch(crossinline onSuccess: (T) -> Unit) {
     enqueue(object : Callback<BaseResponse<T>> {
         override fun onResponse(call: Call<BaseResponse<T>>, response: Response<BaseResponse<T>>) {
             response.body()?.onSuccess { onSuccess(it) }?.onFailure { code, message ->
-                    Log.e("API 실패", "code: $code, message: $message")
-                }
+                Log.e("API 실패", "code: $code, message: $message")
+            }
         }
 
         override fun onFailure(call: Call<BaseResponse<T>>, t: Throwable) {
