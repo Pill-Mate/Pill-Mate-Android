@@ -1,15 +1,14 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:gravity="center_horizontal"
     android:minWidth="320dp"
     android:minHeight="254dp"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
     android:paddingVertical="20dp"
-    android:background="@drawable/bg_dialog"
-    android:gravity="center_horizontal"
     tools:context=".medicine_registration.RegistrationExitDialogFragment">
 
     <ImageView
@@ -21,39 +20,52 @@
 
     <TextView
         android:id="@+id/tv_title"
+        style="@style/T2_B20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/duplicate_title"
-        android:textColor="@color/black"
-        style="@style/T2_B20"
         android:layout_marginBottom="8dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="@string/duplicate_title"
+        android:textColor="@color/black" />
 
     <TextView
         android:id="@+id/tv_message"
+        style="@style/H3_RG16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/duplicate_description"
-        android:textColor="@color/black"
-        style="@style/H3_RG16"
-        android:gravity="center" />
+        android:textColor="@color/black" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_confirm"
+            android:id="@+id/btn_back"
+            style="@style/H2_SB16"
             android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:text="@string/duplicate_btn_confirm"
-            style="@style/H2_SB16"
+            android:background="@drawable/bg_btn_gray_2_stoke"
             android:stateListAnimator="@null"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_btn_pink_1" />
+            android:text="@string/duplicate_btn_back"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/btn_detail"
+            style="@style/H2_SB16"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_pink_1"
+            android:stateListAnimator="@null"
+            android:text="@string/duplicate_btn_detail"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>
