@@ -49,7 +49,7 @@ class ConflictPillDetailBottomSheet(
 
         if (!medicineItem.itemImage.isNullOrEmpty()) {
             Glide.with(requireContext()).load(medicineItem.itemImage).transform(RoundedCorners(20))
-                .into(binding.ivPillImage)
+                .placeholder(R.drawable.img_default).into(binding.ivPillImage)
         } else {
             binding.ivPillImage.setImageResource(R.drawable.img_default)
         }
@@ -107,17 +107,17 @@ class ConflictPillDetailBottomSheet(
 
         // 중복 성분이 있으면 다이얼로그 표시
         if (result.conflictWithUserMeds != null) {
-            val dialog = DuplicateDialogFragment(
-                onConfirm = {
-                    moveToConflictMedicineDetailActivity()
-                    resetProcessing()
-                }, showMessage = false
-            )
+            val dialog = DuplicateDialogFragment(onConfirm = {
+                moveToConflictMedicineDetailActivity()
+                resetProcessing()
+            }, showMessage = false, onCancel = {
+                resetProcessing()
+            })
             dialog.show(parentFragmentManager, "DuplicateDialog")
             return
         }
 
-        moveToMedicineDetailActivity()
+        moveToConflictMedicineDetailActivity()
         resetProcessing()
     }
 

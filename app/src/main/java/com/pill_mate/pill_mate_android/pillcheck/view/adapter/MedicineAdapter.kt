@@ -69,6 +69,7 @@ class MedicineAdapter(
                 val context = binding.root.context
                 val intent = Intent(context, MedicineDetailActivity::class.java)
                 intent.putExtra("medicineId", medicine.itemSeq)
+                intent.putExtra("isConflictMode", false)
                 context.startActivity(intent)
             }
 
