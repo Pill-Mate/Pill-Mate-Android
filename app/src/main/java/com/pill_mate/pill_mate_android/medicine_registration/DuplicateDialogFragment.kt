@@ -11,7 +11,8 @@ import com.pill_mate.pill_mate_android.databinding.FragmentDuplicateDialogBindin
 
 class DuplicateDialogFragment(
     private val onConfirm: () -> Unit,
-    private val showMessage: Boolean = true
+    private val showMessage: Boolean = true,
+    private val onCancel: (() -> Unit)? = null
 ) : DialogFragment() {
 
     private var _binding: FragmentDuplicateDialogBinding? = null
@@ -25,8 +26,13 @@ class DuplicateDialogFragment(
         // 메시지 표시 여부에 따라 visibility 조정
         binding.tvMessage.visibility = if (showMessage) View.VISIBLE else View.GONE
 
-        binding.btnConfirm.setOnClickListener {
+        binding.btnDetail.setOnClickListener {
             onConfirm()
+            dismiss()
+        }
+
+        binding.btnBack.setOnClickListener {
+            onCancel?.invoke()
             dismiss()
         }
 
@@ -40,8 +46,7 @@ class DuplicateDialogFragment(
         super.onStart()
         dialog?.window?.apply {
             setLayout(
-                (resources.displayMetrics.widthPixels * 0.8).toInt(),
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                (resources.displayMetrics.widthPixels * 0.8).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT
             )
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }

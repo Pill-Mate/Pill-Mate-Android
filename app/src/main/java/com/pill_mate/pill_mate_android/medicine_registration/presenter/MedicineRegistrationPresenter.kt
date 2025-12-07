@@ -33,10 +33,12 @@ class MedicineRegistrationPresenter(
             ),
             RegistrationData(
                 "시간대",
-                if (schedule.meal_time > 0 && schedule.meal_unit.isNotEmpty() && currentStep > 4)
-                    "${schedule.meal_unit} ${schedule.meal_time}분"
+                if (schedule.meal_time >= 0 && schedule.meal_unit.isNotEmpty() && currentStep > 4)
+                    "${schedule.meal_unit} " +
+                            if (schedule.meal_time == 0) "즉시" else "${schedule.meal_time}분"
                 else ""
             )
+
             ,
             RegistrationData(
                 "투약량",

@@ -1,11 +1,16 @@
 package com.pill_mate.pill_mate_android.pillcheck.view.adapter
 
+import android.content.Intent
+import android.os.Build.VERSION_CODES
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.pill_mate.pill_mate_android.GlobalApplication
+import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemMedicineBinding
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
@@ -21,6 +26,7 @@ class MedicineAdapter(
         return MedicineViewHolder(binding)
     }
 
+    @RequiresApi(VERSION_CODES.O)
     override fun onBindViewHolder(holder: MedicineViewHolder, position: Int) {
         val isLastItem = position == medicines.size - 1 // 마지막 아이템 여부 확인
         holder.bind(medicines[position], isLastItem)
@@ -30,6 +36,7 @@ class MedicineAdapter(
 
     inner class MedicineViewHolder(private val binding: ItemMedicineBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        @RequiresApi(VERSION_CODES.O)
         fun bind(medicine: Data, isLastItem: Boolean) {
             binding.tvMedicineName.text = medicine.medicineName
             binding.cbCheck.isChecked = medicine.eatCheck
@@ -57,11 +64,30 @@ class MedicineAdapter(
             binding.itemMedicine.setBackgroundResource(backgroudResId)
             binding.itemLine.visibility = if (medicines.size >= 2 && !isLastItem) View.VISIBLE else View.INVISIBLE
 
+            // 아이템 클릭 시 상세 페이지로 이동
+            binding.root.setOnClickListener {
+                val context = binding.root.context
+                val intent = Intent(context, MedicineDetailActivity::class.java)
+                intent.putExtra("medicineId", medicine.itemSeq)
+                intent.putExtra("isConflictMode", false)
+                context.startActivity(intent)
+            }
+
             // 체크박스 상태 및 클릭 이벤트 설정
             binding.cbCheck.setOnClickListener {
                 val newCheckState = binding.cbCheck.isChecked
                 val checkDataList = listOf(MedicineCheckData(medicine.medicineScheduleId, newCheckState))
                 onCheckedChange(checkDataList)
+
+                // 복약 체크 이벤트 트래킹 추가
+                val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
+                GlobalApplication.amplitude.track(
+                    "btn_intake_check_click", mapOf(
+                        "date" to dateKey,
+                        "medicine_id" to medicine.medicineScheduleId,
+                        "checked" to newCheckState,
+                    )
+                )
             }
         }
     }

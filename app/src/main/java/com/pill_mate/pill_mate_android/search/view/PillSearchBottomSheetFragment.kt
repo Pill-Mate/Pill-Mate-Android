@@ -26,10 +26,15 @@ import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.pillsearch.SearchMedicineAdapter
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
+import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -47,6 +52,10 @@ class PillSearchBottomSheetFragment(
     private lateinit var adapter: SearchMedicineAdapter
     private var currentQuery: String = "" // 현재 검색어 저장
     private val searchQueryFlow = MutableStateFlow("")
+
+    private var loaderJob: Job? = null
+    private var searchStartTime = 0L
+    private val loadingDelayMs = 300L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -159,13 +168,18 @@ class PillSearchBottomSheetFragment(
 
         lifecycleScope.launch {
             searchQueryFlow
-                .debounce(300) // 300ms 동안 추가 입력이 없을 때만 실행
-                .distinctUntilChanged() // 같은 검색어 연속 입력 방지
-                .filter { it.isNotEmpty() } // 빈 검색어는 처리 안 함
-                .collect { query ->
-                    val underlineColor = if (query.isNotEmpty()) R.color.main_blue_1 else R.color.black
-                    updateUnderline(underlineColor)
-                    pillSearchPresenter.searchMedicines(query) // 최적화된 검색 실행
+                .debounce(300)
+                .distinctUntilChanged()
+                .filter { it.isNotEmpty() }
+                .collectLatest { query ->
+                    loaderJob?.cancel()
+                    loaderJob = launch {
+                        delay(loadingDelayMs)
+                        binding.showLoading()
+                    }
+
+                    searchStartTime = System.currentTimeMillis()
+                    pillSearchPresenter.searchMedicines(query)
                 }
         }
     }
@@ -180,6 +194,9 @@ class PillSearchBottomSheetFragment(
     }
 
     override fun showMedicines(medicines: List<SearchMedicineItem>) {
+        loaderJob?.cancel()
+        binding.hideLoading()
+        
         if (medicines.isNotEmpty()) {
             binding.rvSuggestion.visibility = View.VISIBLE
             adapter.updateItems(medicines, currentQuery)

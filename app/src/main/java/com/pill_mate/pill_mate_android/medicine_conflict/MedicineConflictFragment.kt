@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentMedicineConflictBinding
@@ -79,11 +80,20 @@ class MedicineConflictFragment : Fragment() {
 
         setupAdapters()
 
+        //충돌약물 버튼 클릭 이벤트
         binding.btnSkip.setOnClickListener {
+            amplitude.track(
+                "click_skip_conflict_check_button",
+                mapOf("screen_name" to "screen_medicine_conflict")
+            )
             findNavController().navigate(R.id.action_medicineConflictFragment_to_stepThreeFragment)
         }
 
         binding.btnFinish.setOnClickListener {
+            amplitude.track(
+                "click_finish_registration_button",
+                mapOf("screen_name" to "screen_medicine_conflict")
+            )
             clearRegistrationData()
         }
 

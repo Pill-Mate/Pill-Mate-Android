@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".setting.view.SettingActivity">
 
+    <include layout="@layout/view_progress_indicator" />
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"

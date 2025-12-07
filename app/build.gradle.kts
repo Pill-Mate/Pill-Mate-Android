@@ -19,8 +19,8 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 35
-        versionCode = 8
-        versionName = "1.2.3"
+        versionCode = 9
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -38,6 +38,9 @@ android {
         )
         buildConfigField(
             "String", "SERVICE_API_KEY", "\"${properties.getProperty("SERVICE_API_KEY")}\""
+        )
+        buildConfigField(
+            "String", "AMPLITUDE_API_KEY", properties.getProperty("AMPLITUDE_API_KEY")
         )
     }
 
@@ -129,9 +132,12 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1") // Glide
     kapt("com.github.bumptech.glide:compiler:4.15.1")
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.security:security-crypto:1.1.0-alpha06") //EncryptedSharedPreferences
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
+    implementation("com.amplitude:analytics-android:1.+") //amplitude
+    implementation("com.amplitude:plugin-session-replay-android:0.20.14")
 }

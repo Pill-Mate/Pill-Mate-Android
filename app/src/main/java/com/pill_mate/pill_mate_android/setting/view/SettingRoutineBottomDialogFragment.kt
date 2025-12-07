@@ -21,6 +21,7 @@ import com.pill_mate.pill_mate_android.util.expandTouchArea
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.pill_mate.pill_mate_android.util.SleepBeforeWakeToastUtil as TimeUtil
 
 class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRoutine? = null) :
     BottomSheetDialogFragment() {
@@ -47,6 +48,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
         setupDropDownButtonListeners()
         onCloseButtonClick()
         onDoneButtonClick()
+        validateTimes(false)
     }
 
     private fun updateUI(responseRoutine: ResponseRoutine) {
@@ -265,6 +267,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
         val hour = binding.hrsPicker1.value
         val min = minValues[binding.minPicker1.value]
         binding.tvWakeupTime.text = "$amPm $hour:$min"
+        validateTimes(true)
     }
 
     private fun updateSleepTime() {
@@ -272,6 +275,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
         val hour = binding.hrsPicker2.value
         val min = minValues[binding.minPicker2.value]
         binding.tvSleepTime.text = "$amPm $hour:$min"
+        validateTimes(true)
     }
 
     private fun updateBreakfastTime() {
@@ -303,6 +307,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
 
     private fun onDoneButtonClick() {
         binding.btnDone.setOnClickListener {
+            if (!validateTimes(true)) return@setOnClickListener
             val routineData = RoutineData(
                 wakeupTime = getFormattedTime(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1),
                 bedTime = getFormattedTime(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2),
@@ -383,4 +388,18 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
             e.printStackTrace()
         }
     }
+
+    private fun validateTimes(showToast: Boolean): Boolean {
+        val wake = TimeUtil.toMinutesFromPickers(binding.hrsPicker1, binding.minPicker1, binding.amPmPicker1, minValues)
+        val sleep =
+            TimeUtil.toMinutesFromPickers(binding.hrsPicker2, binding.minPicker2, binding.amPmPicker2, minValues)
+        val isValid = sleep >= wake
+
+        TimeUtil.setEnabledStyle(
+            binding.btnDone, isValid, R.color.main_blue_1, R.color.gray_3, R.color.white, R.color.black
+        )
+        if (!isValid && showToast) TimeUtil.showBottomToast(requireActivity())
+        return isValid
+    }
+
 }

@@ -22,6 +22,7 @@ import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.ActivitySettingBinding
+import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
 import com.pill_mate.pill_mate_android.login.model.KaKaoTokenData
 import com.pill_mate.pill_mate_android.login.view.KakaoLoginActivity
@@ -33,6 +34,7 @@ import com.pill_mate.pill_mate_android.setting.view.dialog.ConfirmDialogInterfac
 import com.pill_mate.pill_mate_android.setting.view.dialog.LogoutDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SettingRoutineDialog
 import com.pill_mate.pill_mate_android.setting.view.dialog.SignoutDialog
+import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.PermissionUtil.isSystemNotificationPermissionGranted
 import com.pill_mate.pill_mate_android.util.expandTouchArea
 import com.pill_mate.pill_mate_android.util.loadNativeAd
@@ -89,30 +91,35 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun fetchRoutineData(onSuccess: (ResponseRoutine) -> Unit) {
+        binding.showLoading()
         val call = ServiceCreator.getRoutineService.getRoutineData()
 
         call.enqueue(object : Callback<BaseResponse<ResponseRoutine>> {
             override fun onResponse(
                 call: Call<BaseResponse<ResponseRoutine>>, response: Response<BaseResponse<ResponseRoutine>>
             ) {
+                binding.hideLoading()
                 response.body()?.onSuccess { onSuccess(it) }?.onFailure { code, message ->
                     Log.e("Routine API 실패", "code: $code, message: $message")
                 }
             }
 
             override fun onFailure(call: Call<BaseResponse<ResponseRoutine>>, t: Throwable) {
+                binding.hideLoading()
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
     }
 
     private fun fetchUserInfoData() {
+        binding.showLoading()
         val call = ServiceCreator.settingService.getUserInfoData()
 
         call.enqueue(object : Callback<BaseResponse<ResponseUserInfo>> {
             override fun onResponse(
                 call: Call<BaseResponse<ResponseUserInfo>>, response: Response<BaseResponse<ResponseUserInfo>>
             ) {
+                binding.hideLoading()
                 response.body()?.onSuccess { userInfo ->
                     with(binding) {
                         tvNickname.text = "${userInfo.userName} 님"
@@ -129,6 +136,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             override fun onFailure(call: Call<BaseResponse<ResponseUserInfo>>, t: Throwable) {
+                binding.hideLoading()
                 Log.e("네트워크 오류", "네트워크 오류: ${t.message}")
             }
         })
@@ -211,10 +219,12 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     // 회원 탈퇴 api 호출
     private fun sendKakaoTokenData(token: KaKaoTokenData) {
+        binding.showLoading()
         val call: Call<Void> = ServiceCreator.signOutService.sendTokenData(token)
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                binding.hideLoading()
                 if (response.isSuccessful) {
                     GlobalApplication.logout(this@SettingActivity)
                     Log.i(TAG, "서버에서 카카오 연결 끊기 성공")
@@ -226,6 +236,7 @@ class SettingActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                binding.hideLoading()
                 Log.e(TAG, "서버 연결 실패", t)
             }
         })

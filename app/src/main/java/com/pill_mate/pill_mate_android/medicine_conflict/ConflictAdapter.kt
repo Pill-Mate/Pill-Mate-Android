@@ -61,7 +61,7 @@ class ConflictAdapter(
 
             val warning = when (item) {
                 is UsjntTabooResponse -> item.prohbtContent
-                is EfcyDplctResponse -> item.effectName
+                is EfcyDplctResponse -> "${item.effectName} 효능군 중복" // 텍스트 추가
                 else -> ""
             }
 

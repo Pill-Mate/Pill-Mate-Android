@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.pilledit.view
 
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -12,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -22,6 +24,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.gson.Gson
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
@@ -84,6 +87,7 @@ class MedicineEditActivity : AppCompatActivity() {
     private var interstitialAd: InterstitialAd? = null
     private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
 
+    @RequiresApi(VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMedicineEditBinding.inflate(layoutInflater)
@@ -91,6 +95,16 @@ class MedicineEditActivity : AppCompatActivity() {
 
         scheduleId = intent.getLongExtra("scheduleId", -1)
         Log.d("scheduleId", "$scheduleId")
+
+        // 약물 수정 화면 진입 이벤트 로깅
+        if (scheduleId != null && scheduleId != -1L) {
+            val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
+            GlobalApplication.amplitude.track(
+                "screen_medicine_edit", mapOf(
+                    "date" to dateKey
+                )
+            )
+        }
 
         fetchInitialData()
         setupClickListeners()
@@ -372,8 +386,7 @@ class MedicineEditActivity : AppCompatActivity() {
             }
 
             binding.layoutRoot.setOnTouchListener { v, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    // 키보드 숨기기
+                if (event.action == MotionEvent.ACTION_DOWN) { // 키보드 숨기기
                     currentFocus?.clearFocus()
                     KeyboardUtil.hideKeyboard(this@MedicineEditActivity, v)
 
