@@ -43,12 +43,6 @@ class PillMateFcmService : FirebaseMessagingService() {
 
         Log.d(TAG, "FCM 메시지 수신 - title: $title, message: $message")
 
-        // 복약 퍼널 1단계: 알림 수신
-        val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
-        GlobalApplication.amplitude.track(
-            "funnel_alarm_received", mapOf("date" to dateKey)
-        )
-
         showNotification(title, message)
     }
 
@@ -56,7 +50,6 @@ class PillMateFcmService : FirebaseMessagingService() {
     private fun showNotification(title: String, message: String) {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            putExtra("source", "push")
         }
 
         val pendingIntent = PendingIntent.getActivity(

@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
-import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R.id
 import com.pill_mate.pill_mate_android.databinding.ActivityMainBinding
 import com.pill_mate.pill_mate_android.main.contract.MainContract
@@ -34,9 +33,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         setupPlusButtonClickListener()
         binding.bottomNavMain.itemIconTintList = null // 아이콘 원본 색상 적용
         binding.bottomNavMain.selectedItemId = id.menu_home // 홈 메뉴를 기본 탭으로 지정
-
-        // 복약 퍼널 2단계: 알림 클릭 -> 앱 진입
-        trackPushClickIfNeeded(intent)
 
         presenter.onCreate()
 
@@ -96,23 +92,5 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     fun showBottomNav() {
         binding.bottomNavMain.visibility = View.VISIBLE
         binding.floatingBtnAdd.visibility = View.VISIBLE
-    }
-
-    // FLAG_ACTIVITY_SINGLE_TOP 사용 중이므로 재진입 시 onNewIntent로도 처리
-    @RequiresApi(VERSION_CODES.O)
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        trackPushClickIfNeeded(intent)
-    }
-
-    @RequiresApi(VERSION_CODES.O)
-    private fun trackPushClickIfNeeded(intent: Intent?) {
-        if (intent?.getStringExtra("source") == "push") {
-            val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
-            GlobalApplication.amplitude.track(
-                "funnel_alarm_click", mapOf("date" to dateKey)
-            )
-        }
     }
 }
