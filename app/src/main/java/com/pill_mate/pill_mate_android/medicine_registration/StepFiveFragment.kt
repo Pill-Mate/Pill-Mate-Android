@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepFiveBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
@@ -38,11 +37,6 @@ class StepFiveFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 약물 등록 퍼널 5단계 진입
-        amplitude.track(
-            "funnel_registration_step_viewed",
-            mapOf("step_number" to 5)
-        )
 
         // 현재 등록 진행중 데이터 적용
         val currentSchedule = registrationPresenter.getCurrentSchedule()

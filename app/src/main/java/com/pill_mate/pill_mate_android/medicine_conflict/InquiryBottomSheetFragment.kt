@@ -9,7 +9,6 @@ import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetInquiryBin
 import com.pill_mate.pill_mate_android.medicine_registration.model.Hospital
 import com.pill_mate.pill_mate_android.medicine_registration.model.Pharmacy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 
 class InquiryBottomSheetFragment(
     private val pharmacy: Pharmacy,
@@ -41,11 +40,6 @@ class InquiryBottomSheetFragment(
         binding.tvPharmacyName.text = pharmacy.pharmacyName
         binding.tvPharmacyAddress.text = pharmacy.pharmacyAddress
         binding.layoutCallPharmacy.setOnClickListener {
-            // Amplitude: '약국 전화걸기' 버튼 클릭 이벤트 로깅
-            amplitude.track(
-                "click_call_pharmacy_button",
-                mapOf("screen_name" to "screen_inquiry_bottom_sheet")
-            )
 
             // 기존 약국 통화 기능 호출
             makeCall(pharmacy.pharmacyPhone)

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -55,11 +54,7 @@ class ConflictPillDetailBottomSheet(
         }
 
         binding.btnYes.setOnClickListener { // 약물 상세 페이지로 이동 (충돌X)
-            //충돌 검사할 약물선택 확인 버튼 클릭이벤트
-            amplitude.track(
-                "click_confirm_conflict_check_pill_button",
-                mapOf("screen_name" to "screen_conflict_pill_detail_bottom_sheet")
-            )
+
             if (!isProcessing) { // 버튼 클릭 딱 한번만 되게 하는 if문
                 isProcessing = true
                 binding.btnYes.isEnabled = false

@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepSixBinding
 import com.pill_mate.pill_mate_android.medicine_registration.model.BottomSheetType
@@ -42,11 +41,6 @@ class StepSixFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 약물 등록 퍼널 6단계 진입
-        amplitude.track(
-            "funnel_registration_step_viewed",
-            mapOf("step_number" to 6)
-        )
 
         val currentSchedule = registrationPresenter.getCurrentSchedule()
         selectedDosageUnit = currentSchedule.eat_unit.ifEmpty { getString(R.string.dosage_unit_tablet) }

@@ -78,16 +78,6 @@ class MedicineAdapter(
                 val newCheckState = binding.cbCheck.isChecked
                 val checkDataList = listOf(MedicineCheckData(medicine.medicineScheduleId, newCheckState))
                 onCheckedChange(checkDataList)
-
-                // 복약 체크 이벤트 트래킹 추가
-                val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
-                GlobalApplication.amplitude.track(
-                    "btn_intake_check_click", mapOf(
-                        "date" to dateKey,
-                        "medicine_id" to medicine.medicineScheduleId,
-                        "checked" to newCheckState,
-                    )
-                )
             }
         }
     }
