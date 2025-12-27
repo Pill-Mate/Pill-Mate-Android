@@ -3,9 +3,12 @@ import java.util.*
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
     id("kotlin-parcelize")
-    id("com.google.gms.google-services") // firebase
     id("kotlin-kapt")
+
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val properties = Properties()
