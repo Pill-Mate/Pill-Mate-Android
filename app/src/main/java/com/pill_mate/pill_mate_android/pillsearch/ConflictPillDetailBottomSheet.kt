@@ -9,6 +9,11 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
+import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
@@ -31,6 +36,8 @@ class ConflictPillDetailBottomSheet(
     private var isProcessing = false
 
     override fun getTheme(): Int = R.style.RoundedBottomSheetDialogTheme
+
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -64,6 +71,13 @@ class ConflictPillDetailBottomSheet(
 
         binding.btnNo.setOnClickListener {
             dismiss()
+        }
+    }
+
+    // [로그] 약물 상세 화면 진입 (충돌 여부 구분)
+    private fun logMedicineDetailView(hasConflict: Boolean) {
+        firebaseAnalytics.logEvent("view_search_detail") {
+            param("is_conflict", hasConflict.toString())
         }
     }
 
@@ -117,6 +131,10 @@ class ConflictPillDetailBottomSheet(
     }
 
     private fun moveToConflictMedicineDetailActivity() { // 약물 상세 페이지로 이동(충돌O)
+
+        //[로그] 약물 상세 화면 진입 구분 (충돌O)
+        logMedicineDetailView(hasConflict = true)
+
         val context = binding.root.context
         val intent = Intent(context, MedicineDetailActivity::class.java)
         intent.putExtra("medicineId", medicineItem.itemSeq)
@@ -126,6 +144,9 @@ class ConflictPillDetailBottomSheet(
     }
 
     private fun moveToMedicineDetailActivity() { // 약물 상세 페이지로 이동(충돌X)
+        //[로그] 약물 상세 화면 진입 구분 (충돌X)
+        logMedicineDetailView(hasConflict = false)
+
         val context = binding.root.context
         val intent = Intent(context, MedicineDetailActivity::class.java)
         intent.putExtra("medicineId", medicineItem.itemSeq)

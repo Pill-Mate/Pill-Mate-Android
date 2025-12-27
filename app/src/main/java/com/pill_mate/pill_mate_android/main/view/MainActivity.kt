@@ -11,6 +11,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.pill_mate.pill_mate_android.R.id
 import com.pill_mate.pill_mate_android.databinding.ActivityMainBinding
 import com.pill_mate.pill_mate_android.main.contract.MainContract
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var presenter: MainPresenter
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
     @RequiresApi(VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private fun setupPlusButtonClickListener() {
         binding.floatingBtnAdd.setOnClickListener { // 약물 등록 액티비티로 이동
             presenter.onPlusButtonClicked()
+            firebaseAnalytics.logEvent("click_add_button", null) // [로그] 약물 등록 진입
         }
     }
 

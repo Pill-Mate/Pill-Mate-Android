@@ -12,6 +12,9 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.util.loadNativeAd
@@ -23,6 +26,7 @@ class StepElevenFragment : Fragment() {
 
     private var interstitialAd: InterstitialAd? = null
     private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -44,6 +48,7 @@ class StepElevenFragment : Fragment() {
 
     private fun setupButton() {
         binding.btnHome.setOnClickListener {
+            firebaseAnalytics.logEvent("complete_add_process", null) // [로그] 약물 등록 완료
 
             if (interstitialAd != null) {
                 interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {

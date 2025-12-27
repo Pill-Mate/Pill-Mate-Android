@@ -9,7 +9,10 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.pill_mate.pill_mate_android.GlobalApplication
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemMedicineBinding
@@ -20,6 +23,18 @@ import com.pill_mate.pill_mate_android.pillcheck.view.adapter.MedicineAdapter.Me
 class MedicineAdapter(
     private val medicines: List<Data>, private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<MedicineViewHolder>() {
+
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
+
+    // [로그] 체크 완료(ON)일 때만 로그 전송
+    private fun logMedicationCheck(isCheckedNow: Boolean, isAllSelection: Boolean, medicationCount: Int) {
+        if (isCheckedNow) {
+            firebaseAnalytics.logEvent("check_medication") {
+                param("is_all_checked", isAllSelection.toString())
+                param("check_count", medicationCount.toLong())
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedicineViewHolder {
         val binding = ItemMedicineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -74,10 +89,21 @@ class MedicineAdapter(
             }
 
             // 체크박스 상태 및 클릭 이벤트 설정
-            binding.cbCheck.setOnClickListener {
+            binding.cbCheck.setOnClickListener { // [로그] 클릭 전/후 상태를 비교해서 OFF -> ON일 때만 로그 전송
+                val wasChecked = medicine.eatCheck
+
                 val newCheckState = binding.cbCheck.isChecked
                 val checkDataList = listOf(MedicineCheckData(medicine.medicineScheduleId, newCheckState))
                 onCheckedChange(checkDataList)
+
+                if (!wasChecked && newCheckState) {
+                    val checkedCountNow = medicines.count { it.eatCheck } + 1
+
+                    logMedicationCheck(
+                        isCheckedNow = true, isAllSelection = false, // 개별 체크
+                        medicationCount = checkedCountNow
+                    )
+                }
             }
         }
     }

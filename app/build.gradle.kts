@@ -138,6 +138,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
-    implementation("com.amplitude:analytics-android:1.+") //amplitude
-    implementation("com.amplitude:plugin-session-replay-android:0.20.14")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
 }
