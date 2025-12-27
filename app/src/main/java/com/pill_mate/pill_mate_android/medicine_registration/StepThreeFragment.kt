@@ -1,12 +1,10 @@
 package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepThreeBinding
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
@@ -43,11 +41,6 @@ class StepThreeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 약물 등록 퍼널 1단계 진입
-        amplitude.track(
-            "funnel_registration_step_viewed",
-            mapOf("step_number" to 3)
-        )
 
         setupDaySelection()
 

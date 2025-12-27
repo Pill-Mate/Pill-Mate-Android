@@ -5,6 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import com.pill_mate.pill_mate_android.databinding.ItemTimeHeaderBinding
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
 import com.pill_mate.pill_mate_android.pillcheck.model.ResponseHome.Data
@@ -14,6 +18,18 @@ import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeTimeAdapter.
 class IntakeTimeAdapter(
     private val timeGroups: List<TimeGroup>, private val onCheckedChange: (List<MedicineCheckData>) -> Unit
 ) : RecyclerView.Adapter<IntakeTimeViewHolder>() {
+
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
+
+    // [로그] 체크 완료(ON)일 때만 전체체크 로그 전송
+    private fun logMedicationCheck(isCheckedNow: Boolean, isAllSelection: Boolean, medicationCount: Int) {
+        if (isCheckedNow) {
+            firebaseAnalytics.logEvent("check_medication") {
+                param("is_all_checked", isAllSelection.toString())
+                param("check_count", medicationCount.toLong())
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeTimeViewHolder {
         val binding = ItemTimeHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -49,6 +65,15 @@ class IntakeTimeAdapter(
 
             binding.btnCheckAll.setOnClickListener {
                 val allChecked = timeGroup.medicines.all { it.eatCheck }
+                val willBeChecked = !allChecked
+
+                // [로그] 전체체크로 ON이 되는 경우에만 로그 전송
+                if (willBeChecked) {
+                    logMedicationCheck(
+                        isCheckedNow = true, isAllSelection = true, medicationCount = timeGroup.medicines.size
+                    )
+                }
+
                 updateCheckAllButtonText(timeGroup)
 
                 val updatedCheckList = timeGroup.medicines.map { medicine ->

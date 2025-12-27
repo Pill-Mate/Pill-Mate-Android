@@ -12,7 +12,9 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.pill_mate.pill_mate_android.databinding.FragmentStepElevenBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
 import com.pill_mate.pill_mate_android.util.loadNativeAd
@@ -24,6 +26,7 @@ class StepElevenFragment : Fragment() {
 
     private var interstitialAd: InterstitialAd? = null
     private val adUnitId = "ca-app-pub-4392518639765691/2440794028"
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -35,12 +38,6 @@ class StepElevenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 약물 등록 퍼널 11단계 진입
-        amplitude.track(
-            "funnel_registration_step_viewed",
-            mapOf("step_number" to 11)
-        )
-
         // 광고 요청
         loadNativeAd(requireContext(), binding.nativeAdContainer)
 
@@ -51,8 +48,7 @@ class StepElevenFragment : Fragment() {
 
     private fun setupButton() {
         binding.btnHome.setOnClickListener {
-            // 약물 등록 퍼널 최종 이벤트
-            amplitude.track("funnel_registration_complete")
+            firebaseAnalytics.logEvent("complete_add_process", null) // [로그] 약물 등록 완료
 
             if (interstitialAd != null) {
                 interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {

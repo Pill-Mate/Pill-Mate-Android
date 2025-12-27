@@ -1,7 +1,5 @@
 package com.pill_mate.pill_mate_android
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -14,7 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.ConflictAdapter
@@ -60,6 +57,7 @@ class MedicineDetailActivity : AppCompatActivity() {
 
         medicineId = intent?.getLongExtra("medicineId", -1L) ?: -1L
         val isConflictMode = intent?.getBooleanExtra("isConflictMode", false) ?: false
+        Log.d("MedicineDetail", "medicineId=$medicineId, isConflictMode=$isConflictMode")
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.medicine_detail)) { v, insets ->
@@ -99,6 +97,9 @@ class MedicineDetailActivity : AppCompatActivity() {
             btnDropdown4.post {
                 btnDropdown4.expandTouchArea(200)
             }
+            btnFaq2.post {
+                btnFaq2.expandTouchArea(200)
+            }
         }
 
         setupTooltip(binding.layoutContraindicationClickArea, binding.ivContraindicationTooltip)
@@ -119,9 +120,6 @@ class MedicineDetailActivity : AppCompatActivity() {
             ingredientInfoBottomSheet.show(supportFragmentManager, ingredientInfoBottomSheet.tag)
         }
 
-        binding.btnFaq1.setOnClickListener {
-            showConflictTooltip()
-        }
     }
 
     private fun setDropdownClickListener() = with(binding) {
@@ -297,9 +295,8 @@ class MedicineDetailActivity : AppCompatActivity() {
         Log.d("MedicineDetail", "서버에서 받은 약물 상세 데이터: $data")
 
         with(binding) { // Glide로 이미지 로드
-            Glide.with(root.context).load(data.medicineImage).error(R.drawable.img_default_large).transform(
-                RoundedCorners(4)
-            ).placeholder(R.drawable.img_default_large).into(imgMedicine)
+            Glide.with(root.context).load(data.medicineImage).error(R.drawable.img_default_large)
+                .placeholder(R.drawable.img_default_large).into(imgMedicine)
 
             tvMedicineType.text = data.className
             tvMedicineName.text = data.medicineName
@@ -496,37 +493,6 @@ class MedicineDetailActivity : AppCompatActivity() {
         }
 
         // 스크롤 시 툴팁 숨김
-        binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
-            if (tooltip.visibility == View.VISIBLE) {
-                tooltip.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun showConflictTooltip() {
-        val tooltip = binding.ivMedicineConflictTooltip
-
-        if (tooltip.visibility == View.VISIBLE) return
-
-        tooltip.visibility = View.VISIBLE
-        tooltip.bringToFront()
-
-        // 툴팁 내부 특정 영역 클릭 → URL 열기
-        tooltip.setOnClickListener {
-            val url = "https://www.data.go.kr/data/15059486/openapi.do"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivity(intent)
-        }
-
-        // 바깥 터치 시 닫힘
-        binding.scrollView.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN && tooltip.visibility == View.VISIBLE) {
-                tooltip.visibility = View.GONE
-            }
-            false
-        }
-
-        // 스크롤 시 닫힘
         binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
             if (tooltip.visibility == View.VISIBLE) {
                 tooltip.visibility = View.GONE

@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.pill_mate.pill_mate_android.GlobalApplication.Companion.amplitude
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineRegistrationService
 import com.pill_mate.pill_mate_android.databinding.FragmentConflictPillDetailBinding
@@ -58,12 +57,6 @@ class ConflictPillDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // 화면 진입(스크린뷰) 이벤트 트래킹 추가
-        amplitude.track(
-            "screen_view",
-            mapOf("screen_name" to "screen_medicine_conflict_detail")
-        )
 
         initializeSections()
         setupUI()
