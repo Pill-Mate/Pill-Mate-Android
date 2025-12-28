@@ -436,7 +436,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 }
 
                 warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
-                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext_gray_2)
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext)
 
                 if (!isInvalid) {
                     onValidInput?.invoke(inputText)
