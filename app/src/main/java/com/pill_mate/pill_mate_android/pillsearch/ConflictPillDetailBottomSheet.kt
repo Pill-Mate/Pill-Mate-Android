@@ -113,6 +113,15 @@ class ConflictPillDetailBottomSheet(
             Log.d("UsjntTabooList", "[$index] item_image: ${item.item_image}")
         }
 
+        val hasConflict =
+            result.conflictWithUserMeds != null || result.usjntTabooList.isNotEmpty() || result.efcyDplctList.isNotEmpty()
+
+        if (!hasConflict) {
+            moveToMedicineDetailActivity()
+            resetProcessing()
+            return
+        }
+
         // 중복 성분이 있으면 다이얼로그 표시
         if (result.conflictWithUserMeds != null) {
             val dialog = DuplicateDialogFragment(onConfirm = {
