@@ -3,9 +3,12 @@ import java.util.*
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
     id("kotlin-parcelize")
-    id("com.google.gms.google-services") // firebase
     id("kotlin-kapt")
+
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val properties = Properties()
@@ -19,8 +22,8 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.3.0"
+        versionCode = 10
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -138,6 +141,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.12.0")) // Import the Firebase BoM
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
-    implementation("com.amplitude:analytics-android:1.+") //amplitude
-    implementation("com.amplitude:plugin-session-replay-android:0.20.14")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
 }

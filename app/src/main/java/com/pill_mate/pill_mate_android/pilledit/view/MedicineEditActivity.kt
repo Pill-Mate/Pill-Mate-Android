@@ -24,7 +24,6 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.gson.Gson
-import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator.medicineEditService
 import com.pill_mate.pill_mate_android.databinding.ActivityMedicineEditBinding
@@ -95,16 +94,6 @@ class MedicineEditActivity : AppCompatActivity() {
 
         scheduleId = intent.getLongExtra("scheduleId", -1)
         Log.d("scheduleId", "$scheduleId")
-
-        // 약물 수정 화면 진입 이벤트 로깅
-        if (scheduleId != null && scheduleId != -1L) {
-            val dateKey = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString()
-            GlobalApplication.amplitude.track(
-                "screen_medicine_edit", mapOf(
-                    "date" to dateKey
-                )
-            )
-        }
 
         fetchInitialData()
         setupClickListeners()
@@ -447,7 +436,7 @@ class MedicineEditActivity : AppCompatActivity() {
                 }
 
                 warningTextView.visibility = if (isInvalid) View.VISIBLE else View.GONE
-                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext_gray_2)
+                editText.setBackgroundResource(if (isInvalid) R.drawable.bg_edittext_red else R.drawable.bg_selector_edittext)
 
                 if (!isInvalid) {
                     onValidInput?.invoke(inputText)

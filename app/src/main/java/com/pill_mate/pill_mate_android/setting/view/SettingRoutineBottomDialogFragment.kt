@@ -31,6 +31,7 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
     private val minValues = arrayOf("00", "10", "20", "30", "40", "50")
     private val amPmValues = arrayOf("오전", "오후")
     private var currentOpenPicker: Int = 1 // 현재 열려 있는 타임피커 ID, 초기값은 기상 타임피커
+    private var hasShownInvalidTimeToast = false // 토스트 메시지 1회만 띄우기 위한 플래그
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -398,7 +399,10 @@ class SettingRoutineBottomDialogFragment(private val responseRoutine: ResponseRo
         TimeUtil.setEnabledStyle(
             binding.btnDone, isValid, R.color.main_blue_1, R.color.gray_3, R.color.white, R.color.black
         )
-        if (!isValid && showToast) TimeUtil.showBottomToast(requireActivity())
+        if (!isValid && showToast && !hasShownInvalidTimeToast) {
+            hasShownInvalidTimeToast = true
+            TimeUtil.showBottomToast(requireActivity())
+        }
         return isValid
     }
 

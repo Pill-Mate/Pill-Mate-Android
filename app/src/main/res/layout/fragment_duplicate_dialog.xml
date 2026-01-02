@@ -5,7 +5,6 @@
     android:background="@drawable/bg_dialog"
     android:gravity="center_horizontal"
     android:minWidth="320dp"
-    android:minHeight="254dp"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
     android:paddingVertical="20dp"
@@ -23,7 +22,6 @@
         style="@style/T2_B20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="@string/duplicate_title"
         android:textColor="@color/black" />
@@ -33,6 +31,7 @@
         style="@style/H3_RG16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/duplicate_description"
         android:textColor="@color/black" />
@@ -40,7 +39,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <Button
