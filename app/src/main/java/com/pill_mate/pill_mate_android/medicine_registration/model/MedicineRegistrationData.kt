@@ -7,19 +7,20 @@ data class MedicineRegisterRequest(
     val hospitalName: String?,
     val hospitalPhone: String?,
     val hospitalAddress: String?,
-    val identifyNumber: String,
-    val medicineName: String,
-    val ingredient: String,
+    val sourceType: String,      // [추가] (CUSTOM은 직접입력, API는 기존 등록)
+    val itemSeq: Long?,
+    val medicineName: String?,
+    val ingredient: String?,
     val ingredientUnit: String?, // MG, ML 등
     val ingredientAmount: Float?,
     val medicineImage: String?, // URI 대신 String으로 변경
-    val entpName: String,
-    val classname: String,
+    val entpName: String?,
+    val classname: String?,
     val efficacy: String?,
     val sideEffect: String?,
     val caution: String?,
     val storage: String?,
-    val medicineId: Long,
+    val medicineId: Long?,
     val intakeCounts: Set<String>, // 복용 시간
     val intakeFrequencys: Set<String>, // 복용 요일
     val mealUnit: String?, // MEALBEFORE, MEALAFTER 등
@@ -46,11 +47,11 @@ data class Pharmacy(
 )
 
 data class Medicine(
-    val identify_number: String, // 식별 번호
-    val medicine_name: String,   // 약물 이름
+    val identify_number: String, // 식별 번호 ///
+    val medicine_name: String,   // 약물 이름 ///
     val ingredient: String,      // 성분
     val image: String?,          // 약물 이미지 URL
-    val classname: String,       // 분류명
+    val classname: String,       // 분류명 ///
     val efficacy: String,        // 효능
     val side_effect: String,     // 부작용
     val caution: String,         // 주의사항
