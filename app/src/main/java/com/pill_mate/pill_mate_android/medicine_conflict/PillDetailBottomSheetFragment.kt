@@ -84,7 +84,7 @@ class PillDetailBottomSheetFragment(
 
     private fun checkAllConflicts(pillItem: SearchMedicineItem) {
         val itemSeq = pillItem.itemSeq
-        ServiceCreator.medicineRegistrationService.checkConflict(itemSeq.toString())
+        ServiceCreator.medicineRegistrationService.checkConflict(itemSeq)
             .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(
                     call: Call<ConflictCheckResponse>,
