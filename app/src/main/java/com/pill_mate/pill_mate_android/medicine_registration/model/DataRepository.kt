@@ -104,9 +104,6 @@ object DataRepository {
                 sideEffect = medicine?.side_effect?.ifBlank { null },
                 caution = medicine?.caution?.ifBlank { null },
                 storage = medicine?.storage?.ifBlank { null },
-
-                medicineId = if (schedule.medicine_id == 0) null else schedule.medicine_id.toLong(),
-
                 intakeCounts = intakeCounts,
                 intakeFrequencys = intakeFrequencies,
 

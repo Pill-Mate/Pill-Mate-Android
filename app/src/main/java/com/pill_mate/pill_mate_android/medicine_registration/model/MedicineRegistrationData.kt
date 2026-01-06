@@ -20,7 +20,6 @@ data class MedicineRegisterRequest(
     val sideEffect: String?,
     val caution: String?,
     val storage: String?,
-    val medicineId: Long?,
     val intakeCounts: Set<String>, // 복용 시간
     val intakeFrequencys: Set<String>, // 복용 요일
     val mealUnit: String?, // MEALBEFORE, MEALAFTER 등
