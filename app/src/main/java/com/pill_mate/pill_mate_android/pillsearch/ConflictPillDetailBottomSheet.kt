@@ -64,7 +64,7 @@ class ConflictPillDetailBottomSheet(
             if (!isProcessing) { // 버튼 클릭 딱 한번만 되게 하는 if문
                 isProcessing = true
                 binding.btnYes.isEnabled = false
-                checkAllConflicts(medicineItem.itemSeq.toString())
+                checkAllConflicts(medicineItem.itemSeq)
             }
         }
 
@@ -80,7 +80,7 @@ class ConflictPillDetailBottomSheet(
         }
     }
 
-    private fun checkAllConflicts(itemSeq: String) { // 약물 중복과 효능군 중복 병용 금기 한번에 확인하는 API 사용
+    private fun checkAllConflicts(itemSeq: Long) { // 약물 중복과 효능군 중복 병용 금기 한번에 확인하는 API 사용
         ServiceCreator.medicineRegistrationService.checkConflict(itemSeq)
             .enqueue(object : Callback<ConflictCheckResponse> {
                 override fun onResponse(

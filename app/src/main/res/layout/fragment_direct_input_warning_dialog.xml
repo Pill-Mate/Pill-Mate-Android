@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:gravity="center_horizontal"
+    android:minWidth="320dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="20dp">
+
+    <ImageView
+        android:id="@+id/iv_warning"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_warning_blue" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/T2_B20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="직접 입력은\n충돌 정보를 받기 어려워요"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/tv_message"
+        style="@style/H3_RG16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="약물명을 직접 입력하면,\n추후 충돌 정보를 받기 어려워요."
+        android:textColor="@color/black" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        style="@style/H2_SB16"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_main_blue_1"
+        android:stateListAnimator="@null"
+        android:text="확인"
+        android:textColor="@color/white" />
+
+</LinearLayout>

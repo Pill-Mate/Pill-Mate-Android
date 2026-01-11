@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -84,18 +85,39 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
 
     private fun loadMedicineData() {
         val medicine = DataRepository.getMedicine()
-        binding.tvPillName.text = if (medicine?.medicine_name.isNullOrBlank()) getString(R.string.no_info) else medicine?.medicine_name
-        binding.tvPillClass.text = if (medicine?.classname.isNullOrBlank()) getString(R.string.no_info) else medicine?.classname
-        binding.tvPillEntp.text = if (medicine?.entp_name.isNullOrBlank()) getString(R.string.no_info) else medicine?.entp_name
 
-        medicine?.image?.let { imageUrl ->
-            Glide.with(binding.ivPillImage.context)
-                .load(imageUrl)
-                .transform(RoundedCorners(8))
-                .error(R.drawable.img_default)
-                .into(binding.ivPillImage)
-        } ?: run {
-            binding.ivPillImage.setImageResource(R.drawable.img_default)
+        binding.apply {
+            if (medicine == null) {
+                // 데이터가 없으면 이미지와 텍스트 컨테이너를 통째로 숨김
+                ivPillImage.isVisible = false
+                layoutPillInfo.isVisible = false
+            } else {
+                // 데이터가 있으면 보임 처리
+                ivPillImage.isVisible = true
+                layoutPillInfo.isVisible = true
+
+                // 텍스트 세팅
+                tvPillName.text = medicine.medicine_name
+
+                // 분류명 (데이터 있으면 보이고, 없으면 숨김)
+                tvPillClass.isVisible = !medicine.classname.isNullOrBlank()
+                tvPillClass.text = medicine.classname
+
+                // 회사명 (데이터 있으면 보이고, 없으면 숨김)
+                tvPillEntp.isVisible = !medicine.entp_name.isNullOrBlank()
+                tvPillEntp.text = medicine.entp_name
+
+                // 이미지 로드
+                if (!medicine.image.isNullOrEmpty()) {
+                    Glide.with(ivPillImage.context)
+                        .load(medicine.image)
+                        .transform(RoundedCorners(8))
+                        .error(R.drawable.img_default)
+                        .into(ivPillImage)
+                } else {
+                    ivPillImage.setImageResource(R.drawable.img_default)
+                }
+            }
         }
     }
 
@@ -108,20 +130,30 @@ class ConfirmationBottomSheet : BottomSheetDialogFragment() {
     private fun createRegistrationDataList(schedule: Schedule?): List<RegistrationData> {
         if (schedule == null) return emptyList()
 
+        val timeSlot: RegistrationData? =
+            if (schedule.meal_unit.isNotBlank() && schedule.meal_time >= 0) {
+                val minuteText = if (schedule.meal_time == 0) "즉시" else "${schedule.meal_time}분"
+                RegistrationData("시간대", "${schedule.meal_unit} $minuteText")
+            } else null
+
         return listOfNotNull(
-            RegistrationData("약물명", schedule.medicine_name).takeIf { schedule.medicine_name.isNotEmpty() },
-            RegistrationData("요일", schedule.intake_frequency).takeIf { schedule.intake_frequency.isNotEmpty() },
-            RegistrationData("횟수", "${schedule.intake_count.split(",").size}회(${schedule.intake_count})").takeIf { schedule.intake_count.isNotEmpty() },
+            RegistrationData("약물명", schedule.medicine_name).takeIf { schedule.medicine_name.isNotBlank() },
+            RegistrationData("요일", schedule.intake_frequency).takeIf { schedule.intake_frequency.isNotBlank() },
             RegistrationData(
-                "시간대",
-                schedule.meal_unit.takeIf { it.isNotEmpty() && schedule.meal_time >= 0 }?.let {
-                    val minuteText = if (schedule.meal_time == 0) "즉시" else "${schedule.meal_time}분"
-                    "$it $minuteText"
-                } ?: ""
-            ),
-            RegistrationData("투약량", "${schedule.eat_count}${schedule.eat_unit}").takeIf { schedule.eat_count > 0 && schedule.eat_unit.isNotEmpty() },
-            RegistrationData("복약기간", calculateIntakePeriod(schedule)).takeIf { schedule.start_date.isNotEmpty() && schedule.intake_period > 0 },
-            RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}").takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotEmpty() }
+                "횟수",
+                "${schedule.intake_count.split(",").size}회(${schedule.intake_count})"
+            ).takeIf { schedule.intake_count.isNotBlank() },
+
+            timeSlot, // 조건 안 맞으면 null → 리스트에서 제거됨
+
+            RegistrationData("투약량", "${schedule.eat_count}${schedule.eat_unit}")
+                .takeIf { schedule.eat_count > 0 && schedule.eat_unit.isNotBlank() },
+
+            RegistrationData("복약기간", calculateIntakePeriod(schedule))
+                .takeIf { schedule.start_date.isNotBlank() && schedule.intake_period > 0 },
+
+            RegistrationData("투여용량", "${schedule.medicine_volume}${schedule.medicine_unit}")
+                .takeIf { schedule.medicine_volume > 0 && schedule.medicine_unit.isNotBlank() }
         )
     }
 
