@@ -24,7 +24,7 @@ interface MedicineRegistrationService {
     fun getMedicineOnboardingTimes(): Call<OnboardingTimeResponse>
 
     @GET("/api/v1/dur/check-conflict") // 약물 충돌 총합
-    fun checkConflict(@Query("itemSeq") itemSeq: String): Call<ConflictCheckResponse>
+    fun checkConflict(@Query("itemSeq") itemSeq: Long): Call<ConflictCheckResponse>
 
     @GET("/api/v1/dur/get-phone-address") // 약국 병원 전화번호 및 주소 정보 가져오기
     fun getPhoneAndAddress(@Query("itemSeq") itemSeq: String): Call<PhoneAndAddressResponse>

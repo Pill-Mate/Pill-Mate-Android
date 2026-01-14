@@ -68,6 +68,17 @@
         app:layout_constraintStart_toStartOf="@+id/et_pillSearch"
         app:layout_constraintTop_toBottomOf="@id/et_pillSearch" />
 
+    <ImageView
+        android:id="@+id/ic_search"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="20dp"
+        android:elevation="2dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="@id/et_pillSearch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_pillSearch" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_suggestion"
         android:layout_width="match_parent"
@@ -81,15 +92,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_pillSearch" />
 
+    <TextView
+        android:id="@+id/tv_none1"
+        style="@style/H3_RG16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/search_pill_none_title"
+        android:textColor="@color/gray_2"
+        app:layout_constraintBottom_toTopOf="@+id/iv_none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
-        android:id="@+id/ic_search"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="20dp"
-        android:elevation="2dp"
-        android:src="@drawable/ic_search"
-        app:layout_constraintBottom_toBottomOf="@id/et_pillSearch"
+        android:id="@+id/iv_none"
+        android:layout_width="96dp"
+        android:layout_height="72dp"
+        android:src="@drawable/img_logo_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_pillSearch" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_none2"
+        style="@style/H3_RG16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/search_pill_none_subtitle"
+        android:textColor="@color/gray_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_none" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_no_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_none1, iv_none, tv_none2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

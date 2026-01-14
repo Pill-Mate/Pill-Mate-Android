@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
@@ -26,6 +28,7 @@ import com.pill_mate.pill_mate_android.util.CustomDividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.pill_mate.pill_mate_android.DirectInputWarningDialogFragment
 import com.pill_mate.pill_mate_android.hideLoading
 import com.pill_mate.pill_mate_android.pillsearch.SearchMedicineAdapter
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
@@ -119,6 +122,22 @@ class PillSearchBottomSheetFragment(
             dismiss()
         }
 
+        binding.tvNone2.setOnClickListener {
+            val dialog = DirectInputWarningDialogFragment(
+                onConfirm = {
+                    // 1. 입력했던 검색어를 번들에 담음
+                    val bundle = bundleOf("directInputQuery" to currentQuery)
+
+                    // 2. StepTwoFragment로 결과를 전송 (키: "requestDirectInput")
+                    setFragmentResult("requestDirectInput", bundle)
+
+                    // 3. 바텀시트 닫기
+                    dismiss()
+                }
+            )
+            dialog.show(parentFragmentManager, "DirectInputWarningDialog")
+        }
+
         // 키보드 숨김
         binding.mainBg.setOnTouchListener { v, _ ->
             KeyboardUtil.hideKeyboard(requireContext(), v)
@@ -156,7 +175,9 @@ class PillSearchBottomSheetFragment(
                 updateUnderline(underlineColor)
 
                 if (text.isNullOrEmpty()) {
+                    // 검색어 다 지우면 둘 다 안 보이게 초기화
                     binding.rvSuggestion.visibility = View.GONE
+                    binding.groupNoResult.visibility = View.GONE
                 } else {
                     currentQuery = text.toString() // 검색어 업데이트
                     searchQueryFlow.value = currentQuery // 사용자의 입력 값을 Flow에 업데이트
@@ -196,12 +217,16 @@ class PillSearchBottomSheetFragment(
     override fun showMedicines(medicines: List<SearchMedicineItem>) {
         loaderJob?.cancel()
         binding.hideLoading()
-        
+
         if (medicines.isNotEmpty()) {
+            // 결과 있음: 리스트 보이기, 결과없음 그룹 숨기기
             binding.rvSuggestion.visibility = View.VISIBLE
+            binding.groupNoResult.visibility = View.GONE
             adapter.updateItems(medicines, currentQuery)
         } else {
+            // 결과 없음: 리스트 숨기기, 결과없음 그룹 보이기
             binding.rvSuggestion.visibility = View.GONE
+            binding.groupNoResult.visibility = View.VISIBLE
         }
     }
 

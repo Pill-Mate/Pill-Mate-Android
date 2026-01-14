@@ -38,7 +38,6 @@ class MedicineRegistrationPresenter(
                             if (schedule.meal_time == 0) "즉시" else "${schedule.meal_time}분"
                 else ""
             )
-
             ,
             RegistrationData(
                 "투약량",
