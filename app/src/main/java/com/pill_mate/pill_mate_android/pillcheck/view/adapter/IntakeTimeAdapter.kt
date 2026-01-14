@@ -16,7 +16,9 @@ import com.pill_mate.pill_mate_android.pillcheck.model.TimeGroup
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeTimeAdapter.IntakeTimeViewHolder
 
 class IntakeTimeAdapter(
-    private val timeGroups: List<TimeGroup>, private val onCheckedChange: (List<MedicineCheckData>) -> Unit
+    private val timeGroups: List<TimeGroup>,
+    private val onCheckedChange: (List<MedicineCheckData>) -> Unit,
+    private val onMedicineClick: (Data) -> Unit
 ) : RecyclerView.Adapter<IntakeTimeViewHolder>() {
 
     private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
@@ -57,7 +59,7 @@ class IntakeTimeAdapter(
 
             binding.medicineRecyclerView.apply {
                 layoutManager = LinearLayoutManager(binding.root.context)
-                adapter = MedicineAdapter(timeGroup.medicines, onCheckedChange)
+                adapter = MedicineAdapter(timeGroup.medicines, onCheckedChange, onMedicineClick)
             }
 
             binding.btnCheckAll.visibility = if (timeGroup.medicines.size >= 2) View.VISIBLE else View.GONE

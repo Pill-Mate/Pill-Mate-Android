@@ -10,13 +10,15 @@ import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ItemCountHeaderBinding
 import com.pill_mate.pill_mate_android.pillcheck.model.GroupedMedicine
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
+import com.pill_mate.pill_mate_android.pillcheck.model.ResponseHome.Data
 import com.pill_mate.pill_mate_android.pillcheck.util.IntakeCountDiffUtil
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.IntakeCountAdapter.IntakeCountViewHolder
 
 class IntakeCountAdapter(
     private var groupedMedicines: List<GroupedMedicine>,
     private val expandedStates: MutableSet<Int>,
-    private val onCheckedChange: (List<MedicineCheckData>) -> Unit
+    private val onCheckedChange: (List<MedicineCheckData>) -> Unit,
+    private val onMedicineClick: (Data) -> Unit
 ) : RecyclerView.Adapter<IntakeCountViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntakeCountViewHolder {
@@ -88,7 +90,7 @@ class IntakeCountAdapter(
             binding.intakeTimeRecyclerView.apply {
                 layoutManager = LinearLayoutManager(binding.root.context)
                 visibility = if (isExpanded) View.VISIBLE else View.GONE
-                adapter = IntakeTimeAdapter(group.times, onCheckedChange)
+                adapter = IntakeTimeAdapter(group.times, onCheckedChange, onMedicineClick)
             }
         }
     }
