@@ -1,6 +1,5 @@
 package com.pill_mate.pill_mate_android.search.view
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,12 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.FragmentStepTwoBinding
+import com.pill_mate.pill_mate_android.medicine_registration.model.DataRepository
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenter
 import com.pill_mate.pill_mate_android.search.presenter.StepTwoPresenterImpl
 import com.pill_mate.pill_mate_android.medicine_registration.presenter.MedicineRegistrationPresenter
@@ -23,8 +22,12 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
     private var _binding: FragmentStepTwoBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var presenter: StepTwoPresenter
     private lateinit var registrationPresenter: MedicineRegistrationPresenter
+
+    private var isDirectInputMode = false
+    private var lastSavedText: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,13 +36,13 @@ class StepTwoFragment : Fragment(), StepTwoView {
         _binding = FragmentStepTwoBinding.inflate(inflater, container, false)
         presenter = StepTwoPresenterImpl(this)
 
-        // MedicineRegistrationPresenter 인스턴스를 부모 Fragment로부터 가져옴
-        val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+        val parentFragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (parentFragment is MedicineRegistrationFragment) {
-            registrationPresenter = parentFragment.getPresenter() // getter로 presenter 접근
+            registrationPresenter = parentFragment.getPresenter()
         }
 
-        // [추가] PillSearchBottomSheetFragment로부터 직접 입력 요청을 받음
+        // PillSearchBottomSheetFragment → 직접입력 요청 수신
         setFragmentResultListener("requestDirectInput") { _, bundle ->
             val query = bundle.getString("directInputQuery", "")
             switchToDirectInputMode(query)
@@ -53,130 +56,155 @@ class StepTwoFragment : Fragment(), StepTwoView {
 
         setupInputField()
 
-        // YES 클릭했을 때만 약물 정보를 업데이트하도록 설정
+        // 약 상세에서 YES 눌렀을 때만 반영
         setFragmentResultListener("pillConfirmResultKey") { _, bundle ->
-            val confirmedPillItem = bundle.getParcelable<SearchMedicineItem>("confirmedPillItem")
+            val confirmedPillItem =
+                bundle.getParcelable<SearchMedicineItem>("confirmedPillItem")
             confirmedPillItem?.let {
-                handleSearchResult(it) // YES 클릭한 경우에만 업데이트
+                handleSearchResult(it)
             }
         }
     }
 
     private fun setupInputField() {
-        // [중요] 초기 상태: 포커스 잡히면 무조건 바텀시트 오픈
-        binding.etPillName.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
+        binding.etPillName.onFocusChangeListener =
+            View.OnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && !isDirectInputMode) {
+                    openPillSearchBottomSheet()
+                }
+            }
+
+        binding.etPillName.setOnClickListener {
+            if (!isDirectInputMode) {
                 openPillSearchBottomSheet()
             }
         }
 
-        // 클릭 시에도 바텀시트 오픈 (포커스가 이미 있을 때를 대비)
-        binding.etPillName.setOnClickListener {
-            openPillSearchBottomSheet()
-        }
-
-        // EditText 텍스트 변경 감지
         binding.etPillName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {}
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
                 presenter.handleTextChange(s.toString())
                 updateClearButtonVisibility(s)
             }
-            override fun afterTextChanged(s: Editable?) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                if (!isDirectInputMode) return
+
+                val text = s?.toString().orEmpty()
+                if (text == lastSavedText) return
+
+                lastSavedText = text
+
+                registrationPresenter.updateSchedule { schedule ->
+                    schedule.copy(
+                        medicine_name = text,
+                        medicine_id = 0
+                    )
+                }
+            }
         })
 
         binding.ivClear.setOnClickListener {
             binding.etPillName.text?.clear()
             updateClearButtonVisibility(null)
 
-            // Schedule의 약물 정보 초기화
+            isDirectInputMode = false
+            lastSavedText = null
+
             registrationPresenter.updateSchedule { schedule ->
                 schedule.copy(
                     medicine_name = "",
                     medicine_id = 0
                 )
             }
+            DataRepository.clearMedicine()
         }
 
-        // 초기 상태 설정
         updateClearButtonVisibility(binding.etPillName.text)
     }
 
     private fun openPillSearchBottomSheet() {
-        val medicineRegistrationFragment = (parentFragment?.parentFragment as? MedicineRegistrationFragment)
-            ?: (requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment)
+        val medicineRegistrationFragment =
+            (parentFragment?.parentFragment as? MedicineRegistrationFragment)
+                ?: (requireActivity().supportFragmentManager
+                    .findFragmentById(R.id.fragment_container) as? MedicineRegistrationFragment)
 
         if (medicineRegistrationFragment != null) {
-            val bottomSheetFragment = PillSearchBottomSheetFragment.newInstance(
-                this, medicineRegistrationFragment
-            )
+            val bottomSheetFragment =
+                PillSearchBottomSheetFragment.newInstance(this, medicineRegistrationFragment)
 
-            // 바텀시트가 닫힐 때 EditText 포커스 해제
             bottomSheetFragment.setOnDismissListener {
-                Log.d("StepTwoFragment", "PillSearchBottomSheet dismissed, clearing focus.")
+                Log.d("StepTwoFragment", "PillSearchBottomSheet dismissed")
                 binding.etPillName.clearFocus()
             }
 
-            bottomSheetFragment.show(parentFragmentManager, "PillSearchBottomSheetFragment")
+            bottomSheetFragment.show(
+                parentFragmentManager,
+                "PillSearchBottomSheetFragment"
+            )
         } else {
             Log.e("StepTwoFragment", "Could not find MedicineRegistrationFragment")
         }
     }
 
     private fun handleSearchResult(selectedPillItem: SearchMedicineItem) {
-        Log.d("SearchResult", "Selected pill: ${selectedPillItem.itemName}")
-
-        // StepTwoPresenter에 선택된 약물 객체 전달
         presenter.onPillSelected(selectedPillItem)
 
-        // EditText에 약물 이름 업데이트
+        isDirectInputMode = false
+        lastSavedText = null
+
         binding.etPillName.setText(selectedPillItem.itemName)
         binding.etPillName.clearFocus()
 
-        // Presenter에 Schedule 데이터 업데이트 요청
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
                 medicine_name = selectedPillItem.itemName,
-                medicine_id = selectedPillItem.itemSeq.takeIf { it <= Int.MAX_VALUE }?.toInt() ?: 0
+                medicine_id = selectedPillItem.itemSeq
+                    .takeIf { it <= Int.MAX_VALUE }
+                    ?.toInt() ?: 0
             )
         }
     }
 
-    // [핵심 기능] 직접 입력 모드로 전환하는 함수
+    // 직접 입력 모드 진입
     private fun switchToDirectInputMode(query: String) {
-        // 1. 바텀시트를 여는 리스너들을 제거 (일반 EditText처럼 동작하게 함)
-        binding.etPillName.onFocusChangeListener = null
-        binding.etPillName.setOnClickListener(null)
+        isDirectInputMode = true
+        lastSavedText = query
 
-        // 2. 검색했던 텍스트 세팅
-        binding.etPillName.setText(query)
-
-        // 3. 커서를 글자 맨 뒤로 이동
-        binding.etPillName.setSelection(query.length)
-
-        // 4. 강제로 포커스 요청 및 키보드 올리기
-        binding.etPillName.requestFocus()
-
-        // 5. Presenter 등에 텍스트 변경 알림 (필요 시)
-        presenter.handleTextChange(query)
-
-        // [중요] 스케줄 데이터 업데이트 (질문하신 부분)
         registrationPresenter.updateSchedule { schedule ->
             schedule.copy(
-                medicine_name = query, // 사용자가 입력했던 검색어를 이름으로 저장
-                medicine_id = 0        // 직접 입력이므로 ID는 0으로 처리
+                medicine_name = query,
+                medicine_id = 0
             )
         }
+
+        binding.etPillName.setText(query)
+        binding.etPillName.setSelection(query.length)
+        binding.etPillName.requestFocus()
+
+        presenter.handleTextChange(query)
     }
 
     override fun updatePillName(pillName: String) {
         binding.etPillName.setText(pillName)
-        binding.etPillName.clearFocus() // 포커스 해제
+        binding.etPillName.clearFocus()
         updateClearButtonVisibility(pillName)
     }
 
     private fun updateClearButtonVisibility(text: CharSequence?) {
-        binding.ivClear.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+        binding.ivClear.visibility =
+            if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun updateButtonState(isEnabled: Boolean) {

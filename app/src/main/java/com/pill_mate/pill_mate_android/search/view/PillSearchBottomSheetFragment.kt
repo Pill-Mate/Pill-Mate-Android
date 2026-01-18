@@ -34,6 +34,7 @@ import com.pill_mate.pill_mate_android.pillsearch.SearchMedicineAdapter
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.showLoading
 import com.pill_mate.pill_mate_android.util.KeyboardUtil
+import com.pill_mate.pill_mate_android.util.expandTouchArea
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -137,6 +138,9 @@ class PillSearchBottomSheetFragment(
             )
             dialog.show(parentFragmentManager, "DirectInputWarningDialog")
         }
+
+        // 터치 영역 확장
+        binding.tvNone2.expandTouchArea(20)
 
         // 키보드 숨김
         binding.mainBg.setOnTouchListener { v, _ ->
