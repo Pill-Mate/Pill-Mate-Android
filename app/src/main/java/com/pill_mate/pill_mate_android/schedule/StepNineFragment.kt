@@ -176,8 +176,10 @@ class StepNineFragment : Fragment(), AlarmSwitchDialogFragment.AlarmSwitchDialog
                 .error(R.drawable.img_default)
                 .into(binding.ivMedicineImage)
         } else {
-            binding.tvMedicineName.text = getString(R.string.nine_no_medicine)
-            binding.tvMedicineDose.text = ""
+            if (schedule != null) {
+                binding.tvMedicineName.text = schedule.medicine_name
+            }
+            binding.tvMedicineDose.visibility = View.GONE
             binding.ivMedicineImage.setImageResource(R.drawable.img_default)
         }
     }

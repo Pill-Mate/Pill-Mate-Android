@@ -7,9 +7,11 @@ import android.graphics.Typeface
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +23,8 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
+import com.pill_mate.pill_mate_android.MedicineDetailActivity
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillCheckBinding
@@ -31,7 +35,9 @@ import com.pill_mate.pill_mate_android.notice.NotificationActivity
 import com.pill_mate.pill_mate_android.pillcheck.model.GroupedMedicine
 import com.pill_mate.pill_mate_android.pillcheck.model.HomeData
 import com.pill_mate.pill_mate_android.pillcheck.model.MedicineCheckData
+import com.pill_mate.pill_mate_android.pillcheck.model.MedicineIdData
 import com.pill_mate.pill_mate_android.pillcheck.model.ResponseHome
+import com.pill_mate.pill_mate_android.pillcheck.model.ResponseMedicineDetail
 import com.pill_mate.pill_mate_android.pillcheck.model.TimeGroup
 import com.pill_mate.pill_mate_android.pillcheck.util.fetch
 import com.pill_mate.pill_mate_android.pillcheck.view.adapter.CalendarVPAdapter
@@ -373,9 +379,10 @@ class PillCheckFragment : Fragment(), IDateClickListener {
 
         // intakeCount RecyclerView 설정
         if (binding.intakeCountRecyclerView.adapter == null) {
-            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines, expandedStates) { checkDataList ->
-                patchMedicineCheckData(checkDataList)
-            }
+            val intakeCountAdapter = IntakeCountAdapter(groupedMedicines,
+                expandedStates,
+                { checkDataList -> patchMedicineCheckData(checkDataList) },
+                { medicine -> openMedicineDetailSafely(medicine) })
             binding.intakeCountRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = intakeCountAdapter
@@ -401,6 +408,73 @@ class PillCheckFragment : Fragment(), IDateClickListener {
                 intakeCount = intakeCount, times = timeGroups
             )
         }
+    }
+
+    @RequiresApi(VERSION_CODES.O)
+    private fun openMedicineDetailSafely(medicine: ResponseHome.Data) {
+        binding.showLoading()
+
+        ServiceCreator.medicineDetailService.postMedicineDetailData(MedicineIdData(itemSeq = medicine.itemSeq))
+            .fetch { detail: ResponseMedicineDetail? ->
+
+                _binding?.hideLoading()
+
+                //서버에서 데이터가 null이면 → 화면 진입 X
+                if (detail == null) {
+                    showCustomSnackbar(binding.root, "직접 입력한 약물은 정보가 없습니다.")
+                    return@fetch
+                }
+
+                // 데이터가 있을 때만 상세 화면 진입
+                val intent = Intent(requireContext(), MedicineDetailActivity::class.java).apply {
+                    putExtra("medicineId", medicine.itemSeq)
+                    putExtra("isConflictMode", false)
+                }
+                startActivity(intent)
+            }
+    }
+
+    private fun showCustomSnackbar(anchorView: View, message: String) {
+        val snackbar = Snackbar.make(anchorView, "", Snackbar.LENGTH_SHORT)
+
+        val bottomNav = requireActivity().findViewById<View>(R.id.bottom_nav_main)
+        snackbar.setAnchorView(bottomNav)
+
+        val snackbarView = snackbar.view
+        snackbarView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        snackbarView.setPadding(0, 0, 0, 0)
+
+        val lp = snackbarView.layoutParams as ViewGroup.MarginLayoutParams
+        val side = dpToPx(20)
+        lp.marginStart = side
+        lp.marginEnd = side
+
+        if (lp is FrameLayout.LayoutParams) {
+            lp.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+        }
+        snackbarView.layoutParams = lp
+
+        val snackbarLayout = snackbarView as ViewGroup
+
+        // 기본 텍스트 숨기기
+        val defaultText = snackbarView.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        defaultText.visibility = View.INVISIBLE
+
+        val customView =
+            LayoutInflater.from(anchorView.context).inflate(R.layout.snackbar_custom, snackbarLayout, false)
+
+        // 메시지 세팅
+        customView.findViewById<TextView>(R.id.tv_content).text = message
+
+        // 기존 Snackbar 레이아웃 비우고 커스텀 뷰 추가
+        snackbarLayout.removeAllViews()
+        snackbarLayout.addView(customView)
+
+        snackbar.show()
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 
     // 프로그래스바 값 설정

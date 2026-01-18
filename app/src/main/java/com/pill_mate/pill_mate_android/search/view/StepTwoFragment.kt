@@ -1,5 +1,6 @@
 package com.pill_mate.pill_mate_android.search.view
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
@@ -37,6 +39,12 @@ class StepTwoFragment : Fragment(), StepTwoView {
             registrationPresenter = parentFragment.getPresenter() // getter로 presenter 접근
         }
 
+        // [추가] PillSearchBottomSheetFragment로부터 직접 입력 요청을 받음
+        setFragmentResultListener("requestDirectInput") { _, bundle ->
+            val query = bundle.getString("directInputQuery", "")
+            switchToDirectInputMode(query)
+        }
+
         return binding.root
     }
 
@@ -55,11 +63,16 @@ class StepTwoFragment : Fragment(), StepTwoView {
     }
 
     private fun setupInputField() {
-        // EditText 포커스 이벤트 처리
-        binding.etPillName.setOnFocusChangeListener { _, hasFocus ->
+        // [중요] 초기 상태: 포커스 잡히면 무조건 바텀시트 오픈
+        binding.etPillName.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 openPillSearchBottomSheet()
             }
+        }
+
+        // 클릭 시에도 바텀시트 오픈 (포커스가 이미 있을 때를 대비)
+        binding.etPillName.setOnClickListener {
+            openPillSearchBottomSheet()
         }
 
         // EditText 텍스트 변경 감지
@@ -125,6 +138,33 @@ class StepTwoFragment : Fragment(), StepTwoView {
             schedule.copy(
                 medicine_name = selectedPillItem.itemName,
                 medicine_id = selectedPillItem.itemSeq.takeIf { it <= Int.MAX_VALUE }?.toInt() ?: 0
+            )
+        }
+    }
+
+    // [핵심 기능] 직접 입력 모드로 전환하는 함수
+    private fun switchToDirectInputMode(query: String) {
+        // 1. 바텀시트를 여는 리스너들을 제거 (일반 EditText처럼 동작하게 함)
+        binding.etPillName.onFocusChangeListener = null
+        binding.etPillName.setOnClickListener(null)
+
+        // 2. 검색했던 텍스트 세팅
+        binding.etPillName.setText(query)
+
+        // 3. 커서를 글자 맨 뒤로 이동
+        binding.etPillName.setSelection(query.length)
+
+        // 4. 강제로 포커스 요청 및 키보드 올리기
+        binding.etPillName.requestFocus()
+
+        // 5. Presenter 등에 텍스트 변경 알림 (필요 시)
+        presenter.handleTextChange(query)
+
+        // [중요] 스케줄 데이터 업데이트 (질문하신 부분)
+        registrationPresenter.updateSchedule { schedule ->
+            schedule.copy(
+                medicine_name = query, // 사용자가 입력했던 검색어를 이름으로 저장
+                medicine_id = 0        // 직접 입력이므로 ID는 0으로 처리
             )
         }
     }
