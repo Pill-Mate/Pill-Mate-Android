@@ -113,7 +113,6 @@ class PillDetailBottomSheetFragment(
             RegistrationDuplicateDialogFragment(
                 onConfirm = {
                     dismiss()
-                    bottomSheet.dismiss()
                 }
             ).show(parentFragmentManager, "RegistrationDuplicateDialog")
             resetProcessingState()

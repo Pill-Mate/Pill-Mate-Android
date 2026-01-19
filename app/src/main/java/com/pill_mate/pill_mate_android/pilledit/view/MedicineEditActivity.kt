@@ -171,8 +171,17 @@ class MedicineEditActivity : AppCompatActivity() {
             tvEatUnit.text = eatUnit ?: "-"
             tvStartDate.text = startDate ?: "-"
             etPeriod.setText(intakePeriod.toString()) // Null 가능성 없음
-            etMedicineVolume.setText(medicineVolume.toString()) // Null 가능성 없음
-            tvMedicineUnit.text = medicineUnit ?: "-"
+            // QA 적용
+            if (medicineVolume != null && medicineVolume!! > 0 &&
+                !medicineUnit.isNullOrBlank() && medicineUnit != "SKIP"
+            ) {
+                binding.etMedicineVolume.setText(medicineVolume.toString())
+                binding.tvMedicineUnit.text = medicineUnit
+            } else {
+                binding.etMedicineVolume.setText("")
+                binding.tvMedicineUnit.text = ""
+            }
+
             switchAlarm.isChecked = isAlarmOn
             updateEndDateChip()             // 복용 종료일 Chip 추가
 
