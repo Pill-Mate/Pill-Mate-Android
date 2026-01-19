@@ -7,32 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.pill_mate.pill_mate_android.databinding.FragmentDuplicateDialogBinding
+import com.pill_mate.pill_mate_android.databinding.FragmentRegistrationDuplicateDialogBinding
 
-class DuplicateDialogFragment(
-    private val onConfirm: () -> Unit,
-    private val showMessage: Boolean = true,
-    private val onCancel: (() -> Unit)? = null
+class RegistrationDuplicateDialogFragment(
+    private val onConfirm: () -> Unit
 ) : DialogFragment() {
 
-    private var _binding: FragmentDuplicateDialogBinding? = null
+    private var _binding: FragmentRegistrationDuplicateDialogBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDuplicateDialogBinding.inflate(inflater, container, false)
-
-        // 메시지 표시 여부에 따라 visibility 조정
-        binding.tvMessage.visibility = if (showMessage) View.VISIBLE else View.GONE
-
-        binding.btnDetail.setOnClickListener {
-            onConfirm()
-            dismiss()
-        }
+        _binding = FragmentRegistrationDuplicateDialogBinding.inflate(inflater, container, false)
 
         binding.btnBack.setOnClickListener {
-            onCancel?.invoke()
+            onConfirm()
             dismiss()
         }
 
@@ -46,7 +36,8 @@ class DuplicateDialogFragment(
         super.onStart()
         dialog?.window?.apply {
             setLayout(
-                (resources.displayMetrics.widthPixels * 0.8).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
             )
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }

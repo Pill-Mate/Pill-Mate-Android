@@ -16,8 +16,8 @@ import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResp
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResult
 import com.pill_mate.pill_mate_android.medicine_conflict.model.EfcyDplctResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.UsjntTabooResponse
-import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationFragment
+import com.pill_mate.pill_mate_android.medicine_registration.RegistrationDuplicateDialogFragment
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import com.pill_mate.pill_mate_android.search.view.PillSearchBottomSheetFragment
 import retrofit2.Call
@@ -110,13 +110,11 @@ class PillDetailBottomSheetFragment(
     private fun handleConflictResult(result: ConflictCheckResult, pillItem: SearchMedicineItem) {
         // 1. 이미 복용 중인 약과 중복이면 알림 다이얼로그 표시 후 함수 종료
         if (result.conflictWithUserMeds != null) {
-            DuplicateDialogFragment(
+            RegistrationDuplicateDialogFragment(
                 onConfirm = {
                     dismiss()
-                    bottomSheet.dismiss()
-                },
-                showMessage = true
-            ).show(parentFragmentManager, "DuplicateDialog")
+                }
+            ).show(parentFragmentManager, "RegistrationDuplicateDialog")
             resetProcessingState()
             return
         }

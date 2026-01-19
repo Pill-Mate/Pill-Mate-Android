@@ -19,7 +19,6 @@ import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentBottomSheetPillDetailBinding
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResponse
 import com.pill_mate.pill_mate_android.medicine_conflict.model.ConflictCheckResult
-import com.pill_mate.pill_mate_android.medicine_registration.DuplicateDialogFragment
 import com.pill_mate.pill_mate_android.search.model.SearchMedicineItem
 import retrofit2.Call
 import retrofit2.Callback

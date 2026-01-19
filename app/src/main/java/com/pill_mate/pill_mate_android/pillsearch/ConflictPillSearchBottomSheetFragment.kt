@@ -161,10 +161,15 @@ class ConflictPillSearchBottomSheetFragment(
         binding.hideLoading()
 
         if (medicines.isNotEmpty()) {
+            // 결과 있음: 리스트 보이기, 결과없음 그룹 숨기기
             binding.rvSuggestion.visibility = View.VISIBLE
+            binding.groupNoResult.visibility = View.GONE
             adapter.updateItems(medicines, currentQuery)
         } else {
+            // 결과 없음: 리스트 숨기기, 결과없음 그룹 보이기
             binding.rvSuggestion.visibility = View.GONE
+            binding.groupNoResult.visibility = View.VISIBLE
+            binding.tvNone2.text = getString(R.string.search_pill_none_subtitle_conflict)
         }
     }
 
