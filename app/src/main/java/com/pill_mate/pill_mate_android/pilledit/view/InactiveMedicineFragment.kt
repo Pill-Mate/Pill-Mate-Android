@@ -19,7 +19,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InActiveMedicineFragment : Fragment() {
+class InactiveMedicineFragment : Fragment() {
 
     private lateinit var inActiveMedicineAdapter: InActiveMedicineAdapter
     private var _binding: FragmentInactiveMedicineBinding? = null

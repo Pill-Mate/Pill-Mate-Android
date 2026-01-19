@@ -145,6 +145,9 @@
     <!--PillSearchBottomSheetFragment-->
     <string name="search_pill">약물 검색</string>
     <string name="enter_pill_name">약물명을 입력하세요</string>
+    <string name="search_pill_none_title">약물 정보가 없나요?</string>
+    <string name="search_pill_none_subtitle"><u>직접 입력할게요.</u></string>
+    <string name="search_pill_none_subtitle_conflict">조금만 기다려 주세요!\n열심히 준비 중이에요 🛠️</string>
 
     <!--fragment_exit_registration_dialog-->
     <string name="exit_registration_title">약물 등록을 종료하시나요?</string>

@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.gms.ads.AdError
@@ -136,7 +137,9 @@ class MedicineEditActivity : AppCompatActivity() {
             Glide.with(ivImage.context).load(info.medicineImage).transform(RoundedCorners(8))
                 .error(R.drawable.img_default).into(ivImage)
             tvPillName.text = info.medicineName
+            tvClassName.isVisible = !info.className.isNullOrEmpty()
             tvClassName.text = info.className
+            tvCompanyName.isVisible = !info.entpName.isNullOrEmpty()
             tvCompanyName.text = info.entpName
 
             // 복약 정보 매핑
@@ -168,8 +171,17 @@ class MedicineEditActivity : AppCompatActivity() {
             tvEatUnit.text = eatUnit ?: "-"
             tvStartDate.text = startDate ?: "-"
             etPeriod.setText(intakePeriod.toString()) // Null 가능성 없음
-            etMedicineVolume.setText(medicineVolume.toString()) // Null 가능성 없음
-            tvMedicineUnit.text = medicineUnit ?: "-"
+            // QA 적용
+            if (medicineVolume != null && medicineVolume!! > 0 &&
+                !medicineUnit.isNullOrBlank() && medicineUnit != "SKIP"
+            ) {
+                binding.etMedicineVolume.setText(medicineVolume.toString())
+                binding.tvMedicineUnit.text = medicineUnit
+            } else {
+                binding.etMedicineVolume.setText("")
+                binding.tvMedicineUnit.text = ""
+            }
+
             switchAlarm.isChecked = isAlarmOn
             updateEndDateChip()             // 복용 종료일 Chip 추가
 
