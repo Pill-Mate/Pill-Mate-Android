@@ -2,6 +2,7 @@ package com.pill_mate.pill_mate_android.medicine_registration
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -76,6 +77,26 @@ class StepEightFragment : Fragment() {
         // 소수점 입력 허용: 0.1 ~ 999.9, 소수점 이하 최대 1자리 허용
         binding.etMedicineVolume.setMinMaxDecimalValue(min = 0.1f, max = 999.9f, decimalLimit = 1)
 
+        // 정수부 3자리 제한 필터 추가 (기존 필터 유지)
+        val integerMax3Filter = InputFilter { source, start, end, dest, dstart, dend ->
+            val newText =
+                dest.substring(0, dstart) +
+                        source.subSequence(start, end) +
+                        dest.substring(dend)
+
+            // 비어있으면 허용(삭제/초기 입력 과정)
+            if (newText.isBlank()) return@InputFilter null
+
+            // 정수부만 3자리 제한 (예: 999.9 OK, 1000 차단)
+            val integerPart = newText.substringBefore('.', newText)
+
+            // "."로 시작하는 입력 같은 케이스는 정수부가 ""가 될 수 있으니 허용
+            if (integerPart.isNotEmpty() && integerPart.length > 3) "" else null
+        }
+
+        val existingFilters = binding.etMedicineVolume.filters ?: emptyArray()
+        binding.etMedicineVolume.filters = existingFilters + integerMax3Filter
+
         binding.etMedicineVolume.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -97,10 +118,11 @@ class StepEightFragment : Fragment() {
 
         binding.etMedicineVolume.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_NEXT ||  // "다음" 버튼 클릭 처리
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                actionId == EditorInfo.IME_ACTION_NEXT ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)
+            ) {
                 binding.etMedicineVolume.clearFocus()
-                KeyboardUtil.hideKeyboard(requireContext(), binding.etMedicineVolume) // 키보드 닫기
+                KeyboardUtil.hideKeyboard(requireContext(), binding.etMedicineVolume)
                 return@setOnEditorActionListener true
             }
             false
