@@ -22,7 +22,7 @@ android {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
+        versionCode = 13
         versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
