@@ -178,6 +178,10 @@ obj/
 .idea/gradle.xml
 .idea/jarRepositories.xml
 .idea/navEditor.xml
+.idea/deploymentTargetSelector.xml
+.idea/AndroidProjectSystem.xml
+.idea/markdown.xml
+.idea/runConfigurations.xml
 
 # Legacy Eclipse project files
 .classpath
