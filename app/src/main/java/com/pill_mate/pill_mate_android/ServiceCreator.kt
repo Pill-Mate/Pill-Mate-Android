@@ -3,6 +3,7 @@ package com.pill_mate.pill_mate_android
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.pill_mate.pill_mate_android.login.model.AuthStatusService
 import com.pill_mate.pill_mate_android.login.model.FcmService
 import com.pill_mate.pill_mate_android.login.model.LoginService
 import com.pill_mate.pill_mate_android.login.model.OnBoardingService
@@ -54,6 +55,7 @@ object ServiceCreator { // 서버 URL
 
     // 서비스 인터페이스 초기화
     val loginService: LoginService = userRetrofit.create(LoginService::class.java)
+    val authStatusService: AuthStatusService = userRetrofit.create(AuthStatusService::class.java)
     val refreshTokenService: RefreshTokenService = userRetrofit.create(RefreshTokenService::class.java)
     val onBoardingService: OnBoardingService = userRetrofit.create(OnBoardingService::class.java)
     val homeService: HomeService = userRetrofit.create(HomeService::class.java)
