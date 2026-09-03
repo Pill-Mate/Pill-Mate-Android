@@ -4,11 +4,17 @@ import com.pill_mate.pill_mate_android.BaseResponse
 import com.pill_mate.pill_mate_android.onboarding.model.OnBoardingData
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface LoginService {
     @POST("/api/v1/auth/signup")
     fun login(@Body login: KaKaoTokenData): Call<BaseResponse<ResponseToken>>
+}
+
+interface AuthStatusService {
+    @GET("/api/v1/auth/status")
+    fun checkStatus(): Call<BaseResponse<ResponseAuthStatus>>
 }
 
 interface OnBoardingService {
