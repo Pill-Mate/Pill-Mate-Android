@@ -1,6 +1,8 @@
 package com.pill_mate.pill_mate_android.main.view
 
+import android.animation.ValueAnimator
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.View
@@ -50,25 +52,50 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     // 기본 상태바로 설정
+    @Suppress("DEPRECATION")
     fun setDefaultStatusBar() {
-        window.apply {
-            statusBarColor = ContextCompat.getColor(this@MainActivity, android.R.color.transparent) // 기본 상태바 색상
-            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = true // 기본 상태바 아이콘(검정)
-        }
+        binding.viewStatusBarBg.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white)) // 기본 상태바 색상 (엣지 투 엣지 기기용)
+        window.statusBarColor = ContextCompat.getColor(this, android.R.color.white) // 구버전(non-edge-to-edge) 기기 호환용
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true // 기본 상태바 아이콘(검정)
     }
 
     // 상태바 색상 변경
+    @Suppress("DEPRECATION")
     fun setStatusBarColor(colorResId: Int, isLightStatusBar: Boolean) {
-        window.apply {
-            statusBarColor = ContextCompat.getColor(this@MainActivity, colorResId) // 상태바 색상 변경
-            WindowInsetsControllerCompat(this, decorView).isAppearanceLightStatusBars = isLightStatusBar // 아이콘 색상 변경
-        }
+        val color = ContextCompat.getColor(this, colorResId)
+        binding.viewStatusBarBg.setBackgroundColor(color) // 상태바 색상 변경 (엣지 투 엣지 기기용)
+        window.statusBarColor = color // 구버전(non-edge-to-edge) 기기 호환용
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLightStatusBar // 아이콘 색상 변경
+    }
+
+    // 상태바 색상 애니메이션 변경 (스크롤 등에 연동해서 부드럽게 전환할 때 사용)
+    @Suppress("DEPRECATION")
+    fun animateStatusBarColor(toColor: Int, lightIcons: Boolean) {
+        val statusBarBg = binding.viewStatusBarBg
+        val fromColor =
+            (statusBarBg.background as? ColorDrawable)?.color ?: ContextCompat.getColor(this, android.R.color.white)
+
+        ValueAnimator.ofArgb(fromColor, toColor).apply {
+            duration = 300
+            addUpdateListener {
+                val color = it.animatedValue as Int
+                statusBarBg.setBackgroundColor(color) // 엣지 투 엣지 기기용
+                window.statusBarColor = color // 구버전(non-edge-to-edge) 기기 호환용
+            }
+        }.start()
+
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = lightIcons
     }
 
     override fun setWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            // 상단은 루트가 아닌 frm_main에서 개별적으로 소비 (루트에 주면 view_status_bar_bg도 함께 밀려 내려가 상태바 영역을 못 덮게 됨)
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            binding.frmMain.setPadding(0, systemBars.top, 0, 0)
+            binding.viewStatusBarBg.layoutParams = binding.viewStatusBarBg.layoutParams.apply {
+                height = systemBars.top // 상태바 높이만큼 배경 뷰 크기 고정
+            }
             insets
         }
     }

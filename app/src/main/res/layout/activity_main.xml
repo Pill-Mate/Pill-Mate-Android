@@ -9,6 +9,14 @@
     android:fitsSystemWindows="true"
     tools:context=".main.view.MainActivity">
 
+    <!-- 상태바 배경색 (엣지 투 엣지 대응, 상태바 높이만큼 MainActivity에서 동적으로 크기 지정) -->
+    <View
+        android:id="@+id/view_status_bar_bg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top"
+        android:background="@android:color/white" />
+
     <!-- 메인 콘텐츠를 담을 프레임 레이아웃 -->
     <FrameLayout
         android:id="@+id/frm_main"
