@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.math.MathUtils.clamp
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -119,17 +118,7 @@ class PillCheckFragment : Fragment(), IDateClickListener {
     // 상태바 색상 변경 애니메이션
     private fun animateStatusBarChange(toColor: Int, lightIcons: Boolean) {
         val activity = activity as? MainActivity ?: return
-        val window = activity.window
-        val fromColor = window.statusBarColor
-
-        val animator = ValueAnimator.ofArgb(fromColor, toColor)
-        animator.duration = 300
-        animator.addUpdateListener {
-            window.statusBarColor = it.animatedValue as Int
-        }
-        animator.start()
-
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = lightIcons
+        activity.animateStatusBarColor(toColor, lightIcons)
     }
 
     @RequiresApi(VERSION_CODES.O)
