@@ -7,11 +7,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.CheckBox
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.pill_mate.pill_mate_android.GlobalApplication
 import com.pill_mate.pill_mate_android.R
 import com.pill_mate.pill_mate_android.databinding.ActivityAgreementBinding
 import com.pill_mate.pill_mate_android.login.dialog.AlarmPermissionDialog
@@ -44,6 +46,14 @@ class AgreementActivity : AppCompatActivity() {
         onBackButtonClick()
         onDetailButtonClick()
 
+        // 시스템 뒤로가기(제스처 포함)도 화면 상단 뒤로가기 버튼과 동일하게 동작하도록 처리
+        // 온보딩 중단 후 재진입한 경우 SplashActivity가 자기 자신을 finish()하고 곧바로 이 화면으로 이동시키기 때문에,
+        // 백스택에 KakaoLoginActivity가 없어 기본 동작(그냥 finish)으로는 앱이 종료되어 버림
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                goToLogin()
+            }
+        })
     }
 
     private fun setUpCheckBoxes() {
@@ -107,8 +117,13 @@ class AgreementActivity : AppCompatActivity() {
     // 뒤로 가기 버튼 클릭 시 -> 로그인 페이지로 이동
     private fun onBackButtonClick() {
         binding.btnBack.setOnClickListener {
-            finish()
+            goToLogin()
         }
+    }
+
+    // 미완료 상태의 로그인 정보를 정리하고 로그인 화면으로 이동 (다른 계정으로 다시 시작 가능하도록)
+    private fun goToLogin() {
+        GlobalApplication.logout(this)
     }
 
     // 가입완료 버튼 클릭 시
