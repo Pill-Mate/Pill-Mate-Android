@@ -16,13 +16,13 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.pill_mate.pill_mate_android"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.pill_mate.pill_mate_android"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 14
+        targetSdk = 36
+        versionCode = 15
         versionName = "1.4.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
