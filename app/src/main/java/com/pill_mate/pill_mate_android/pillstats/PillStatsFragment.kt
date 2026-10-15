@@ -22,6 +22,9 @@ class PillStatsFragment : Fragment() {
     private val calendarAdapter = PillStatsCalendarAdapter()
     private val displayedMonth: Calendar = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
 
+    private var drugs: List<StatsDrug> = emptyList()
+    private var selectedDrug: StatsDrug? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -33,6 +36,7 @@ class PillStatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setUpCalendar()
+        setUpDrugSelection()
         showSampleData()
     }
 
@@ -54,9 +58,30 @@ class PillStatsFragment : Fragment() {
         binding.btnNextMonth.setOnClickListener { moveMonth(1) }
     }
 
+    private fun setUpDrugSelection() {
+        binding.layoutDrugSelect.setOnClickListener {
+            if (drugs.isEmpty()) return@setOnClickListener
+            PillStatsDrugBottomSheetFragment.newInstance(drugs.map { it.name }, selectedDrug?.name)
+                .show(childFragmentManager, PillStatsDrugBottomSheetFragment.TAG)
+        }
+
+        childFragmentManager.setFragmentResultListener(
+            PillStatsDrugBottomSheetFragment.RESULT_KEY, viewLifecycleOwner
+        ) { _, result ->
+            val name = result.getString(PillStatsDrugBottomSheetFragment.RESULT_SELECTED_DRUG)
+            drugs.firstOrNull { it.name == name }?.let(::selectDrug)
+        }
+    }
+
+    private fun selectDrug(drug: StatsDrug) {
+        selectedDrug = drug
+        showTakingSummary(drug.name, drug.takingDays)
+        showCalendar(drug.takenDays)
+    }
+
     private fun moveMonth(offset: Int) {
         displayedMonth.add(Calendar.MONTH, offset)
-        showCalendar(SAMPLE_TAKEN_DAYS)
+        showCalendar(selectedDrug?.takenDays.orEmpty())
     }
 
     private fun showCalendar(takenDays: Set<Int>) {
@@ -94,10 +119,10 @@ class PillStatsFragment : Fragment() {
         append(rest)
     }
 
-    // 서버 연동 전 UI 확인용 샘플 데이터. API 연결 시 show* 함수에 실제 데이터를 넘기면 된다.
+    // 서버 연동 전 UI 확인용 샘플 데이터. API 연결 시 drugs와 show* 함수에 실제 데이터를 넘기면 된다.
     private fun showSampleData() {
-        showTakingSummary(drugName = "오그맥스정", takingDays = 14)
-        showCalendar(SAMPLE_TAKEN_DAYS)
+        drugs = SAMPLE_DRUGS
+        selectDrug(SAMPLE_DRUGS.first())
 
         val month = Calendar.getInstance()
         val points = SAMPLE_COUNTS.mapIndexed { index, count ->
@@ -109,7 +134,11 @@ class PillStatsFragment : Fragment() {
 
     private companion object {
         const val DAYS_IN_WEEK = 7
-        val SAMPLE_TAKEN_DAYS = setOf(1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16)
         val SAMPLE_COUNTS = listOf(6, 4, 7, 7, 8, 5, 7)
+        val SAMPLE_DRUGS = listOf(
+            StatsDrug("오그맥스정", 14, setOf(1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16)),
+            StatsDrug("타이레놀정", 7, setOf(10, 11, 12, 13, 14, 15, 16)),
+            StatsDrug("비타민C", 21, (1..16).toSet() - setOf(3, 9))
+        )
     }
 }
