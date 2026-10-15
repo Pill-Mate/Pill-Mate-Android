@@ -1,51 +1,279 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:paddingBottom="100dp"
     tools:context=".pillstats.PillStatsFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_bottom"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="80dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Layout None -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_none"
+        <!-- 개별약물 복용여부 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <ImageView
-                android:id="@+id/iv_none"
-                android:layout_width="96dp"
-                android:layout_height="72dp"
-                android:src="@drawable/img_logo_gray"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/H2_SB16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="개별약물 복용여부"
+                    android:textColor="@color/black"
+                    app:lineHeight="22sp" />
+
+                <LinearLayout
+                    android:id="@+id/layout_drug_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_btn_main_blue_2"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="6dp">
+
+                    <TextView
+                        android:id="@+id/tv_drug_name"
+                        style="@style/B1_SB14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/main_blue_1"
+                        app:lineHeight="20sp"
+                        tools:text="오그맥스정" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="4dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_stats_dropdown" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_stats_card"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tv_drug_label"
+                    style="@style/B4_MD12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="18sp"
+                    tools:text="오그맥스정" />
+
+                <TextView
+                    android:id="@+id/tv_taking_days"
+                    style="@style/T2_B20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/black"
+                    app:lineHeight="26sp"
+                    tools:text="14일째 복용중" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_month"
+                    style="@style/H3_RG16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    app:lineHeight="22sp"
+                    tools:text="2026년 10월" />
+
+                <ImageView
+                    android:id="@+id/btn_prev_month"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="이전 달"
+                    android:src="@drawable/ic_stats_previous" />
+
+                <ImageView
+                    android:id="@+id/btn_next_month"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="다음 달"
+                    android:src="@drawable/ic_stats_next" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="일"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="월"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="화"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="수"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="목"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="금"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+
+                <TextView
+                    style="@style/B2_RG14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="토"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="20sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@color/gray_3" />
+
+        <!-- 약물 종류 갯수 추이 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
-                android:id="@+id/tv_none2"
-                style="@style/H3_RG16"
-                android:layout_width="wrap_content"
+                style="@style/H2_SB16"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="조금만 기다려 주세요!\n열심히 준비 중이에요 🛠️"
-                android:textColor="@color/gray_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_none" />
+                android:text="약물 종류 갯수 추이"
+                android:textColor="@color/black"
+                app:lineHeight="22sp" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_stats_card"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    style="@style/B4_MD12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="지난달 보다"
+                    android:textColor="@color/gray_1"
+                    app:lineHeight="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_count_diff"
+                    style="@style/T2_B20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/black"
+                    app:lineHeight="26sp"
+                    tools:text="1종 줄었어요" />
+            </LinearLayout>
+
+            <com.pill_mate.pill_mate_android.pillstats.MedicineCountChartView
+                android:id="@+id/chart_medicine_count"
+                android:layout_width="match_parent"
+                android:layout_height="223dp"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                style="@style/B4_MD12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="권장 복약갯수: 7개 이하"
+                android:textColor="@color/gray_2"
+                app:lineHeight="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
