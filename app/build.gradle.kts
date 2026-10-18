@@ -143,4 +143,13 @@ dependencies {
     implementation("com.google.android.gms:play-services-ads:23.0.0") // AdMob
     implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
     implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+
+    val cameraXVersion = "1.3.4"
+    implementation("androidx.camera:camera-core:$cameraXVersion")
+    implementation("androidx.camera:camera-camera2:$cameraXVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraXVersion")
+    implementation("androidx.camera:camera-view:$cameraXVersion")
+    implementation("com.google.mlkit:text-recognition-korean:16.0.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 }

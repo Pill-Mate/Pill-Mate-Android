@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,12 +22,18 @@ import com.pill_mate.pill_mate_android.databinding.ActivityMainBinding
 import com.pill_mate.pill_mate_android.main.contract.MainContract
 import com.pill_mate.pill_mate_android.main.presenter.MainPresenter
 import com.pill_mate.pill_mate_android.medicine_registration.MedicineRegistrationActivity
+import com.pill_mate.pill_mate_android.ocr.OcrActivity
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var presenter: MainPresenter
     private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
+
+    private var isAddMenuOpen = false
+    private val addMenuBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = closeAddMenu()
+    }
 
     @RequiresApi(VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,19 +43,73 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         presenter = MainPresenter(this)
         setDefaultStatusBar()
+        onBackPressedDispatcher.addCallback(this, addMenuBackCallback)
         setupPlusButtonClickListener()
         binding.bottomNavMain.itemIconTintList = null // 아이콘 원본 색상 적용
         binding.bottomNavMain.selectedItemId = id.menu_home // 홈 메뉴를 기본 탭으로 지정
 
         presenter.onCreate()
+    }
 
+    override fun onStop() {
+        super.onStop()
+        // 다른 화면으로 나갔다 돌아왔을 때 메뉴가 열려 있지 않도록 정리
+        closeAddMenu()
     }
 
     private fun setupPlusButtonClickListener() {
-        binding.floatingBtnAdd.setOnClickListener { // 약물 등록 액티비티로 이동
-            presenter.onPlusButtonClicked()
+        binding.floatingBtnAdd.setOnClickListener {
             firebaseAnalytics.logEvent("click_add_button", null) // [로그] 약물 등록 진입
+            if (isAddMenuOpen) closeAddMenu() else openAddMenu()
         }
+        binding.viewScrim.setOnClickListener { closeAddMenu() }
+
+        binding.cardManual.setOnClickListener {
+            closeAddMenu()
+            presenter.onPlusButtonClicked() // 기존 수동 입력 흐름
+        }
+        binding.cardOcr.setOnClickListener {
+            closeAddMenu()
+            startActivity(Intent(this, OcrActivity::class.java))
+        }
+    }
+
+    private fun openAddMenu() {
+        isAddMenuOpen = true
+        addMenuBackCallback.isEnabled = true
+
+        binding.viewScrim.apply {
+            visibility = View.VISIBLE
+            alpha = 0f
+            animate().alpha(1f).setDuration(200).start()
+        }
+        binding.floatingBtnAdd.animate().rotation(45f).setDuration(200).start()
+
+        binding.layoutAddMenu.visibility = View.VISIBLE
+        // FAB에 가까운 버튼부터 차례로 올라오게
+        listOf(binding.cardManual, binding.cardOcr).forEachIndexed { i, card ->
+            card.alpha = 0f
+            card.translationY = 40f
+            card.animate().alpha(1f).translationY(0f)
+                .setStartDelay(i * 50L).setDuration(200).start()
+        }
+    }
+
+    private fun closeAddMenu() {
+        if (!isAddMenuOpen) return
+        isAddMenuOpen = false
+        addMenuBackCallback.isEnabled = false
+
+        binding.floatingBtnAdd.animate().rotation(0f).setDuration(200).start()
+        binding.viewScrim.animate().alpha(0f).setDuration(200)
+            .withEndAction { binding.viewScrim.visibility = View.GONE }.start()
+
+        listOf(binding.cardManual, binding.cardOcr).forEach { card ->
+            card.animate().alpha(0f).translationY(40f).setStartDelay(0).setDuration(150).start()
+        }
+        binding.layoutAddMenu.postDelayed({
+            if (!isAddMenuOpen) binding.layoutAddMenu.visibility = View.GONE
+        }, 160)
     }
 
     // 기본 상태바로 설정
