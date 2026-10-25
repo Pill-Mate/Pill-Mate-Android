@@ -21,6 +21,7 @@ class MedicineCountChartView @JvmOverloads constructor(
     data class Point(val label: String, val count: Int)
 
     private var points: List<Point> = emptyList()
+    private var showValues = true
 
     private val density = resources.displayMetrics.density
     private fun dp(value: Float) = value * density
@@ -54,8 +55,10 @@ class MedicineCountChartView @JvmOverloads constructor(
 
     private val linePath = Path()
 
-    fun setPoints(newPoints: List<Point>) {
+    // showValues=false: 기록이 없을 때 점·선·개수는 그리지 않고 테두리, 점선, 월 라벨만 그린다.
+    fun setPoints(newPoints: List<Point>, showValues: Boolean = true) {
         points = newPoints
+        this.showValues = showValues
         invalidate()
     }
 
@@ -76,25 +79,28 @@ class MedicineCountChartView @JvmOverloads constructor(
         }
 
         val xs = FloatArray(points.size) { cellWidth * (it + 0.5f) }
-        val ys = computeYs()
-
-        linePath.reset()
-        points.indices.forEach { i ->
-            if (i == 0) linePath.moveTo(xs[i], ys[i]) else linePath.lineTo(xs[i], ys[i])
-        }
-        canvas.drawPath(linePath, linePaint)
-
-        val dotRadius = dp(DOT_RADIUS_DP)
         val lastIndex = points.lastIndex
-        points.indices.forEach { i ->
-            val isCurrent = i == lastIndex
 
-            dotPaint.color = if (isCurrent) blue else gray2
-            canvas.drawCircle(xs[i], ys[i], dotRadius, dotPaint)
+        if (showValues) {
+            val ys = computeYs()
 
-            textPaint.typeface = if (isCurrent) bold else semiBold
-            textPaint.color = if (isCurrent) blue else gray2
-            drawCenteredText(canvas, "${points[i].count}개", xs[i], ys[i] - dotRadius - dp(10f))
+            linePath.reset()
+            points.indices.forEach { i ->
+                if (i == 0) linePath.moveTo(xs[i], ys[i]) else linePath.lineTo(xs[i], ys[i])
+            }
+            canvas.drawPath(linePath, linePaint)
+
+            val dotRadius = dp(DOT_RADIUS_DP)
+            points.indices.forEach { i ->
+                val isCurrent = i == lastIndex
+
+                dotPaint.color = if (isCurrent) blue else gray2
+                canvas.drawCircle(xs[i], ys[i], dotRadius, dotPaint)
+
+                textPaint.typeface = if (isCurrent) bold else semiBold
+                textPaint.color = if (isCurrent) blue else gray2
+                drawCenteredText(canvas, "${points[i].count}개", xs[i], ys[i] - dotRadius - dp(10f))
+            }
         }
 
         val labelCenterY = chartHeight + dp(LABEL_GAP_DP) + dp(10f)
