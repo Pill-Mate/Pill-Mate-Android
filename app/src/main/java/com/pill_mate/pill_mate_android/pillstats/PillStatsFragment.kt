@@ -66,9 +66,16 @@ class PillStatsFragment : Fragment() {
     private fun setUpDrugSelection() {
         binding.layoutDrugSelect.setOnClickListener {
             val current = selectedDrug ?: return@setOnClickListener
+            // 연속 탭으로 시트가 겹쳐 뜨지 않도록, 이미 떠 있으면 무시하고 showNow로 즉시 커밋한다.
+            if (childFragmentManager.isStateSaved ||
+                childFragmentManager.findFragmentByTag(PillStatsDrugBottomSheetFragment.TAG) != null
+            ) {
+                return@setOnClickListener
+            }
+
             val labels = drugLabels()
             PillStatsDrugBottomSheetFragment.newInstance(labels, labels[drugs.indexOf(current)])
-                .show(childFragmentManager, PillStatsDrugBottomSheetFragment.TAG)
+                .showNow(childFragmentManager, PillStatsDrugBottomSheetFragment.TAG)
         }
 
         childFragmentManager.setFragmentResultListener(
