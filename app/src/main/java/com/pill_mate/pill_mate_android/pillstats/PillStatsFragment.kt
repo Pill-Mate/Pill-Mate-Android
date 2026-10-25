@@ -99,7 +99,9 @@ class PillStatsFragment : Fragment() {
         ServiceCreator.statisticsService.getMedicines().fetch { medicines ->
             if (_binding == null) return@fetch
 
-            drugs = medicines.map { StatsDrug(it.medicineId, it.medicineName, it.totalIntakeDays.toInt()) }
+            drugs = medicines.mapNotNull { medicine ->
+                medicine.medicineName?.let { StatsDrug(medicine.medicineId, it, medicine.totalIntakeDays.toInt()) }
+            }
             val firstDrug = drugs.firstOrNull()
             if (firstDrug != null) selectDrug(firstDrug) else showNoDrug()
         }
@@ -138,7 +140,7 @@ class PillStatsFragment : Fragment() {
                 displayedMonth.get(Calendar.YEAR) != year || displayedMonth.get(Calendar.MONTH) + 1 != month
             if (isStale) return@fetch
 
-            showCalendar(calendar.days.filter { it.isTaken }.map { it.dayOfMonth }.toSet())
+            showCalendar(calendar.days.orEmpty().filter { it.isTaken }.mapNotNull { it.dayOfMonth }.toSet())
         }
     }
 
@@ -146,7 +148,9 @@ class PillStatsFragment : Fragment() {
         ServiceCreator.statisticsService.getMedicineCountTrend().fetch { result ->
             if (_binding == null) return@fetch
 
-            val points = result.trend.map { MedicineCountChartView.Point(it.monthLabel, it.count) }
+            val points = result.trend.orEmpty().mapNotNull { item ->
+                item.monthLabel?.let { MedicineCountChartView.Point(it, item.count) }
+            }
             showCountTrend(points, result.diffFromLastMonth)
             binding.tvRecommendedMax.text = "권장 복약갯수: ${result.recommendedMax}개 이하"
         }
