@@ -19,6 +19,7 @@ import com.pill_mate.pill_mate_android.pilledit.api.ActiveMedicineService
 import com.pill_mate.pill_mate_android.pilledit.api.InActiveMedicineService
 import com.pill_mate.pill_mate_android.pilledit.api.MedicineEditService
 import com.pill_mate.pill_mate_android.pilledit.api.StopMedicineService
+import com.pill_mate.pill_mate_android.pillstats.api.StatisticsService
 import com.pill_mate.pill_mate_android.search.api.SearchService
 import com.pill_mate.pill_mate_android.setting.model.GetRoutineService
 import com.pill_mate.pill_mate_android.setting.model.PatchAlarmInfoService
@@ -82,4 +83,5 @@ object ServiceCreator { // 서버 URL
     val medicineDetailService: MedicineDetailService = userRetrofit.create(MedicineDetailService::class.java)
     val conflictMedicineDetailService: ConflictMedicineDetailService =
         userRetrofit.create(ConflictMedicineDetailService::class.java)
+    val statisticsService: StatisticsService = userRetrofit.create(StatisticsService::class.java)
 }
