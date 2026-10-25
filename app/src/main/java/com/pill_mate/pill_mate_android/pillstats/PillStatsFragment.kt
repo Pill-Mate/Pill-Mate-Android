@@ -93,12 +93,22 @@ class PillStatsFragment : Fragment() {
             if (_binding == null) return@fetch
 
             drugs = medicines.map { StatsDrug(it.medicineId, it.medicineName, it.totalIntakeDays.toInt()) }
-            drugs.firstOrNull()?.let(::selectDrug)
+            val firstDrug = drugs.firstOrNull()
+            if (firstDrug != null) selectDrug(firstDrug) else showNoDrug()
         }
+    }
+
+    private fun showNoDrug() {
+        selectedDrug = null
+        binding.layoutDrugSelect.visibility = View.INVISIBLE
+        binding.tvDrugLabel.text = "-"
+        binding.tvTakingDays.text = "복용중인 약물이 없어요"
+        showCalendar(emptySet())
     }
 
     private fun selectDrug(drug: StatsDrug) {
         selectedDrug = drug
+        binding.layoutDrugSelect.visibility = View.VISIBLE
         showTakingSummary(drug.name, drug.takingDays)
         showCalendar(emptySet())
         loadCalendar()
