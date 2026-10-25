@@ -167,12 +167,20 @@ class PillStatsFragment : Fragment() {
     }
 
     private fun showCountTrend(points: List<MedicineCountChartView.Point>, diffFromLastMonth: Int) {
-        binding.chartMedicineCount.setPoints(points)
-        binding.tvCountDiff.text = when {
-            diffFromLastMonth < 0 -> highlighted("${-diffFromLastMonth}종", " 줄었어요")
-            diffFromLastMonth > 0 -> highlighted("${diffFromLastMonth}종", " 늘었어요")
-            else -> highlighted("변화", " 없어요")
+        val hasRecord = points.any { it.count > 0 }
+        binding.chartMedicineCount.setPoints(points, showValues = hasRecord)
+
+        when {
+            !hasRecord -> showCountSummary("-", "기록이 없어요")
+            diffFromLastMonth == 0 -> showCountSummary("지난달과", "동일해요")
+            diffFromLastMonth < 0 -> showCountSummary("지난달 보다", highlighted("${-diffFromLastMonth}종", " 줄었어요"))
+            else -> showCountSummary("지난달 보다", highlighted("${diffFromLastMonth}종", " 늘었어요"))
         }
+    }
+
+    private fun showCountSummary(label: String, message: CharSequence) {
+        binding.tvCountLabel.text = label
+        binding.tvCountDiff.text = message
     }
 
     private fun highlighted(highlight: String, rest: String): CharSequence = SpannableStringBuilder().apply {
