@@ -11,8 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.pill_mate.pill_mate_android.R
+import com.pill_mate.pill_mate_android.ServiceCreator
 import com.pill_mate.pill_mate_android.databinding.FragmentPillStatsBinding
 import com.pill_mate.pill_mate_android.main.view.MainActivity
+import com.pill_mate.pill_mate_android.pillcheck.util.fetch
 import java.util.Calendar
 
 class PillStatsFragment : Fragment() {
@@ -37,7 +39,10 @@ class PillStatsFragment : Fragment() {
 
         setUpCalendar()
         setUpDrugSelection()
-        showSampleData()
+        showCalendar(emptySet())
+
+        loadDrugs()
+        loadCountTrend()
     }
 
     override fun onResume() {
@@ -60,28 +65,74 @@ class PillStatsFragment : Fragment() {
 
     private fun setUpDrugSelection() {
         binding.layoutDrugSelect.setOnClickListener {
-            if (drugs.isEmpty()) return@setOnClickListener
-            PillStatsDrugBottomSheetFragment.newInstance(drugs.map { it.name }, selectedDrug?.name)
+            val current = selectedDrug ?: return@setOnClickListener
+            val labels = drugLabels()
+            PillStatsDrugBottomSheetFragment.newInstance(labels, labels[drugs.indexOf(current)])
                 .show(childFragmentManager, PillStatsDrugBottomSheetFragment.TAG)
         }
 
         childFragmentManager.setFragmentResultListener(
             PillStatsDrugBottomSheetFragment.RESULT_KEY, viewLifecycleOwner
         ) { _, result ->
-            val name = result.getString(PillStatsDrugBottomSheetFragment.RESULT_SELECTED_DRUG)
-            drugs.firstOrNull { it.name == name }?.let(::selectDrug)
+            val label = result.getString(PillStatsDrugBottomSheetFragment.RESULT_SELECTED_DRUG)
+            drugs.getOrNull(drugLabels().indexOf(label))?.let(::selectDrug)
+        }
+    }
+
+    // 같은 이름의 약이 여러 개면 라디오 선택이 섞이지 않도록 "이름 (2)"처럼 구분한다.
+    private fun drugLabels(): List<String> {
+        val seen = mutableMapOf<String, Int>()
+        return drugs.map { drug ->
+            val order = seen.merge(drug.name, 1, Int::plus) ?: 1
+            if (order == 1) drug.name else "${drug.name} ($order)"
+        }
+    }
+
+    private fun loadDrugs() {
+        ServiceCreator.statisticsService.getMedicines().fetch { medicines ->
+            if (_binding == null) return@fetch
+
+            drugs = medicines.map { StatsDrug(it.medicineId, it.medicineName, it.totalIntakeDays.toInt()) }
+            drugs.firstOrNull()?.let(::selectDrug)
         }
     }
 
     private fun selectDrug(drug: StatsDrug) {
         selectedDrug = drug
         showTakingSummary(drug.name, drug.takingDays)
-        showCalendar(drug.takenDays)
+        showCalendar(emptySet())
+        loadCalendar()
     }
 
     private fun moveMonth(offset: Int) {
         displayedMonth.add(Calendar.MONTH, offset)
-        showCalendar(selectedDrug?.takenDays.orEmpty())
+        showCalendar(emptySet())
+        loadCalendar()
+    }
+
+    private fun loadCalendar() {
+        val drug = selectedDrug ?: return
+        val year = displayedMonth.get(Calendar.YEAR)
+        val month = displayedMonth.get(Calendar.MONTH) + 1
+
+        ServiceCreator.statisticsService.getCalendar(drug.medicineId, year, month).fetch { calendar ->
+            // 응답을 기다리는 사이 화면이 닫히거나 약물/월이 바뀌었으면 무시
+            val isStale = _binding == null || selectedDrug != drug ||
+                displayedMonth.get(Calendar.YEAR) != year || displayedMonth.get(Calendar.MONTH) + 1 != month
+            if (isStale) return@fetch
+
+            showCalendar(calendar.days.filter { it.isTaken }.map { it.dayOfMonth }.toSet())
+        }
+    }
+
+    private fun loadCountTrend() {
+        ServiceCreator.statisticsService.getMedicineCountTrend().fetch { result ->
+            if (_binding == null) return@fetch
+
+            val points = result.trend.map { MedicineCountChartView.Point(it.monthLabel, it.count) }
+            showCountTrend(points, result.diffFromLastMonth)
+            binding.tvRecommendedMax.text = "권장 복약갯수: ${result.recommendedMax}개 이하"
+        }
     }
 
     private fun showCalendar(takenDays: Set<Int>) {
@@ -119,26 +170,7 @@ class PillStatsFragment : Fragment() {
         append(rest)
     }
 
-    // 서버 연동 전 UI 확인용 샘플 데이터. API 연결 시 drugs와 show* 함수에 실제 데이터를 넘기면 된다.
-    private fun showSampleData() {
-        drugs = SAMPLE_DRUGS
-        selectDrug(SAMPLE_DRUGS.first())
-
-        val month = Calendar.getInstance()
-        val points = SAMPLE_COUNTS.mapIndexed { index, count ->
-            val labelMonth = (month.clone() as Calendar).apply { add(Calendar.MONTH, index - SAMPLE_COUNTS.lastIndex) }
-            MedicineCountChartView.Point("${labelMonth.get(Calendar.MONTH) + 1}월", count)
-        }
-        showCountTrend(points, diffFromLastMonth = SAMPLE_COUNTS.last() - SAMPLE_COUNTS[SAMPLE_COUNTS.lastIndex - 1])
-    }
-
     private companion object {
         const val DAYS_IN_WEEK = 7
-        val SAMPLE_COUNTS = listOf(6, 4, 7, 7, 8, 5, 7)
-        val SAMPLE_DRUGS = listOf(
-            StatsDrug("오그맥스정", 14, setOf(1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16)),
-            StatsDrug("타이레놀정", 7, setOf(10, 11, 12, 13, 14, 15, 16)),
-            StatsDrug("비타민C", 21, (1..16).toSet() - setOf(3, 9))
-        )
     }
 }
