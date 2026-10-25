@@ -147,7 +147,11 @@ class PillStatsFragment : Fragment() {
     }
 
     private fun showTakingSummary(drugName: String, takingDays: Int) {
-        binding.tvDrugName.text = drugName
+        binding.tvDrugName.text = if (drugName.length > DRUG_CHIP_NAME_MAX_LENGTH) {
+            drugName.take(DRUG_CHIP_NAME_MAX_LENGTH) + "..."
+        } else {
+            drugName
+        }
         binding.tvDrugLabel.text = drugName
         binding.tvTakingDays.text = highlighted("${takingDays}일째", " 복용중")
     }
@@ -172,5 +176,6 @@ class PillStatsFragment : Fragment() {
 
     private companion object {
         const val DAYS_IN_WEEK = 7
+        const val DRUG_CHIP_NAME_MAX_LENGTH = 5
     }
 }
