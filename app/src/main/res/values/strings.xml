@@ -219,6 +219,7 @@
     <string name="select_meal_time">복용 시간대를 선택하세요</string>
     <string name="select_dosage_unit">투약 단위를 선택해주세요</string>
     <string name="select_volume_unit">투약 단위를 선택하세요</string>
+    <string name="select_drug">약물을 선택하세요</string>
     <string name="meal_time_before_meal">식전</string>
     <string name="meal_time_after_meal">식후</string>
     <string name="dosage_unit_tablet">정(개)</string>

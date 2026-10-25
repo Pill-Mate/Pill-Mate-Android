@@ -85,6 +85,18 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="B4_MD12">
+        <item name="android:includeFontPadding">false</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="B2_MD14">
+        <item name="android:includeFontPadding">false</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="C1_SB14">
         <item name="android:includeFontPadding">false</item>
         <item name="fontFamily">@font/pretendard_semibold</item>
